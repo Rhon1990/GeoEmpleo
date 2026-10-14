@@ -22,10 +22,16 @@ Campos comunes viven en un único esquema con `$defs`. OpenAPI se genera desde e
 
 La validación es estructural y de formato. Reglas como mínimo salarial ≤ máximo, país registrado, correspondencias geográficas, vigencia de permisos y pertenencia de la publicación a la fuente configurada siguen perteneciendo al dominio/normalizador. No se confunde una observación válida de transporte con una oferta válida para mostrar.
 
-El tiempo usa UTC con segundos y milisegundos opcionales de tres dígitos, calendario válido y años 0001–9999. Se extraerá el parseo ya existente del dominio a una utilidad compartida por la regla de publicación y Ajv, sin cambiar su comportamiento. Python comprobará el mismo formato mediante su biblioteca estándar.
+El tiempo usa UTC con segundos y milisegundos opcionales de tres dígitos, calendario válido y años 0001–9999. Se extrajo el parseo ya existente del dominio a una utilidad compartida por la regla de publicación y Ajv, sin cambiar su comportamiento. Python comprueba el mismo formato mediante su biblioteca estándar.
 
 Fixtures independientes, propios, con resultado esperado explícito: nulos, campos faltantes/desconocidos, cuentas no admitidas, versiones, tipos, importes enteros seguros, booleanos como números, fechas, coordenadas, eventos, variantes mapa y contenido público. Ambos lenguajes deben aceptar/rechazar todos los mismos fixtures; la comprobación no acredita conformidad de todos los validadores del mercado.
 
 Las sugerencias, catálogos de filtros, modelo completo de persistencia y todas las reglas de negocio del futuro normalizador quedan fuera. GEO-04 se registrará como parcial hasta cerrar esos contratos; no se dará por terminado el catálogo nacional.
 
 Fuentes: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12), [Ajv](https://ajv.js.org/json-schema.html), [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0.html).
+
+## Ajustes de revisión implementados
+
+Se usan patrones de final absoluto y espacios/controles explícitos para resolver divergencias JavaScript/Python. El formato personalizado `http-url` limita autoridad/puerto/IP y utiliza parsers WHATWG (Node URL y Python Ada), con IDN punycode y sin surrogates aislados en URLs. Su registro es obligatorio para validadores externos, también al consumir OpenAPI. No hay resolución DNS ni comprobación SSRF. Revisar interoperabilidad al actualizar dependencias.
+
+Corpus actual: 76 fixtures estructurales propios, más regresión del dominio/formato/OpenAPI: 102 tests Node. Ambas implementaciones aceptan/rechazan el corpus con las expectativas explícitas; no se afirma equivalencia universal entre motores.

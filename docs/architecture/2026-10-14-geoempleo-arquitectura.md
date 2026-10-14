@@ -1,6 +1,6 @@
 # GeoEmpleo: análisis funcional y propuesta de arquitectura
 
-Fecha: 14 de octubre de 2026, Europe/Madrid. Estado: arquitectura propuesta, con una primera biblioteca local de dominio implementada. El resto de la plataforma permanece sin implementar. Acceso sin registro y visualización mediante Google Maps son requisitos confirmados del usuario.
+Fecha: 14 de octubre de 2026, Europe/Madrid. Estado: arquitectura propuesta, con biblioteca local de dominio y contratos de transporte implementados (GEO-04 parcial). El resto de la plataforma permanece sin implementar. Acceso sin registro y visualización mediante Google Maps son requisitos confirmados del usuario.
 
 ## 1. Referencia funcional y límites de ingeniería inversa
 
@@ -258,7 +258,9 @@ SEO: páginas editoriales/locales con contenido útil y URLs canónicas; no inde
 
 ### Google Maps: decisión confirmada
 
-Usar Maps JavaScript API para el mapa y mantener sus objetos dentro de un adaptador de UI. El backend devuelve coordenadas y agrupaciones propias; los filtros y el dominio no dependen de clases de Google. Cargar el SDK una vez bajo demanda, configurar español/región España y conservar atribución y controles accesibles. Fallos del SDK no bloquearán listado ni detalle.
+Usar Maps JavaScript API para el mapa y mantener sus objetos dentro de un adaptador de UI. El backend devuelve coordenadas y agrupaciones propias; los filtros y el dominio no dependen de clases de Google. Para el modo avanzado, cargar el SDK una vez bajo demanda, configurar español/región España y conservar atribución y controles accesibles. Fallos del SDK no bloquearán listado ni detalle.
+
+El usuario prioriza similitud a Bandana con poco gasto, inicialmente 0 € de Maps. Dynamic Maps ofrece 10.000 cargas gratuitas al mes por cuenta de facturación; Embed tiene uso gratuito ilimitado, pero no permite capas de ofertas/agrupaciones propias. Diseñar adaptadores Dynamic/Embed y continuidad básica sin interrumpir lista/detalle. El control avanzado deberá validarse antes de activar consumo; hasta entonces usar solo Embed. Véase [Mapas y coste](2026-10-14-google-maps-coste.md), con límites y QA; no se garantiza mapa avanzado ilimitado con coste cero. [Tarifas](https://developers.google.com/maps/billing-and-pricing/pricing), [Embed](https://developers.google.com/maps/documentation/embed/usage-and-billing).
 
 Maps JavaScript API requiere facturación y credenciales técnicas; otros servicios se facturan por separado. Planificar cargas, cuotas y alertas; una alerta de presupuesto no es un corte automático de gasto. No se han activado servicios ni contratado capacidad. [Uso y facturación](https://developers.google.com/maps/documentation/javascript/usage-and-billing).
 
@@ -332,7 +334,7 @@ Después: mejorar ranking con evaluaciones, ampliar fuentes/territorios deficita
 
 En esta tarea se verificaron páginas públicas de Bandana, SEPE, InfoJobs, ESCO, BOE y COCEDER. La herramienta de búsqueda web devolvió errores de acceso tras la primera consulta; la comprobación continuó mediante navegación pública. No se probaron cuotas, credenciales ni acuerdos. El catálogo territorial de INE requiere localizar y validar el recurso vigente antes de integrarlo.
 
-La revisión inicial fue documental: cobertura de requisitos, coherencia con el contexto, enlaces locales, fences Mermaid/Markdown y `git diff --check`. Después, con autorización del usuario, se implementó la biblioteca local de contratos/políticas/salario/publicación: 20 pruebas y comprobación estricta de tipos correctas. Se validó instalación desde lockfile y revisión independiente del código. Todavía no existen frontend, API ni infraestructura; sus builds y QA runtime siguen pendientes.
+La revisión inicial fue documental: cobertura de requisitos, coherencia con el contexto, enlaces locales, fences Mermaid/Markdown y `git diff --check`. Después, con autorización del usuario, se implementó la biblioteca local de contratos/políticas/salario/publicación: 20 pruebas y comprobación estricta de tipos correctas. Se validó instalación desde lockfile y revisión independiente del código. La siguiente iteración incorpora seis contratos de transporte, validadores TypeScript/Python y OpenAPI de tres rutas públicas. Verificación actual: 102 tests Node, 76 fixtures Python, tipos estrictos y artefacto OpenAPI sincronizado. GEO-04 sigue parcial: sugerencias, catálogos y contratos canónicos pendientes. Todavía no existen frontend, servidor API ni infraestructura; sus builds y QA runtime siguen pendientes. El diseño de coste de mapas se verificó contra documentación oficial; no hay mapa activo ni control cloud validado.
 
 ## 12. Decisiones pendientes y justificación
 

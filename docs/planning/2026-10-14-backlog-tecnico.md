@@ -46,7 +46,7 @@ No crear todo este árbol de una vez. Cada tarea introduce únicamente sus archi
 
 ## 3. Prioridades y dependencias del backlog
 
-P0: condición necesaria de suministro, integridad o acceso público. P1: necesario para lanzamiento nacional. P2: evolución posterior. **GEO-03 está implementado localmente; GEO-06 está parcial, con tooling inicial.** Los demás ítems están planificados, no iniciados. Los IDs son locales; no se han creado tareas en sistemas externos.
+P0: condición necesaria de suministro, integridad o acceso público. P1: necesario para lanzamiento nacional. P2: evolución posterior. **GEO-03 está implementado localmente; GEO-04 está parcial (seis esquemas, validadores TS/Python y tres rutas GET descritas); GEO-06 está parcial, con tooling local.** GEO-04 aún necesita sugerencias, catálogos y contratos canónicos; no existe API HTTP. Los demás ítems están planificados, no iniciados. Los IDs son locales; no se han creado tareas en sistemas externos.
 
 ### Viabilidad y base
 
@@ -82,14 +82,14 @@ P0: condición necesaria de suministro, integridad o acceso público. P1: necesa
 | GEO-18 P1 | Cursor y clusters · Backend | GEO-17 | PIT + orden estable; cursor vinculado a filtros y TTL; mapa limitado por bbox/zoom; cierres no reaparecen por PIT antiguo |
 | GEO-19 P0 | API pública y detalle · Backend | GEO-05,15,17 | Sin auth de candidato; descripción completa, origen y inscripción externa; errores del buscador no equivalen a cero ofertas; contenido saneado |
 | GEO-20 P0 | Web de consulta y detalle · Frontend | GEO-04,19 | Español, URLs compartibles, SSR de detalle; filtros móviles; estado vacío/error; ningún control o ruta redirige a login |
-| GEO-21 P1 | Google Maps y aislamiento de UI · Frontend/plataforma | GEO-12,18,20,23 | SDK bajo demanda; markers/clusters propios; filtros compartidos; no reinstanciar mapa por filtro; error de mapa conserva lista/detalle |
+| GEO-21 P1 | Google Maps y aislamiento de UI · Frontend/plataforma | GEO-12,18,20,23 | Dynamic bajo demanda y reutilizado; markers/clusters propios y selección de lista; admisión conservadora distribuida durante el mes; Embed básico si no queda capacidad; error conserva lista/detalle |
 | GEO-22 P1 | SEO y accesibilidad · Frontend/QA | GEO-20,21 | Teclado/lector de pantalla; alternativa al mapa; canónicas/sitemap; schema adecuado por tipo de oportunidad y retirada al caducar |
 
 ### Operación y lanzamiento
 
 | ID / prioridad | Trabajo y responsable funcional | Depende de | Criterio de aceptación |
 |---|---|---|---|
-| GEO-23 P1 | Proyecto/configuración de Google Maps · Plataforma | GEO-02 | APIs mínimas, clave web por sitios/API y entorno, clave servidor separada si procede; cuotas/alertas y condiciones EEE revisadas; sin login del visitante |
+| GEO-23 P1 | Proyecto/configuración de Google Maps · Plataforma | GEO-02 | APIs mínimas, clave web por sitios/API y entorno, clave servidor separada si procede; objetivo inicial Maps 0 €; tramo Dynamic 10.000/mes compartido por cuenta; Embed gratuito ilimitado de continuidad, claves por API; control probado antes de activar Dynamic, sin prometer tope de gasto por alertas; condiciones EEE; sin login |
 | GEO-24 P0 | Seguridad y políticas de publicación · Backend/QA | GEO-07,19,20 | XSS/SSRF/redirecciones probados; contenido retirado por permiso revocado; logs sin datos personales/ubicación precisa; acceso operativo separado |
 | GEO-25 P1 | Infraestructura y observabilidad · Plataforma | GEO-02,06,07,16 | Entornos aislados, despliegue reversible, métricas por fuente y cola, disponibilidad/latencia, presupuesto y alertas accionables |
 | GEO-26 P1 | Calidad/cobertura nacional · Datos/QA | GEO-08,09,10,12,13,14,15 | Matriz de CCAA/ciudades autónomas y perfiles con muestras; huecos registrados; umbrales acordados en GEO-02 cumplidos o lanzamiento replanificado |
@@ -154,3 +154,9 @@ Un ítem está preparado cuando tiene responsable, dependencias satisfechas, con
 Un ítem termina con evidencia reciente: cambios acotados, checks pertinentes, migración/rollback si existe, contrato compatible, métricas cuando aplique y contexto actualizado. No declarar test E2E real a partir de mocks, ni integración de Google Maps a partir de un contenedor visual vacío.
 
 La primera iteración no necesita permisos de fuentes ni Google: prueba reglas con fixtures propios. La siguiente iteración preparará los contratos interoperables y persistencia antes de construir la búsqueda. El mapa se integra sobre ese flujo para evitar una UI que no corresponda al catálogo.
+
+## Evidencia local actual
+
+GEO-04 parcial: JSON Schema 2020-12, Ajv/WHATWG y Python/jsonschema/Ada, OpenAPI 3.1 empaquetado. `npm run check`: 102 tests Node y 76 fixtures Python correctos, tipos estrictos y generación API sincronizada. Plan y corpus en `docs/superpowers/plans/2026-10-14-contratos-v1.md` y `packages/contracts/fixtures/v1.json`. No hay servidor, ingesta, base de datos ni UI; H1 sigue incompleto.
+
+La [decisión de mapas y coste](../architecture/2026-10-14-google-maps-coste.md) prioriza similitud a Bandana y bajo gasto, diferenciando Dynamic avanzado y Embed básico. Solo Embed permite continuidad de mapa sin límite de cargas publicado y sin consumir el tramo Dynamic; pierde clusters propios. Configuración cloud y control de consumo siguen pendientes.

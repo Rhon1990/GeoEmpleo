@@ -470,8 +470,8 @@ Comprobación de tipos y reglas: `npm run check`.
 La biblioteca no requiere cuentas, claves Google ni fuentes externas.
 Todavía no incluye frontend, API, persistencia, mapa o datos reales.
 
-Contexto: [docs/project-context.md](docs/project-context.md).
-Backlog: [docs/planning/2026-10-14-backlog-tecnico.md](docs/planning/2026-10-14-backlog-tecnico.md).
+Contexto: [docs/project-context.md](../../project-context.md).
+Backlog: [docs/planning/2026-10-14-backlog-tecnico.md](../../planning/2026-10-14-backlog-tecnico.md).
 ```
 
 - [x] En `docs/project-context.md`, sustituir el párrafo de estado exclusivamente documental por el siguiente, **solo si la implementación y todas las comprobaciones realmente se completan**:

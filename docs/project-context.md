@@ -8,7 +8,7 @@ GeoEmpleo será una plataforma pública de descubrimiento de empleo, inicialment
 
 El usuario ha elegido un **lanzamiento nacional de gran volumen**. La cobertura deberá incluir territorios urbanos y rurales, ofertas privadas, empleo público y perfiles desde trabajos operativos sin experiencia hasta puestos profesionales y ejecutivos.
 
-El proveedor de visualización del mapa será **Google Maps**, por elección explícita del usuario. Tras completar el plan y el backlog, el usuario ha autorizado iniciar la primera implementación local del dominio.
+El proveedor de visualización del mapa será **Google Maps**, por elección explícita del usuario. Tras completar el plan y el backlog, el usuario ha autorizado iniciar la implementación local y continuar con los contratos compartidos. Prioriza una experiencia similar a Bandana con poco gasto: objetivo inicial de Maps de 0 €, tramo Dynamic de 10.000 cargas/mes y continuidad básica gratuita mediante Embed. Véase la [decisión de mapas y coste](architecture/2026-10-14-google-maps-coste.md); no se han activado servicios de pago.
 
 **No habrá registro, inicio de sesión ni cuentas de candidatos, tampoco opcionales.** Buscar, filtrar, consultar el mapa y leer el detalle completo serán funciones públicas. No se diseñarán perfiles, almacenamiento de CV ni candidaturas con autenticación en GeoEmpleo.
 
@@ -18,15 +18,15 @@ La inscripción a una oferta podrá realizarse en su destino de origen. Cuando e
 
 En la inspección inicial de esta tarea solo existía `README.md`, con el título del proyecto. El historial contenía el commit inicial `840e1e5`. No existían aplicación, módulos, componentes reutilizables, dependencias, infraestructura ni suites de pruebas. Tampoco existía este documento.
 
-Existe una primera biblioteca local TypeScript de contratos de país, salario español y elegibilidad de publicación. Se ejecuta con `npm ci` y `npm run check`. Las reglas usan fixtures propios; no existe todavía frontend, API pública, persistencia, ingesta de fuentes reales ni Google Maps integrado. La cobertura nacional y los objetivos de escala permanecen sin validar en runtime.
+Existe una primera biblioteca local TypeScript de contratos de país, salario español y elegibilidad de publicación. Se añade `packages/contracts`: seis contratos JSON Schema con validadores TypeScript/Python y OpenAPI 3.1 para búsqueda/detalle/mapa. Ejecutar la preparación de Node y venv Python del [README](../README.md), después `npm run check`. Las reglas usan fixtures propios; no existe todavía frontend, API pública, persistencia, ingesta de fuentes reales ni Google Maps integrado. La cobertura nacional y los objetivos de escala permanecen sin validar en runtime.
 
-Versiones verificadas: Node.js 24.19.0, TypeScript 7.0.2 y tipos de Node 24.19.2. Las dependencias de desarrollo están fijadas y existe lockfile; no hay dependencias runtime en el dominio. Las demás tecnologías siguientes siguen como propuestas. Si el código y este contexto difieren, prevalece el código y debe actualizarse este índice.
+Versiones verificadas: Node.js 24.19.0, TypeScript 7.0.2 y tipos de Node 24.19.2. Las dependencias de desarrollo están fijadas y existe lockfile; no hay dependencias runtime en el dominio. Contratos usa Ajv 8.20.0; Python 3.9.6 con jsonschema 4.25.1 y ada-url 1.27.0, más dependencias fijadas en requirements. Node y Python contrastan el mismo corpus, sin descarga remota de esquemas. Las demás tecnologías siguientes siguen como propuestas. Si el código y este contexto difieren, prevalece el código y debe actualizarse este índice.
 
 ## Índice funcional
 
 La especificación principal está en [Análisis de Bandana y arquitectura de GeoEmpleo](architecture/2026-10-14-geoempleo-arquitectura.md).
 
-Planificación: [Backlog y plan técnico nacional](planning/2026-10-14-backlog-tecnico.md) y [Plan ejecutable de la primera iteración de dominio](superpowers/plans/2026-10-14-contratos-dominio.md).
+Planificación: [Backlog y plan técnico nacional](planning/2026-10-14-backlog-tecnico.md) y [Plan ejecutable de la primera iteración de dominio](superpowers/plans/2026-10-14-contratos-dominio.md), [Contratos v1](superpowers/plans/2026-10-14-contratos-v1.md) y [Mapas/coste](architecture/2026-10-14-google-maps-coste.md).
 
 | Área | Referencia en la especificación |
 |---|---|
@@ -49,11 +49,17 @@ Planificación: [Backlog y plan técnico nacional](planning/2026-10-14-backlog-t
 | `packages/domain/src/model.ts` | Contratos internos iniciales de remuneración, país y publicación |
 | `packages/domain/src/country-policy.ts` | Registro y despacho de políticas versionadas sin condicionales por país |
 | `packages/domain/src/publication.ts` | Rechazo de fichas incompletas, sin permiso, inactivas o caducadas |
+| `packages/domain/src/time.ts` | Parser de instante UTC compartido por publicación y Ajv |
+| `packages/contracts/schemas/v1/`, `packages/contracts/fixtures/v1.json` | Contratos versionados y corpus estructural propio |
+| `packages/contracts/src/validate.ts`, `packages/contracts/src/formats.ts` | Validación Ajv, formatos UTC/HTTP y errores sin valores recibidos |
+| `packages/contracts/python/validate.py`, `packages/contracts/python/requirements.txt` | Validación Python con esquemas locales y parser URL WHATWG |
+| `packages/contracts/openapi/v1.json`, `packages/contracts/tools/` | API prevista sin auth, generación/verificación y runner Python |
+| `tests/contracts.test.ts`, `tests/openapi.test.ts`, `tests/time.test.ts` | Interoperabilidad, referencias API y parseo temporal |
 | `packages/country-es/src/compensation.ts` | Anualización EUR/bruto con pagas u horas/semanas explícitas, sin inventar mínimos |
 | `tests/compensation.test.ts`, `tests/country-policy.test.ts`, `tests/publication.test.ts` | Reglas del dominio con fixtures propios |
 | `package.json`, `package-lock.json`, `tsconfig.json` | Instalación reproducible, tipos estrictos y comandos de comprobación |
 
-GEO-03 está implementado localmente; GEO-06 solo tiene tooling inicial. No se han implementado CI, servicios locales ni el resto del catálogo.
+GEO-03 está implementado localmente; GEO-04 está parcial (faltan sugerencias/catálogos y persistencia canónica); GEO-06 tiene tooling local reproducible. No se han implementado CI, servicios locales ni el resto del catálogo.
 
 ## Arquitectura propuesta
 
@@ -62,7 +68,7 @@ Separar tres superficies desplegables: frontend público, API pública de lectur
 | Responsabilidad | Propuesta |
 |---|---|
 | Web pública en español, responsive, páginas de detalle indexables | Next.js + TypeScript, SSR para detalles y páginas editoriales |
-| Visualización de mapa | Google Maps JavaScript API, carga bajo demanda y adaptación en un componente aislado |
+| Visualización de mapa | Google Dynamic para la experiencia avanzada bajo control de consumo; Embed para continuidad básica gratuita. Adaptadores aislados; todavía sin implementar |
 | API y lógica de catálogo/búsqueda | NestJS + TypeScript, contratos OpenAPI |
 | Datos canónicos y geografía | PostgreSQL + PostGIS |
 | Búsqueda textual, facetas y geográfica | OpenSearch administrado |
@@ -75,7 +81,7 @@ Separar tres superficies desplegables: frontend público, API pública de lectur
 
 El proveedor cloud, los servicios equivalentes, las versiones y el presupuesto quedan pendientes de elección. No se presupone una infraestructura existente ni se exige Kubernetes para empezar.
 
-Google Maps es una decisión de producto confirmada; su proyecto técnico, facturación, clave restringida y presupuesto siguen pendientes. La clave web será visible en el navegador y debe restringirse por sitios y API; las claves de servicios backend serán independientes. Ninguna de estas credenciales implica registro de visitantes.
+Google Maps y bajo gasto son decisiones confirmadas; el objetivo inicial del mapa es 0 € usando tramos gratuitos, con Embed gratuito ilimitado de respaldo básico. El proyecto técnico, claves, facturación y validación del control avanzado siguen pendientes. Presupuesto de infraestructura/fuentes pendiente; no se promete que toda la plataforma sea gratuita. La clave web será visible en el navegador y debe restringirse por sitios y API; las claves de servicios backend serán independientes. Ninguna de estas credenciales implica registro de visitantes.
 
 El mapa no decide la geografía del catálogo. Las coordenadas persistentes deberán tener permiso de almacenamiento/indexación; no se presupone que los resultados de Google Geocoding/Places se puedan guardar indefinidamente. Consultar las políticas y condiciones EEE aplicables antes de habilitar esos servicios adicionales.
 
@@ -100,8 +106,8 @@ La propuesta usa una hipótesis de carga de 1 millón de ofertas activas y 500 c
 
 ## QA y actualización de este archivo
 
-Las pruebas se crearon antes de implementar las reglas y se comprobaron fallos funcionales antes de la fase verde. `npm run check` verifica tipos estrictos y 20 pruebas de reglas. La revisión independiente no dejó hallazgos pendientes después de corregir el redondeo decimal mediante aritmética BigInt. Los importes mantienen el contrato en unidades menores; el producto numérico de factores solo es informativo. La instalación desde lockfile también se comprueba con `npm ci`. Estas evidencias acreditan la biblioteca local, no QA de una plataforma completa.
+Las pruebas se crearon antes de implementar las reglas y se comprobaron fallos funcionales antes de la fase verde. `npm run check` verifica tipos estrictos, 102 pruebas Node (incluidas las 20 de dominio), OpenAPI sincronizado y 76 fixtures con el mismo resultado esperado en Python. La revisión independiente no dejó hallazgos pendientes después de corregir el redondeo decimal mediante aritmética BigInt y discrepancias de formatos Unicode, finales de línea, URLs/punycode y surrogates en los contratos. Los importes mantienen el contrato en unidades menores; el producto numérico de factores solo es informativo. La instalación desde lockfile se comprueba con `npm ci`; Python usa venv y requirements fijados. Los validadores externos necesitan registrar los formatos personalizados, documentados en [contracts](../packages/contracts/README.md). Estas evidencias acreditan la biblioteca local, no QA de una plataforma completa.
 
-Limitaciones actuales: no hay validación de JSON externo, sanitización HTML, verificación automática de licencias, deduplicación, cierre de vacantes multifuente ni interpretación de plazos oficiales/territoriales. El módulo de publicación espera instantes UTC normalizados y una política de fuente previamente comprobada. La futura plataforma deberá superar pruebas de integración, idempotencia, geografía, acceso anónimo, seguridad, accesibilidad y carga.
+Limitaciones actuales: la validación JSON implementada solo acredita estructura/formato; no hay sanitización HTML, verificación automática de licencias, deduplicación, cierre de vacantes multifuente ni interpretación de plazos oficiales/territoriales. El módulo de publicación espera instantes UTC normalizados y una política de fuente previamente comprobada. La futura plataforma deberá superar pruebas de integración, idempotencia, geografía, acceso anónimo, seguridad, accesibilidad y carga.
 
 Actualizar este archivo cuando se apruebe o cambie una decisión arquitectónica, se incorpore una fuente, exista un módulo real, se establezcan comandos de ejecución o se pruebe un despliegue. Registrar evidencias y distinguir siempre propuesta, implementación, integración y validación runtime.
