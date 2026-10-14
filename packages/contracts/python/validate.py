@@ -4,8 +4,7 @@ import ipaddress
 from datetime import datetime
 from itertools import islice
 from pathlib import Path
-from urllib.parse import urlsplit
-
+from ada_url import URL
 from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
 
@@ -39,8 +38,8 @@ def is_http_url(value):
         return False
     hostname = parts[1]
     try:
-        parsed = urlsplit(value)
-        if parsed.scheme not in ("http", "https") or not parsed.hostname or parsed.username is not None or parsed.password is not None:
+        parsed = URL(value)
+        if parsed.protocol not in ("http:", "https:") or not parsed.hostname or parsed.username or parsed.password:
             return False
         parsed.port  # Comprueba rango y sintaxis del puerto, sin resolver DNS.
         if hostname.startswith("["):
