@@ -8,7 +8,7 @@ GeoEmpleo será una plataforma pública de descubrimiento de empleo, inicialment
 
 El usuario ha elegido un **lanzamiento nacional de gran volumen**. La cobertura deberá incluir territorios urbanos y rurales, ofertas privadas, empleo público y perfiles desde trabajos operativos sin experiencia hasta puestos profesionales y ejecutivos.
 
-El proveedor de visualización del mapa será **Google Maps**, por elección explícita del usuario. La continuación autorizada se limita a completar el plan técnico y el backlog, sin implementar todavía la aplicación.
+El proveedor de visualización del mapa será **Google Maps**, por elección explícita del usuario. Tras completar el plan y el backlog, el usuario ha autorizado iniciar la primera implementación local del dominio.
 
 **No habrá registro, inicio de sesión ni cuentas de candidatos, tampoco opcionales.** Buscar, filtrar, consultar el mapa y leer el detalle completo serán funciones públicas. No se diseñarán perfiles, almacenamiento de CV ni candidaturas con autenticación en GeoEmpleo.
 
@@ -18,7 +18,9 @@ La inscripción a una oferta podrá realizarse en su destino de origen. Cuando e
 
 En la inspección inicial de esta tarea solo existía `README.md`, con el título del proyecto. El historial contenía el commit inicial `840e1e5`. No existían aplicación, módulos, componentes reutilizables, dependencias, infraestructura ni suites de pruebas. Tampoco existía este documento.
 
-Esta entrega añade documentación. **No hay implementación, integración de fuentes, despliegue ni QA de una plataforma funcionando.** Las tecnologías siguientes son propuestas, no decisiones implementadas o aprobadas. Si el código futuro difiere de este contexto, prevalece el código y debe actualizarse este índice.
+Existe una primera biblioteca local TypeScript de contratos de país, salario español y elegibilidad de publicación. Se ejecuta con `npm ci` y `npm run check`. Las reglas usan fixtures propios; no existe todavía frontend, API pública, persistencia, ingesta de fuentes reales ni Google Maps integrado. La cobertura nacional y los objetivos de escala permanecen sin validar en runtime.
+
+Versiones verificadas: Node.js 24.19.0, TypeScript 7.0.2 y tipos de Node 24.19.2. Las dependencias de desarrollo están fijadas y existe lockfile; no hay dependencias runtime en el dominio. Las demás tecnologías siguientes siguen como propuestas. Si el código y este contexto difieren, prevalece el código y debe actualizarse este índice.
 
 ## Índice funcional
 
@@ -39,6 +41,19 @@ Planificación: [Backlog y plan técnico nacional](planning/2026-10-14-backlog-t
 | Dimensionamiento y operación | 9. Escala |
 | Fases, dependencias y criterios de salida | 10. Hoja de ruta |
 | Pruebas, riesgos y pendientes | 11 y 12. Validación y decisiones |
+
+### Código existente
+
+| Ruta | Responsabilidad comprobada |
+|---|---|
+| `packages/domain/src/model.ts` | Contratos internos iniciales de remuneración, país y publicación |
+| `packages/domain/src/country-policy.ts` | Registro y despacho de políticas versionadas sin condicionales por país |
+| `packages/domain/src/publication.ts` | Rechazo de fichas incompletas, sin permiso, inactivas o caducadas |
+| `packages/country-es/src/compensation.ts` | Anualización EUR/bruto con pagas u horas/semanas explícitas, sin inventar mínimos |
+| `tests/compensation.test.ts`, `tests/country-policy.test.ts`, `tests/publication.test.ts` | Reglas del dominio con fixtures propios |
+| `package.json`, `package-lock.json`, `tsconfig.json` | Instalación reproducible, tipos estrictos y comandos de comprobación |
+
+GEO-03 está implementado localmente; GEO-06 solo tiene tooling inicial. No se han implementado CI, servicios locales ni el resto del catálogo.
 
 ## Arquitectura propuesta
 
@@ -85,6 +100,8 @@ La propuesta usa una hipótesis de carga de 1 millón de ofertas activas y 500 c
 
 ## QA y actualización de este archivo
 
-La entrega actual se valida mediante revisión documental y comprobaciones de estructura, enlaces locales y diferencias Git. Los ejemplos del primer plan se ejecutaron exclusivamente en un directorio temporal: 18 pruebas de reglas pasaron con Node 24.19.0; no se ejecutó comprobación TypeScript porque el compilador no está disponible localmente. Esto no acredita implementación en el repositorio ni QA de una aplicación. La futura plataforma deberá superar pruebas de contratos de fuentes/países, idempotencia, salarios, geografía, deduplicación, caducidad, acceso anónimo, seguridad, accesibilidad y carga.
+Las pruebas se crearon antes de implementar las reglas y se comprobaron fallos funcionales antes de la fase verde. `npm run check` verifica tipos estrictos y 20 pruebas de reglas. La revisión independiente no dejó hallazgos pendientes después de corregir el redondeo decimal mediante aritmética BigInt. Los importes mantienen el contrato en unidades menores; el producto numérico de factores solo es informativo. La instalación desde lockfile también se comprueba con `npm ci`. Estas evidencias acreditan la biblioteca local, no QA de una plataforma completa.
+
+Limitaciones actuales: no hay validación de JSON externo, sanitización HTML, verificación automática de licencias, deduplicación, cierre de vacantes multifuente ni interpretación de plazos oficiales/territoriales. El módulo de publicación espera instantes UTC normalizados y una política de fuente previamente comprobada. La futura plataforma deberá superar pruebas de integración, idempotencia, geografía, acceso anónimo, seguridad, accesibilidad y carga.
 
 Actualizar este archivo cuando se apruebe o cambie una decisión arquitectónica, se incorpore una fuente, exista un módulo real, se establezcan comandos de ejecución o se pruebe un despliegue. Registrar evidencias y distinguir siempre propuesta, implementación, integración y validación runtime.

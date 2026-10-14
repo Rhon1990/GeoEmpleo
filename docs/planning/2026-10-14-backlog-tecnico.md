@@ -1,6 +1,6 @@
 # GeoEmpleo — Plan técnico y backlog nacional
 
-Fecha: 14 de octubre de 2026, Europe/Madrid. Entrega de planificación, sin implementación.
+Fecha: 14 de octubre de 2026, Europe/Madrid. Plan y backlog con seguimiento de la primera implementación local.
 
 Referencias: [contexto](../project-context.md), [arquitectura](../architecture/2026-10-14-geoempleo-arquitectura.md) y [primera iteración ejecutable](../superpowers/plans/2026-10-14-contratos-dominio.md).
 
@@ -46,7 +46,7 @@ No crear todo este árbol de una vez. Cada tarea introduce únicamente sus archi
 
 ## 3. Prioridades y dependencias del backlog
 
-P0: condición necesaria de suministro, integridad o acceso público. P1: necesario para lanzamiento nacional. P2: evolución posterior. Todos los ítems están **planificados, no iniciados**. Los IDs son locales; no se han creado tareas en sistemas externos.
+P0: condición necesaria de suministro, integridad o acceso público. P1: necesario para lanzamiento nacional. P2: evolución posterior. **GEO-03 está implementado localmente; GEO-06 está parcial, con tooling inicial.** Los demás ítems están planificados, no iniciados. Los IDs son locales; no se han creado tareas en sistemas externos.
 
 ### Viabilidad y base
 

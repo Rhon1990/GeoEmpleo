@@ -1,6 +1,6 @@
 # GeoEmpleo: análisis funcional y propuesta de arquitectura
 
-Fecha: 14 de octubre de 2026, Europe/Madrid. Estado: propuesta técnica para revisión; documentación, sin implementación. Acceso sin registro y visualización mediante Google Maps son requisitos confirmados del usuario.
+Fecha: 14 de octubre de 2026, Europe/Madrid. Estado: arquitectura propuesta, con una primera biblioteca local de dominio implementada. El resto de la plataforma permanece sin implementar. Acceso sin registro y visualización mediante Google Maps son requisitos confirmados del usuario.
 
 ## 1. Referencia funcional y límites de ingeniería inversa
 
@@ -332,7 +332,7 @@ Después: mejorar ranking con evaluaciones, ampliar fuentes/territorios deficita
 
 En esta tarea se verificaron páginas públicas de Bandana, SEPE, InfoJobs, ESCO, BOE y COCEDER. La herramienta de búsqueda web devolvió errores de acceso tras la primera consulta; la comprobación continuó mediante navegación pública. No se probaron cuotas, credenciales ni acuerdos. El catálogo territorial de INE requiere localizar y validar el recurso vigente antes de integrarlo.
 
-Validación documental: comprobar cobertura de requisitos, coherencia entre este documento y el contexto, existencia de enlaces locales, fences Mermaid/Markdown y `git diff --check`. No procede ejecutar build o tests de aplicación: el repositorio aún no tiene código ni infraestructura.
+La revisión inicial fue documental: cobertura de requisitos, coherencia con el contexto, enlaces locales, fences Mermaid/Markdown y `git diff --check`. Después, con autorización del usuario, se implementó la biblioteca local de contratos/políticas/salario/publicación: 20 pruebas y comprobación estricta de tipos correctas. Se validó instalación desde lockfile y revisión independiente del código. Todavía no existen frontend, API ni infraestructura; sus builds y QA runtime siguen pendientes.
 
 ## 12. Decisiones pendientes y justificación
 
