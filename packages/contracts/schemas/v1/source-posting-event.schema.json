@@ -20,7 +20,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 128,
-      "pattern": "\\S"
+      "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
     },
     "externalId": {
       "anyOf": [
@@ -28,7 +28,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 512,
-          "pattern": "\\S"
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
         },
         {
           "type": "null"
@@ -42,13 +42,13 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 128,
-      "pattern": "\\S"
+      "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
     },
     "parserVersion": {
       "type": "string",
       "minLength": 1,
       "maxLength": 64,
-      "pattern": "\\S"
+      "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
     },
     "observedAt": {
       "$ref": "common.schema.json#/$defs/Timestamp"
@@ -57,7 +57,7 @@
       "anyOf": [
         {
           "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
         },
         {
           "type": "null"

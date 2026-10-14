@@ -2363,5 +2363,889 @@
         }
       ]
     }
+  },
+  {
+    "name": "NEL no es texto visible",
+    "contract": "search-request",
+    "valid": false,
+    "payload": {
+      "countryCode": "ES",
+      "query": {
+        "q": "",
+        "filters": {},
+        "location": null,
+        "sort": "relevance",
+        "limit": 25,
+        "cursor": null
+      }
+    }
+  },
+  {
+    "name": "control no es texto visible",
+    "contract": "search-request",
+    "valid": false,
+    "payload": {
+      "countryCode": "ES",
+      "query": {
+        "q": "\u001c",
+        "filters": {},
+        "location": null,
+        "sort": "relevance",
+        "limit": 25,
+        "cursor": null
+      }
+    }
+  },
+  {
+    "name": "BOM no es texto visible",
+    "contract": "search-request",
+    "valid": false,
+    "payload": {
+      "countryCode": "ES",
+      "query": {
+        "q": "﻿",
+        "filters": {},
+        "location": null,
+        "sort": "relevance",
+        "limit": 25,
+        "cursor": null
+      }
+    }
+  },
+  {
+    "name": "país no admite LF final",
+    "contract": "search-request",
+    "valid": false,
+    "payload": {
+      "countryCode": "ES\n",
+      "query": {
+        "q": null,
+        "filters": {},
+        "location": null,
+        "sort": "relevance",
+        "limit": 25,
+        "cursor": null
+      }
+    }
+  },
+  {
+    "name": "UUID no admite LF final",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\n",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://jobs.example/oferta/123",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "digest no admite LF final",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://jobs.example/oferta/123",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "cursor no admite LF final",
+    "contract": "search-request",
+    "valid": false,
+    "payload": {
+      "countryCode": "ES",
+      "query": {
+        "q": null,
+        "filters": {},
+        "location": null,
+        "sort": "relevance",
+        "limit": 25,
+        "cursor": "cursor\n"
+      }
+    }
+  },
+  {
+    "name": "URL sin autoridad",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://:",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL con puerto inválido",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://example.com:65536",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL no admite LF final",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://example.com\n",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL con IPv4 inválida",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://999.999.999.999",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL con host escapado no canónico",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://exa%2fmple.com",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL internacional con hostname punycode",
+    "contract": "source-posting-event",
+    "valid": true,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://xn--espaa-rta.example/oferta",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL IPv6 estándar",
+    "contract": "source-posting-event",
+    "valid": true,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://[2001:db8::1]:443/oferta",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL IPv6 no admite sufijo de autoridad",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://[::1]x",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL no admite dos puntos finales de dominio",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://example.com..",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
+  },
+  {
+    "name": "URL no admite puerto explícito vacío",
+    "contract": "source-posting-event",
+    "valid": false,
+    "payload": {
+      "contractVersion": "1.0.0",
+      "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "eventType": "source-posting.observed",
+      "sourceId": "fixture-source",
+      "externalId": "job-123",
+      "sourceUrl": "https://example.com:",
+      "runId": "fixture-run",
+      "parserVersion": "1.0.0",
+      "observedAt": "2026-10-14T10:00:00.000Z",
+      "evidenceSha256": null,
+      "posting": {
+        "title": "Operario/a",
+        "descriptionText": null,
+        "descriptionCompleteness": "unknown",
+        "employer": null,
+        "locations": [
+          {
+            "countryCode": "ES",
+            "label": "Madrid",
+            "regionIds": [
+              "ES-MD",
+              "ES-M-28079"
+            ],
+            "point": [
+              -3.7038,
+              40.4168
+            ],
+            "precision": "municipality"
+          }
+        ],
+        "classification": {
+          "occupationCodes": [
+            "esco:example-operative"
+          ],
+          "sectorCodes": [
+            "industry"
+          ],
+          "experienceCode": null,
+          "educationCode": null,
+          "responsibilityCode": null
+        },
+        "employment": {
+          "contractCode": null,
+          "scheduleCode": null,
+          "workMode": null
+        },
+        "compensation": {
+          "minMinor": 150000,
+          "maxMinor": 200000,
+          "currency": "EUR",
+          "period": "month",
+          "basis": "gross",
+          "paymentsPerYear": 12,
+          "hoursPerWeek": null,
+          "paidWeeksPerYear": null
+        },
+        "status": "unknown",
+        "publishedAt": null,
+        "expiresAt": null
+      }
+    }
   }
 ]

@@ -16,7 +16,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 200000,
-          "pattern": "\\S"
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
         },
         "applicationRoutes": {
           "type": "array",
@@ -27,7 +27,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 512,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "url": {
                 "$ref": "common.schema.json#/$defs/HttpUrl"
@@ -59,13 +59,13 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "name": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 512,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "url": {
                 "$ref": "common.schema.json#/$defs/HttpUrl"

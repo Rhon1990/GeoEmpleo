@@ -1,8 +1,10 @@
 import json
 import re
+import ipaddress
 from datetime import datetime
 from itertools import islice
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
@@ -20,6 +22,41 @@ registry = Registry(retrieve=deny_remote).with_resources(
     (schema["$id"], Resource.from_contents(schema)) for schema in schemas.values()
 )
 checker = FormatChecker()
+
+
+@checker.checks("http-url")
+def is_http_url(value):
+    if not isinstance(value, str):
+        return True
+    match = re.match(r"^https?://([^/?#]+)", value)
+    if not match:
+        return False
+    authority = match[1]
+    if not re.fullmatch(r"[\x21-\x7e]+", authority) or re.search(r"[@%\\]", authority) or "\\" in value:
+        return False
+    parts = re.fullmatch(r"(\[[0-9a-fA-F:.]+\]|[^:]+)(?::([0-9]{1,5}))?", authority)
+    if not parts or (parts[2] is not None and int(parts[2]) > 65535):
+        return False
+    hostname = parts[1]
+    try:
+        parsed = urlsplit(value)
+        if parsed.scheme not in ("http", "https") or not parsed.hostname or parsed.username is not None or parsed.password is not None:
+            return False
+        parsed.port  # Comprueba rango y sintaxis del puerto, sin resolver DNS.
+        if hostname.startswith("["):
+            ipaddress.IPv6Address(hostname[1:-1])
+            return True
+        if re.fullmatch(r"[0-9.]+", hostname):
+            ipaddress.IPv4Address(hostname)
+            return True
+        labels = (hostname[:-1] if hostname.endswith(".") else hostname).split(".")
+        if len(hostname) > 253 or any(len(label) > 63 or not re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?", label) for label in labels):
+            return False
+        if re.fullmatch(r"(?:[0-9]+|0x[0-9a-f]+)", labels[-1], re.IGNORECASE):
+            return False
+        return parsed.hostname == hostname.lower()
+    except ValueError:
+        return False
 
 
 @checker.checks("date-time")

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { Ajv2020, type ValidateFunction } from 'ajv/dist/2020.js';
 import { parseUtcInstant } from '../../domain/src/time.ts';
+import { isHttpUrl } from './formats.ts';
 
 export type ContractName = 'source-posting-event' | 'search-request' | 'job-detail' | 'job-list' | 'map-response' | 'problem';
 export type ValidationResult = { valid: true } | { valid: false; issues: { path: string; code: string }[] };
@@ -14,6 +15,7 @@ const ajv = new Ajv2020({
   messages: false, verbose: false,
 });
 ajv.addFormat('date-time', { type: 'string', validate: value => parseUtcInstant(value) !== null });
+ajv.addFormat('http-url', { type: 'string', validate: isHttpUrl });
 
 for (const name of ['common', ...contractNames]) {
   const schema = JSON.parse(readFileSync(new URL(`../schemas/v1/${name}.schema.json`, import.meta.url), 'utf8'));

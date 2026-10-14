@@ -4,21 +4,22 @@
   "$defs": {
     "CountryCode": {
       "type": "string",
-      "pattern": "^[A-Z]{2}$"
+      "pattern": "^[A-Z]{2}(?![\\s\\S])"
     },
     "Uuid": {
       "type": "string",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
     },
     "Timestamp": {
       "type": "string",
       "format": "date-time",
-      "pattern": "^(?!0000)[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{3})?Z$"
+      "pattern": "^(?!0000)[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{3})?Z(?![\\s\\S])"
     },
     "HttpUrl": {
       "type": "string",
       "maxLength": 4096,
-      "pattern": "^https?://[^/?#@\\s]+(?:[/?#][^\\s]*)?$"
+      "pattern": "^https?://[^/?#@%\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]+(?:[/?#][^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]*)?(?![\\s\\S])",
+      "format": "http-url"
     },
     "Point": {
       "type": "array",
@@ -95,7 +96,7 @@
         },
         "currency": {
           "type": "string",
-          "pattern": "^[A-Z]{3}$"
+          "pattern": "^[A-Z]{3}(?![\\s\\S])"
         },
         "period": {
           "type": "string",
@@ -167,13 +168,13 @@
       "properties": {
         "countryCode": {
           "type": "string",
-          "pattern": "^[A-Z]{2}$"
+          "pattern": "^[A-Z]{2}(?![\\s\\S])"
         },
         "label": {
           "type": "string",
           "minLength": 1,
           "maxLength": 512,
-          "pattern": "\\S"
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
         },
         "regionIds": {
           "type": "array",
@@ -181,7 +182,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 128,
-            "pattern": "\\S"
+            "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
           },
           "maxItems": 10,
           "uniqueItems": true
@@ -257,7 +258,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 128,
-            "pattern": "\\S"
+            "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
           },
           "maxItems": 30,
           "uniqueItems": true
@@ -268,7 +269,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 128,
-            "pattern": "\\S"
+            "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
           },
           "maxItems": 30,
           "uniqueItems": true
@@ -279,7 +280,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 128,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -292,7 +293,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 128,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -305,7 +306,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 128,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -331,7 +332,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 128,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -344,7 +345,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 128,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -387,7 +388,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 512,
-          "pattern": "\\S"
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
         },
         "employer": {
           "anyOf": [
@@ -398,7 +399,7 @@
                   "type": "string",
                   "minLength": 1,
                   "maxLength": 512,
-                  "pattern": "\\S"
+                  "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
                 }
               },
               "required": [
@@ -475,7 +476,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 512,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -488,7 +489,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 200000,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -512,7 +513,7 @@
                   "type": "string",
                   "minLength": 1,
                   "maxLength": 512,
-                  "pattern": "\\S"
+                  "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
                 }
               },
               "required": [
@@ -609,7 +610,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 200000,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               }
             }
           }
@@ -625,7 +626,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 200,
-              "pattern": "\\S"
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
             },
             {
               "type": "null"
@@ -641,7 +642,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "maxItems": 30,
               "uniqueItems": true
@@ -652,7 +653,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "maxItems": 30,
               "uniqueItems": true
@@ -663,7 +664,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "maxItems": 30,
               "uniqueItems": true
@@ -674,7 +675,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "maxItems": 30,
               "uniqueItems": true
@@ -685,7 +686,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "maxItems": 30,
               "uniqueItems": true
@@ -696,7 +697,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
-                "pattern": "\\S"
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
               },
               "maxItems": 30,
               "uniqueItems": true
@@ -774,7 +775,7 @@
                   "type": "string",
                   "minLength": 1,
                   "maxLength": 128,
-                  "pattern": "\\S"
+                  "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
                 }
               },
               "required": [
@@ -844,7 +845,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 2048,
-              "pattern": "^[A-Za-z0-9_-]+$"
+              "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
             },
             {
               "type": "null"
@@ -869,13 +870,13 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 128,
-          "pattern": "\\S"
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
         },
         "label": {
           "type": "string",
           "minLength": 1,
           "maxLength": 512,
-          "pattern": "\\S"
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
         },
         "count": {
           "type": "integer",
