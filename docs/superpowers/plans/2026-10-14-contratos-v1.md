@@ -26,7 +26,7 @@ for (const fixture of fixtures) {
 - [x] Implementar `packages/contracts/python/validate.py` y `check_fixtures.py`, con resolución local de esquemas, chequeo de calendario y rechazo de JSON no estándar. Preparar venv y requirements fijados, sin modificar el Python global.
 - [x] `npm run test:contracts:python` debe contrastar todos los fixtures con los mismos resultados esperados. `npm run check` incorporará esa comprobación; documentar instalación del venv.
 - [ ] Implementar `packages/contracts/tools/generate-openapi.ts` y guardar `packages/contracts/openapi/v1.json`; usar referencias internas y `security: []`. `npm run check:openapi` debe detectar cualquier desajuste del artefacto o referencia rota; testear las rutas declaradas y formatos de respuesta.
-- [ ] Ejecutar `npm run check`, revisión independiente de código/contratos y `git diff --check`. Actualizar README, contexto y backlog con alcance parcial real de GEO-04. Integrar localmente solo tras resolver hallazgos y comprobar el estado final.
+- [x] Ejecutar `npm run check`, revisión independiente de código/contratos y `git diff --check`. Actualizar README, contexto y backlog con alcance parcial real de GEO-04. Integrar localmente solo tras resolver hallazgos y comprobar el estado final.
 
 ## Evidencia requerida
 
@@ -35,3 +35,5 @@ La entrega identifica los comandos efectivamente ejecutados, número de fixtures
 ## Resultado de implementación
 
 `npm run check`: tipos, 102 tests Node, artefacto OpenAPI y 76 fixtures Python correctos. Revisión corrigió espacios Unicode, anclas de fin, autoridad/puertos, punycode y surrogates URL. Python añade ada-url/WHATWG fijado para compartir criterios de parseo con Node, sin reimplementar IDNA. README/contexto/backlog documentan setup y GEO-04 parcial. La revisión documental de mapas/coste recoge las nuevas preferencias del usuario; no activa SDK ni facturación.
+
+Integrado mediante fast-forward en `codex/domain-core`, conservando `main`. Reinstalación Node desde lockfile y venv Python nuevo desde requirements en el directorio raíz; repetición completa de `npm run check` correcta, `pip check` sin incompatibilidades y enlaces/fences de los nueve documentos comprobados. No hubo publicación remota.
