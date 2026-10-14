@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geoempleo.example/contracts/v1/map-response.schema.json",
+  "type": "object",
+  "properties": {
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "countryCode": {
+      "$ref": "common.schema.json#/$defs/CountryCode"
+    },
+    "bounds": {
+      "$ref": "common.schema.json#/$defs/Bounds"
+    },
+    "zoom": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 30
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "marker"
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "pattern": "\\S"
+              },
+              "jobId": {
+                "$ref": "common.schema.json#/$defs/Uuid"
+              },
+              "position": {
+                "$ref": "common.schema.json#/$defs/Point"
+              },
+              "precision": {
+                "type": "string",
+                "enum": [
+                  "address",
+                  "municipality",
+                  "region"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "jobId",
+              "position",
+              "precision"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "cluster"
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "pattern": "\\S"
+              },
+              "position": {
+                "$ref": "common.schema.json#/$defs/Point"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "position",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "maxItems": 500
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "unmappedCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    }
+  },
+  "required": [
+    "contractVersion",
+    "countryCode",
+    "bounds",
+    "zoom",
+    "items",
+    "truncated",
+    "unmappedCount"
+  ],
+  "additionalProperties": false
+}

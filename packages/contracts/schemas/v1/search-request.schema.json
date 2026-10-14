@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geoempleo.example/contracts/v1/search-request.schema.json",
+  "type": "object",
+  "properties": {
+    "countryCode": {
+      "$ref": "common.schema.json#/$defs/CountryCode"
+    },
+    "query": {
+      "$ref": "common.schema.json#/$defs/SearchQuery"
+    }
+  },
+  "required": [
+    "countryCode",
+    "query"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geoempleo.example/contracts/v1/source-posting-event.schema.json",
+  "type": "object",
+  "properties": {
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "eventId": {
+      "$ref": "common.schema.json#/$defs/Uuid"
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "source-posting.observed",
+        "source-posting.removed"
+      ]
+    },
+    "sourceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "\\S"
+    },
+    "externalId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "\\S"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sourceUrl": {
+      "$ref": "common.schema.json#/$defs/HttpUrl"
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "\\S"
+    },
+    "parserVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "\\S"
+    },
+    "observedAt": {
+      "$ref": "common.schema.json#/$defs/Timestamp"
+    },
+    "evidenceSha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "posting": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/ExtractedPosting"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "contractVersion",
+    "eventId",
+    "eventType",
+    "sourceId",
+    "externalId",
+    "sourceUrl",
+    "runId",
+    "parserVersion",
+    "observedAt",
+    "evidenceSha256",
+    "posting"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "eventType": {
+            "const": "source-posting.observed"
+          }
+        },
+        "required": [
+          "eventType"
+        ]
+      },
+      "then": {
+        "properties": {
+          "posting": {
+            "type": "object"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "posting": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}
