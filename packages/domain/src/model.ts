@@ -15,6 +15,7 @@ export interface AnnualSalary {
   currency: string;
   basis: 'gross';
   period: 'year';
+  /** Producto numérico informativo; los importes se calculan desde los factores originales. */
   factor: number;
   rounding: 'nearest_minor_unit';
 }

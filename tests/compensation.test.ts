@@ -49,3 +49,28 @@ test('rechaza desbordamiento al convertir', () => {
     minMinor: Number.MAX_SAFE_INTEGER, maxMinor: null, paymentsPerYear: 14,
   })), RangeError);
 });
+
+test('redondea medio céntimo con factores decimales sin perder precisión', () => {
+  const result = spainPolicy.annualize(salary({
+    period: 'hour', minMinor: 1005, maxMinor: null,
+    hoursPerWeek: 10.2, paidWeeksPerYear: 50.5,
+  }));
+  assert.equal(result?.minMinor, 517676);
+  assert.equal(spainPolicy.annualize(salary({
+    period: 'hour', minMinor: 10000000, maxMinor: null,
+    hoursPerWeek: 1e-7, paidWeeksPerYear: 50,
+  }))?.minMinor, 50);
+  assert.equal(spainPolicy.annualize(salary({
+    period: 'hour', minMinor: 1005, maxMinor: null,
+    hoursPerWeek: 1e21, paidWeeksPerYear: 1e-21,
+  }))?.minMinor, 1005);
+});
+
+test('rechaza factores compuestos fuera del rango representable', () => {
+  for (const hoursPerWeek of [1e-200, 1e200]) {
+    assert.throws(() => spainPolicy.annualize(salary({
+      period: 'hour', minMinor: 0, maxMinor: null,
+      hoursPerWeek, paidWeeksPerYear: hoursPerWeek,
+    })), RangeError);
+  }
+});
