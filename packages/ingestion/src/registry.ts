@@ -39,6 +39,26 @@ const definitions: readonly SourceDefinition[] = [
   },
 ];
 
-export const sourceRegistry: ReadonlyMap<string, Readonly<SourceDefinition>> = new Map(
-  definitions.map((source) => [source.id, Object.freeze({ ...source })]),
-);
+export interface SourceRegistry {
+  readonly size: number;
+  get(id: string): Readonly<SourceDefinition> | undefined;
+  values(): IterableIterator<Readonly<SourceDefinition>>;
+}
+
+export function createSourceRegistry(
+  sourceDefinitions: readonly Readonly<SourceDefinition>[],
+): SourceRegistry {
+  const sourceById = new Map<string, Readonly<SourceDefinition>>();
+  for (const source of sourceDefinitions) {
+    if (sourceById.has(source.id)) throw new Error(`Fuente duplicada: ${source.id}`);
+    sourceById.set(source.id, Object.freeze({ ...source }));
+  }
+
+  return Object.freeze({
+    size: sourceById.size,
+    get: (id: string) => sourceById.get(id),
+    values: () => sourceById.values(),
+  });
+}
+
+export const sourceRegistry = createSourceRegistry(definitions);
