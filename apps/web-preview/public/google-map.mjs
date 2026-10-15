@@ -60,17 +60,17 @@ function loadSdk(key) {
 }
 
 /** Un mapa por página; actualizar markers no genera una nueva instancia Map. */
-export async function createGoogleMap(host,config,events) {
+export async function createGoogleMap(host,config,events,initial={}) {
   const google = await loadSdk(config.googleMapsApiKey);
   const [{Map:GoogleMap},{AdvancedMarkerElement}] = await Promise.all([google.maps.importLibrary('maps'),google.maps.importLibrary('marker')]);
-  const map = new GoogleMap(host,{center:{lat:39.7,lng:-3.5},zoom:6,mapId:config.googleMapsMapId || 'DEMO_MAP_ID',streetViewControl:false,mapTypeControl:false,fullscreenControl:true,gestureHandling:'greedy'});
+  const map = new GoogleMap(host,{center:isPoint(initial.point)?{lat:initial.point[1],lng:initial.point[0]}:{lat:39.7,lng:-3.5},zoom:initial.zoom??6,mapId:config.googleMapsMapId || 'DEMO_MAP_ID',streetViewControl:false,mapTypeControl:false,fullscreenControl:true,gestureHandling:'greedy'});
   const markers = new window.Map();
   let originMarker;
   let radiusCircle;
   const originSelection = createOriginSelection(point => events.onOrigin(point));
   let selectedId = null;
   let knownCalls = [];
-  const infoWindow=new google.maps.InfoWindow();
+  const infoWindow=new google.maps.InfoWindow({disableAutoPan:true});
   map.addListener('click',event => {
     if (!event.latLng) return;
     originSelection.capture([event.latLng.lng(),event.latLng.lat()]);
@@ -123,8 +123,11 @@ export async function createGoogleMap(host,config,events) {
     for(const item of markers.values()) item.pin.classList.toggle('selected',item.ids.includes(selectedId));
   }
   map.addListener('zoom_changed',renderMarkers);
+  map.addListener('idle',()=>events.onViewport?.());
   return {
     select,
+    focus(point,zoom=12) {if(!isPoint(point))return;map.setCenter({lng:point[0],lat:point[1]});map.setZoom(zoom);},
+    overview() {map.setCenter({lat:39.7,lng:-3.5});map.setZoom(6);},
     chooseOrigin() {originSelection.arm();map.setOptions({draggableCursor:'crosshair'});},
     cancelOriginSelection() {originSelection.cancel();map.setOptions({draggableCursor:null});},
     bounds() {const bounds = map.getBounds(); if (!bounds) return null; return [bounds.getSouthWest().lng(),bounds.getSouthWest().lat(),bounds.getNorthEast().lng(),bounds.getNorthEast().lat()];},

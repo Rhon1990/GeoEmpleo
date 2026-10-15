@@ -3,9 +3,13 @@ import { readFile } from 'node:fs/promises';
 import { resolvePreviewPath } from './routing.mjs';
 import { publicMapConfig } from './config.mjs';
 import { parseEnv } from 'node:util';
+import {createJobStore} from './job-store.mjs';
+import {createPlacesStore} from './places-store.mjs';
 import { randomBytes } from 'node:crypto';
 
 const root = new URL('./public/', import.meta.url);
+const jobStore=createJobStore(new URL('./public/data/calls.json',import.meta.url));
+const placesStore=createPlacesStore(new URL('./data/spain-places.json.gz',import.meta.url));
 const routes = new Map([
   ['/', ['index.html','text/html; charset=utf-8']],
   ['/index.html', ['index.html','text/html; charset=utf-8']],
@@ -15,6 +19,8 @@ const routes = new Map([
   ['/catalog.mjs', ['catalog.mjs','text/javascript; charset=utf-8']],
   ['/geography.mjs', ['geography.mjs','text/javascript; charset=utf-8']],
   ['/google-map.mjs', ['google-map.mjs','text/javascript; charset=utf-8']],
+  ['/map-search.mjs', ['map-search.mjs','text/javascript; charset=utf-8']],
+  ['/reference-places.mjs', ['reference-places.mjs','text/javascript; charset=utf-8']],
   ['/map-state.mjs', ['map-state.mjs','text/javascript; charset=utf-8']],
   ['/data/calls.json', ['data/calls.json','application/json; charset=utf-8']],
   ['/data/places.json', ['data/places.json','application/json; charset=utf-8']],
@@ -25,6 +31,20 @@ const server = createServer(async (request,response) => {
   }
   const path = resolvePreviewPath(request.url);
   if (path === null) {response.writeHead(400); response.end('Solicitud incorrecta'); return;}
+  if(path==='/api/jobs' || path==='/api/job' || path==='/api/places') {
+    try {
+      const params=new URL(request.url,'http://127.0.0.1').searchParams;
+      if(path==='/api/job' && params.getAll('id').length!==1) throw new TypeError('ID inválido');
+      const result=path==='/api/places'?await placesStore.query(params):path==='/api/jobs'?await jobStore.query(params):await jobStore.detail(params.get('id'));
+      const status=result===null?404:200;
+      response.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+      response.end(request.method==='HEAD'?undefined:JSON.stringify(result??{error:'Oferta no disponible'}));
+    } catch(error) {
+      response.writeHead(error instanceof TypeError?400:503,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+      response.end(request.method==='HEAD'?undefined:JSON.stringify({error:error instanceof TypeError?'Parámetros inválidos':'Catálogo temporalmente no disponible'}));
+    }
+    return;
+  }
   if (path === '/config.json') {
     try {
       let environment = {};

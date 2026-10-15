@@ -4,6 +4,24 @@
   "retrievedAt": "2026-10-14",
   "places": [
     {
+      "id": "osm-node-309691474",
+      "name": "Coto de San Isidro",
+      "label": "Coto de San Isidro · Ituero y Lama, Segovia (40151)",
+      "aliases": ["Urbanización Coto de San Isidro", "Coto de San Isidro, Ituero y Lama", "Coto de San Isidro, Ituero y Lama, Segovia 40151"],
+      "municipality": "Ituero y Lama",
+      "province": "Segovia",
+      "postalCodes": ["40151"],
+      "postalCodeSourceUrl": "https://www.femp.es/asociados/entidades-locales/ituero-y-lama",
+      "latitude": 40.7737942,
+      "longitude": -4.3689205,
+      "sourceUrl": "https://www.openstreetmap.org/node/309691474",
+      "license": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "attribution": "© OpenStreetMap contributors",
+      "updatedAt": "2026-04-29",
+      "retrievedAt": "2026-10-15",
+      "precision": "locality"
+    },
+    {
       "id": "3119841",
       "name": "A Coruña",
       "latitude": 43.37135,
