@@ -12,7 +12,9 @@ const location = {
   sourceUpdatedAt: '2012-03-04',
   note: 'Ubicación municipal aproximada; no es la dirección exacta del puesto.',
 };
-const cylOfficialUrl = 'https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/2026-00125/Empleo';
+const cylIdentifier = '1285689059828';
+const cylPath = `/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${cylIdentifier}/Empleo`;
+const cylOfficialUrl = `https://empleo.jcyl.es${cylPath}`;
 
 const cylRaw = {
   titulo: 'Técnico/a de mantenimiento',
@@ -22,11 +24,23 @@ const cylRaw = {
   fuente_contenido: 'ECYL',
   localidad_asset: '1179297860755',
   localidad_asset0: 'RIAZA',
-  identificador: '2026-00125',
+  identificador: cylIdentifier,
   actualizacionmetadatos: '2026-10-14T08:00:00+02:00',
-  enlace_al_contenido: 'https://gestorcontenidos.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/2026-00125/Empleo',
+  enlace_al_contenido: `https://gestorcontenidos.jcyl.es${cylPath}`,
   geografico: { lon: -3.47787, lat: 41.27826 },
 };
+
+function cylOffer(
+  identifier: string,
+  overrides: Readonly<Record<string, unknown>> = {},
+): Record<string, unknown> {
+  return {
+    ...cylRaw,
+    identificador: identifier,
+    enlace_al_contenido: `https://gestorcontenidos.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${identifier}/Empleo`,
+    ...overrides,
+  };
+}
 
 const lanbideRaw = {
   codigo: '162026012345',
@@ -37,8 +51,20 @@ const lanbideRaw = {
   municipio: 'DONOSTIA/SAN SEBASTIÁN',
   fecMod: '14/10/2026',
   fecPub: '15/09/2026',
-  url: 'https://web.lanbide.eus/apps/OF_DETALLE_OFERTA?LG=C&ML=OFEMEN1&IDRG=162026012345',
+  url: 'https://web.lanbide.eus/apps/OF_DETALLE_OFERTA_TRABAJO?LG=C&ML=OFEMEN1&MS=Eaaa&IDRG=162026012345&CTRG=1',
 };
+
+function lanbideOffer(
+  code: string,
+  overrides: Readonly<Record<string, unknown>> = {},
+): Record<string, unknown> {
+  return {
+    ...lanbideRaw,
+    codigo: code,
+    url: `https://web.lanbide.eus/apps/OF_DETALLE_OFERTA_TRABAJO?LG=C&ML=OFEMEN1&MS=Eaaa&IDRG=${code}&CTRG=1`,
+    ...overrides,
+  };
+}
 
 test('adapta ECYL reciente con texto completo seguro, procedencia y punto publicado', () => {
   const jobs = adaptCylOffers([cylRaw], checkedAt, () => {
@@ -48,7 +74,7 @@ test('adapta ECYL reciente con texto completo seguro, procedencia y punto public
   assert.equal(jobs.length, 1);
   assert.deepEqual(jobs[0], {
     kind: 'job', sourceId: 'ecyl-castilla-leon', source: 'ECYL Castilla y León',
-    id: 'ECYL-2026-00125', title: 'Técnico/a de mantenimiento',
+    id: `ECYL-${cylIdentifier}`, title: 'Técnico/a de mantenimiento',
     employer: 'Oferta publicada por ECYL', city: 'RIAZA', province: 'Segovia',
     region: 'Castilla y León', category: 'otros', categoryLabel: 'Otros',
     regime: 'Oferta de empleo', places: null,
@@ -77,8 +103,7 @@ test('ECYL resuelve nacionalmente solo cuando no publica geográfico', () => {
 
 test('ECYL admite el extremo occidental publicado de Valladolid', () => {
   const edge = {
-    ...cylRaw,
-    identificador: '1285689962112',
+    ...cylOffer('1285689962112'),
     provincia: 'VALLADOLID',
     localidad_asset0: 'Villavicencio de los Caballeros',
     geografico: { lon: -5.237418, lat: 42.05893 },
@@ -90,33 +115,30 @@ test('ECYL admite el extremo occidental publicado de Valladolid', () => {
 test('ECYL filtra historial anterior a 30 días y ofertas futuras', () => {
   const jobs = adaptCylOffers([
     cylRaw,
-    { ...cylRaw, identificador: '2026-OLD', fecha_publicacion: '2026-09-14' },
-    { ...cylRaw, identificador: '2026-FUTURE', fecha_publicacion: '2026-10-16' },
-    {
-      ...cylRaw,
-      identificador: '2026-OTHER',
+    cylOffer('1285689000001', { fecha_publicacion: '2026-09-14' }),
+    cylOffer('1285689000002', { fecha_publicacion: '2026-10-16' }),
+    cylOffer('1285689000003', {
       provincia: 'Otra',
       localidad_asset: null,
       localidad_asset0: null,
       geografico: null,
-    },
-    {
-      ...cylRaw,
-      identificador: '2026-NOCITY',
+    }),
+    cylOffer('1285689000004', {
       provincia: 'Palencia',
       localidad_asset: null,
       localidad_asset0: null,
       geografico: null,
-    },
+    }),
   ], checkedAt, () => null);
 
-  assert.deepEqual(jobs.map((job) => job.id), ['ECYL-2026-00125']);
+  assert.deepEqual(jobs.map((job) => job.id), [`ECYL-${cylIdentifier}`]);
 });
 
 test('ECYL invalida la captura por identidad, URL o geografía publicada malformada', () => {
   const invalidInputs = [
     [cylRaw, cylRaw],
-    [{ ...cylRaw, identificador: '../oferta' }],
+    [cylOffer('X')],
+    [cylOffer('../oferta')],
     [{ ...cylRaw, enlace_al_contenido: 'http://empleo.jcyl.es/oferta' }],
     [{ ...cylRaw, enlace_al_contenido: 'https://example.com/oferta' }],
     [{ ...cylRaw, provincia: 'MADRID' }],
@@ -126,6 +148,21 @@ test('ECYL invalida la captura por identidad, URL o geografía publicada malform
   for (const input of invalidInputs) {
     assert.throws(() => adaptCylOffers(input, checkedAt, () => null));
   }
+});
+
+test('ECYL rechaza URL canónica duplicada y vínculo URL-ID incoherente', () => {
+  const duplicateUrl = {
+    ...cylOffer('1285689059829'),
+    enlace_al_contenido: cylOfficialUrl,
+  };
+  assert.throws(
+    () => adaptCylOffers([cylRaw, duplicateUrl], checkedAt, () => null),
+    /URL ECYL duplicada/,
+  );
+  assert.throws(
+    () => adaptCylOffers([duplicateUrl], checkedAt, () => null),
+    /URL ECYL no corresponde al identificador/,
+  );
 });
 
 test('adapta Lanbide reciente con texto completo sanitizado y resolución nacional', () => {
@@ -149,12 +186,10 @@ test('adapta Lanbide reciente con texto completo sanitizado y resolución nacion
 });
 
 test('Lanbide conserva ofertas españolas fuera de Euskadi con su región real', () => {
-  const navarra = {
-    ...lanbideRaw,
-    codigo: '162026011032',
+  const navarra = lanbideOffer('162026011032', {
     provincia: 'NAVARRA',
     municipio: 'LARRAUN',
-  };
+  });
   const jobs = adaptLanbideOffers([navarra], checkedAt, (city, province) => {
     assert.equal(city, 'LARRAUN');
     assert.equal(province, 'Navarra');
@@ -168,13 +203,14 @@ test('Lanbide conserva ofertas españolas fuera de Euskadi con su región real',
 test('Lanbide aplica 30 días, no publica futuras e invalida identidad, fecha o URL', () => {
   const jobs = adaptLanbideOffers([
     lanbideRaw,
-    { ...lanbideRaw, codigo: '162026000001', fecPub: '14/09/2026' },
-    { ...lanbideRaw, codigo: '162026000002', fecPub: '16/10/2026' },
+    lanbideOffer('162026000001', { fecPub: '14/09/2026' }),
+    lanbideOffer('162026000002', { fecPub: '16/10/2026' }),
   ], checkedAt, () => null);
   assert.deepEqual(jobs.map((job) => job.id), ['LANBIDE-162026012345']);
 
   for (const input of [
     [lanbideRaw, lanbideRaw],
+    [lanbideOffer('X')],
     [{ ...lanbideRaw, codigo: 'código inválido' }],
     [{ ...lanbideRaw, fecPub: '2026-10-15' }],
     [{ ...lanbideRaw, url: 'http://web.lanbide.eus/oferta' }],
@@ -182,6 +218,21 @@ test('Lanbide aplica 30 días, no publica futuras e invalida identidad, fecha o 
   ]) {
     assert.throws(() => adaptLanbideOffers(input, checkedAt, () => null));
   }
+});
+
+test('Lanbide rechaza URL canónica duplicada y vínculo IDRG-codigo incoherente', () => {
+  const duplicateUrl = {
+    ...lanbideOffer('162026012346'),
+    url: 'https://WEB.LANBIDE.EUS:443/apps/OF_DETALLE_OFERTA_TRABAJO?CTRG=1&IDRG=162026012345&MS=Eaaa&ML=OFEMEN1&LG=C',
+  };
+  assert.throws(
+    () => adaptLanbideOffers([lanbideRaw, duplicateUrl], checkedAt, () => null),
+    /URL Lanbide duplicada/,
+  );
+  assert.throws(
+    () => adaptLanbideOffers([duplicateUrl], checkedAt, () => null),
+    /URL Lanbide no corresponde al código/,
+  );
 });
 
 test('registra ECYL y Lanbide activas con endpoints y licencias oficiales', () => {

@@ -2,9 +2,10 @@ import type { PlaceResolver } from '../geography.ts';
 import type { PublicJob } from '../model.ts';
 import { canonicalSpanishProvince } from '../national-geography.ts';
 import {
+  canonicalUrlKey,
   dateFromSpanish,
-  externalIdentifier,
   isRecentPublication,
+  numericIdentifier,
   officialHttpsUrl,
   record,
   requiredText,
@@ -19,13 +20,22 @@ export function adaptLanbideOffers(
 ): PublicJob[] {
   if (!Array.isArray(input)) throw new TypeError('Lanbide debe devolver un array');
   const seen = new Set<string>();
+  const seenUrls = new Set<string>();
   const jobs: PublicJob[] = [];
 
   for (const raw of input) {
     const offer = record(raw, 'Lanbide');
-    const externalId = externalIdentifier(offer.codigo, 'Lanbide');
+    const externalId = numericIdentifier(offer.codigo, 'Lanbide', 12);
     if (seen.has(externalId)) throw new TypeError('Identidad Lanbide inválida o duplicada');
     seen.add(externalId);
+    const sourceUrl = officialHttpsUrl(offer.url, 'web.lanbide.eus', 'Lanbide');
+    const sourceUrlKey = canonicalUrlKey(sourceUrl);
+    if (seenUrls.has(sourceUrlKey)) throw new TypeError('URL Lanbide duplicada');
+    seenUrls.add(sourceUrlKey);
+    const linkedIds = new URL(sourceUrl).searchParams.getAll('IDRG');
+    if (linkedIds.length !== 1 || linkedIds[0] !== externalId) {
+      throw new TypeError('URL Lanbide no corresponde al código');
+    }
 
     requiredText(offer.pais, 'Lanbide');
     const publishedAt = dateFromSpanish(offer.fecPub, 'Lanbide');
@@ -34,7 +44,6 @@ export function adaptLanbideOffers(
     const city = requiredText(offer.municipio, 'Lanbide');
     const province = canonicalSpanishProvince(requiredText(offer.provincia, 'Lanbide'));
     if (!province) throw new TypeError('Provincia Lanbide no autorizada');
-    const sourceUrl = officialHttpsUrl(offer.url, 'web.lanbide.eus', 'Lanbide');
     const location = resolve(city, province.name);
 
     if (!isRecentPublication(publishedAt, checkedAt)) continue;

@@ -25,9 +25,14 @@ export function requiredText(value: unknown, source: string): string {
   return value.trim();
 }
 
-export function externalIdentifier(value: unknown, source: string): string {
+export function numericIdentifier(
+  value: unknown,
+  source: string,
+  exactDigits?: number,
+): string {
   const identifier = requiredText(value, source);
-  if (!/^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,126}[A-Za-z0-9])?$/.test(identifier)) {
+  const pattern = exactDigits === undefined ? /^\d+$/ : new RegExp(`^\\d{${exactDigits}}$`);
+  if (!pattern.test(identifier)) {
     throw new TypeError(`Identidad ${source} inválida`);
   }
   return identifier;
@@ -43,6 +48,20 @@ export function officialHttpsUrl(value: unknown, hostname: string, source: strin
   if (url.protocol !== 'https:' || url.hostname !== hostname || url.username || url.password) {
     throw new TypeError(`URL ${source} no autorizada`);
   }
+  return url.href;
+}
+
+export function canonicalUrlKey(value: string): string {
+  const url = new URL(value);
+  const parameters = [...url.searchParams.entries()]
+    .sort(([leftName, leftValue], [rightName, rightValue]) => (
+      leftName.localeCompare(rightName) || leftValue.localeCompare(rightValue)
+    ));
+  url.search = '';
+  for (const [name, parameterValue] of parameters) {
+    url.searchParams.append(name, parameterValue);
+  }
+  url.hash = '';
   return url.href;
 }
 

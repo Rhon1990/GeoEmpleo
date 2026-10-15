@@ -2,10 +2,11 @@ import type { PlaceResolver } from '../geography.ts';
 import type { PublicJob } from '../model.ts';
 import { canonicalSpanishProvince } from '../national-geography.ts';
 import {
+  canonicalUrlKey,
   type CoordinateBounds,
-  externalIdentifier,
   isRecentPublication,
   isoDate,
+  numericIdentifier,
   officialHttpsUrl,
   publishedPoint,
   record,
@@ -73,13 +74,21 @@ export function adaptCylOffers(
 ): PublicJob[] {
   if (!Array.isArray(input)) throw new TypeError('ECYL debe devolver un array');
   const seen = new Set<string>();
+  const seenUrls = new Set<string>();
   const jobs: PublicJob[] = [];
 
   for (const raw of input) {
     const offer = record(raw, 'ECYL');
-    const externalId = externalIdentifier(offer.identificador, 'ECYL');
+    const externalId = numericIdentifier(offer.identificador, 'ECYL');
     if (seen.has(externalId)) throw new TypeError('Identidad ECYL inválida o duplicada');
     seen.add(externalId);
+    const canonicalSourceUrl = sourceUrl(offer.enlace_al_contenido);
+    const sourceUrlKey = canonicalUrlKey(canonicalSourceUrl);
+    if (seenUrls.has(sourceUrlKey)) throw new TypeError('URL ECYL duplicada');
+    seenUrls.add(sourceUrlKey);
+    if (!new URL(canonicalSourceUrl).pathname.split('/').includes(externalId)) {
+      throw new TypeError('URL ECYL no corresponde al identificador');
+    }
 
     const publishedAt = isoDate(offer.fecha_publicacion, 'ECYL');
     const province = officialProvince(offer.provincia);
@@ -88,7 +97,6 @@ export function adaptCylOffers(
     const paragraphs = sanitizedParagraphs(offer.descripcion, 'ECYL');
     const city = locality(offer);
     if (city === null) continue;
-    const canonicalSourceUrl = sourceUrl(offer.enlace_al_contenido);
     const sourceUpdatedAt = offer.actualizacionmetadatos == null
       ? null
       : isoDate(offer.actualizacionmetadatos, 'ECYL');
