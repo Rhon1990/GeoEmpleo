@@ -10,6 +10,8 @@ GeoEmpleo incorporará diariamente todas las fuentes de empleo para España que 
 
 La búsqueda, el mapa y el detalle de GeoEmpleo seguirán siendo públicos y sin cuentas de candidatos. Las credenciales de fuentes son credenciales técnicas del backend.
 
+El usuario autoriza crear cuentas operativas o de desarrollador cuando un proveedor las exija. Cada alta utilizará una identidad y un contacto reales controlados por el usuario; no se crearán perfiles ficticios ni se aceptarán declaraciones empresariales que no puedan acreditarse. Las verificaciones de correo, teléfono, identidad, condiciones contractuales o pago se completarán en la web del proveedor por el usuario cuando sean obligatorias. Los secretos se guardarán fuera de Git y nunca se copiarán al chat. Crear una cuenta en LinkedIn no habilita lectura de su catálogo: ese conector seguirá bloqueado hasta que LinkedIn conceda el acceso de socio correspondiente.
+
 ## Estrategia elegida
 
 Se adopta una arquitectura híbrida de conectores. Las fuentes oficiales y abiertas se consultan directamente; los agregadores privados se integran mediante API; las empresas se incorporan mediante interfaces públicas o autorizadas de sus ATS. La extracción de HTML queda reservada a páginas que la permitan, con límites y revisión por fuente.
