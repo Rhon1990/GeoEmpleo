@@ -18,6 +18,20 @@ test('convierte HTML externo y entidades en párrafos de texto', () => {
   );
 });
 
+test('decodifica entidades numéricas decimales y hexadecimales válidas', () => {
+  assert.deepEqual(
+    htmlToParagraphs('<p>Técnico &#241; &#x1F4BC;</p>'),
+    ['Técnico ñ 💼'],
+  );
+});
+
+test('decodifica todas las entidades nombradas admitidas', () => {
+  assert.deepEqual(
+    htmlToParagraphs('&lt;puesto&gt;&nbsp;&quot;QA&quot; &apos;manual&apos; &amp; soporte'),
+    ['<puesto> "QA" \'manual\' & soporte'],
+  );
+});
+
 test('elimina entidades numéricas inválidas sin lanzar', () => {
   assert.deepEqual(
     htmlToParagraphs('<p>Antes</p><p>&#1114112;&#xD800;Después</p>'),
