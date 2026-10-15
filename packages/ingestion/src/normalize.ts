@@ -12,7 +12,7 @@ const categories: Readonly<Record<string, Category>> = Object.freeze({
   SP: Object.freeze({ category: 'cuidados', label: 'Cuidados y servicios' }),
   TC: Object.freeze({ category: 'transporte', label: 'Transporte' }),
   TH: Object.freeze({ category: 'hosteleria', label: 'Turismo y hostelería' }),
-  MR: Object.freeze({ category: 'oficios', label: 'Oficios técnicos' }),
+  MR: Object.freeze({ category: 'tecnico', label: 'Oficios técnicos' }),
 });
 
 const fallbackCategory: Category = Object.freeze({ category: 'otros', label: 'Otros' });

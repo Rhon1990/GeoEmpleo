@@ -89,7 +89,7 @@ test('clasifica sectores conocidos y conserva un fallback explícito', () => {
     SP: { category: 'cuidados', label: 'Cuidados y servicios' },
     TC: { category: 'transporte', label: 'Transporte' },
     TH: { category: 'hosteleria', label: 'Turismo y hostelería' },
-    MR: { category: 'oficios', label: 'Oficios técnicos' },
+    MR: { category: 'tecnico', label: 'Oficios técnicos' },
   } as const;
 
   for (const [code, category] of Object.entries(expected)) {

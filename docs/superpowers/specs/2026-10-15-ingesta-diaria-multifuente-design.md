@@ -46,12 +46,12 @@ Referencias: [BOE Open Data](https://www.boe.es/datosabiertos/api/api.php?lang=e
 | Conector | Requisito | Estado inicial |
 |---|---|---|
 | `infojobs` | Aplicación registrada, Client ID y secret | `credentials_required` |
-| `adzuna-es` | App ID y key | `credentials_required` |
+| `adzuna-es` | App ID/key y suscripción de 8 GBP/mes observada el 15/10/2026 | `paused` por requisito gratuito |
 | `jooble-es` | Key española; controlar su cuota contractual | `credentials_required` |
 | `talent-publisher` | Alta en programa publisher/API o XML | `authorization_required` |
 | `careerjet-es` | Cuenta publisher; respetar el requisito de búsqueda iniciada por visitante | `authorization_required` para ingesta diaria |
 
-InfoJobs y Adzuna son los primeros conectores privados por amplitud y documentación. Jooble se usa solo cuando su cuota permita el volumen diario. Careerjet no se utilizará como importación por lotes si su contrato continúa exigiendo IP y agente del visitante que inició la búsqueda.
+InfoJobs es la primera candidata privada por amplitud y documentación; Adzuna queda pausada por el requisito de suscripción observado. Jooble se usa solo cuando su cuota permita el volumen diario. Careerjet no se utilizará como importación por lotes si su contrato continúa exigiendo IP y agente del visitante que inició la búsqueda.
 
 Referencias: [InfoJobs](https://developer.infojobs.net/documentation/operation/offer-list-1.xhtml), [Adzuna](https://developer.adzuna.com/overview), [Jooble](https://jooblehelpcenter.freshdesk.com/en/support/solutions/articles/60001448238-rest-api-documentation), [Talent.com](https://employers.talent.com/publishers) y [Careerjet](https://www.careerjet.com/partners/api).
 
@@ -141,3 +141,5 @@ El primer despliegue usa servicios gratuitos o de bajo coste y una ejecución di
 La primera implementación crea el registro, contratos, runner diario y conectores abiertos de mayor rendimiento: Lanbide, Feina Activa, ECYL, Galicia, Murcia, Aragón, BOE/Empleo Público y Andalucía. Después se incorporan fuentes locales y ATS. InfoJobs, Adzuna y Jooble se activan al configurar sus credenciales. Los adaptadores que requieren acuerdo quedan operativos a nivel de contrato y configuración, pero permanecen bloqueados hasta recibir autorización.
 
 Cada incremento aumenta ofertas reales visibles. Ningún conector se contará como activo sin una captura reciente, pruebas del adaptador y verificación de una muestra contra el origen.
+
+Actualización de acceso del 15/10/2026: el alta de Adzuna muestra 25 llamadas de prueba y exige tarjeta/8 GBP al mes para acceso completo. Se excluye de la ingesta gratuita. La automatización inicial es una tarea diaria del chat a las 05:30, sobre el worktree actual, sin crear chats independientes; solo SEF Murcia se ha validado activo en esta entrega.

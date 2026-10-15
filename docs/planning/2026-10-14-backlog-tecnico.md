@@ -13,7 +13,7 @@ La planificación se divide en subsistemas. El backlog describe resultados compr
 | Decisión | Estado y siguiente evidencia |
 |---|---|
 | Acceso público sin cuenta | Confirmado; incluir prueba anónima en cada entrega de UI/API |
-| Google Maps para visualizar | Confirmado; proyecto, claves, presupuesto y configuración aún sin crear |
+| Google Maps para visualizar | Confirmado; proyecto/prueba gratuita/clave local restringida y QA real configurados; control de producción pendiente |
 | API modular y captación aislada | Propuesta seleccionada para planificar; verificar con prototipo de contratos |
 | PostgreSQL/PostGIS + OpenSearch | Propuesta; benchmark con datos y consultas representativos antes de capacidad final |
 | Monorepo por responsabilidad | Propuesta; dominio sin dependencias de cloud, HTTP ni UI |
@@ -46,7 +46,7 @@ No crear todo este árbol de una vez. Cada tarea introduce únicamente sus archi
 
 ## 3. Prioridades y dependencias del backlog
 
-P0: condición necesaria de suministro, integridad o acceso público. P1: necesario para lanzamiento nacional. P2: evolución posterior. **GEO-03 está implementado localmente; GEO-04 está parcial (seis esquemas, validadores TS/Python y tres rutas GET descritas); GEO-06 está parcial, con tooling local.** GEO-04 aún necesita sugerencias, catálogos y contratos canónicos; no existe API HTTP. Los demás ítems están planificados, no iniciados. Los IDs son locales; no se han creado tareas en sistemas externos.
+P0: condición necesaria de suministro, integridad o acceso público. P1: necesario para lanzamiento nacional. P2: evolución posterior. **GEO-03 está implementado localmente; GEO-04 está parcial (seis esquemas, validadores TS/Python y tres rutas GET descritas); GEO-06 está parcial, con tooling local.** GEO-04 aún necesita sugerencias, catálogos y contratos canónicos; no existe API HTTP. GEO-12/20/21 están parciales: web local, geografía/proximidad y adaptador Google verificado; clustering, admisión de producción y coste tras la prueba gratuita siguen pendientes. Los demás ítems permanecen planificados. Los IDs son locales; no se han creado tareas en sistemas externos.
 
 ### Viabilidad y base
 
@@ -157,6 +157,16 @@ La primera iteración no necesita permisos de fuentes ni Google: prueba reglas c
 
 ## Evidencia local actual
 
-GEO-04 parcial: JSON Schema 2020-12, Ajv/WHATWG y Python/jsonschema/Ada, OpenAPI 3.1 empaquetado. `npm run check`: 102 tests Node y 76 fixtures Python correctos, tipos estrictos y generación API sincronizada. Plan y corpus en `docs/superpowers/plans/2026-10-14-contratos-v1.md` y `packages/contracts/fixtures/v1.json`. No hay servidor, ingesta, base de datos ni UI; H1 sigue incompleto.
+GEO-04 parcial: JSON Schema 2020-12, Ajv/WHATWG y Python/jsonschema/Ada, OpenAPI 3.1 empaquetado. Verificación conjunta actual: 150 tests Node y 76 fixtures Python correctos, tipos estrictos y generación API sincronizada. Plan y corpus en `docs/superpowers/plans/2026-10-14-contratos-v1.md` y `packages/contracts/fixtures/v1.json`. Existe servidor/UI local de vista previa; hay ingesta SEF Murcia, pero no API de catálogo ni base de datos. H1 sigue incompleto.
 
-La [decisión de mapas y coste](../architecture/2026-10-14-google-maps-coste.md) prioriza similitud a Bandana y bajo gasto, diferenciando Dynamic avanzado y Embed básico. Solo Embed permite continuidad de mapa sin límite de cargas publicado y sin consumir el tramo Dynamic; pierde clusters propios. Configuración cloud y control de consumo siguen pendientes.
+La [decisión de mapas y coste](../architecture/2026-10-14-google-maps-coste.md) prioriza similitud a Bandana y bajo gasto, diferenciando Dynamic avanzado y Embed básico. Solo Embed permite continuidad de mapa sin límite de cargas publicado y sin consumir el tramo Dynamic; pierde clusters propios. La configuración cloud local está validada; control de producción y fallback Embed siguen pendientes.
+
+## Primera superficie web local
+
+El usuario solicita ver la página, exige datos reales y corrige el mapa: debe localizar convocatorias y permitir búsqueda cerca del origen. Implementado prototipo en `apps/web-preview`, con parse5 para ingesta: 238 ofertas SEF Murcia y cuatro convocatorias BOE/nueve plazas, snapshot verificado el 14/10/2026; 737 localidades abiertas, radio en línea recta y viewport. Maps JavaScript + AdvancedMarkerElement usa una sola instancia y se validó con clave restringida, cuatro marcadores y Madrid–Fuentidueña a 56,7 km. No usar iframe general como si fuera buscador de ofertas. `npm run dev:web` sirve en loopback en 4310; no hay despliegue. Ver [plan](../superpowers/plans/2026-10-14-web-preview.md) y [configuración Maps](../architecture/2026-10-14-google-maps-local.md).
+
+## Ingesta diaria: primer incremento (15/10/2026)
+
+Registro inmutable, HTML seguro, resolver municipal Murcia, conector real, HTTP con límites, reconciliación por identidad, publicación atómica, bloqueo e informe implementados. Dos capturas reales: 238 SEF + 4 BOE, 207 ofertas con punto. Automatización de chat activa a las 05:30 Europe/Madrid; pendiente observar primer ciclo programado. 150 pruebas Node y 76 Python correctas. UI muestra procedencia por fuente y agrupación por zoom/municipio, con detalle de cada oferta. El BOE sigue estático.
+
+Siguiente prioridad: completar municipios y conectores abiertos del diseño aprobado, después InfoJobs con credenciales verificadas y términos de reutilización. Adzuna pausado por suscripción obligatoria (8 GBP/mes) bajo el requisito gratuito; LinkedIn exige autorización de socio. No confundir registro de una cuenta con conector activo. La ingesta nacional, persistencia canónica, observaciones/revisiones, deduplicación entre fuentes y calendario de cierre siguen pendientes.

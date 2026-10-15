@@ -1,0 +1,5903 @@
+{
+  "sourceUrl": "https://download.geonames.org/export/dump/cities15000.zip",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "retrievedAt": "2026-10-14",
+  "places": [
+    {
+      "id": "3119841",
+      "name": "A Coruña",
+      "latitude": 43.37135,
+      "longitude": -8.396,
+      "sourceUrl": "https://www.geonames.org/3119841",
+      "updatedAt": "2025-11-26"
+    },
+    {
+      "id": "3119746",
+      "name": "A Estrada",
+      "latitude": 42.68911,
+      "longitude": -8.48842,
+      "sourceUrl": "https://www.geonames.org/3119746",
+      "updatedAt": "2021-11-08"
+    },
+    {
+      "id": "11549996",
+      "name": "Abrantes",
+      "latitude": 40.37898,
+      "longitude": -3.72617,
+      "sourceUrl": "https://www.geonames.org/11549996",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "11549948",
+      "name": "Acacias",
+      "latitude": 40.40107,
+      "longitude": -3.70726,
+      "sourceUrl": "https://www.geonames.org/11549948",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2522437",
+      "name": "Adeje",
+      "latitude": 28.12271,
+      "longitude": -16.726,
+      "sourceUrl": "https://www.geonames.org/2522437",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549955",
+      "name": "Adelfas",
+      "latitude": 40.40112,
+      "longitude": -3.67097,
+      "sourceUrl": "https://www.geonames.org/11549955",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2522430",
+      "name": "Adra",
+      "latitude": 36.74831,
+      "longitude": -3.02076,
+      "sourceUrl": "https://www.geonames.org/2522430",
+      "updatedAt": "2019-10-14"
+    },
+    {
+      "id": "2522325",
+      "name": "Agüimes",
+      "latitude": 27.90539,
+      "longitude": -15.44609,
+      "sourceUrl": "https://www.geonames.org/2522325",
+      "updatedAt": "2025-07-07"
+    },
+    {
+      "id": "3120030",
+      "name": "Alameda de Osuna",
+      "latitude": 40.45178,
+      "longitude": -3.58667,
+      "sourceUrl": "https://www.geonames.org/3120030",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2522297",
+      "name": "Alaquàs",
+      "latitude": 39.45568,
+      "longitude": -0.461,
+      "sourceUrl": "https://www.geonames.org/2522297",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2522258",
+      "name": "Albacete",
+      "latitude": 38.99424,
+      "longitude": -1.85643,
+      "sourceUrl": "https://www.geonames.org/2522258",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2522250",
+      "name": "Albal",
+      "latitude": 39.4,
+      "longitude": -0.41667,
+      "sourceUrl": "https://www.geonames.org/2522250",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2522208",
+      "name": "Albolote",
+      "latitude": 37.23088,
+      "longitude": -3.6551,
+      "sourceUrl": "https://www.geonames.org/2522208",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2522203",
+      "name": "Alboraya",
+      "latitude": 39.5,
+      "longitude": -0.35,
+      "sourceUrl": "https://www.geonames.org/2522203",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2522165",
+      "name": "Alcalá de Guadaira",
+      "latitude": 37.33791,
+      "longitude": -5.83951,
+      "sourceUrl": "https://www.geonames.org/2522165",
+      "updatedAt": "2012-01-19"
+    },
+    {
+      "id": "3130616",
+      "name": "Alcalá de Henares",
+      "latitude": 40.48205,
+      "longitude": -3.35996,
+      "sourceUrl": "https://www.geonames.org/3130616",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2522160",
+      "name": "Alcalá la Real",
+      "latitude": 37.4614,
+      "longitude": -3.92301,
+      "sourceUrl": "https://www.geonames.org/2522160",
+      "updatedAt": "2012-08-13"
+    },
+    {
+      "id": "2522152",
+      "name": "Alcantarilla",
+      "latitude": 37.96939,
+      "longitude": -1.21714,
+      "sourceUrl": "https://www.geonames.org/2522152",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3130606",
+      "name": "Alcañiz",
+      "latitude": 41.05,
+      "longitude": -0.13333,
+      "sourceUrl": "https://www.geonames.org/3130606",
+      "updatedAt": "2020-07-26"
+    },
+    {
+      "id": "3130583",
+      "name": "Alcobendas",
+      "latitude": 40.54746,
+      "longitude": -3.64197,
+      "sourceUrl": "https://www.geonames.org/3130583",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3130564",
+      "name": "Alcorcón",
+      "latitude": 40.34582,
+      "longitude": -3.82487,
+      "sourceUrl": "https://www.geonames.org/3130564",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2522098",
+      "name": "Alcoy",
+      "latitude": 38.70545,
+      "longitude": -0.47432,
+      "sourceUrl": "https://www.geonames.org/2522098",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2522131",
+      "name": "Alcázar de San Juan",
+      "latitude": 39.39011,
+      "longitude": -3.20827,
+      "sourceUrl": "https://www.geonames.org/2522131",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2522091",
+      "name": "Alcúdia",
+      "latitude": 39.85316,
+      "longitude": 3.12138,
+      "sourceUrl": "https://www.geonames.org/2522091",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2522077",
+      "name": "Aldaia",
+      "latitude": 39.46569,
+      "longitude": -0.46005,
+      "sourceUrl": "https://www.geonames.org/2522077",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2522057",
+      "name": "Alfafar",
+      "latitude": 39.41667,
+      "longitude": -0.38333,
+      "sourceUrl": "https://www.geonames.org/2522057",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2522013",
+      "name": "Algeciras",
+      "latitude": 36.13326,
+      "longitude": -5.45051,
+      "sourceUrl": "https://www.geonames.org/2522013",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2522012",
+      "name": "Algemesí",
+      "latitude": 39.19042,
+      "longitude": -0.43572,
+      "sourceUrl": "https://www.geonames.org/2522012",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3130383",
+      "name": "Algete",
+      "latitude": 40.59711,
+      "longitude": -3.49743,
+      "sourceUrl": "https://www.geonames.org/3130383",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3130380",
+      "name": "Algorta",
+      "latitude": 43.34927,
+      "longitude": -3.0094,
+      "sourceUrl": "https://www.geonames.org/3130380",
+      "updatedAt": "2007-11-15"
+    },
+    {
+      "id": "2521992",
+      "name": "Alhama de Murcia",
+      "latitude": 37.85103,
+      "longitude": -1.42507,
+      "sourceUrl": "https://www.geonames.org/2521992",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2521986",
+      "name": "Alhaurín de la Torre",
+      "latitude": 36.66401,
+      "longitude": -4.56139,
+      "sourceUrl": "https://www.geonames.org/2521986",
+      "updatedAt": "2023-09-13"
+    },
+    {
+      "id": "2521985",
+      "name": "Alhaurín el Grande",
+      "latitude": 36.643,
+      "longitude": -4.68728,
+      "sourceUrl": "https://www.geonames.org/2521985",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2521978",
+      "name": "Alicante",
+      "latitude": 38.34517,
+      "longitude": -0.48149,
+      "sourceUrl": "https://www.geonames.org/2521978",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2521964",
+      "name": "Aljaraque",
+      "latitude": 37.26989,
+      "longitude": -7.02313,
+      "sourceUrl": "https://www.geonames.org/2521964",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549968",
+      "name": "Almagro",
+      "latitude": 40.43285,
+      "longitude": -3.69354,
+      "sourceUrl": "https://www.geonames.org/11549968",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2521923",
+      "name": "Almansa",
+      "latitude": 38.86917,
+      "longitude": -1.09713,
+      "sourceUrl": "https://www.geonames.org/2521923",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2521909",
+      "name": "Almassora",
+      "latitude": 39.94729,
+      "longitude": -0.06313,
+      "sourceUrl": "https://www.geonames.org/2521909",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "11549965",
+      "name": "Almenara",
+      "latitude": 40.47066,
+      "longitude": -3.69431,
+      "sourceUrl": "https://www.geonames.org/11549965",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2521893",
+      "name": "Almendralejo",
+      "latitude": 38.68316,
+      "longitude": -6.40747,
+      "sourceUrl": "https://www.geonames.org/2521893",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "11549926",
+      "name": "Almendrales",
+      "latitude": 40.38368,
+      "longitude": -3.69931,
+      "sourceUrl": "https://www.geonames.org/11549926",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2521886",
+      "name": "Almería",
+      "latitude": 36.83814,
+      "longitude": -2.45974,
+      "sourceUrl": "https://www.geonames.org/2521886",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2521857",
+      "name": "Almonte",
+      "latitude": 37.2647,
+      "longitude": -6.51667,
+      "sourceUrl": "https://www.geonames.org/2521857",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2521855",
+      "name": "Almoradí",
+      "latitude": 38.10879,
+      "longitude": -0.79197,
+      "sourceUrl": "https://www.geonames.org/2521855",
+      "updatedAt": "2022-12-12"
+    },
+    {
+      "id": "6615442",
+      "name": "Almozara",
+      "latitude": 41.66124,
+      "longitude": -0.90169,
+      "sourceUrl": "https://www.geonames.org/6615442",
+      "updatedAt": "2010-01-29"
+    },
+    {
+      "id": "2521847",
+      "name": "Almuñécar",
+      "latitude": 36.73246,
+      "longitude": -3.69173,
+      "sourceUrl": "https://www.geonames.org/2521847",
+      "updatedAt": "2026-02-06"
+    },
+    {
+      "id": "2521804",
+      "name": "Altea",
+      "latitude": 38.59878,
+      "longitude": -0.05151,
+      "sourceUrl": "https://www.geonames.org/2521804",
+      "updatedAt": "2025-02-20"
+    },
+    {
+      "id": "11549989",
+      "name": "Aluche",
+      "latitude": 40.39191,
+      "longitude": -3.75669,
+      "sourceUrl": "https://www.geonames.org/11549989",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2522129",
+      "name": "Alzira",
+      "latitude": 39.15,
+      "longitude": -0.43333,
+      "sourceUrl": "https://www.geonames.org/2522129",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3130137",
+      "name": "Amorebieta",
+      "latitude": 43.21667,
+      "longitude": -2.73333,
+      "sourceUrl": "https://www.geonames.org/3130137",
+      "updatedAt": "2012-12-01"
+    },
+    {
+      "id": "3130131",
+      "name": "Amposta",
+      "latitude": 40.70995,
+      "longitude": 0.57856,
+      "sourceUrl": "https://www.geonames.org/3130131",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2521738",
+      "name": "Andújar",
+      "latitude": 38.03922,
+      "longitude": -4.05077,
+      "sourceUrl": "https://www.geonames.org/2521738",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2521710",
+      "name": "Antequera",
+      "latitude": 37.01938,
+      "longitude": -4.56123,
+      "sourceUrl": "https://www.geonames.org/2521710",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549931",
+      "name": "Apostol Santiago",
+      "latitude": 40.4764,
+      "longitude": -3.65942,
+      "sourceUrl": "https://www.geonames.org/11549931",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3129877",
+      "name": "Aranda de Duero",
+      "latitude": 41.67041,
+      "longitude": -3.6892,
+      "sourceUrl": "https://www.geonames.org/3129877",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3129857",
+      "name": "Aranjuez",
+      "latitude": 40.03108,
+      "longitude": -3.60246,
+      "sourceUrl": "https://www.geonames.org/3129857",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549946",
+      "name": "Arapiles",
+      "latitude": 40.4344,
+      "longitude": -3.70803,
+      "sourceUrl": "https://www.geonames.org/11549946",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3129827",
+      "name": "Aravaca",
+      "latitude": 40.45772,
+      "longitude": -3.78282,
+      "sourceUrl": "https://www.geonames.org/3129827",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2521676",
+      "name": "Archena",
+      "latitude": 38.11631,
+      "longitude": -1.30043,
+      "sourceUrl": "https://www.geonames.org/2521676",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11550028",
+      "name": "Arcos",
+      "latitude": 40.42122,
+      "longitude": -3.61759,
+      "sourceUrl": "https://www.geonames.org/11550028",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2521665",
+      "name": "Arcos de la Frontera",
+      "latitude": 36.75075,
+      "longitude": -5.81056,
+      "sourceUrl": "https://www.geonames.org/2521665",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3129661",
+      "name": "Arenys de Mar",
+      "latitude": 41.5819,
+      "longitude": 2.54936,
+      "sourceUrl": "https://www.geonames.org/3129661",
+      "updatedAt": "2016-10-13"
+    },
+    {
+      "id": "3129636",
+      "name": "Arganda",
+      "latitude": 40.30076,
+      "longitude": -3.43722,
+      "sourceUrl": "https://www.geonames.org/3129636",
+      "updatedAt": "2016-07-07"
+    },
+    {
+      "id": "6544487",
+      "name": "Arganzuela",
+      "latitude": 40.40021,
+      "longitude": -3.69618,
+      "sourceUrl": "https://www.geonames.org/6544487",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "11549973",
+      "name": "Argüelles",
+      "latitude": 40.42821,
+      "longitude": -3.71785,
+      "sourceUrl": "https://www.geonames.org/11549973",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2521590",
+      "name": "Armilla",
+      "latitude": 37.14386,
+      "longitude": -3.62534,
+      "sourceUrl": "https://www.geonames.org/2521590",
+      "updatedAt": "2017-10-26"
+    },
+    {
+      "id": "2521582",
+      "name": "Arona",
+      "latitude": 28.09962,
+      "longitude": -16.68102,
+      "sourceUrl": "https://www.geonames.org/2521582",
+      "updatedAt": "2015-09-03"
+    },
+    {
+      "id": "3116503",
+      "name": "Arrasate / Mondragón",
+      "latitude": 43.06441,
+      "longitude": -2.48977,
+      "sourceUrl": "https://www.geonames.org/3116503",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "2521570",
+      "name": "Arrecife",
+      "latitude": 28.96302,
+      "longitude": -13.54769,
+      "sourceUrl": "https://www.geonames.org/2521570",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2521554",
+      "name": "Arroyo de la Miel",
+      "latitude": 36.59917,
+      "longitude": -4.53505,
+      "sourceUrl": "https://www.geonames.org/2521554",
+      "updatedAt": "2023-06-07"
+    },
+    {
+      "id": "3129356",
+      "name": "Arroyomolinos",
+      "latitude": 40.26951,
+      "longitude": -3.91946,
+      "sourceUrl": "https://www.geonames.org/3129356",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "3129329",
+      "name": "Arteixo",
+      "latitude": 43.30482,
+      "longitude": -8.50749,
+      "sourceUrl": "https://www.geonames.org/3129329",
+      "updatedAt": "2016-12-12"
+    },
+    {
+      "id": "2521519",
+      "name": "Arucas",
+      "latitude": 28.11983,
+      "longitude": -15.52325,
+      "sourceUrl": "https://www.geonames.org/2521519",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2521510",
+      "name": "Aspe",
+      "latitude": 38.34511,
+      "longitude": -0.76721,
+      "sourceUrl": "https://www.geonames.org/2521510",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2521486",
+      "name": "Atamaría",
+      "latitude": 37.59989,
+      "longitude": -0.80682,
+      "sourceUrl": "https://www.geonames.org/2521486",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "2521485",
+      "name": "Atarfe",
+      "latitude": 37.22479,
+      "longitude": -3.68686,
+      "sourceUrl": "https://www.geonames.org/2521485",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3129135",
+      "name": "Avilés",
+      "latitude": 43.55473,
+      "longitude": -5.92483,
+      "sourceUrl": "https://www.geonames.org/3129135",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "2521456",
+      "name": "Ayamonte",
+      "latitude": 37.21329,
+      "longitude": -7.40807,
+      "sourceUrl": "https://www.geonames.org/2521456",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3129046",
+      "name": "Azuqueca de Henares",
+      "latitude": 40.56566,
+      "longitude": -3.26753,
+      "sourceUrl": "https://www.geonames.org/3129046",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2521420",
+      "name": "Badajoz",
+      "latitude": 38.87789,
+      "longitude": -6.97061,
+      "sourceUrl": "https://www.geonames.org/2521420",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3129028",
+      "name": "Badalona",
+      "latitude": 41.45004,
+      "longitude": 2.24741,
+      "sourceUrl": "https://www.geonames.org/3129028",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2521415",
+      "name": "Baena",
+      "latitude": 37.6167,
+      "longitude": -4.32245,
+      "sourceUrl": "https://www.geonames.org/2521415",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2521413",
+      "name": "Baeza",
+      "latitude": 37.99384,
+      "longitude": -3.47103,
+      "sourceUrl": "https://www.geonames.org/2521413",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2521410",
+      "name": "Bailén",
+      "latitude": 38.09639,
+      "longitude": -3.77786,
+      "sourceUrl": "https://www.geonames.org/2521410",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3128978",
+      "name": "Balaguer",
+      "latitude": 41.79117,
+      "longitude": 0.81094,
+      "sourceUrl": "https://www.geonames.org/3128978",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3128885",
+      "name": "Banyoles",
+      "latitude": 42.11667,
+      "longitude": 2.76667,
+      "sourceUrl": "https://www.geonames.org/3128885",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3128832",
+      "name": "Barajas de Madrid",
+      "latitude": 40.47366,
+      "longitude": -3.57777,
+      "sourceUrl": "https://www.geonames.org/3128832",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3109453",
+      "name": "Barakaldo",
+      "latitude": 43.29639,
+      "longitude": -2.98813,
+      "sourceUrl": "https://www.geonames.org/3109453",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3128824",
+      "name": "Barañáin",
+      "latitude": 42.80567,
+      "longitude": -1.67731,
+      "sourceUrl": "https://www.geonames.org/3128824",
+      "updatedAt": "2021-11-03"
+    },
+    {
+      "id": "3128795",
+      "name": "Barbastro",
+      "latitude": 42.03565,
+      "longitude": 0.12686,
+      "sourceUrl": "https://www.geonames.org/3128795",
+      "updatedAt": "2019-10-09"
+    },
+    {
+      "id": "2521335",
+      "name": "Barbate",
+      "latitude": 36.19237,
+      "longitude": -5.92186,
+      "sourceUrl": "https://www.geonames.org/2521335",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3109804",
+      "name": "Barberà del Vallès",
+      "latitude": 41.5159,
+      "longitude": 2.12457,
+      "sourceUrl": "https://www.geonames.org/3109804",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "3128760",
+      "name": "Barcelona",
+      "latitude": 41.38879,
+      "longitude": 2.15899,
+      "sourceUrl": "https://www.geonames.org/3128760",
+      "updatedAt": "2026-05-20"
+    },
+    {
+      "id": "6544577",
+      "name": "Barri Gòtic",
+      "latitude": 41.38364,
+      "longitude": 2.17628,
+      "sourceUrl": "https://www.geonames.org/6544577",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549820",
+      "name": "Barri de Sant Andreu",
+      "latitude": 41.43693,
+      "longitude": 2.19022,
+      "sourceUrl": "https://www.geonames.org/11549820",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "11549821",
+      "name": "Barri de les Corts",
+      "latitude": 41.38697,
+      "longitude": 2.13472,
+      "sourceUrl": "https://www.geonames.org/11549821",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "2521249",
+      "name": "Barrio de Peral",
+      "latitude": 37.62513,
+      "longitude": -0.98792,
+      "sourceUrl": "https://www.geonames.org/2521249",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "6697039",
+      "name": "Basauri",
+      "latitude": 43.2397,
+      "longitude": -2.8858,
+      "sourceUrl": "https://www.geonames.org/6697039",
+      "updatedAt": "2011-07-31"
+    },
+    {
+      "id": "2521215",
+      "name": "Baza",
+      "latitude": 37.49073,
+      "longitude": -2.77259,
+      "sourceUrl": "https://www.geonames.org/2521215",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549963",
+      "name": "Bellas Vistas",
+      "latitude": 40.45245,
+      "longitude": -3.70763,
+      "sourceUrl": "https://www.geonames.org/11549963",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2521139",
+      "name": "Benalmádena",
+      "latitude": 36.5961,
+      "longitude": -4.57267,
+      "sourceUrl": "https://www.geonames.org/2521139",
+      "updatedAt": "2017-05-09"
+    },
+    {
+      "id": "3128291",
+      "name": "Benavente",
+      "latitude": 42.00249,
+      "longitude": -5.67826,
+      "sourceUrl": "https://www.geonames.org/3128291",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2521105",
+      "name": "Benetússer",
+      "latitude": 39.42265,
+      "longitude": -0.39686,
+      "sourceUrl": "https://www.geonames.org/2521105",
+      "updatedAt": "2015-06-01"
+    },
+    {
+      "id": "3128273",
+      "name": "Benicarló",
+      "latitude": 40.4165,
+      "longitude": 0.42709,
+      "sourceUrl": "https://www.geonames.org/3128273",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3128272",
+      "name": "Benicàssim",
+      "latitude": 40.05,
+      "longitude": 0.06667,
+      "sourceUrl": "https://www.geonames.org/3128272",
+      "updatedAt": "2021-11-03"
+    },
+    {
+      "id": "2521088",
+      "name": "Benidorm",
+      "latitude": 38.53816,
+      "longitude": -0.13098,
+      "sourceUrl": "https://www.geonames.org/2521088",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3128201",
+      "name": "Berga",
+      "latitude": 42.10429,
+      "longitude": 1.84628,
+      "sourceUrl": "https://www.geonames.org/3128201",
+      "updatedAt": "2013-09-17"
+    },
+    {
+      "id": "2521016",
+      "name": "Berja",
+      "latitude": 36.84693,
+      "longitude": -2.94966,
+      "sourceUrl": "https://www.geonames.org/2521016",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3128174",
+      "name": "Bermeo",
+      "latitude": 43.42088,
+      "longitude": -2.72152,
+      "sourceUrl": "https://www.geonames.org/3128174",
+      "updatedAt": "2012-11-09"
+    },
+    {
+      "id": "11549961",
+      "name": "Berruguete",
+      "latitude": 40.45962,
+      "longitude": -3.70496,
+      "sourceUrl": "https://www.geonames.org/11549961",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3128026",
+      "name": "Bilbao",
+      "latitude": 43.26271,
+      "longitude": -2.92528,
+      "sourceUrl": "https://www.geonames.org/3128026",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3127978",
+      "name": "Blanes",
+      "latitude": 41.67419,
+      "longitude": 2.79036,
+      "sourceUrl": "https://www.geonames.org/3127978",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3127958",
+      "name": "Boadilla del Monte",
+      "latitude": 40.405,
+      "longitude": -3.87835,
+      "sourceUrl": "https://www.geonames.org/3127958",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3127889",
+      "name": "Boiro",
+      "latitude": 42.64725,
+      "longitude": -8.88459,
+      "sourceUrl": "https://www.geonames.org/3127889",
+      "updatedAt": "2015-06-16"
+    },
+    {
+      "id": "2520833",
+      "name": "Bormujos",
+      "latitude": 37.37358,
+      "longitude": -6.07233,
+      "sourceUrl": "https://www.geonames.org/2520833",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549995",
+      "name": "Buenavista",
+      "latitude": 40.36709,
+      "longitude": -3.74608,
+      "sourceUrl": "https://www.geonames.org/11549995",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3127461",
+      "name": "Burgos",
+      "latitude": 42.34106,
+      "longitude": -3.70184,
+      "sourceUrl": "https://www.geonames.org/3127461",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2520712",
+      "name": "Burjassot",
+      "latitude": 39.50984,
+      "longitude": -0.41327,
+      "sourceUrl": "https://www.geonames.org/2520712",
+      "updatedAt": "2024-01-26"
+    },
+    {
+      "id": "3127451",
+      "name": "Burlata",
+      "latitude": 42.82562,
+      "longitude": -1.61671,
+      "sourceUrl": "https://www.geonames.org/3127451",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2520709",
+      "name": "Burriana",
+      "latitude": 39.88901,
+      "longitude": -0.08499,
+      "sourceUrl": "https://www.geonames.org/2520709",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "11550026",
+      "name": "Butarque",
+      "latitude": 40.33719,
+      "longitude": -3.6763,
+      "sourceUrl": "https://www.geonames.org/11550026",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3128382",
+      "name": "Béjar",
+      "latitude": 40.38641,
+      "longitude": -5.76341,
+      "sourceUrl": "https://www.geonames.org/3128382",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2520968",
+      "name": "Bétera",
+      "latitude": 39.59111,
+      "longitude": -0.46151,
+      "sourceUrl": "https://www.geonames.org/2520968",
+      "updatedAt": "2015-06-16"
+    },
+    {
+      "id": "2520645",
+      "name": "Cabra",
+      "latitude": 37.47249,
+      "longitude": -4.44206,
+      "sourceUrl": "https://www.geonames.org/2520645",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2520600",
+      "name": "Cadiz",
+      "latitude": 36.52672,
+      "longitude": -6.2891,
+      "sourceUrl": "https://www.geonames.org/2520600",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3127066",
+      "name": "Calafell",
+      "latitude": 41.19997,
+      "longitude": 1.5683,
+      "sourceUrl": "https://www.geonames.org/3127066",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3127065",
+      "name": "Calahorra",
+      "latitude": 42.30506,
+      "longitude": -1.96521,
+      "sourceUrl": "https://www.geonames.org/3127065",
+      "updatedAt": "2015-06-07"
+    },
+    {
+      "id": "3127047",
+      "name": "Calatayud",
+      "latitude": 41.35353,
+      "longitude": -1.64318,
+      "sourceUrl": "https://www.geonames.org/3127047",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3127035",
+      "name": "Caldes de Montbui",
+      "latitude": 41.63333,
+      "longitude": 2.16667,
+      "sourceUrl": "https://www.geonames.org/3127035",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3127007",
+      "name": "Calella",
+      "latitude": 41.61381,
+      "longitude": 2.65423,
+      "sourceUrl": "https://www.geonames.org/3127007",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2520502",
+      "name": "Callosa de Segura",
+      "latitude": 38.12497,
+      "longitude": -0.87822,
+      "sourceUrl": "https://www.geonames.org/2520502",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2520496",
+      "name": "Calp",
+      "latitude": 38.6447,
+      "longitude": 0.0445,
+      "sourceUrl": "https://www.geonames.org/2520496",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "2520493",
+      "name": "Calvià",
+      "latitude": 39.5657,
+      "longitude": 2.50621,
+      "sourceUrl": "https://www.geonames.org/2520493",
+      "updatedAt": "2015-09-01"
+    },
+    {
+      "id": "3126917",
+      "name": "Camargo",
+      "latitude": 43.40744,
+      "longitude": -3.88498,
+      "sourceUrl": "https://www.geonames.org/3126917",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "2520477",
+      "name": "Camas",
+      "latitude": 37.40202,
+      "longitude": -6.03314,
+      "sourceUrl": "https://www.geonames.org/2520477",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3126890",
+      "name": "Cambre",
+      "latitude": 43.29438,
+      "longitude": -8.34736,
+      "sourceUrl": "https://www.geonames.org/3126890",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "3126888",
+      "name": "Cambrils",
+      "latitude": 41.06997,
+      "longitude": 1.05949,
+      "sourceUrl": "https://www.geonames.org/3126888",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "3123608",
+      "name": "Campamento",
+      "latitude": 40.38644,
+      "longitude": -3.79818,
+      "sourceUrl": "https://www.geonames.org/3123608",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2520425",
+      "name": "Campiña",
+      "latitude": 38.21896,
+      "longitude": -2.98069,
+      "sourceUrl": "https://www.geonames.org/2520425",
+      "updatedAt": "2016-06-22"
+    },
+    {
+      "id": "2520413",
+      "name": "Campo de Criptana",
+      "latitude": 39.40463,
+      "longitude": -3.12492,
+      "sourceUrl": "https://www.geonames.org/2520413",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2520283",
+      "name": "Candelaria",
+      "latitude": 28.3548,
+      "longitude": -16.37268,
+      "sourceUrl": "https://www.geonames.org/2520283",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3126577",
+      "name": "Cangas do Morrazo",
+      "latitude": 42.26413,
+      "longitude": -8.78463,
+      "sourceUrl": "https://www.geonames.org/3126577",
+      "updatedAt": "2015-06-16"
+    },
+    {
+      "id": "3126563",
+      "name": "Canillas",
+      "latitude": 40.46396,
+      "longitude": -3.63625,
+      "sourceUrl": "https://www.geonames.org/3126563",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3126558",
+      "name": "Canillejas",
+      "latitude": 40.44838,
+      "longitude": -3.60849,
+      "sourceUrl": "https://www.geonames.org/3126558",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3126534",
+      "name": "Canovelles",
+      "latitude": 41.61667,
+      "longitude": 2.28333,
+      "sourceUrl": "https://www.geonames.org/3126534",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "6544493",
+      "name": "Carabanchel",
+      "latitude": 40.39094,
+      "longitude": -3.7242,
+      "sourceUrl": "https://www.geonames.org/6544493",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2520171",
+      "name": "Caravaca",
+      "latitude": 38.10558,
+      "longitude": -1.86343,
+      "sourceUrl": "https://www.geonames.org/2520171",
+      "updatedAt": "2023-12-12"
+    },
+    {
+      "id": "3126369",
+      "name": "Carballo",
+      "latitude": 43.213,
+      "longitude": -8.69104,
+      "sourceUrl": "https://www.geonames.org/3126369",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2520150",
+      "name": "Carcaixent",
+      "latitude": 39.1218,
+      "longitude": -0.44812,
+      "sourceUrl": "https://www.geonames.org/2520150",
+      "updatedAt": "2015-05-31"
+    },
+    {
+      "id": "3126317",
+      "name": "Cardedeu",
+      "latitude": 41.63976,
+      "longitude": 2.35739,
+      "sourceUrl": "https://www.geonames.org/3126317",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "2520121",
+      "name": "Carlet",
+      "latitude": 39.2266,
+      "longitude": -0.52142,
+      "sourceUrl": "https://www.geonames.org/2520121",
+      "updatedAt": "2015-06-01"
+    },
+    {
+      "id": "2520118",
+      "name": "Carmona",
+      "latitude": 37.47125,
+      "longitude": -5.64608,
+      "sourceUrl": "https://www.geonames.org/2520118",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2520069",
+      "name": "Carrizal",
+      "latitude": 27.91161,
+      "longitude": -15.40558,
+      "sourceUrl": "https://www.geonames.org/2520069",
+      "updatedAt": "2016-10-08"
+    },
+    {
+      "id": "2520058",
+      "name": "Cartagena",
+      "latitude": 37.60197,
+      "longitude": -0.98397,
+      "sourceUrl": "https://www.geonames.org/2520058",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2520052",
+      "name": "Cartaya",
+      "latitude": 37.28114,
+      "longitude": -7.15071,
+      "sourceUrl": "https://www.geonames.org/2520052",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549928",
+      "name": "Casco Histórico de Vallecas",
+      "latitude": 40.34852,
+      "longitude": -3.61621,
+      "sourceUrl": "https://www.geonames.org/11549928",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549930",
+      "name": "Casco Histórico de Vicálvaro",
+      "latitude": 40.39241,
+      "longitude": -3.57015,
+      "sourceUrl": "https://www.geonames.org/11549930",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549929",
+      "name": "Castellana",
+      "latitude": 40.43355,
+      "longitude": -3.68429,
+      "sourceUrl": "https://www.geonames.org/11549929",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3125915",
+      "name": "Castellar del Vallès",
+      "latitude": 41.61667,
+      "longitude": 2.08333,
+      "sourceUrl": "https://www.geonames.org/3125915",
+      "updatedAt": "2021-11-08"
+    },
+    {
+      "id": "3125897",
+      "name": "Castelldefels",
+      "latitude": 41.27794,
+      "longitude": 1.97033,
+      "sourceUrl": "https://www.geonames.org/3125897",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2519752",
+      "name": "Castelló de la Plana",
+      "latitude": 39.98567,
+      "longitude": -0.04935,
+      "sourceUrl": "https://www.geonames.org/2519752",
+      "updatedAt": "2026-09-11"
+    },
+    {
+      "id": "11549962",
+      "name": "Castilla",
+      "latitude": 40.47431,
+      "longitude": -3.67972,
+      "sourceUrl": "https://www.geonames.org/11549962",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2519738",
+      "name": "Castilleja de la Cuesta",
+      "latitude": 37.38594,
+      "longitude": -6.05258,
+      "sourceUrl": "https://www.geonames.org/2519738",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549964",
+      "name": "Castillejos",
+      "latitude": 40.46041,
+      "longitude": -3.69413,
+      "sourceUrl": "https://www.geonames.org/11549964",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3125621",
+      "name": "Castro-Urdiales",
+      "latitude": 43.38285,
+      "longitude": -3.22043,
+      "sourceUrl": "https://www.geonames.org/3125621",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2519690",
+      "name": "Catarroja",
+      "latitude": 39.4,
+      "longitude": -0.4,
+      "sourceUrl": "https://www.geonames.org/2519690",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "2519651",
+      "name": "Cehegín",
+      "latitude": 38.09242,
+      "longitude": -1.7985,
+      "sourceUrl": "https://www.geonames.org/2519651",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "6949575",
+      "name": "Centro",
+      "latitude": 28.1272,
+      "longitude": -15.4314,
+      "sourceUrl": "https://www.geonames.org/6949575",
+      "updatedAt": "2025-12-29"
+    },
+    {
+      "id": "3109402",
+      "name": "Cerdanyola del Vallès",
+      "latitude": 41.49109,
+      "longitude": 2.14079,
+      "sourceUrl": "https://www.geonames.org/3109402",
+      "updatedAt": "2010-04-22"
+    },
+    {
+      "id": "6362987",
+      "name": "Ceuta",
+      "latitude": 35.88919,
+      "longitude": -5.32042,
+      "sourceUrl": "https://www.geonames.org/6362987",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3125239",
+      "name": "Chamartín",
+      "latitude": 40.46206,
+      "longitude": -3.6766,
+      "sourceUrl": "https://www.geonames.org/3125239",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "6544492",
+      "name": "Chamberí",
+      "latitude": 40.43404,
+      "longitude": -3.70379,
+      "sourceUrl": "https://www.geonames.org/6544492",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2519513",
+      "name": "Chiclana de la Frontera",
+      "latitude": 36.41976,
+      "longitude": -6.14367,
+      "sourceUrl": "https://www.geonames.org/2519513",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2519477",
+      "name": "Chipiona",
+      "latitude": 36.73663,
+      "longitude": -6.43703,
+      "sourceUrl": "https://www.geonames.org/2519477",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549938",
+      "name": "Chopera",
+      "latitude": 40.39476,
+      "longitude": -3.69907,
+      "sourceUrl": "https://www.geonames.org/11549938",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3125082",
+      "name": "Ciempozuelos",
+      "latitude": 40.15913,
+      "longitude": -3.62103,
+      "sourceUrl": "https://www.geonames.org/3125082",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2519425",
+      "name": "Cieza",
+      "latitude": 38.23998,
+      "longitude": -1.41987,
+      "sourceUrl": "https://www.geonames.org/2519425",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "11549959",
+      "name": "Ciudad Jardín",
+      "latitude": 40.4483,
+      "longitude": -3.673,
+      "sourceUrl": "https://www.geonames.org/11549959",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3124964",
+      "name": "Ciudad Lineal",
+      "latitude": 40.44505,
+      "longitude": -3.65132,
+      "sourceUrl": "https://www.geonames.org/3124964",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "2519402",
+      "name": "Ciudad Real",
+      "latitude": 38.98626,
+      "longitude": -3.92907,
+      "sourceUrl": "https://www.geonames.org/2519402",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "11549993",
+      "name": "Ciudad Universitaria",
+      "latitude": 40.45595,
+      "longitude": -3.73839,
+      "sourceUrl": "https://www.geonames.org/11549993",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3124967",
+      "name": "Ciutadella",
+      "latitude": 40.00112,
+      "longitude": 3.84144,
+      "sourceUrl": "https://www.geonames.org/3124967",
+      "updatedAt": "2016-03-13"
+    },
+    {
+      "id": "6544106",
+      "name": "Ciutat Vella",
+      "latitude": 41.38022,
+      "longitude": 2.17319,
+      "sourceUrl": "https://www.geonames.org/6544106",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3124794",
+      "name": "Collado-Villalba",
+      "latitude": 40.63506,
+      "longitude": -4.00486,
+      "sourceUrl": "https://www.geonames.org/3124794",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "3124765",
+      "name": "Colmenar Viejo",
+      "latitude": 40.65909,
+      "longitude": -3.76762,
+      "sourceUrl": "https://www.geonames.org/3124765",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549978",
+      "name": "Comillas",
+      "latitude": 40.3935,
+      "longitude": -3.71196,
+      "sourceUrl": "https://www.geonames.org/11549978",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549983",
+      "name": "Concepción",
+      "latitude": 40.43932,
+      "longitude": -3.64928,
+      "sourceUrl": "https://www.geonames.org/11549983",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2519289",
+      "name": "Conil de la Frontera",
+      "latitude": 36.27719,
+      "longitude": -6.0885,
+      "sourceUrl": "https://www.geonames.org/2519289",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2519233",
+      "name": "Coria del Río",
+      "latitude": 37.28766,
+      "longitude": -6.0541,
+      "sourceUrl": "https://www.geonames.org/2519233",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3124569",
+      "name": "Cornellà de Llobregat",
+      "latitude": 41.35,
+      "longitude": 2.08333,
+      "sourceUrl": "https://www.geonames.org/3124569",
+      "updatedAt": "2022-12-12"
+    },
+    {
+      "id": "7115111",
+      "name": "Corvera de Asturias",
+      "latitude": 43.53554,
+      "longitude": -5.88893,
+      "sourceUrl": "https://www.geonames.org/7115111",
+      "updatedAt": "2015-09-07"
+    },
+    {
+      "id": "3124408",
+      "name": "Coslada",
+      "latitude": 40.42378,
+      "longitude": -3.56129,
+      "sourceUrl": "https://www.geonames.org/3124408",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549972",
+      "name": "Costillares",
+      "latitude": 40.47665,
+      "longitude": -3.66852,
+      "sourceUrl": "https://www.geonames.org/11549972",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2519367",
+      "name": "Coín",
+      "latitude": 36.65947,
+      "longitude": -4.75639,
+      "sourceUrl": "https://www.geonames.org/2519367",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2519110",
+      "name": "Crevillente",
+      "latitude": 38.24994,
+      "longitude": -0.80975,
+      "sourceUrl": "https://www.geonames.org/2519110",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "6545089",
+      "name": "Cuatro Caminos",
+      "latitude": 40.44682,
+      "longitude": -3.70347,
+      "sourceUrl": "https://www.geonames.org/6545089",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3124132",
+      "name": "Cuenca",
+      "latitude": 40.06667,
+      "longitude": -2.13333,
+      "sourceUrl": "https://www.geonames.org/3124132",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2518949",
+      "name": "Cullera",
+      "latitude": 39.16667,
+      "longitude": -0.25,
+      "sourceUrl": "https://www.geonames.org/2518949",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3124041",
+      "name": "Culleredo",
+      "latitude": 43.28788,
+      "longitude": -8.38858,
+      "sourceUrl": "https://www.geonames.org/3124041",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2520611",
+      "name": "Cáceres",
+      "latitude": 39.47649,
+      "longitude": -6.37224,
+      "sourceUrl": "https://www.geonames.org/2520611",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "11549988",
+      "name": "Cármenes",
+      "latitude": 40.40149,
+      "longitude": -3.73593,
+      "sourceUrl": "https://www.geonames.org/11549988",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2520055",
+      "name": "Cártama",
+      "latitude": 36.71068,
+      "longitude": -4.63297,
+      "sourceUrl": "https://www.geonames.org/2520055",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "2519240",
+      "name": "Córdoba",
+      "latitude": 37.89155,
+      "longitude": -4.77275,
+      "sourceUrl": "https://www.geonames.org/2519240",
+      "updatedAt": "2022-09-23"
+    },
+    {
+      "id": "2518924",
+      "name": "Daimiel",
+      "latitude": 39.07004,
+      "longitude": -3.61498,
+      "sourceUrl": "https://www.geonames.org/2518924",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549952",
+      "name": "Delicias",
+      "latitude": 40.39673,
+      "longitude": -3.68996,
+      "sourceUrl": "https://www.geonames.org/11549952",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "6615440",
+      "name": "Delicias",
+      "latitude": 41.64928,
+      "longitude": -0.90757,
+      "sourceUrl": "https://www.geonames.org/6615440",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2518878",
+      "name": "Denia",
+      "latitude": 38.84078,
+      "longitude": 0.10574,
+      "sourceUrl": "https://www.geonames.org/2518878",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "2518820",
+      "name": "Don Benito",
+      "latitude": 38.95627,
+      "longitude": -5.86162,
+      "sourceUrl": "https://www.geonames.org/2518820",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3110044",
+      "name": "Donostia / San Sebastián",
+      "latitude": 43.31283,
+      "longitude": -1.97499,
+      "sourceUrl": "https://www.geonames.org/3110044",
+      "updatedAt": "2025-07-03"
+    },
+    {
+      "id": "2518794",
+      "name": "Dos Hermanas",
+      "latitude": 37.28287,
+      "longitude": -5.92088,
+      "sourceUrl": "https://www.geonames.org/2518794",
+      "updatedAt": "2026-08-30"
+    },
+    {
+      "id": "6690786",
+      "name": "Dreta de l'Eixample",
+      "latitude": 41.39606,
+      "longitude": 2.16688,
+      "sourceUrl": "https://www.geonames.org/6690786",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "3123773",
+      "name": "Durango",
+      "latitude": 43.17124,
+      "longitude": -2.6338,
+      "sourceUrl": "https://www.geonames.org/3123773",
+      "updatedAt": "2012-11-09"
+    },
+    {
+      "id": "3123709",
+      "name": "Eibar",
+      "latitude": 43.18493,
+      "longitude": -2.47158,
+      "sourceUrl": "https://www.geonames.org/3123709",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "6544100",
+      "name": "Eixample",
+      "latitude": 41.38896,
+      "longitude": 2.16179,
+      "sourceUrl": "https://www.geonames.org/6544100",
+      "updatedAt": "2018-11-13"
+    },
+    {
+      "id": "3123688",
+      "name": "Ejea de los Caballeros",
+      "latitude": 42.12632,
+      "longitude": -1.13716,
+      "sourceUrl": "https://www.geonames.org/3123688",
+      "updatedAt": "2012-04-29"
+    },
+    {
+      "id": "2518729",
+      "name": "El Arahal",
+      "latitude": 37.26273,
+      "longitude": -5.5453,
+      "sourceUrl": "https://www.geonames.org/2518729",
+      "updatedAt": "2021-11-06"
+    },
+    {
+      "id": "3123667",
+      "name": "El Astillero",
+      "latitude": 43.40094,
+      "longitude": -3.82051,
+      "sourceUrl": "https://www.geonames.org/3123667",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "2520447",
+      "name": "El Campello",
+      "latitude": 38.42885,
+      "longitude": -0.39774,
+      "sourceUrl": "https://www.geonames.org/2520447",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "6545261",
+      "name": "El Carmel",
+      "latitude": 41.41758,
+      "longitude": 2.15914,
+      "sourceUrl": "https://www.geonames.org/6545261",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "2518494",
+      "name": "El Ejido",
+      "latitude": 36.77629,
+      "longitude": -2.81456,
+      "sourceUrl": "https://www.geonames.org/2518494",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "3123504",
+      "name": "El Escorial",
+      "latitude": 40.58254,
+      "longitude": -4.12846,
+      "sourceUrl": "https://www.geonames.org/3123504",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "3123477",
+      "name": "El Goloso",
+      "latitude": 40.55342,
+      "longitude": -3.69968,
+      "sourceUrl": "https://www.geonames.org/3123477",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2518444",
+      "name": "El Grao",
+      "latitude": 39.97358,
+      "longitude": 0.01284,
+      "sourceUrl": "https://www.geonames.org/2518444",
+      "updatedAt": "2016-10-12"
+    },
+    {
+      "id": "3117232",
+      "name": "El Masnou",
+      "latitude": 41.47978,
+      "longitude": 2.3188,
+      "sourceUrl": "https://www.geonames.org/3117232",
+      "updatedAt": "2021-11-03"
+    },
+    {
+      "id": "2518294",
+      "name": "El Palmar",
+      "latitude": 37.93939,
+      "longitude": -1.16095,
+      "sourceUrl": "https://www.geonames.org/2518294",
+      "updatedAt": "2026-09-09"
+    },
+    {
+      "id": "3123329",
+      "name": "El Prat de Llobregat",
+      "latitude": 41.32784,
+      "longitude": 2.09472,
+      "sourceUrl": "https://www.geonames.org/3123329",
+      "updatedAt": "2017-09-22"
+    },
+    {
+      "id": "2518207",
+      "name": "El Puerto de Santa María",
+      "latitude": 36.59389,
+      "longitude": -6.23298,
+      "sourceUrl": "https://www.geonames.org/2518207",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "3106180",
+      "name": "El Vendrell",
+      "latitude": 41.21667,
+      "longitude": 1.53333,
+      "sourceUrl": "https://www.geonames.org/3106180",
+      "updatedAt": "2012-04-29"
+    },
+    {
+      "id": "6545097",
+      "name": "El Viso",
+      "latitude": 40.44626,
+      "longitude": -3.68411,
+      "sourceUrl": "https://www.geonames.org/6545097",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2518040",
+      "name": "El Viso del Alcor",
+      "latitude": 37.39106,
+      "longitude": -5.71993,
+      "sourceUrl": "https://www.geonames.org/2518040",
+      "updatedAt": "2021-11-04"
+    },
+    {
+      "id": "2518559",
+      "name": "Elche",
+      "latitude": 38.26218,
+      "longitude": -0.70107,
+      "sourceUrl": "https://www.geonames.org/2518559",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2518505",
+      "name": "Elda",
+      "latitude": 38.47783,
+      "longitude": -0.79157,
+      "sourceUrl": "https://www.geonames.org/2518505",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549934",
+      "name": "Embajadores",
+      "latitude": 40.40924,
+      "longitude": -3.70246,
+      "sourceUrl": "https://www.geonames.org/11549934",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3123115",
+      "name": "Entrevías",
+      "latitude": 40.37846,
+      "longitude": -3.6739,
+      "sourceUrl": "https://www.geonames.org/3123115",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3123104",
+      "name": "Erandio",
+      "latitude": 43.30438,
+      "longitude": -2.97352,
+      "sourceUrl": "https://www.geonames.org/3123104",
+      "updatedAt": "2015-06-16"
+    },
+    {
+      "id": "8050880",
+      "name": "Ermitagaña",
+      "latitude": 42.81084,
+      "longitude": -1.66409,
+      "sourceUrl": "https://www.geonames.org/8050880",
+      "updatedAt": "2024-01-25"
+    },
+    {
+      "id": "3123063",
+      "name": "Ermua",
+      "latitude": 43.18725,
+      "longitude": -2.50261,
+      "sourceUrl": "https://www.geonames.org/3123063",
+      "updatedAt": "2015-05-31"
+    },
+    {
+      "id": "3112011",
+      "name": "Errenteria",
+      "latitude": 43.31195,
+      "longitude": -1.90234,
+      "sourceUrl": "https://www.geonames.org/3112011",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "3122912",
+      "name": "Esparreguera",
+      "latitude": 41.53809,
+      "longitude": 1.87025,
+      "sourceUrl": "https://www.geonames.org/3122912",
+      "updatedAt": "2019-02-22"
+    },
+    {
+      "id": "3122826",
+      "name": "Esplugues de Llobregat",
+      "latitude": 41.37732,
+      "longitude": 2.08809,
+      "sourceUrl": "https://www.geonames.org/3122826",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "2517816",
+      "name": "Estepona",
+      "latitude": 36.42764,
+      "longitude": -5.14589,
+      "sourceUrl": "https://www.geonames.org/2517816",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549956",
+      "name": "Estrella",
+      "latitude": 40.41409,
+      "longitude": -3.66553,
+      "sourceUrl": "https://www.geonames.org/11549956",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2517750",
+      "name": "Felanitx",
+      "latitude": 39.4696,
+      "longitude": 3.14831,
+      "sourceUrl": "https://www.geonames.org/2517750",
+      "updatedAt": "2011-07-31"
+    },
+    {
+      "id": "3123493",
+      "name": "Ferrol",
+      "latitude": 43.48451,
+      "longitude": -8.23293,
+      "sourceUrl": "https://www.geonames.org/3123493",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3122453",
+      "name": "Figueres",
+      "latitude": 42.26645,
+      "longitude": 2.96163,
+      "sourceUrl": "https://www.geonames.org/3122453",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11550011",
+      "name": "Fontarrón",
+      "latitude": 40.40141,
+      "longitude": -3.64678,
+      "sourceUrl": "https://www.geonames.org/11550011",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "6690784",
+      "name": "Fort Pienc",
+      "latitude": 41.39458,
+      "longitude": 2.17946,
+      "sourceUrl": "https://www.geonames.org/6690784",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "3121969",
+      "name": "Fuencarral",
+      "latitude": 40.5,
+      "longitude": -3.68333,
+      "sourceUrl": "https://www.geonames.org/3121969",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "8285534",
+      "name": "Fuencarral-El Pardo",
+      "latitude": 40.4984,
+      "longitude": -3.7314,
+      "sourceUrl": "https://www.geonames.org/8285534",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2517595",
+      "name": "Fuengirola",
+      "latitude": 36.53998,
+      "longitude": -4.62473,
+      "sourceUrl": "https://www.geonames.org/2517595",
+      "updatedAt": "2020-09-10"
+    },
+    {
+      "id": "3121960",
+      "name": "Fuenlabrada",
+      "latitude": 40.28419,
+      "longitude": -3.79415,
+      "sourceUrl": "https://www.geonames.org/3121960",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549945",
+      "name": "Fuente del Berro",
+      "latitude": 40.42478,
+      "longitude": -3.66379,
+      "sourceUrl": "https://www.geonames.org/11549945",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "Q24012744",
+      "name": "Fuentidueña de Tajo",
+      "latitude": 40.11866111111111,
+      "longitude": -3.159438888888889,
+      "sourceUrl": "https://www.wikidata.org/wiki/Q24012744",
+      "updatedAt": null
+    },
+    {
+      "id": "3121766",
+      "name": "Galapagar",
+      "latitude": 40.5783,
+      "longitude": -4.00426,
+      "sourceUrl": "https://www.geonames.org/3121766",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3121751",
+      "name": "Galdakao",
+      "latitude": 43.23073,
+      "longitude": -2.8429,
+      "sourceUrl": "https://www.geonames.org/3121751",
+      "updatedAt": "2018-12-30"
+    },
+    {
+      "id": "3121663",
+      "name": "Gamonal",
+      "latitude": 42.35664,
+      "longitude": -3.67321,
+      "sourceUrl": "https://www.geonames.org/3121663",
+      "updatedAt": "2019-02-01"
+    },
+    {
+      "id": "2517367",
+      "name": "Gandia",
+      "latitude": 38.96667,
+      "longitude": -0.18333,
+      "sourceUrl": "https://www.geonames.org/2517367",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3104499",
+      "name": "Gasteiz / Vitoria",
+      "latitude": 42.84998,
+      "longitude": -2.67268,
+      "sourceUrl": "https://www.geonames.org/3104499",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3121519",
+      "name": "Gavà",
+      "latitude": 41.30605,
+      "longitude": 2.00123,
+      "sourceUrl": "https://www.geonames.org/3121519",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549943",
+      "name": "Gaztambide",
+      "latitude": 40.43498,
+      "longitude": -3.71461,
+      "sourceUrl": "https://www.geonames.org/11549943",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3120989",
+      "name": "Gernika-Lumo",
+      "latitude": 43.31667,
+      "longitude": -2.68333,
+      "sourceUrl": "https://www.geonames.org/3120989",
+      "updatedAt": "2012-11-12"
+    },
+    {
+      "id": "3121437",
+      "name": "Getafe",
+      "latitude": 40.30571,
+      "longitude": -3.73295,
+      "sourceUrl": "https://www.geonames.org/3121437",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3121007",
+      "name": "Getxo",
+      "latitude": 43.35689,
+      "longitude": -3.01146,
+      "sourceUrl": "https://www.geonames.org/3121007",
+      "updatedAt": "2023-01-24"
+    },
+    {
+      "id": "3121424",
+      "name": "Gijón",
+      "latitude": 43.53573,
+      "longitude": -5.66152,
+      "sourceUrl": "https://www.geonames.org/3121424",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3121456",
+      "name": "Girona",
+      "latitude": 41.98311,
+      "longitude": 2.82493,
+      "sourceUrl": "https://www.geonames.org/3121456",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "11549944",
+      "name": "Goya",
+      "latitude": 40.42505,
+      "longitude": -3.67442,
+      "sourceUrl": "https://www.geonames.org/11549944",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2517117",
+      "name": "Granada",
+      "latitude": 37.18817,
+      "longitude": -3.60667,
+      "sourceUrl": "https://www.geonames.org/2517117",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2517111",
+      "name": "Granadilla de Abona",
+      "latitude": 28.11882,
+      "longitude": -16.57599,
+      "sourceUrl": "https://www.geonames.org/2517111",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3121145",
+      "name": "Granollers",
+      "latitude": 41.60797,
+      "longitude": 2.28773,
+      "sourceUrl": "https://www.geonames.org/3121145",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "2567529",
+      "name": "Grao de Murviedro",
+      "latitude": 39.64167,
+      "longitude": -0.23889,
+      "sourceUrl": "https://www.geonames.org/2567529",
+      "updatedAt": "2016-12-20"
+    },
+    {
+      "id": "3121245",
+      "name": "Gràcia",
+      "latitude": 41.40237,
+      "longitude": 2.15641,
+      "sourceUrl": "https://www.geonames.org/3121245",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "3121070",
+      "name": "Guadalajara",
+      "latitude": 40.62862,
+      "longitude": -3.16185,
+      "sourceUrl": "https://www.geonames.org/3121070",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2516925",
+      "name": "Guadix",
+      "latitude": 37.29932,
+      "longitude": -3.13922,
+      "sourceUrl": "https://www.geonames.org/2516925",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2516902",
+      "name": "Guardamar del Segura",
+      "latitude": 38.09031,
+      "longitude": -0.65556,
+      "sourceUrl": "https://www.geonames.org/2516902",
+      "updatedAt": "2012-04-29"
+    },
+    {
+      "id": "11549958",
+      "name": "Guindalera",
+      "latitude": 40.43633,
+      "longitude": -3.66658,
+      "sourceUrl": "https://www.geonames.org/11549958",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2516860",
+      "name": "Guía de Isora",
+      "latitude": 28.21154,
+      "longitude": -16.77947,
+      "sourceUrl": "https://www.geonames.org/2516860",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2517436",
+      "name": "Gáldar",
+      "latitude": 28.14701,
+      "longitude": -15.6502,
+      "sourceUrl": "https://www.geonames.org/2517436",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2516852",
+      "name": "Güimar",
+      "latitude": 28.31122,
+      "longitude": -16.41276,
+      "sourceUrl": "https://www.geonames.org/2516852",
+      "updatedAt": "2015-05-31"
+    },
+    {
+      "id": "2516797",
+      "name": "Hellín",
+      "latitude": 38.5106,
+      "longitude": -1.70096,
+      "sourceUrl": "https://www.geonames.org/2516797",
+      "updatedAt": "2014-08-22"
+    },
+    {
+      "id": "3120811",
+      "name": "Hernani",
+      "latitude": 43.26615,
+      "longitude": -1.97615,
+      "sourceUrl": "https://www.geonames.org/3120811",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "11549960",
+      "name": "Hispanoamérica",
+      "latitude": 40.45537,
+      "longitude": -3.67711,
+      "sourceUrl": "https://www.geonames.org/11549960",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3121881",
+      "name": "Hondarribia",
+      "latitude": 43.36859,
+      "longitude": -1.79622,
+      "sourceUrl": "https://www.geonames.org/3121881",
+      "updatedAt": "2013-05-24"
+    },
+    {
+      "id": "3120637",
+      "name": "Horta",
+      "latitude": 41.43628,
+      "longitude": 2.15725,
+      "sourceUrl": "https://www.geonames.org/3120637",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "6544103",
+      "name": "Horta-Guinardó",
+      "latitude": 41.41849,
+      "longitude": 2.1677,
+      "sourceUrl": "https://www.geonames.org/6544103",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "3120635",
+      "name": "Hortaleza",
+      "latitude": 40.47444,
+      "longitude": -3.6411,
+      "sourceUrl": "https://www.geonames.org/3120635",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "6545104",
+      "name": "Hostafrancs",
+      "latitude": 41.37694,
+      "longitude": 2.14306,
+      "sourceUrl": "https://www.geonames.org/6545104",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "2516548",
+      "name": "Huelva",
+      "latitude": 37.26638,
+      "longitude": -6.94004,
+      "sourceUrl": "https://www.geonames.org/2516548",
+      "updatedAt": "2022-09-23"
+    },
+    {
+      "id": "2516542",
+      "name": "Huercal-Overa",
+      "latitude": 37.38918,
+      "longitude": -1.943,
+      "sourceUrl": "https://www.geonames.org/2516542",
+      "updatedAt": "2025-02-12"
+    },
+    {
+      "id": "3120514",
+      "name": "Huesca",
+      "latitude": 42.13615,
+      "longitude": -0.4087,
+      "sourceUrl": "https://www.geonames.org/3120514",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3120501",
+      "name": "Humanes de Madrid",
+      "latitude": 40.25038,
+      "longitude": -3.83062,
+      "sourceUrl": "https://www.geonames.org/3120501",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2516480",
+      "name": "Ibi",
+      "latitude": 38.62533,
+      "longitude": -0.57225,
+      "sourceUrl": "https://www.geonames.org/2516480",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549939",
+      "name": "Ibiza",
+      "latitude": 40.41888,
+      "longitude": -3.67434,
+      "sourceUrl": "https://www.geonames.org/11549939",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2516479",
+      "name": "Ibiza",
+      "latitude": 38.90883,
+      "longitude": 1.43296,
+      "sourceUrl": "https://www.geonames.org/2516479",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2516474",
+      "name": "Icod de los Vinos",
+      "latitude": 28.37241,
+      "longitude": -16.71188,
+      "sourceUrl": "https://www.geonames.org/2516474",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3120431",
+      "name": "Igualada",
+      "latitude": 41.58098,
+      "longitude": 1.6172,
+      "sourceUrl": "https://www.geonames.org/3120431",
+      "updatedAt": "2025-07-05"
+    },
+    {
+      "id": "3120410",
+      "name": "Illescas",
+      "latitude": 40.12213,
+      "longitude": -3.84704,
+      "sourceUrl": "https://www.geonames.org/3120410",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549947",
+      "name": "Imperial",
+      "latitude": 40.40619,
+      "longitude": -3.71836,
+      "sourceUrl": "https://www.geonames.org/11549947",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2516452",
+      "name": "Inca",
+      "latitude": 39.7211,
+      "longitude": 2.91093,
+      "sourceUrl": "https://www.geonames.org/2516452",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2516443",
+      "name": "Ingenio",
+      "latitude": 27.91855,
+      "longitude": -15.43433,
+      "sourceUrl": "https://www.geonames.org/2516443",
+      "updatedAt": "2025-01-22"
+    },
+    {
+      "id": "3120304",
+      "name": "Irun",
+      "latitude": 43.33904,
+      "longitude": -1.78938,
+      "sourceUrl": "https://www.geonames.org/3120304",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2516431",
+      "name": "Isla Cristina",
+      "latitude": 37.2,
+      "longitude": -7.31667,
+      "sourceUrl": "https://www.geonames.org/2516431",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "8050879",
+      "name": "Iturrama",
+      "latitude": 42.80847,
+      "longitude": -1.65825,
+      "sourceUrl": "https://www.geonames.org/8050879",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2516336",
+      "name": "Javea",
+      "latitude": 38.78333,
+      "longitude": 0.16667,
+      "sourceUrl": "https://www.geonames.org/2516336",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "2516395",
+      "name": "Jaén",
+      "latitude": 37.76922,
+      "longitude": -3.79028,
+      "sourceUrl": "https://www.geonames.org/2516395",
+      "updatedAt": "2024-09-05"
+    },
+    {
+      "id": "2516326",
+      "name": "Jerez de la Frontera",
+      "latitude": 36.68645,
+      "longitude": -6.13606,
+      "sourceUrl": "https://www.geonames.org/2516326",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2516255",
+      "name": "Jumilla",
+      "latitude": 38.47917,
+      "longitude": -1.325,
+      "sourceUrl": "https://www.geonames.org/2516255",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549927",
+      "name": "Justicia",
+      "latitude": 40.42366,
+      "longitude": -3.69666,
+      "sourceUrl": "https://www.geonames.org/11549927",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2516004",
+      "name": "L'Eliana",
+      "latitude": 39.56667,
+      "longitude": -0.53333,
+      "sourceUrl": "https://www.geonames.org/2516004",
+      "updatedAt": "2021-11-05"
+    },
+    {
+      "id": "3120619",
+      "name": "L'Hospitalet de Llobregat",
+      "latitude": 41.35967,
+      "longitude": 2.10028,
+      "sourceUrl": "https://www.geonames.org/3120619",
+      "updatedAt": "2023-02-19"
+    },
+    {
+      "id": "2516217",
+      "name": "La Algaba",
+      "latitude": 37.46325,
+      "longitude": -6.01113,
+      "sourceUrl": "https://www.geonames.org/2516217",
+      "updatedAt": "2021-11-05"
+    },
+    {
+      "id": "6545107",
+      "name": "La Bonanova",
+      "latitude": 41.40585,
+      "longitude": 2.13243,
+      "sourceUrl": "https://www.geonames.org/6545107",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "6545105",
+      "name": "La Bordeta",
+      "latitude": 41.369,
+      "longitude": 2.137,
+      "sourceUrl": "https://www.geonames.org/6545105",
+      "updatedAt": "2026-09-22"
+    },
+    {
+      "id": "2516088",
+      "name": "La Carolina",
+      "latitude": 38.27559,
+      "longitude": -3.61535,
+      "sourceUrl": "https://www.geonames.org/2516088",
+      "updatedAt": "2021-11-05"
+    },
+    {
+      "id": "3119739",
+      "name": "La Felguera",
+      "latitude": 43.3075,
+      "longitude": -5.69092,
+      "sourceUrl": "https://www.geonames.org/3119739",
+      "updatedAt": "2024-10-29"
+    },
+    {
+      "id": "2511401",
+      "name": "La Laguna",
+      "latitude": 28.4853,
+      "longitude": -16.32014,
+      "sourceUrl": "https://www.geonames.org/2511401",
+      "updatedAt": "2019-02-27"
+    },
+    {
+      "id": "2515812",
+      "name": "La Línea de la Concepción",
+      "latitude": 36.16809,
+      "longitude": -5.34777,
+      "sourceUrl": "https://www.geonames.org/2515812",
+      "updatedAt": "2010-04-22"
+    },
+    {
+      "id": "2515698",
+      "name": "La Oliva",
+      "latitude": 28.61052,
+      "longitude": -13.92912,
+      "sourceUrl": "https://www.geonames.org/2515698",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "2515692",
+      "name": "La Orotava",
+      "latitude": 28.39076,
+      "longitude": -16.52309,
+      "sourceUrl": "https://www.geonames.org/2515692",
+      "updatedAt": "2023-10-18"
+    },
+    {
+      "id": "11549980",
+      "name": "La Paz",
+      "latitude": 40.48116,
+      "longitude": -3.69659,
+      "sourceUrl": "https://www.geonames.org/11549980",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3119231",
+      "name": "La Pineda",
+      "latitude": 41.07699,
+      "longitude": 1.17891,
+      "sourceUrl": "https://www.geonames.org/3119231",
+      "updatedAt": "2024-12-27"
+    },
+    {
+      "id": "2512251",
+      "name": "La Pobla de Vallbona",
+      "latitude": 39.59747,
+      "longitude": -0.55468,
+      "sourceUrl": "https://www.geonames.org/2512251",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "2515562",
+      "name": "La Rinconada",
+      "latitude": 37.48613,
+      "longitude": -5.98091,
+      "sourceUrl": "https://www.geonames.org/2515562",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "2515555",
+      "name": "La Roda",
+      "latitude": 39.20735,
+      "longitude": -2.15723,
+      "sourceUrl": "https://www.geonames.org/2515555",
+      "updatedAt": "2020-05-17"
+    },
+    {
+      "id": "3119045",
+      "name": "La Sagrera",
+      "latitude": 41.42271,
+      "longitude": 2.18589,
+      "sourceUrl": "https://www.geonames.org/3119045",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "2515284",
+      "name": "La Solana",
+      "latitude": 38.94422,
+      "longitude": -3.2381,
+      "sourceUrl": "https://www.geonames.org/2515284",
+      "updatedAt": "2021-11-08"
+    },
+    {
+      "id": "2515151",
+      "name": "La Unión",
+      "latitude": 37.61915,
+      "longitude": -0.87799,
+      "sourceUrl": "https://www.geonames.org/2515151",
+      "updatedAt": "2012-01-19"
+    },
+    {
+      "id": "3119631",
+      "name": "Laguna de Duero",
+      "latitude": 41.58151,
+      "longitude": -4.72332,
+      "sourceUrl": "https://www.geonames.org/3119631",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3119536",
+      "name": "Lalín",
+      "latitude": 42.66085,
+      "longitude": -8.11285,
+      "sourceUrl": "https://www.geonames.org/3119536",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "2515493",
+      "name": "Las Cabezas de San Juan",
+      "latitude": 36.9838,
+      "longitude": -5.93933,
+      "sourceUrl": "https://www.geonames.org/2515493",
+      "updatedAt": "2025-01-22"
+    },
+    {
+      "id": "6559641",
+      "name": "Las Gabias",
+      "latitude": 37.13548,
+      "longitude": -3.67029,
+      "sourceUrl": "https://www.geonames.org/6559641",
+      "updatedAt": "2015-06-15"
+    },
+    {
+      "id": "2515270",
+      "name": "Las Palmas de Gran Canaria",
+      "latitude": 28.10178,
+      "longitude": -15.41573,
+      "sourceUrl": "https://www.geonames.org/2515270",
+      "updatedAt": "2026-10-11"
+    },
+    {
+      "id": "3118848",
+      "name": "Las Rozas de Madrid",
+      "latitude": 40.49292,
+      "longitude": -3.87371,
+      "sourceUrl": "https://www.geonames.org/3118848",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "2515219",
+      "name": "Las Torres de Cotillas",
+      "latitude": 38.02822,
+      "longitude": -1.24188,
+      "sourceUrl": "https://www.geonames.org/2515219",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "6545108",
+      "name": "Las Tres Torres",
+      "latitude": 41.39989,
+      "longitude": 2.12931,
+      "sourceUrl": "https://www.geonames.org/6545108",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "11549985",
+      "name": "Las Águilas",
+      "latitude": 40.3818,
+      "longitude": -3.77109,
+      "sourceUrl": "https://www.geonames.org/11549985",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3119027",
+      "name": "Lasarte",
+      "latitude": 43.26774,
+      "longitude": -2.02169,
+      "sourceUrl": "https://www.geonames.org/3119027",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "6544489",
+      "name": "Latina",
+      "latitude": 40.38897,
+      "longitude": -3.74569,
+      "sourceUrl": "https://www.geonames.org/6544489",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3118228",
+      "name": "Laudio / Llodio",
+      "latitude": 43.14322,
+      "longitude": -2.96204,
+      "sourceUrl": "https://www.geonames.org/3118228",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "6545078",
+      "name": "Lavapiés",
+      "latitude": 40.40804,
+      "longitude": -3.70131,
+      "sourceUrl": "https://www.geonames.org/6545078",
+      "updatedAt": "2024-04-20"
+    },
+    {
+      "id": "2515096",
+      "name": "Lebrija",
+      "latitude": 36.92077,
+      "longitude": -6.07529,
+      "sourceUrl": "https://www.geonames.org/2515096",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3118594",
+      "name": "Leganés",
+      "latitude": 40.32718,
+      "longitude": -3.7635,
+      "sourceUrl": "https://www.geonames.org/3118594",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549951",
+      "name": "Legazpi",
+      "latitude": 40.38884,
+      "longitude": -3.68715,
+      "sourceUrl": "https://www.geonames.org/11549951",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3118554",
+      "name": "Leioa",
+      "latitude": 43.32686,
+      "longitude": -2.98884,
+      "sourceUrl": "https://www.geonames.org/3118554",
+      "updatedAt": "2018-02-20"
+    },
+    {
+      "id": "2515072",
+      "name": "Lepe",
+      "latitude": 37.25482,
+      "longitude": -7.20433,
+      "sourceUrl": "https://www.geonames.org/2515072",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "6544101",
+      "name": "Les Corts",
+      "latitude": 41.38712,
+      "longitude": 2.13007,
+      "sourceUrl": "https://www.geonames.org/6544101",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3118532",
+      "name": "León",
+      "latitude": 42.60003,
+      "longitude": -5.57032,
+      "sourceUrl": "https://www.geonames.org/3118532",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2515045",
+      "name": "Linares",
+      "latitude": 38.09519,
+      "longitude": -3.63602,
+      "sourceUrl": "https://www.geonames.org/2515045",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549933",
+      "name": "Lista",
+      "latitude": 40.43202,
+      "longitude": -3.67583,
+      "sourceUrl": "https://www.geonames.org/11549933",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "6943537",
+      "name": "Llefià",
+      "latitude": 41.43806,
+      "longitude": 2.2195,
+      "sourceUrl": "https://www.geonames.org/6943537",
+      "updatedAt": "2011-09-11"
+    },
+    {
+      "id": "3118514",
+      "name": "Lleida",
+      "latitude": 41.61674,
+      "longitude": 0.62218,
+      "sourceUrl": "https://www.geonames.org/3118514",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3118212",
+      "name": "Lloret de Mar",
+      "latitude": 41.69993,
+      "longitude": 2.84565,
+      "sourceUrl": "https://www.geonames.org/3118212",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2514984",
+      "name": "Llucmajor",
+      "latitude": 39.49093,
+      "longitude": 2.89108,
+      "sourceUrl": "https://www.geonames.org/2514984",
+      "updatedAt": "2011-07-31"
+    },
+    {
+      "id": "2515036",
+      "name": "Llíria",
+      "latitude": 39.62894,
+      "longitude": -0.59783,
+      "sourceUrl": "https://www.geonames.org/2515036",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "3118150",
+      "name": "Logroño",
+      "latitude": 42.46615,
+      "longitude": -2.45115,
+      "sourceUrl": "https://www.geonames.org/3118150",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "2514946",
+      "name": "Loja",
+      "latitude": 37.16887,
+      "longitude": -4.15129,
+      "sourceUrl": "https://www.geonames.org/2514946",
+      "updatedAt": "2018-06-21"
+    },
+    {
+      "id": "2514893",
+      "name": "Lora del Río",
+      "latitude": 37.65896,
+      "longitude": -5.52751,
+      "sourceUrl": "https://www.geonames.org/2514893",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2514891",
+      "name": "Lorca",
+      "latitude": 37.67119,
+      "longitude": -1.7017,
+      "sourceUrl": "https://www.geonames.org/2514891",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2514868",
+      "name": "Los Alcázares",
+      "latitude": 37.74425,
+      "longitude": -0.85041,
+      "sourceUrl": "https://www.geonames.org/2514868",
+      "updatedAt": "2021-11-03"
+    },
+    {
+      "id": "11550023",
+      "name": "Los Angeles",
+      "latitude": 40.35579,
+      "longitude": -3.69914,
+      "sourceUrl": "https://www.geonames.org/11550023",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2514824",
+      "name": "Los Barrios",
+      "latitude": 36.18482,
+      "longitude": -5.49213,
+      "sourceUrl": "https://www.geonames.org/2514824",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "2514651",
+      "name": "Los Llanos de Aridane",
+      "latitude": 28.65851,
+      "longitude": -17.91821,
+      "sourceUrl": "https://www.geonames.org/2514651",
+      "updatedAt": "2021-11-03"
+    },
+    {
+      "id": "2514553",
+      "name": "Los Palacios y Villafranca",
+      "latitude": 37.16181,
+      "longitude": -5.92433,
+      "sourceUrl": "https://www.geonames.org/2514553",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "6692471",
+      "name": "Los Realejos",
+      "latitude": 28.38487,
+      "longitude": -16.58275,
+      "sourceUrl": "https://www.geonames.org/6692471",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "11550022",
+      "name": "Los Rosales",
+      "latitude": 40.35572,
+      "longitude": -3.68855,
+      "sourceUrl": "https://www.geonames.org/11550022",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2514392",
+      "name": "Lucena",
+      "latitude": 37.40881,
+      "longitude": -4.48522,
+      "sourceUrl": "https://www.geonames.org/2514392",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549975",
+      "name": "Lucero",
+      "latitude": 40.40229,
+      "longitude": -3.75035,
+      "sourceUrl": "https://www.geonames.org/11549975",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3117814",
+      "name": "Lugo",
+      "latitude": 43.00992,
+      "longitude": -7.55602,
+      "sourceUrl": "https://www.geonames.org/3117814",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3117735",
+      "name": "Madrid",
+      "latitude": 40.4165,
+      "longitude": -3.70256,
+      "sourceUrl": "https://www.geonames.org/3117735",
+      "updatedAt": "2026-02-23"
+    },
+    {
+      "id": "6544494",
+      "name": "Madrid Centro",
+      "latitude": 40.41831,
+      "longitude": -3.70275,
+      "sourceUrl": "https://www.geonames.org/6544494",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2514288",
+      "name": "Mairena del Alcor",
+      "latitude": 37.37301,
+      "longitude": -5.74951,
+      "sourceUrl": "https://www.geonames.org/2514288",
+      "updatedAt": "2016-04-16"
+    },
+    {
+      "id": "2514287",
+      "name": "Mairena del Aljarafe",
+      "latitude": 37.34461,
+      "longitude": -6.06391,
+      "sourceUrl": "https://www.geonames.org/2514287",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3117667",
+      "name": "Majadahonda",
+      "latitude": 40.47353,
+      "longitude": -3.87182,
+      "sourceUrl": "https://www.geonames.org/3117667",
+      "updatedAt": "2015-06-08"
+    },
+    {
+      "id": "3117636",
+      "name": "Malgrat de Mar",
+      "latitude": 41.64662,
+      "longitude": 2.74135,
+      "sourceUrl": "https://www.geonames.org/3117636",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2514216",
+      "name": "Manacor",
+      "latitude": 39.56964,
+      "longitude": 3.20955,
+      "sourceUrl": "https://www.geonames.org/2514216",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2514197",
+      "name": "Manises",
+      "latitude": 39.49139,
+      "longitude": -0.46349,
+      "sourceUrl": "https://www.geonames.org/2514197",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3117539",
+      "name": "Manlleu",
+      "latitude": 42.00228,
+      "longitude": 2.28476,
+      "sourceUrl": "https://www.geonames.org/3117539",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3117533",
+      "name": "Manresa",
+      "latitude": 41.72815,
+      "longitude": 1.82399,
+      "sourceUrl": "https://www.geonames.org/3117533",
+      "updatedAt": "2025-07-05"
+    },
+    {
+      "id": "2514190",
+      "name": "Manzanares",
+      "latitude": 38.99915,
+      "longitude": -3.36991,
+      "sourceUrl": "https://www.geonames.org/2514190",
+      "updatedAt": "2022-10-30"
+    },
+    {
+      "id": "2514176",
+      "name": "Maracena",
+      "latitude": 37.20764,
+      "longitude": -3.63493,
+      "sourceUrl": "https://www.geonames.org/2514176",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2514169",
+      "name": "Marbella",
+      "latitude": 36.51543,
+      "longitude": -4.88583,
+      "sourceUrl": "https://www.geonames.org/2514169",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2514158",
+      "name": "Marchena",
+      "latitude": 37.329,
+      "longitude": -5.41681,
+      "sourceUrl": "https://www.geonames.org/2514158",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2514097",
+      "name": "Marratxí",
+      "latitude": 39.62142,
+      "longitude": 2.7253,
+      "sourceUrl": "https://www.geonames.org/2514097",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11550000",
+      "name": "Marroquina",
+      "latitude": 40.41073,
+      "longitude": -3.64061,
+      "sourceUrl": "https://www.geonames.org/11550000",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3117331",
+      "name": "Martorell",
+      "latitude": 41.47402,
+      "longitude": 1.93062,
+      "sourceUrl": "https://www.geonames.org/3117331",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2514073",
+      "name": "Martos",
+      "latitude": 37.72107,
+      "longitude": -3.97264,
+      "sourceUrl": "https://www.geonames.org/2514073",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3117409",
+      "name": "Marín",
+      "latitude": 42.39145,
+      "longitude": -8.70136,
+      "sourceUrl": "https://www.geonames.org/3117409",
+      "updatedAt": "2018-12-03"
+    },
+    {
+      "id": "2514042",
+      "name": "Maspalomas",
+      "latitude": 27.76056,
+      "longitude": -15.58602,
+      "sourceUrl": "https://www.geonames.org/2514042",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "2514066",
+      "name": "Massamagrell",
+      "latitude": 39.56667,
+      "longitude": -0.33333,
+      "sourceUrl": "https://www.geonames.org/2514066",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3117164",
+      "name": "Mataró",
+      "latitude": 41.54211,
+      "longitude": 2.4445,
+      "sourceUrl": "https://www.geonames.org/3117164",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2513983",
+      "name": "Mazarrón",
+      "latitude": 37.5992,
+      "longitude": -1.31493,
+      "sourceUrl": "https://www.geonames.org/2513983",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2514301",
+      "name": "Maó",
+      "latitude": 39.88853,
+      "longitude": 4.26583,
+      "sourceUrl": "https://www.geonames.org/2514301",
+      "updatedAt": "2026-03-15"
+    },
+    {
+      "id": "11550010",
+      "name": "Media Legua",
+      "latitude": 40.41189,
+      "longitude": -3.65682,
+      "sourceUrl": "https://www.geonames.org/11550010",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3117010",
+      "name": "Medina del Campo",
+      "latitude": 41.31239,
+      "longitude": -4.91413,
+      "sourceUrl": "https://www.geonames.org/3117010",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3116963",
+      "name": "Mejorada del Campo",
+      "latitude": 40.39283,
+      "longitude": -3.48194,
+      "sourceUrl": "https://www.geonames.org/3116963",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2513947",
+      "name": "Melilla",
+      "latitude": 35.29369,
+      "longitude": -2.93833,
+      "sourceUrl": "https://www.geonames.org/2513947",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3116789",
+      "name": "Mieres",
+      "latitude": 43.25,
+      "longitude": -5.76667,
+      "sourceUrl": "https://www.geonames.org/3116789",
+      "updatedAt": "2018-12-01"
+    },
+    {
+      "id": "2513885",
+      "name": "Miguelturra",
+      "latitude": 38.96442,
+      "longitude": -3.89047,
+      "sourceUrl": "https://www.geonames.org/2513885",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "2513882",
+      "name": "Mijas",
+      "latitude": 36.59575,
+      "longitude": -4.63728,
+      "sourceUrl": "https://www.geonames.org/2513882",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3116689",
+      "name": "Miranda de Ebro",
+      "latitude": 42.6865,
+      "longitude": -2.94695,
+      "sourceUrl": "https://www.geonames.org/3116689",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549991",
+      "name": "Mirasierra",
+      "latitude": 40.49631,
+      "longitude": -3.71957,
+      "sourceUrl": "https://www.geonames.org/11549991",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2513811",
+      "name": "Mislata",
+      "latitude": 39.47523,
+      "longitude": -0.41825,
+      "sourceUrl": "https://www.geonames.org/2513811",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3116653",
+      "name": "Moaña",
+      "latitude": 42.27807,
+      "longitude": -8.73921,
+      "sourceUrl": "https://www.geonames.org/3116653",
+      "updatedAt": "2018-12-03"
+    },
+    {
+      "id": "2513791",
+      "name": "Moguer",
+      "latitude": 37.27559,
+      "longitude": -6.83851,
+      "sourceUrl": "https://www.geonames.org/2513791",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2513798",
+      "name": "Mogán",
+      "latitude": 27.88385,
+      "longitude": -15.72538,
+      "sourceUrl": "https://www.geonames.org/2513798",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2513759",
+      "name": "Molina de Segura",
+      "latitude": 38.05456,
+      "longitude": -1.20763,
+      "sourceUrl": "https://www.geonames.org/2513759",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "3116562",
+      "name": "Molins de Rei",
+      "latitude": 41.41667,
+      "longitude": 2.01667,
+      "sourceUrl": "https://www.geonames.org/3116562",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "3116553",
+      "name": "Mollet del Vallès",
+      "latitude": 41.54026,
+      "longitude": 2.21306,
+      "sourceUrl": "https://www.geonames.org/3116553",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "2513703",
+      "name": "Moncada",
+      "latitude": 39.54555,
+      "longitude": -0.39551,
+      "sourceUrl": "https://www.geonames.org/2513703",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "6544099",
+      "name": "Moncloa-Aravaca",
+      "latitude": 40.43547,
+      "longitude": -3.7317,
+      "sourceUrl": "https://www.geonames.org/6544099",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "3116478",
+      "name": "Monforte de Lemos",
+      "latitude": 42.52165,
+      "longitude": -7.51422,
+      "sourceUrl": "https://www.geonames.org/3116478",
+      "updatedAt": "2015-06-07"
+    },
+    {
+      "id": "3116527",
+      "name": "Montcada i Reixac",
+      "latitude": 41.48333,
+      "longitude": 2.18333,
+      "sourceUrl": "https://www.geonames.org/3116527",
+      "updatedAt": "2010-04-22"
+    },
+    {
+      "id": "6615443",
+      "name": "Montecanal",
+      "latitude": 41.62965,
+      "longitude": -0.93873,
+      "sourceUrl": "https://www.geonames.org/6615443",
+      "updatedAt": "2011-09-11"
+    },
+    {
+      "id": "2513604",
+      "name": "Montijo",
+      "latitude": 38.90839,
+      "longitude": -6.61785,
+      "sourceUrl": "https://www.geonames.org/2513604",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2513601",
+      "name": "Montilla",
+      "latitude": 37.58627,
+      "longitude": -4.63805,
+      "sourceUrl": "https://www.geonames.org/2513601",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3116262",
+      "name": "Montornès del Vallès",
+      "latitude": 41.54206,
+      "longitude": 2.26748,
+      "sourceUrl": "https://www.geonames.org/3116262",
+      "updatedAt": "2015-06-01"
+    },
+    {
+      "id": "3116224",
+      "name": "Monzón",
+      "latitude": 41.91084,
+      "longitude": 0.19406,
+      "sourceUrl": "https://www.geonames.org/3116224",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3116156",
+      "name": "Moratalaz",
+      "latitude": 40.40742,
+      "longitude": -3.64935,
+      "sourceUrl": "https://www.geonames.org/3116156",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2513509",
+      "name": "Morón de la Frontera",
+      "latitude": 37.12084,
+      "longitude": -5.45403,
+      "sourceUrl": "https://www.geonames.org/2513509",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "11550002",
+      "name": "Moscardó",
+      "latitude": 40.389,
+      "longitude": -3.70682,
+      "sourceUrl": "https://www.geonames.org/11550002",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2513477",
+      "name": "Motril",
+      "latitude": 36.75066,
+      "longitude": -3.5179,
+      "sourceUrl": "https://www.geonames.org/2513477",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2513436",
+      "name": "Mula",
+      "latitude": 38.04095,
+      "longitude": -1.49014,
+      "sourceUrl": "https://www.geonames.org/2513436",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3115907",
+      "name": "Mungia",
+      "latitude": 43.35461,
+      "longitude": -2.84524,
+      "sourceUrl": "https://www.geonames.org/3115907",
+      "updatedAt": "2015-06-03"
+    },
+    {
+      "id": "2513416",
+      "name": "Murcia",
+      "latitude": 37.98704,
+      "longitude": -1.13004,
+      "sourceUrl": "https://www.geonames.org/2513416",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "2513465",
+      "name": "Mutxamel",
+      "latitude": 38.4158,
+      "longitude": -0.44529,
+      "sourceUrl": "https://www.geonames.org/2513465",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "2514256",
+      "name": "Málaga",
+      "latitude": 36.72016,
+      "longitude": -4.42034,
+      "sourceUrl": "https://www.geonames.org/2514256",
+      "updatedAt": "2026-04-30"
+    },
+    {
+      "id": "2513917",
+      "name": "Mérida",
+      "latitude": 38.91802,
+      "longitude": -6.34292,
+      "sourceUrl": "https://www.geonames.org/2513917",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3116025",
+      "name": "Móstoles",
+      "latitude": 40.32234,
+      "longitude": -3.86496,
+      "sourceUrl": "https://www.geonames.org/3116025",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3115739",
+      "name": "Narón",
+      "latitude": 43.50175,
+      "longitude": -8.19082,
+      "sourceUrl": "https://www.geonames.org/3115739",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "8629192",
+      "name": "Natahoyo",
+      "latitude": 43.54035,
+      "longitude": -5.68233,
+      "sourceUrl": "https://www.geonames.org/8629192",
+      "updatedAt": "2013-10-20"
+    },
+    {
+      "id": "3115659",
+      "name": "Navalcarnero",
+      "latitude": 40.28908,
+      "longitude": -4.01197,
+      "sourceUrl": "https://www.geonames.org/3115659",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2513324",
+      "name": "Navalmoral de la Mata",
+      "latitude": 39.89158,
+      "longitude": -5.54064,
+      "sourceUrl": "https://www.geonames.org/2513324",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549805",
+      "name": "Navas",
+      "latitude": 41.41803,
+      "longitude": 2.18596,
+      "sourceUrl": "https://www.geonames.org/11549805",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2513240",
+      "name": "Nerja",
+      "latitude": 36.75278,
+      "longitude": -3.8744,
+      "sourceUrl": "https://www.geonames.org/2513240",
+      "updatedAt": "2018-11-22"
+    },
+    {
+      "id": "3115463",
+      "name": "Nigrán",
+      "latitude": 42.14153,
+      "longitude": -8.80656,
+      "sourceUrl": "https://www.geonames.org/3115463",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549932",
+      "name": "Niño Jesús",
+      "latitude": 40.41161,
+      "longitude": -3.67343,
+      "sourceUrl": "https://www.geonames.org/11549932",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "6252065",
+      "name": "Nou Barris",
+      "latitude": 41.44163,
+      "longitude": 2.17727,
+      "sourceUrl": "https://www.geonames.org/6252065",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2513195",
+      "name": "Novelda",
+      "latitude": 38.38479,
+      "longitude": -0.76773,
+      "sourceUrl": "https://www.geonames.org/2513195",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549937",
+      "name": "Nueva España",
+      "latitude": 40.46276,
+      "longitude": -3.67813,
+      "sourceUrl": "https://www.geonames.org/11549937",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549994",
+      "name": "Numancia",
+      "latitude": 40.3995,
+      "longitude": -3.65853,
+      "sourceUrl": "https://www.geonames.org/11549994",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2513222",
+      "name": "Níjar",
+      "latitude": 36.96655,
+      "longitude": -2.20595,
+      "sourceUrl": "https://www.geonames.org/2513222",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "3115177",
+      "name": "Oleiros",
+      "latitude": 43.33333,
+      "longitude": -8.31667,
+      "sourceUrl": "https://www.geonames.org/3115177",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3115171",
+      "name": "Olesa de Montserrat",
+      "latitude": 41.54372,
+      "longitude": 1.89407,
+      "sourceUrl": "https://www.geonames.org/3115171",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "2513145",
+      "name": "Oliva",
+      "latitude": 38.91971,
+      "longitude": -0.11935,
+      "sourceUrl": "https://www.geonames.org/2513145",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "6615444",
+      "name": "Oliver-Valdefierro",
+      "latitude": 41.64454,
+      "longitude": -0.93349,
+      "sourceUrl": "https://www.geonames.org/6615444",
+      "updatedAt": "2015-05-07"
+    },
+    {
+      "id": "3115093",
+      "name": "Olot",
+      "latitude": 42.18096,
+      "longitude": 2.49012,
+      "sourceUrl": "https://www.geonames.org/3115093",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2513115",
+      "name": "Onda",
+      "latitude": 39.96495,
+      "longitude": -0.26041,
+      "sourceUrl": "https://www.geonames.org/2513115",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2513106",
+      "name": "Ontinyent",
+      "latitude": 38.82191,
+      "longitude": -0.60603,
+      "sourceUrl": "https://www.geonames.org/2513106",
+      "updatedAt": "2015-05-31"
+    },
+    {
+      "id": "11549979",
+      "name": "Opañel",
+      "latitude": 40.39023,
+      "longitude": -3.72178,
+      "sourceUrl": "https://www.geonames.org/11549979",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549997",
+      "name": "Orcasitas",
+      "latitude": 40.36863,
+      "longitude": -3.71242,
+      "sourceUrl": "https://www.geonames.org/11549997",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3114957",
+      "name": "Oria",
+      "latitude": 43.25541,
+      "longitude": -2.01873,
+      "sourceUrl": "https://www.geonames.org/3114957",
+      "updatedAt": "2012-11-19"
+    },
+    {
+      "id": "2513076",
+      "name": "Orihuela",
+      "latitude": 38.08483,
+      "longitude": -0.94401,
+      "sourceUrl": "https://www.geonames.org/2513076",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2513052",
+      "name": "Osuna",
+      "latitude": 37.2376,
+      "longitude": -5.10311,
+      "sourceUrl": "https://www.geonames.org/2513052",
+      "updatedAt": "2015-05-31"
+    },
+    {
+      "id": "3114965",
+      "name": "Ourense",
+      "latitude": 42.33669,
+      "longitude": -7.86407,
+      "sourceUrl": "https://www.geonames.org/3114965",
+      "updatedAt": "2025-06-21"
+    },
+    {
+      "id": "3114711",
+      "name": "Oviedo",
+      "latitude": 43.36029,
+      "longitude": -5.84476,
+      "sourceUrl": "https://www.geonames.org/3114711",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "11549954",
+      "name": "Pacífico",
+      "latitude": 40.40435,
+      "longitude": -3.67873,
+      "sourceUrl": "https://www.geonames.org/11549954",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2513029",
+      "name": "Paiporta",
+      "latitude": 39.42814,
+      "longitude": -0.41765,
+      "sourceUrl": "https://www.geonames.org/2513029",
+      "updatedAt": "2015-06-14"
+    },
+    {
+      "id": "11549949",
+      "name": "Palacio",
+      "latitude": 40.41542,
+      "longitude": -3.71407,
+      "sourceUrl": "https://www.geonames.org/11549949",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3114567",
+      "name": "Palafrugell",
+      "latitude": 41.91738,
+      "longitude": 3.1631,
+      "sourceUrl": "https://www.geonames.org/3114567",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3114566",
+      "name": "Palamós",
+      "latitude": 41.84843,
+      "longitude": 3.12912,
+      "sourceUrl": "https://www.geonames.org/3114566",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3114531",
+      "name": "Palencia",
+      "latitude": 42.00955,
+      "longitude": -4.52406,
+      "sourceUrl": "https://www.geonames.org/3114531",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2512989",
+      "name": "Palma",
+      "latitude": 39.56939,
+      "longitude": 2.65024,
+      "sourceUrl": "https://www.geonames.org/2512989",
+      "updatedAt": "2026-03-23"
+    },
+    {
+      "id": "2512990",
+      "name": "Palma del Río",
+      "latitude": 37.70024,
+      "longitude": -5.28121,
+      "sourceUrl": "https://www.geonames.org/2512990",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "11550008",
+      "name": "Palomeras Bajas",
+      "latitude": 40.38476,
+      "longitude": -3.65888,
+      "sourceUrl": "https://www.geonames.org/11550008",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11550009",
+      "name": "Palomeras Sureste",
+      "latitude": 40.38524,
+      "longitude": -3.63726,
+      "sourceUrl": "https://www.geonames.org/11550009",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549953",
+      "name": "Palos de Moguer",
+      "latitude": 40.40351,
+      "longitude": -3.69468,
+      "sourceUrl": "https://www.geonames.org/11549953",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3114472",
+      "name": "Pamplona",
+      "latitude": 42.81687,
+      "longitude": -1.64323,
+      "sourceUrl": "https://www.geonames.org/3114472",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3114267",
+      "name": "Parets del Vallès",
+      "latitude": 41.57481,
+      "longitude": 2.23306,
+      "sourceUrl": "https://www.geonames.org/3114267",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "3114256",
+      "name": "Parla",
+      "latitude": 40.23604,
+      "longitude": -3.76752,
+      "sourceUrl": "https://www.geonames.org/3114256",
+      "updatedAt": "2014-11-17"
+    },
+    {
+      "id": "6693088",
+      "name": "Pasaia",
+      "latitude": 43.3253,
+      "longitude": -1.92707,
+      "sourceUrl": "https://www.geonames.org/6693088",
+      "updatedAt": "2019-02-20"
+    },
+    {
+      "id": "2512862",
+      "name": "Paterna",
+      "latitude": 39.50263,
+      "longitude": -0.44079,
+      "sourceUrl": "https://www.geonames.org/2512862",
+      "updatedAt": "2019-01-08"
+    },
+    {
+      "id": "3113943",
+      "name": "Peña Grande",
+      "latitude": 40.47456,
+      "longitude": -3.72236,
+      "sourceUrl": "https://www.geonames.org/3113943",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2512620",
+      "name": "Picassent",
+      "latitude": 39.3635,
+      "longitude": -0.45949,
+      "sourceUrl": "https://www.geonames.org/2512620",
+      "updatedAt": "2015-05-31"
+    },
+    {
+      "id": "3113576",
+      "name": "Piera",
+      "latitude": 41.52232,
+      "longitude": 1.75076,
+      "sourceUrl": "https://www.geonames.org/3113576",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "11549974",
+      "name": "Pilar",
+      "latitude": 40.47714,
+      "longitude": -3.70959,
+      "sourceUrl": "https://www.geonames.org/11549974",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2512581",
+      "name": "Pilar de la Horadada",
+      "latitude": 37.86591,
+      "longitude": -0.79256,
+      "sourceUrl": "https://www.geonames.org/2512581",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "6324376",
+      "name": "Pinar de Chamartín",
+      "latitude": 40.47903,
+      "longitude": -3.66836,
+      "sourceUrl": "https://www.geonames.org/6324376",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "11550020",
+      "name": "Pinar del Rey",
+      "latitude": 40.4724,
+      "longitude": -3.64709,
+      "sourceUrl": "https://www.geonames.org/11550020",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3113526",
+      "name": "Pineda de Mar",
+      "latitude": 41.62763,
+      "longitude": 2.6889,
+      "sourceUrl": "https://www.geonames.org/3113526",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3113415",
+      "name": "Pinto",
+      "latitude": 40.24147,
+      "longitude": -3.69999,
+      "sourceUrl": "https://www.geonames.org/3113415",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11550018",
+      "name": "Piovera",
+      "latitude": 40.45572,
+      "longitude": -3.63509,
+      "sourceUrl": "https://www.geonames.org/11550018",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3113331",
+      "name": "Plasencia",
+      "latitude": 40.03116,
+      "longitude": -6.08845,
+      "sourceUrl": "https://www.geonames.org/3113331",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "6354969",
+      "name": "Playa del Ingles",
+      "latitude": 27.7567,
+      "longitude": -15.5787,
+      "sourceUrl": "https://www.geonames.org/6354969",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "6545103",
+      "name": "Poble Sec",
+      "latitude": 41.37452,
+      "longitude": 2.16326,
+      "sourceUrl": "https://www.geonames.org/6545103",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3113035",
+      "name": "Poio",
+      "latitude": 42.44775,
+      "longitude": -8.68594,
+      "sourceUrl": "https://www.geonames.org/3113035",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "2512432",
+      "name": "Pollença",
+      "latitude": 39.87678,
+      "longitude": 3.01626,
+      "sourceUrl": "https://www.geonames.org/2512432",
+      "updatedAt": "2012-04-29"
+    },
+    {
+      "id": "3113236",
+      "name": "Ponferrada",
+      "latitude": 42.54664,
+      "longitude": -6.59619,
+      "sourceUrl": "https://www.geonames.org/3113236",
+      "updatedAt": "2012-12-08"
+    },
+    {
+      "id": "3112761",
+      "name": "Ponteareas",
+      "latitude": 42.17476,
+      "longitude": -8.50398,
+      "sourceUrl": "https://www.geonames.org/3112761",
+      "updatedAt": "2015-05-30"
+    },
+    {
+      "id": "3113209",
+      "name": "Pontevedra",
+      "latitude": 42.431,
+      "longitude": -8.64435,
+      "sourceUrl": "https://www.geonames.org/3113209",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3113157",
+      "name": "Porriño",
+      "latitude": 42.16156,
+      "longitude": -8.6198,
+      "sourceUrl": "https://www.geonames.org/3113157",
+      "updatedAt": "2018-12-01"
+    },
+    {
+      "id": "11549785",
+      "name": "Porta",
+      "latitude": 41.4349,
+      "longitude": 2.17883,
+      "sourceUrl": "https://www.geonames.org/11549785",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "11550005",
+      "name": "Portazgo",
+      "latitude": 40.39061,
+      "longitude": -3.64824,
+      "sourceUrl": "https://www.geonames.org/11550005",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3113082",
+      "name": "Portugalete",
+      "latitude": 43.32099,
+      "longitude": -3.02064,
+      "sourceUrl": "https://www.geonames.org/3113082",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2512340",
+      "name": "Pozoblanco",
+      "latitude": 38.37906,
+      "longitude": -4.84827,
+      "sourceUrl": "https://www.geonames.org/2512340",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3112989",
+      "name": "Pozuelo de Alarcón",
+      "latitude": 40.43293,
+      "longitude": -3.81338,
+      "sourceUrl": "https://www.geonames.org/3112989",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11550004",
+      "name": "Pradolongo",
+      "latitude": 40.37814,
+      "longitude": -3.70712,
+      "sourceUrl": "https://www.geonames.org/11550004",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3112866",
+      "name": "Premià de Mar",
+      "latitude": 41.49206,
+      "longitude": 2.36524,
+      "sourceUrl": "https://www.geonames.org/3112866",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2512282",
+      "name": "Priego de Córdoba",
+      "latitude": 37.43807,
+      "longitude": -4.19523,
+      "sourceUrl": "https://www.geonames.org/2512282",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "8050888",
+      "name": "Primer Ensanche",
+      "latitude": 42.81483,
+      "longitude": -1.64898,
+      "sourceUrl": "https://www.geonames.org/8050888",
+      "updatedAt": "2024-01-25"
+    },
+    {
+      "id": "3119198",
+      "name": "Prosperidad",
+      "latitude": 40.44427,
+      "longitude": -3.66926,
+      "sourceUrl": "https://www.geonames.org/3119198",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "11549778",
+      "name": "Provenals del Poblenou",
+      "latitude": 41.41109,
+      "longitude": 2.2026,
+      "sourceUrl": "https://www.geonames.org/11549778",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "11549981",
+      "name": "Pueblo Nuevo",
+      "latitude": 40.42629,
+      "longitude": -3.63546,
+      "sourceUrl": "https://www.geonames.org/11549981",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3112737",
+      "name": "Puente de Vallecas",
+      "latitude": 40.39354,
+      "longitude": -3.662,
+      "sourceUrl": "https://www.geonames.org/3112737",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2512232",
+      "name": "Puente-Genil",
+      "latitude": 37.38943,
+      "longitude": -4.76686,
+      "sourceUrl": "https://www.geonames.org/2512232",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "11549986",
+      "name": "Puerta Bonita",
+      "latitude": 40.37966,
+      "longitude": -3.73909,
+      "sourceUrl": "https://www.geonames.org/11549986",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549940",
+      "name": "Puerta del Angel",
+      "latitude": 40.40969,
+      "longitude": -3.73181,
+      "sourceUrl": "https://www.geonames.org/11549940",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2512169",
+      "name": "Puerto Real",
+      "latitude": 36.52819,
+      "longitude": -6.19011,
+      "sourceUrl": "https://www.geonames.org/2512169",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2512196",
+      "name": "Puerto de la Cruz",
+      "latitude": 28.41686,
+      "longitude": -16.55085,
+      "sourceUrl": "https://www.geonames.org/2512196",
+      "updatedAt": "2023-10-18"
+    },
+    {
+      "id": "6355013",
+      "name": "Puerto del Carmen",
+      "latitude": 28.92313,
+      "longitude": -13.66579,
+      "sourceUrl": "https://www.geonames.org/6355013",
+      "updatedAt": "2015-06-10"
+    },
+    {
+      "id": "2512186",
+      "name": "Puerto del Rosario",
+      "latitude": 28.50038,
+      "longitude": -13.86272,
+      "sourceUrl": "https://www.geonames.org/2512186",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2512177",
+      "name": "Puertollano",
+      "latitude": 38.68712,
+      "longitude": -4.10734,
+      "sourceUrl": "https://www.geonames.org/2512177",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2512127",
+      "name": "Puçol",
+      "latitude": 39.61667,
+      "longitude": -0.3,
+      "sourceUrl": "https://www.geonames.org/2512127",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2513026",
+      "name": "Pájara",
+      "latitude": 28.35039,
+      "longitude": -14.1076,
+      "sourceUrl": "https://www.geonames.org/2513026",
+      "updatedAt": "2019-09-16"
+    },
+    {
+      "id": "2519068",
+      "name": "Quart de Poblet",
+      "latitude": 39.48139,
+      "longitude": -0.43937,
+      "sourceUrl": "https://www.geonames.org/2519068",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549999",
+      "name": "Quintana",
+      "latitude": 40.43701,
+      "longitude": -3.64507,
+      "sourceUrl": "https://www.geonames.org/11549999",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2511994",
+      "name": "Realejo Alto",
+      "latitude": 28.37645,
+      "longitude": -16.58575,
+      "sourceUrl": "https://www.geonames.org/2511994",
+      "updatedAt": "2012-01-19"
+    },
+    {
+      "id": "11549942",
+      "name": "Recoletos",
+      "latitude": 40.4246,
+      "longitude": -3.68582,
+      "sourceUrl": "https://www.geonames.org/11549942",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3112154",
+      "name": "Redondela",
+      "latitude": 42.28337,
+      "longitude": -8.6096,
+      "sourceUrl": "https://www.geonames.org/3112154",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "11550030",
+      "name": "Rejas",
+      "latitude": 40.44509,
+      "longitude": -3.57016,
+      "sourceUrl": "https://www.geonames.org/11550030",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2511930",
+      "name": "Requena",
+      "latitude": 39.48834,
+      "longitude": -1.10044,
+      "sourceUrl": "https://www.geonames.org/2511930",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "6544495",
+      "name": "Retiro",
+      "latitude": 40.41317,
+      "longitude": -3.68307,
+      "sourceUrl": "https://www.geonames.org/6544495",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3111933",
+      "name": "Reus",
+      "latitude": 41.15612,
+      "longitude": 1.10687,
+      "sourceUrl": "https://www.geonames.org/3111933",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2511880",
+      "name": "Ribarroja del Turia",
+      "latitude": 39.54595,
+      "longitude": -0.57069,
+      "sourceUrl": "https://www.geonames.org/2511880",
+      "updatedAt": "2021-11-05"
+    },
+    {
+      "id": "3111807",
+      "name": "Ribeira",
+      "latitude": 42.73809,
+      "longitude": -8.44106,
+      "sourceUrl": "https://www.geonames.org/3111807",
+      "updatedAt": "2020-04-24"
+    },
+    {
+      "id": "2511852",
+      "name": "Rincón de la Victoria",
+      "latitude": 36.71715,
+      "longitude": -4.27583,
+      "sourceUrl": "https://www.geonames.org/2511852",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549969",
+      "name": "Rios Rosas",
+      "latitude": 40.44239,
+      "longitude": -3.69773,
+      "sourceUrl": "https://www.geonames.org/11549969",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3111605",
+      "name": "Ripollet",
+      "latitude": 41.49686,
+      "longitude": 2.15739,
+      "sourceUrl": "https://www.geonames.org/3111605",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3107112",
+      "name": "Rivas-Vaciamadrid",
+      "latitude": 40.32605,
+      "longitude": -3.51089,
+      "sourceUrl": "https://www.geonames.org/3107112",
+      "updatedAt": "2023-02-19"
+    },
+    {
+      "id": "2511752",
+      "name": "Rojales",
+      "latitude": 38.08799,
+      "longitude": -0.72544,
+      "sourceUrl": "https://www.geonames.org/2511752",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2511730",
+      "name": "Ronda",
+      "latitude": 36.74231,
+      "longitude": -5.16709,
+      "sourceUrl": "https://www.geonames.org/2511730",
+      "updatedAt": "2012-12-15"
+    },
+    {
+      "id": "2511716",
+      "name": "Roquetas de Mar",
+      "latitude": 36.76419,
+      "longitude": -2.61475,
+      "sourceUrl": "https://www.geonames.org/2511716",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11550029",
+      "name": "Rosas",
+      "latitude": 40.42752,
+      "longitude": -3.59426,
+      "sourceUrl": "https://www.geonames.org/11550029",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3111348",
+      "name": "Roses",
+      "latitude": 42.26199,
+      "longitude": 3.17689,
+      "sourceUrl": "https://www.geonames.org/3111348",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2511700",
+      "name": "Rota",
+      "latitude": 36.62364,
+      "longitude": -6.35997,
+      "sourceUrl": "https://www.geonames.org/2511700",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3111294",
+      "name": "Rubí",
+      "latitude": 41.49226,
+      "longitude": 2.03305,
+      "sourceUrl": "https://www.geonames.org/3111294",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3111199",
+      "name": "Sabadell",
+      "latitude": 41.54329,
+      "longitude": 2.10942,
+      "sourceUrl": "https://www.geonames.org/3111199",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "6690794",
+      "name": "Sagrada Família",
+      "latitude": 41.40408,
+      "longitude": 2.17332,
+      "sourceUrl": "https://www.geonames.org/6690794",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "2511619",
+      "name": "Sagunto",
+      "latitude": 39.68333,
+      "longitude": -0.26667,
+      "sourceUrl": "https://www.geonames.org/2511619",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "3111108",
+      "name": "Salamanca",
+      "latitude": 40.96882,
+      "longitude": -5.66388,
+      "sourceUrl": "https://www.geonames.org/3111108",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "6544491",
+      "name": "Salamanca",
+      "latitude": 40.42972,
+      "longitude": -3.67975,
+      "sourceUrl": "https://www.geonames.org/6544491",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3110986",
+      "name": "Salou",
+      "latitude": 41.07663,
+      "longitude": 1.14163,
+      "sourceUrl": "https://www.geonames.org/3110986",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "3110983",
+      "name": "Salt",
+      "latitude": 41.97489,
+      "longitude": 2.79281,
+      "sourceUrl": "https://www.geonames.org/3110983",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3110962",
+      "name": "Sama",
+      "latitude": 43.29568,
+      "longitude": -5.68416,
+      "sourceUrl": "https://www.geonames.org/3110962",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "3110880",
+      "name": "San Andrés del Rabanedo",
+      "latitude": 42.61174,
+      "longitude": -5.61671,
+      "sourceUrl": "https://www.geonames.org/3110880",
+      "updatedAt": "2024-06-09"
+    },
+    {
+      "id": "2511447",
+      "name": "San Bartolomé",
+      "latitude": 29.00093,
+      "longitude": -13.613,
+      "sourceUrl": "https://www.geonames.org/2511447",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2511440",
+      "name": "San Bartolomé de Tirajana",
+      "latitude": 27.92481,
+      "longitude": -15.57329,
+      "sourceUrl": "https://www.geonames.org/2511440",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "6544488",
+      "name": "San Blas-Canillejas",
+      "latitude": 40.43893,
+      "longitude": -3.61537,
+      "sourceUrl": "https://www.geonames.org/6544488",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "11550021",
+      "name": "San Cristobal",
+      "latitude": 40.34077,
+      "longitude": -3.68843,
+      "sourceUrl": "https://www.geonames.org/11550021",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11550006",
+      "name": "San Diego",
+      "latitude": 40.39003,
+      "longitude": -3.66787,
+      "sourceUrl": "https://www.geonames.org/11550006",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11550001",
+      "name": "San Fermín",
+      "latitude": 40.37059,
+      "longitude": -3.68912,
+      "sourceUrl": "https://www.geonames.org/11550001",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2511388",
+      "name": "San Fernando",
+      "latitude": 36.4759,
+      "longitude": -6.19817,
+      "sourceUrl": "https://www.geonames.org/2511388",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3110627",
+      "name": "San Fernando de Henares",
+      "latitude": 40.42386,
+      "longitude": -3.53261,
+      "sourceUrl": "https://www.geonames.org/3110627",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "11549990",
+      "name": "San Isidro",
+      "latitude": 40.3966,
+      "longitude": -3.72833,
+      "sourceUrl": "https://www.geonames.org/11549990",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2511371",
+      "name": "San Isidro",
+      "latitude": 28.07617,
+      "longitude": -16.558,
+      "sourceUrl": "https://www.geonames.org/2511371",
+      "updatedAt": "2013-08-07"
+    },
+    {
+      "id": "2511366",
+      "name": "San Javier",
+      "latitude": 37.80626,
+      "longitude": -0.83736,
+      "sourceUrl": "https://www.geonames.org/2511366",
+      "updatedAt": "2015-10-24"
+    },
+    {
+      "id": "2511329",
+      "name": "San Juan de Aznalfarache",
+      "latitude": 37.35813,
+      "longitude": -6.03731,
+      "sourceUrl": "https://www.geonames.org/2511329",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3110458",
+      "name": "San Lorenzo de El Escorial",
+      "latitude": 40.59144,
+      "longitude": -4.14738,
+      "sourceUrl": "https://www.geonames.org/3110458",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3110360",
+      "name": "San Martín de la Vega",
+      "latitude": 40.20735,
+      "longitude": -3.57063,
+      "sourceUrl": "https://www.geonames.org/3110360",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2511287",
+      "name": "San Miguel De Abona",
+      "latitude": 28.09826,
+      "longitude": -16.61708,
+      "sourceUrl": "https://www.geonames.org/2511287",
+      "updatedAt": "2015-12-04"
+    },
+    {
+      "id": "11550014",
+      "name": "San Pascual",
+      "latitude": 40.44286,
+      "longitude": -3.65346,
+      "sourceUrl": "https://www.geonames.org/11550014",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2511250",
+      "name": "San Pedro Alcántara",
+      "latitude": 36.48839,
+      "longitude": -4.99123,
+      "sourceUrl": "https://www.geonames.org/2511250",
+      "updatedAt": "2023-12-19"
+    },
+    {
+      "id": "2511247",
+      "name": "San Pedro del Pinatar",
+      "latitude": 37.83568,
+      "longitude": -0.79102,
+      "sourceUrl": "https://www.geonames.org/2511247",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2511239",
+      "name": "San Roque",
+      "latitude": 36.20983,
+      "longitude": -5.38452,
+      "sourceUrl": "https://www.geonames.org/2511239",
+      "updatedAt": "2023-09-27"
+    },
+    {
+      "id": "3110040",
+      "name": "San Sebastián de los Reyes",
+      "latitude": 40.55555,
+      "longitude": -3.62733,
+      "sourceUrl": "https://www.geonames.org/3110040",
+      "updatedAt": "2015-06-14"
+    },
+    {
+      "id": "2511032",
+      "name": "San Vicent del Raspeig",
+      "latitude": 38.3964,
+      "longitude": -0.5255,
+      "sourceUrl": "https://www.geonames.org/2511032",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "2511306",
+      "name": "Sanlúcar de Barrameda",
+      "latitude": 36.77808,
+      "longitude": -6.3515,
+      "sourceUrl": "https://www.geonames.org/2511306",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "3110921",
+      "name": "Sant Adrià de Besòs",
+      "latitude": 41.43073,
+      "longitude": 2.21855,
+      "sourceUrl": "https://www.geonames.org/3110921",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "6941125",
+      "name": "Sant Agustí",
+      "latitude": 39.55065,
+      "longitude": 2.59741,
+      "sourceUrl": "https://www.geonames.org/6941125",
+      "updatedAt": "2024-03-29"
+    },
+    {
+      "id": "3110876",
+      "name": "Sant Andreu",
+      "latitude": 41.43541,
+      "longitude": 2.18982,
+      "sourceUrl": "https://www.geonames.org/3110876",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "3110885",
+      "name": "Sant Andreu de la Barca",
+      "latitude": 41.44659,
+      "longitude": 1.97187,
+      "sourceUrl": "https://www.geonames.org/3110885",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "11549779",
+      "name": "Sant Antoni",
+      "latitude": 41.37857,
+      "longitude": 2.15937,
+      "sourceUrl": "https://www.geonames.org/11549779",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "2511448",
+      "name": "Sant Antoni de Portmany",
+      "latitude": 38.98068,
+      "longitude": 1.30362,
+      "sourceUrl": "https://www.geonames.org/2511448",
+      "updatedAt": "2014-01-07"
+    },
+    {
+      "id": "3110834",
+      "name": "Sant Boi de Llobregat",
+      "latitude": 41.34357,
+      "longitude": 2.03659,
+      "sourceUrl": "https://www.geonames.org/3110834",
+      "updatedAt": "2010-07-27"
+    },
+    {
+      "id": "3110821",
+      "name": "Sant Carles de la Ràpita",
+      "latitude": 40.61667,
+      "longitude": 0.6,
+      "sourceUrl": "https://www.geonames.org/3110821",
+      "updatedAt": "2016-01-05"
+    },
+    {
+      "id": "3110813",
+      "name": "Sant Celoni",
+      "latitude": 41.68921,
+      "longitude": 2.48965,
+      "sourceUrl": "https://www.geonames.org/3110813",
+      "updatedAt": "2015-06-14"
+    },
+    {
+      "id": "3110718",
+      "name": "Sant Cugat del Vallès",
+      "latitude": 41.47063,
+      "longitude": 2.08611,
+      "sourceUrl": "https://www.geonames.org/3110718",
+      "updatedAt": "2015-06-14"
+    },
+    {
+      "id": "3110643",
+      "name": "Sant Feliu de Guíxols",
+      "latitude": 41.78333,
+      "longitude": 3.03333,
+      "sourceUrl": "https://www.geonames.org/3110643",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3110642",
+      "name": "Sant Feliu de Llobregat",
+      "latitude": 41.38333,
+      "longitude": 2.05,
+      "sourceUrl": "https://www.geonames.org/3110642",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549789",
+      "name": "Sant Gervasi - Galvany",
+      "latitude": 41.3975,
+      "longitude": 2.14301,
+      "sourceUrl": "https://www.geonames.org/11549789",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "3110519",
+      "name": "Sant Joan Despí",
+      "latitude": 41.36718,
+      "longitude": 2.0574,
+      "sourceUrl": "https://www.geonames.org/3110519",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "2511330",
+      "name": "Sant Joan d'Alacant",
+      "latitude": 38.40148,
+      "longitude": -0.43623,
+      "sourceUrl": "https://www.geonames.org/2511330",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "3109546",
+      "name": "Sant Just Desvern",
+      "latitude": 41.38389,
+      "longitude": 2.06758,
+      "sourceUrl": "https://www.geonames.org/3109546",
+      "updatedAt": "2017-06-28"
+    },
+    {
+      "id": "6544105",
+      "name": "Sant Martí",
+      "latitude": 41.41814,
+      "longitude": 2.19933,
+      "sourceUrl": "https://www.geonames.org/6544105",
+      "updatedAt": "2020-01-18"
+    },
+    {
+      "id": "6690839",
+      "name": "Sant Martí de Provençals",
+      "latitude": 41.4202,
+      "longitude": 2.19632,
+      "sourceUrl": "https://www.geonames.org/6690839",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "3110143",
+      "name": "Sant Pere de Ribes",
+      "latitude": 41.26045,
+      "longitude": 1.77391,
+      "sourceUrl": "https://www.geonames.org/3110143",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "3119123",
+      "name": "Sant Pere, Santa Caterina i La Ribera",
+      "latitude": 41.3845,
+      "longitude": 2.18152,
+      "sourceUrl": "https://www.geonames.org/3119123",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3110101",
+      "name": "Sant Quirze del Vallès",
+      "latitude": 41.53333,
+      "longitude": 2.08333,
+      "sourceUrl": "https://www.geonames.org/3110101",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3109442",
+      "name": "Sant Vicenç dels Horts",
+      "latitude": 41.39317,
+      "longitude": 2.00689,
+      "sourceUrl": "https://www.geonames.org/3109442",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2511202",
+      "name": "Santa Brígida",
+      "latitude": 28.03197,
+      "longitude": -15.50425,
+      "sourceUrl": "https://www.geonames.org/2511202",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3109981",
+      "name": "Santa Coloma de Gramenet",
+      "latitude": 41.45152,
+      "longitude": 2.2081,
+      "sourceUrl": "https://www.geonames.org/3109981",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "2511174",
+      "name": "Santa Cruz de Tenerife",
+      "latitude": 28.46824,
+      "longitude": -16.25462,
+      "sourceUrl": "https://www.geonames.org/2511174",
+      "updatedAt": "2026-10-11"
+    },
+    {
+      "id": "2511180",
+      "name": "Santa Cruz de la Palma",
+      "latitude": 28.68351,
+      "longitude": -17.76421,
+      "sourceUrl": "https://www.geonames.org/2511180",
+      "updatedAt": "2021-11-01"
+    },
+    {
+      "id": "11550024",
+      "name": "Santa Eugenia",
+      "latitude": 40.38344,
+      "longitude": -3.61135,
+      "sourceUrl": "https://www.geonames.org/11550024",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2511162",
+      "name": "Santa Eulària des Riu",
+      "latitude": 38.98457,
+      "longitude": 1.53409,
+      "sourceUrl": "https://www.geonames.org/2511162",
+      "updatedAt": "2012-10-17"
+    },
+    {
+      "id": "2511150",
+      "name": "Santa Lucía",
+      "latitude": 27.91174,
+      "longitude": -15.54071,
+      "sourceUrl": "https://www.geonames.org/2511150",
+      "updatedAt": "2021-11-03"
+    },
+    {
+      "id": "3109689",
+      "name": "Santa Perpètua de Mogoda",
+      "latitude": 41.53333,
+      "longitude": 2.18333,
+      "sourceUrl": "https://www.geonames.org/3109689",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2511102",
+      "name": "Santa Pola",
+      "latitude": 38.19165,
+      "longitude": -0.5658,
+      "sourceUrl": "https://www.geonames.org/2511102",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3109897",
+      "name": "Santa Uxía de Ribeira",
+      "latitude": 42.55352,
+      "longitude": -8.99094,
+      "sourceUrl": "https://www.geonames.org/3109897",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "2511160",
+      "name": "Santafé",
+      "latitude": 37.18856,
+      "longitude": -3.71887,
+      "sourceUrl": "https://www.geonames.org/2511160",
+      "updatedAt": "2015-10-22"
+    },
+    {
+      "id": "3109718",
+      "name": "Santander",
+      "latitude": 43.46589,
+      "longitude": -3.80493,
+      "sourceUrl": "https://www.geonames.org/3109718",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3109642",
+      "name": "Santiago de Compostela",
+      "latitude": 42.88052,
+      "longitude": -8.54569,
+      "sourceUrl": "https://www.geonames.org/3109642",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "2511050",
+      "name": "Santomera",
+      "latitude": 38.06147,
+      "longitude": -1.04877,
+      "sourceUrl": "https://www.geonames.org/2511050",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3109493",
+      "name": "Sants",
+      "latitude": 41.37426,
+      "longitude": 2.13826,
+      "sourceUrl": "https://www.geonames.org/3109493",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549787",
+      "name": "Sants - Badal",
+      "latitude": 41.37471,
+      "longitude": 2.12775,
+      "sourceUrl": "https://www.geonames.org/11549787",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "6544104",
+      "name": "Sants-Montjuïc",
+      "latitude": 41.37263,
+      "longitude": 2.1546,
+      "sourceUrl": "https://www.geonames.org/6544104",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "3109481",
+      "name": "Santurtzi",
+      "latitude": 43.32842,
+      "longitude": -3.03248,
+      "sourceUrl": "https://www.geonames.org/3109481",
+      "updatedAt": "2012-11-14"
+    },
+    {
+      "id": "6618856",
+      "name": "Santutxu",
+      "latitude": 43.25347,
+      "longitude": -2.9161,
+      "sourceUrl": "https://www.geonames.org/6618856",
+      "updatedAt": "2011-09-11"
+    },
+    {
+      "id": "3110610",
+      "name": "Sanxenxo",
+      "latitude": 42.39996,
+      "longitude": -8.80698,
+      "sourceUrl": "https://www.geonames.org/3110610",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549772",
+      "name": "Sarrià",
+      "latitude": 41.40269,
+      "longitude": 2.1162,
+      "sourceUrl": "https://www.geonames.org/11549772",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "6544102",
+      "name": "Sarrià-Sant Gervasi",
+      "latitude": 41.40104,
+      "longitude": 2.1394,
+      "sourceUrl": "https://www.geonames.org/6544102",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "3109256",
+      "name": "Segovia",
+      "latitude": 40.94808,
+      "longitude": -4.11839,
+      "sourceUrl": "https://www.geonames.org/3109256",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "8050889",
+      "name": "Segundo Ensanche",
+      "latitude": 42.8139,
+      "longitude": -1.64295,
+      "sourceUrl": "https://www.geonames.org/8050889",
+      "updatedAt": "2024-01-25"
+    },
+    {
+      "id": "3109050",
+      "name": "Seseña",
+      "latitude": 40.10473,
+      "longitude": -3.69793,
+      "sourceUrl": "https://www.geonames.org/3109050",
+      "updatedAt": "2011-07-31"
+    },
+    {
+      "id": "3109041",
+      "name": "Sestao",
+      "latitude": 43.30975,
+      "longitude": -3.00716,
+      "sourceUrl": "https://www.geonames.org/3109041",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2510911",
+      "name": "Sevilla",
+      "latitude": 37.38283,
+      "longitude": -5.97317,
+      "sourceUrl": "https://www.geonames.org/2510911",
+      "updatedAt": "2026-03-23"
+    },
+    {
+      "id": "2510880",
+      "name": "Silla",
+      "latitude": 39.36257,
+      "longitude": -0.41169,
+      "sourceUrl": "https://www.geonames.org/2510880",
+      "updatedAt": "2015-11-16"
+    },
+    {
+      "id": "11550027",
+      "name": "Simancas",
+      "latitude": 40.43533,
+      "longitude": -3.6251,
+      "sourceUrl": "https://www.geonames.org/11550027",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3108877",
+      "name": "Sitges",
+      "latitude": 41.23506,
+      "longitude": 1.81193,
+      "sourceUrl": "https://www.geonames.org/3108877",
+      "updatedAt": "2019-10-21"
+    },
+    {
+      "id": "2510804",
+      "name": "Son Rapinya",
+      "latitude": 39.58932,
+      "longitude": 2.61899,
+      "sourceUrl": "https://www.geonames.org/2510804",
+      "updatedAt": "2024-03-29"
+    },
+    {
+      "id": "3108681",
+      "name": "Soria",
+      "latitude": 41.76401,
+      "longitude": -2.46883,
+      "sourceUrl": "https://www.geonames.org/3108681",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2510764",
+      "name": "Sueca",
+      "latitude": 39.2026,
+      "longitude": -0.31114,
+      "sourceUrl": "https://www.geonames.org/2510764",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2510725",
+      "name": "Tacoronte",
+      "latitude": 28.47688,
+      "longitude": -16.41016,
+      "sourceUrl": "https://www.geonames.org/2510725",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2510693",
+      "name": "Talavera de la Reina",
+      "latitude": 39.96348,
+      "longitude": -4.83076,
+      "sourceUrl": "https://www.geonames.org/2510693",
+      "updatedAt": "2012-10-21"
+    },
+    {
+      "id": "3108317",
+      "name": "Tarancón",
+      "latitude": 40.00851,
+      "longitude": -3.00731,
+      "sourceUrl": "https://www.geonames.org/3108317",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2510599",
+      "name": "Tarifa",
+      "latitude": 36.01393,
+      "longitude": -5.60695,
+      "sourceUrl": "https://www.geonames.org/2510599",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3108288",
+      "name": "Tarragona",
+      "latitude": 41.11905,
+      "longitude": 1.24544,
+      "sourceUrl": "https://www.geonames.org/3108288",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2510743",
+      "name": "Tavernes de la Valldigna",
+      "latitude": 39.07195,
+      "longitude": -0.26623,
+      "sourceUrl": "https://www.geonames.org/2510743",
+      "updatedAt": "2021-10-18"
+    },
+    {
+      "id": "2510573",
+      "name": "Teguise",
+      "latitude": 29.06049,
+      "longitude": -13.56397,
+      "sourceUrl": "https://www.geonames.org/2510573",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2510542",
+      "name": "Telde",
+      "latitude": 27.99243,
+      "longitude": -15.41915,
+      "sourceUrl": "https://www.geonames.org/2510542",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "3108165",
+      "name": "Teo",
+      "latitude": 42.795,
+      "longitude": -8.548,
+      "sourceUrl": "https://www.geonames.org/3108165",
+      "updatedAt": "2024-01-30"
+    },
+    {
+      "id": "3108286",
+      "name": "Terrassa",
+      "latitude": 41.56667,
+      "longitude": 2.01667,
+      "sourceUrl": "https://www.geonames.org/3108286",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "3108126",
+      "name": "Teruel",
+      "latitude": 40.3456,
+      "longitude": -1.10646,
+      "sourceUrl": "https://www.geonames.org/3108126",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3108118",
+      "name": "Tetuán de las Victorias",
+      "latitude": 40.45975,
+      "longitude": -3.6975,
+      "sourceUrl": "https://www.geonames.org/3108118",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "2510409",
+      "name": "Toledo",
+      "latitude": 39.8581,
+      "longitude": -4.02263,
+      "sourceUrl": "https://www.geonames.org/2510409",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3108008",
+      "name": "Tolosa",
+      "latitude": 43.13484,
+      "longitude": -2.07801,
+      "sourceUrl": "https://www.geonames.org/3108008",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2510394",
+      "name": "Tomares",
+      "latitude": 37.37281,
+      "longitude": -6.04589,
+      "sourceUrl": "https://www.geonames.org/2510394",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2510392",
+      "name": "Tomelloso",
+      "latitude": 39.15759,
+      "longitude": -3.02156,
+      "sourceUrl": "https://www.geonames.org/2510392",
+      "updatedAt": "2023-07-27"
+    },
+    {
+      "id": "3107955",
+      "name": "Tordera",
+      "latitude": 41.69914,
+      "longitude": 2.71888,
+      "sourceUrl": "https://www.geonames.org/3107955",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2510309",
+      "name": "Torre del Mar",
+      "latitude": 36.742,
+      "longitude": -4.09291,
+      "sourceUrl": "https://www.geonames.org/2510309",
+      "updatedAt": "2019-01-09"
+    },
+    {
+      "id": "2510271",
+      "name": "Torre-Pacheco",
+      "latitude": 37.74293,
+      "longitude": -0.95396,
+      "sourceUrl": "https://www.geonames.org/2510271",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "3107807",
+      "name": "Torredembarra",
+      "latitude": 41.14505,
+      "longitude": 1.39861,
+      "sourceUrl": "https://www.geonames.org/3107807",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3107784",
+      "name": "Torrejón de Ardoz",
+      "latitude": 40.45535,
+      "longitude": -3.46973,
+      "sourceUrl": "https://www.geonames.org/3107784",
+      "updatedAt": "2014-11-10"
+    },
+    {
+      "id": "3107775",
+      "name": "Torrelavega",
+      "latitude": 43.34943,
+      "longitude": -4.04785,
+      "sourceUrl": "https://www.geonames.org/3107775",
+      "updatedAt": "2025-03-10"
+    },
+    {
+      "id": "3107765",
+      "name": "Torrelodones",
+      "latitude": 40.57654,
+      "longitude": -3.92658,
+      "sourceUrl": "https://www.geonames.org/3107765",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2510281",
+      "name": "Torremolinos",
+      "latitude": 36.62035,
+      "longitude": -4.49976,
+      "sourceUrl": "https://www.geonames.org/2510281",
+      "updatedAt": "2021-03-14"
+    },
+    {
+      "id": "2510279",
+      "name": "Torrent",
+      "latitude": 39.43705,
+      "longitude": -0.46546,
+      "sourceUrl": "https://www.geonames.org/2510279",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2510253",
+      "name": "Torrevieja",
+      "latitude": 37.97872,
+      "longitude": -0.68222,
+      "sourceUrl": "https://www.geonames.org/2510253",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2510245",
+      "name": "Torrox",
+      "latitude": 36.75793,
+      "longitude": -3.95233,
+      "sourceUrl": "https://www.geonames.org/2510245",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3107677",
+      "name": "Tortosa",
+      "latitude": 40.81249,
+      "longitude": 0.5216,
+      "sourceUrl": "https://www.geonames.org/3107677",
+      "updatedAt": "2025-07-05"
+    },
+    {
+      "id": "2510224",
+      "name": "Totana",
+      "latitude": 37.7688,
+      "longitude": -1.50229,
+      "sourceUrl": "https://www.geonames.org/2510224",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549967",
+      "name": "Trafalgar",
+      "latitude": 40.43285,
+      "longitude": -3.70113,
+      "sourceUrl": "https://www.geonames.org/11549967",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "7577022",
+      "name": "Tres Cantos",
+      "latitude": 40.60092,
+      "longitude": -3.70806,
+      "sourceUrl": "https://www.geonames.org/7577022",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "3107418",
+      "name": "Tudela",
+      "latitude": 42.06166,
+      "longitude": -1.60452,
+      "sourceUrl": "https://www.geonames.org/3107418",
+      "updatedAt": "2026-08-27"
+    },
+    {
+      "id": "3107364",
+      "name": "Tui",
+      "latitude": 42.04713,
+      "longitude": -8.64435,
+      "sourceUrl": "https://www.geonames.org/3107364",
+      "updatedAt": "2015-06-07"
+    },
+    {
+      "id": "3108285",
+      "name": "Tàrrega",
+      "latitude": 41.64704,
+      "longitude": 1.13957,
+      "sourceUrl": "https://www.geonames.org/3108285",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2510485",
+      "name": "Tías",
+      "latitude": 28.96108,
+      "longitude": -13.64502,
+      "sourceUrl": "https://www.geonames.org/2510485",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2510112",
+      "name": "Ubrique",
+      "latitude": 36.67777,
+      "longitude": -5.446,
+      "sourceUrl": "https://www.geonames.org/2510112",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549950",
+      "name": "Universidad",
+      "latitude": 40.42567,
+      "longitude": -3.70707,
+      "sourceUrl": "https://www.geonames.org/11549950",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "6544490",
+      "name": "Usera",
+      "latitude": 40.38866,
+      "longitude": -3.70035,
+      "sourceUrl": "https://www.geonames.org/6544490",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3107139",
+      "name": "Utebo",
+      "latitude": 41.70826,
+      "longitude": -0.99916,
+      "sourceUrl": "https://www.geonames.org/3107139",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "2510073",
+      "name": "Utrera",
+      "latitude": 37.18516,
+      "longitude": -5.78093,
+      "sourceUrl": "https://www.geonames.org/2510073",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "11549966",
+      "name": "Valdeacederas",
+      "latitude": 40.46702,
+      "longitude": -3.70416,
+      "sourceUrl": "https://www.geonames.org/11549966",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3114183",
+      "name": "Valdebernardo",
+      "latitude": 40.40072,
+      "longitude": -3.62133,
+      "sourceUrl": "https://www.geonames.org/3114183",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "11550025",
+      "name": "Valdefuentes",
+      "latitude": 40.49367,
+      "longitude": -3.6359,
+      "sourceUrl": "https://www.geonames.org/11550025",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3106868",
+      "name": "Valdemoro",
+      "latitude": 40.19081,
+      "longitude": -3.67887,
+      "sourceUrl": "https://www.geonames.org/3106868",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2509982",
+      "name": "Valdepeñas",
+      "latitude": 38.76211,
+      "longitude": -3.38483,
+      "sourceUrl": "https://www.geonames.org/2509982",
+      "updatedAt": "2013-11-13"
+    },
+    {
+      "id": "11549935",
+      "name": "Valdezarza",
+      "latitude": 40.46525,
+      "longitude": -3.7173,
+      "sourceUrl": "https://www.geonames.org/11549935",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "2509954",
+      "name": "Valencia",
+      "latitude": 39.47391,
+      "longitude": -0.37966,
+      "sourceUrl": "https://www.geonames.org/2509954",
+      "updatedAt": "2025-10-22"
+    },
+    {
+      "id": "3106672",
+      "name": "Valladolid",
+      "latitude": 41.65541,
+      "longitude": -4.72353,
+      "sourceUrl": "https://www.geonames.org/3106672",
+      "updatedAt": "2025-09-09"
+    },
+    {
+      "id": "6690791",
+      "name": "Vallcarca",
+      "latitude": 41.41209,
+      "longitude": 2.14394,
+      "sourceUrl": "https://www.geonames.org/6690791",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3106601",
+      "name": "Vallecas",
+      "latitude": 40.38333,
+      "longitude": -3.61667,
+      "sourceUrl": "https://www.geonames.org/3106601",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "11549970",
+      "name": "Vallehermoso",
+      "latitude": 40.44289,
+      "longitude": -3.71124,
+      "sourceUrl": "https://www.geonames.org/11549970",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3106492",
+      "name": "Valls",
+      "latitude": 41.28612,
+      "longitude": 1.24993,
+      "sourceUrl": "https://www.geonames.org/3106492",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11549984",
+      "name": "Valverde",
+      "latitude": 40.50024,
+      "longitude": -3.67877,
+      "sourceUrl": "https://www.geonames.org/11549984",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "11550013",
+      "name": "Ventas",
+      "latitude": 40.42248,
+      "longitude": -3.64741,
+      "sourceUrl": "https://www.geonames.org/11550013",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "3106050",
+      "name": "Vic",
+      "latitude": 41.93012,
+      "longitude": 2.25486,
+      "sourceUrl": "https://www.geonames.org/3106050",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3106054",
+      "name": "Vicálvaro",
+      "latitude": 40.4,
+      "longitude": -3.6,
+      "sourceUrl": "https://www.geonames.org/3106054",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "3105976",
+      "name": "Vigo",
+      "latitude": 42.23282,
+      "longitude": -8.72264,
+      "sourceUrl": "https://www.geonames.org/3105976",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2509509",
+      "name": "Vila-real",
+      "latitude": 39.9383,
+      "longitude": -0.10087,
+      "sourceUrl": "https://www.geonames.org/2509509",
+      "updatedAt": "2024-05-02"
+    },
+    {
+      "id": "3105803",
+      "name": "Vila-seca",
+      "latitude": 41.11118,
+      "longitude": 1.14764,
+      "sourceUrl": "https://www.geonames.org/3105803",
+      "updatedAt": "2022-11-28"
+    },
+    {
+      "id": "3105935",
+      "name": "Viladecans",
+      "latitude": 41.31405,
+      "longitude": 2.01427,
+      "sourceUrl": "https://www.geonames.org/3105935",
+      "updatedAt": "2022-12-13"
+    },
+    {
+      "id": "3105600",
+      "name": "Vilafranca del Penedès",
+      "latitude": 41.34618,
+      "longitude": 1.69713,
+      "sourceUrl": "https://www.geonames.org/3105600",
+      "updatedAt": "2024-09-05"
+    },
+    {
+      "id": "3105575",
+      "name": "Vilagarcía de Arousa",
+      "latitude": 42.59631,
+      "longitude": -8.76426,
+      "sourceUrl": "https://www.geonames.org/3105575",
+      "updatedAt": "2025-06-29"
+    },
+    {
+      "id": "3105184",
+      "name": "Vilanova i la Geltrú",
+      "latitude": 41.22392,
+      "longitude": 1.72511,
+      "sourceUrl": "https://www.geonames.org/3105184",
+      "updatedAt": "2010-04-22"
+    },
+    {
+      "id": "11549794",
+      "name": "Vilapicina i la Torre Llobeta",
+      "latitude": 41.42861,
+      "longitude": 2.1741,
+      "sourceUrl": "https://www.geonames.org/11549794",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "3105805",
+      "name": "Vilaseca",
+      "latitude": 42.06174,
+      "longitude": 2.25528,
+      "sourceUrl": "https://www.geonames.org/3105805",
+      "updatedAt": "2012-01-19"
+    },
+    {
+      "id": "3110516",
+      "name": "Vilassar de Mar",
+      "latitude": 41.50507,
+      "longitude": 2.39227,
+      "sourceUrl": "https://www.geonames.org/3110516",
+      "updatedAt": "2021-11-07"
+    },
+    {
+      "id": "8285535",
+      "name": "Villa de Vallecas",
+      "latitude": 40.36695,
+      "longitude": -3.60146,
+      "sourceUrl": "https://www.geonames.org/8285535",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "2509588",
+      "name": "Villajoyosa",
+      "latitude": 38.50754,
+      "longitude": -0.23346,
+      "sourceUrl": "https://www.geonames.org/2509588",
+      "updatedAt": "2013-07-22"
+    },
+    {
+      "id": "3105247",
+      "name": "Villanueva de la Cañada",
+      "latitude": 40.44689,
+      "longitude": -4.00428,
+      "sourceUrl": "https://www.geonames.org/3105247",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2509553",
+      "name": "Villanueva de la Serena",
+      "latitude": 38.97655,
+      "longitude": -5.7974,
+      "sourceUrl": "https://www.geonames.org/2509553",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "3105214",
+      "name": "Villanueva del Pardillo",
+      "latitude": 40.49014,
+      "longitude": -3.96383,
+      "sourceUrl": "https://www.geonames.org/3105214",
+      "updatedAt": "2015-06-01"
+    },
+    {
+      "id": "3105148",
+      "name": "Villaquilambre",
+      "latitude": 42.64685,
+      "longitude": -5.55835,
+      "sourceUrl": "https://www.geonames.org/3105148",
+      "updatedAt": "2018-06-08"
+    },
+    {
+      "id": "2509491",
+      "name": "Villarrobledo",
+      "latitude": 39.26992,
+      "longitude": -2.60119,
+      "sourceUrl": "https://www.geonames.org/2509491",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3104748",
+      "name": "Villaverde",
+      "latitude": 40.35,
+      "longitude": -3.7,
+      "sourceUrl": "https://www.geonames.org/3104748",
+      "updatedAt": "2026-09-14"
+    },
+    {
+      "id": "3104703",
+      "name": "Villaviciosa de Odón",
+      "latitude": 40.3581,
+      "longitude": -3.9043,
+      "sourceUrl": "https://www.geonames.org/3104703",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2509463",
+      "name": "Villena",
+      "latitude": 38.6373,
+      "longitude": -0.86568,
+      "sourceUrl": "https://www.geonames.org/2509463",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "3104584",
+      "name": "Vinaròs",
+      "latitude": 40.47033,
+      "longitude": 0.47559,
+      "sourceUrl": "https://www.geonames.org/3104584",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "11550012",
+      "name": "Vinateros",
+      "latitude": 40.40525,
+      "longitude": -3.64249,
+      "sourceUrl": "https://www.geonames.org/11550012",
+      "updatedAt": "2026-09-02"
+    },
+    {
+      "id": "11549977",
+      "name": "Vista Alegre",
+      "latitude": 40.38432,
+      "longitude": -3.74575,
+      "sourceUrl": "https://www.geonames.org/11549977",
+      "updatedAt": "2024-04-14"
+    },
+    {
+      "id": "3104475",
+      "name": "Viveiro",
+      "latitude": 43.66228,
+      "longitude": -7.59344,
+      "sourceUrl": "https://www.geonames.org/3104475",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2509769",
+      "name": "Vélez-Málaga",
+      "latitude": 36.78107,
+      "longitude": -4.10266,
+      "sourceUrl": "https://www.geonames.org/2509769",
+      "updatedAt": "2020-02-10"
+    },
+    {
+      "id": "2509650",
+      "name": "Vícar",
+      "latitude": 36.83155,
+      "longitude": -2.64273,
+      "sourceUrl": "https://www.geonames.org/2509650",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2519466",
+      "name": "Xirivella",
+      "latitude": 39.46588,
+      "longitude": -0.42589,
+      "sourceUrl": "https://www.geonames.org/2519466",
+      "updatedAt": "2021-11-02"
+    },
+    {
+      "id": "2516345",
+      "name": "Xàtiva",
+      "latitude": 38.99042,
+      "longitude": -0.51852,
+      "sourceUrl": "https://www.geonames.org/2516345",
+      "updatedAt": "2015-05-29"
+    },
+    {
+      "id": "2509408",
+      "name": "Yaiza",
+      "latitude": 28.95678,
+      "longitude": -13.76535,
+      "sourceUrl": "https://www.geonames.org/2509408",
+      "updatedAt": "2025-07-29"
+    },
+    {
+      "id": "2509402",
+      "name": "Yecla",
+      "latitude": 38.61365,
+      "longitude": -1.11468,
+      "sourceUrl": "https://www.geonames.org/2509402",
+      "updatedAt": "2012-03-04"
+    },
+    {
+      "id": "2509377",
+      "name": "Zafra",
+      "latitude": 38.42539,
+      "longitude": -6.41734,
+      "sourceUrl": "https://www.geonames.org/2509377",
+      "updatedAt": "2018-12-19"
+    },
+    {
+      "id": "3104342",
+      "name": "Zamora",
+      "latitude": 41.50633,
+      "longitude": -5.74456,
+      "sourceUrl": "https://www.geonames.org/3104342",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "3104324",
+      "name": "Zaragoza",
+      "latitude": 41.65606,
+      "longitude": -0.87734,
+      "sourceUrl": "https://www.geonames.org/3104324",
+      "updatedAt": "2026-03-23"
+    },
+    {
+      "id": "3104316",
+      "name": "Zarautz",
+      "latitude": 43.28444,
+      "longitude": -2.16992,
+      "sourceUrl": "https://www.geonames.org/3104316",
+      "updatedAt": "2012-11-19"
+    },
+    {
+      "id": "2509305",
+      "name": "Zubia",
+      "latitude": 37.11906,
+      "longitude": -3.584,
+      "sourceUrl": "https://www.geonames.org/2509305",
+      "updatedAt": "2021-11-04"
+    },
+    {
+      "id": "11549774",
+      "name": "el Baix Guinardó",
+      "latitude": 41.41175,
+      "longitude": 2.16784,
+      "sourceUrl": "https://www.geonames.org/11549774",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549814",
+      "name": "el Besòs i el Maresme",
+      "latitude": 41.41309,
+      "longitude": 2.21736,
+      "sourceUrl": "https://www.geonames.org/11549814",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "11549791",
+      "name": "el Camp d'en Grassot i Gràcia Nova",
+      "latitude": 41.40634,
+      "longitude": 2.16503,
+      "sourceUrl": "https://www.geonames.org/11549791",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "11549795",
+      "name": "el Camp de l'Arpa del Clot",
+      "latitude": 41.41204,
+      "longitude": 2.18247,
+      "sourceUrl": "https://www.geonames.org/11549795",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "3124932",
+      "name": "el Clot",
+      "latitude": 41.40986,
+      "longitude": 2.19053,
+      "sourceUrl": "https://www.geonames.org/3124932",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549815",
+      "name": "el Guinardó",
+      "latitude": 41.41885,
+      "longitude": 2.17364,
+      "sourceUrl": "https://www.geonames.org/11549815",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "6545114",
+      "name": "el Poblenou",
+      "latitude": 41.40392,
+      "longitude": 2.20413,
+      "sourceUrl": "https://www.geonames.org/6545114",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549777",
+      "name": "el Putxet i el Farró",
+      "latitude": 41.40693,
+      "longitude": 2.14392,
+      "sourceUrl": "https://www.geonames.org/11549777",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "3123673",
+      "name": "el Raval",
+      "latitude": 41.38042,
+      "longitude": 2.1686,
+      "sourceUrl": "https://www.geonames.org/3123673",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549813",
+      "name": "el Turó de la Peira",
+      "latitude": 41.43232,
+      "longitude": 2.16895,
+      "sourceUrl": "https://www.geonames.org/11549813",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "6559503",
+      "name": "l'Alfàs del Pi",
+      "latitude": 38.58055,
+      "longitude": -0.10321,
+      "sourceUrl": "https://www.geonames.org/6559503",
+      "updatedAt": "2016-01-07"
+    },
+    {
+      "id": "11549773",
+      "name": "l'Antiga Esquerra de l'Eixample",
+      "latitude": 41.38939,
+      "longitude": 2.15517,
+      "sourceUrl": "https://www.geonames.org/11549773",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "3128757",
+      "name": "la Barceloneta",
+      "latitude": 41.3799,
+      "longitude": 2.18971,
+      "sourceUrl": "https://www.geonames.org/3128757",
+      "updatedAt": "2017-05-26"
+    },
+    {
+      "id": "11549806",
+      "name": "la Guineueta",
+      "latitude": 41.43884,
+      "longitude": 2.16893,
+      "sourceUrl": "https://www.geonames.org/11549806",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "11549793",
+      "name": "la Marina de Port",
+      "latitude": 41.36,
+      "longitude": 2.13986,
+      "sourceUrl": "https://www.geonames.org/11549793",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549788",
+      "name": "la Maternitat i Sant Ramon",
+      "latitude": 41.38125,
+      "longitude": 2.11744,
+      "sourceUrl": "https://www.geonames.org/11549788",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "11549784",
+      "name": "la Nova Esquerra de l'Eixample",
+      "latitude": 41.38309,
+      "longitude": 2.149,
+      "sourceUrl": "https://www.geonames.org/11549784",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "2515701",
+      "name": "la Nucia",
+      "latitude": 38.61372,
+      "longitude": -0.1269,
+      "sourceUrl": "https://www.geonames.org/2515701",
+      "updatedAt": "2010-04-22"
+    },
+    {
+      "id": "11549776",
+      "name": "la Prosperitat",
+      "latitude": 41.44269,
+      "longitude": 2.182,
+      "sourceUrl": "https://www.geonames.org/11549776",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549811",
+      "name": "la Verneda i la Pau",
+      "latitude": 41.42399,
+      "longitude": 2.20304,
+      "sourceUrl": "https://www.geonames.org/11549811",
+      "updatedAt": "2025-07-30"
+    },
+    {
+      "id": "11549783",
+      "name": "la Vila de Gràcia",
+      "latitude": 41.40315,
+      "longitude": 2.15687,
+      "sourceUrl": "https://www.geonames.org/11549783",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "11549807",
+      "name": "les Roquetes",
+      "latitude": 41.44809,
+      "longitude": 2.17519,
+      "sourceUrl": "https://www.geonames.org/11549807",
+      "updatedAt": "2017-05-24"
+    },
+    {
+      "id": "2522333",
+      "name": "Águilas",
+      "latitude": 37.4063,
+      "longitude": -1.58289,
+      "sourceUrl": "https://www.geonames.org/2522333",
+      "updatedAt": "2015-07-03"
+    },
+    {
+      "id": "3129136",
+      "name": "Ávila",
+      "latitude": 40.65724,
+      "longitude": -4.69951,
+      "sourceUrl": "https://www.geonames.org/3129136",
+      "updatedAt": "2025-07-25"
+    },
+    {
+      "id": "2518770",
+      "name": "Écija",
+      "latitude": 37.5422,
+      "longitude": -5.0826,
+      "sourceUrl": "https://www.geonames.org/2518770",
+      "updatedAt": "2025-07-28"
+    },
+    {
+      "id": "2510116",
+      "name": "Úbeda",
+      "latitude": 38.01328,
+      "longitude": -3.3705,
+      "sourceUrl": "https://www.geonames.org/2510116",
+      "updatedAt": "2025-07-28"
+    }
+  ]
+}
