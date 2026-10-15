@@ -24,7 +24,9 @@ const definitions: readonly SourceDefinition[] = [
     name: 'Adzuna España',
     countryCode: 'ES',
     kind: 'partner_api',
-    status: 'credentials_required',
+    // 2026-10-15: account provides 25 trial calls; full access requires £8/month.
+    // Paused under the user's zero-cost requirement, even when credentials exist.
+    status: 'paused',
     endpoint: 'https://api.adzuna.com/v1/api/jobs/es/search/1',
     licenseUrl: 'https://developer.adzuna.com/',
   },

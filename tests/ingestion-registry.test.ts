@@ -5,7 +5,7 @@ import { createSourceRegistry, sourceRegistry } from '../packages/ingestion/src/
 test('el registro distingue fuentes activas y bloqueadas sin credenciales', () => {
   assert.equal(sourceRegistry.get('sef-murcia')?.status, 'active');
   assert.equal(sourceRegistry.get('infojobs')?.status, 'credentials_required');
-  assert.equal(sourceRegistry.get('adzuna-es')?.status, 'credentials_required');
+  assert.equal(sourceRegistry.get('adzuna-es')?.status, 'paused');
   assert.equal(sourceRegistry.get('linkedin')?.status, 'authorization_required');
   assert.equal(sourceRegistry.get('sef-murcia')?.countryCode, 'ES');
 });
