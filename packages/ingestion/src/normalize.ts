@@ -93,3 +93,9 @@ export function htmlToParagraphs(value: string): string[] {
 export function categoryForSector(code: string): Category {
   return categories[code] ?? fallbackCategory;
 }
+
+export function dateInSpain(instant:string):string {
+  const date=new Date(instant);
+  if (!Number.isFinite(date.valueOf())) throw new TypeError('Instante de captura inválido');
+  return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
+}

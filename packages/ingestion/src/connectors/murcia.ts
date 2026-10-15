@@ -1,6 +1,6 @@
 import type {PublicJob} from '../model.ts';
 import type {PlaceResolver} from '../geography.ts';
-import {categoryForSector, htmlToParagraphs, spanishDate} from '../normalize.ts';
+import {categoryForSector, dateInSpain, htmlToParagraphs, spanishDate} from '../normalize.ts';
 
 function object(value:unknown): Record<string,unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError('Registro SEF inválido');
@@ -9,11 +9,6 @@ function object(value:unknown): Record<string,unknown> {
 function text(value:unknown):string {
   if (typeof value !== 'string' || !value.trim()) throw new TypeError('Campo SEF obligatorio ausente');
   return value.trim();
-}
-export function dateInSpain(instant:string):string {
-  const date=new Date(instant);
-  if (!Number.isFinite(date.valueOf())) throw new TypeError('Instante de captura inválido');
-  return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
 }
 /** A malformed record invalidates the snapshot rather than silently closing valid jobs. */
 export function adaptMurciaOffers(input:unknown,checkedAt:string,resolve:PlaceResolver):PublicJob[] {
