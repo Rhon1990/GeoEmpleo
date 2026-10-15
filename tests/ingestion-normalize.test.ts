@@ -60,6 +60,13 @@ test('decodifica entidades HTML estándar fuera del subconjunto original', () =>
   assert.deepEqual(htmlToParagraphs('Salario: 20.000 &euro;'), ['Salario: 20.000 €']);
 });
 
+test('respeta el remapeo HTML5 de referencias numéricas C1', () => {
+  assert.deepEqual(
+    htmlToParagraphs('Moneda &#128; &#x80; y puntos &#133; &#x85;'),
+    ['Moneda € € y puntos … …'],
+  );
+});
+
 test('elimina NUL, controles y surrogates aislados del texto', () => {
   assert.deepEqual(
     htmlToParagraphs('A\u0000\u0001\u0008\u000b\u000c\u000e\u001f\u007f\u0085\ud800B'),

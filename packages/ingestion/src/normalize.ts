@@ -18,14 +18,6 @@ const categories: Readonly<Record<string, Category>> = Object.freeze({
 const fallbackCategory: Category = Object.freeze({ category: 'otros', label: 'Otros' });
 const paragraphTags = new Set(['div', 'li', 'p']);
 const ignoredTags = new Set(['script', 'style', 'template']);
-const numericEntityPattern = /&#(?:x([0-9a-f]+)|(\d+));?/gi;
-
-function isUnicodeScalar(codePoint: number): boolean {
-  return Number.isSafeInteger(codePoint)
-    && codePoint >= 0
-    && codePoint <= 0x10ffff
-    && !(codePoint >= 0xd800 && codePoint <= 0xdfff);
-}
 
 function isDiscardedControl(codePoint: number): boolean {
   return codePoint <= 0x08
@@ -34,20 +26,17 @@ function isDiscardedControl(codePoint: number): boolean {
     || (codePoint >= 0x7f && codePoint <= 0x9f);
 }
 
-function cleanExternalHtml(value: string): string {
+function cleanTextNode(value: string): string {
   let clean = '';
   for (const character of value) {
     const codePoint = character.codePointAt(0);
     if (codePoint === undefined
+      || codePoint === 0xfffd
       || isDiscardedControl(codePoint)
       || (codePoint >= 0xd800 && codePoint <= 0xdfff)) continue;
     clean += character;
   }
-
-  return clean.replace(numericEntityPattern, (entity, hexadecimal: string | undefined, decimal: string | undefined) => {
-    const codePoint = Number.parseInt(hexadecimal ?? decimal ?? '', hexadecimal === undefined ? 10 : 16);
-    return isUnicodeScalar(codePoint) && !isDiscardedControl(codePoint) ? entity : '';
-  });
+  return clean;
 }
 
 export function spanishDate(value: string): string | null {
@@ -67,7 +56,7 @@ export function spanishDate(value: string): string | null {
 }
 
 export function htmlToParagraphs(value: string): string[] {
-  const fragment = parseFragment(cleanExternalHtml(value));
+  const fragment = parseFragment(value);
   const chunks: string[] = [];
   const boundary = (): void => {
     if (chunks.at(-1) !== '\n') chunks.push('\n');
@@ -75,7 +64,7 @@ export function htmlToParagraphs(value: string): string[] {
 
   const append = (node: DefaultTreeAdapterTypes.ChildNode): void => {
     if ('value' in node) {
-      chunks.push(node.value);
+      chunks.push(cleanTextNode(node.value));
       return;
     }
     if (!('tagName' in node)) return;
