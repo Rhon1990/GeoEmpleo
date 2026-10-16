@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   clearSelectionBeforeFocusRestore,
   createJobInteraction,
+  previewJobAfterFocusRestore,
   restoreJobFocus,
 } from '../apps/web-preview/public/job-interaction.mjs';
 
@@ -61,13 +62,9 @@ test('restaura el foco a la tarjeta regenerada o al panel de resultados',() => {
 test('al cerrar limpia la selección antes de restaurar el foco y conserva la previsualización',() => {
   const interaction=createJobInteraction();
   interaction.select('job-a');
-  const button={focus:()=>interaction.preview('job-a')};
-  const list={querySelectorAll:()=>[
-    {dataset:{jobId:'job-a'},querySelector:()=>button},
-  ]};
 
   clearSelectionBeforeFocusRestore(interaction,()=>{
-    assert.equal(restoreJobFocus(list as unknown as HTMLElement,'job-a'),'card');
+    assert.equal(previewJobAfterFocusRestore(interaction,'job-a',()=> 'card'),'card');
   });
 
   assert.deepEqual(interaction.snapshot(),{

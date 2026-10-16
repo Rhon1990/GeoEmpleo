@@ -44,6 +44,17 @@ export function clearSelectionBeforeFocusRestore(interaction,restoreFocus) {
 }
 
 /**
+ * @param {{preview:(id:string)=>void}} interaction
+ * @param {string|null} id
+ * @param {()=>('card'|'fallback'|'none')} restoreFocus
+ */
+export function previewJobAfterFocusRestore(interaction,id,restoreFocus) {
+  const target=restoreFocus();
+  if(target==='card'&&id!==null)interaction.preview(id);
+  return target;
+}
+
+/**
  * @param {HTMLElement} list
  * @param {string|null} id
  * @param {HTMLElement|null} fallback
