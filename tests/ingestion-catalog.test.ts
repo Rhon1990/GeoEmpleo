@@ -22,6 +22,21 @@ test('rechaza captura vacía, IDs duplicados o fuente cruzada sin alterar el cat
  for(const incoming of [[],[job('X'),job('X')],[job('X','boe')]]) assert.throws(()=>reconcileSource(catalog,'sef-murcia',incoming,at));
  assert.equal(catalog.checkedAt,'old');
 });
+test('retiene una oferta ausente sin cierre durante siete días exactos',()=>{
+ const missing=job('ECYL-MISSING','ecyl-castilla-leon',null);
+ const base={...catalog,calls:[missing]} as PublicCatalog;
+ const incoming=[{...job('ECYL-CURRENT','ecyl-castilla-leon',null),checkedAt:'2026-10-21T05:30:00Z'}];
+
+ const atLimit=reconcileSource(
+  base,'ecyl-castilla-leon',incoming,'2026-10-21T05:30:00Z',{missingRetentionDays:7},
+ );
+ const afterLimit=reconcileSource(
+  base,'ecyl-castilla-leon',incoming,'2026-10-21T05:30:00.001Z',{missingRetentionDays:7},
+ );
+
+ assert.ok(atLimit.calls.some(item=>item.id==='ECYL-MISSING'));
+ assert.ok(!afterLimit.calls.some(item=>item.id==='ECYL-MISSING'));
+});
 test('escribe JSON atómicamente y limpia temporales ante error',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-'));try{
  const target=join(dir,'catalog.json');await writeJsonAtomic(target,{ok:true});
