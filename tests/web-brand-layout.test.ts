@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { parse, type DefaultTreeAdapterTypes, type ParserError } from 'parse5';
+import { parse, parseFragment, type DefaultTreeAdapterTypes, type ParserError } from 'parse5';
 
 type Node = DefaultTreeAdapterTypes.Node;
 type Element = DefaultTreeAdapterTypes.Element;
 
 const html = await readFile(new URL('../apps/web-preview/public/index.html', import.meta.url), 'utf8');
+const css = await readFile(new URL('../apps/web-preview/public/styles.css', import.meta.url), 'utf8');
 const parseErrors: ParserError[] = [];
 const document = parse(html, { onParseError: error => parseErrors.push(error) });
 
@@ -30,6 +31,48 @@ function textContent(node: Node): string {
   if ('value' in node) return node.value;
   if (!('childNodes' in node)) return '';
   return node.childNodes.map(textContent).join('');
+}
+
+function elementWithClass(root: Node, tagName: string, className: string): Element | undefined {
+  return elements(root).find(element => element.tagName === tagName && hasClass(element, className));
+}
+
+function mediaBlockForViewport(cssText: string, viewportWidth: number): string | undefined {
+  const mediaPattern = /@media\(max-width:(\d+)px\)\{/g;
+  const matches = [...cssText.matchAll(mediaPattern)]
+    .filter(match => Number(match[1]) >= viewportWidth && match.index !== undefined)
+    .sort((left, right) => Number(left[1]) - Number(right[1]));
+
+  for (const match of matches) {
+    const bodyStart = match.index + match[0].length;
+    let depth = 1;
+    for (let index = bodyStart; index < cssText.length; index += 1) {
+      if (cssText[index] === '{') depth += 1;
+      if (cssText[index] === '}') depth -= 1;
+      if (depth === 0) return cssText.slice(bodyStart, index);
+    }
+  }
+  return undefined;
+}
+
+function relativeLuminance(hex: string): number {
+  const shorthand = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(hex);
+  const normalized = shorthand
+    ? `#${shorthand[1]}${shorthand[1]}${shorthand[2]}${shorthand[2]}${shorthand[3]}${shorthand[3]}`
+    : hex;
+  const channels = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(normalized)?.slice(1);
+  assert.ok(channels, `Expected a three- or six-digit hex colour, received ${hex}`);
+  const linear = channels.map(channel => {
+    const value = Number.parseInt(channel, 16) / 255;
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const lighter = Math.max(relativeLuminance(foreground), relativeLuminance(background));
+  const darker = Math.min(relativeLuminance(foreground), relativeLuminance(background));
+  return (lighter + 0.05) / (darker + 0.05);
 }
 
 function openAccessMessageInHeader(root: Node): Element | undefined {
@@ -66,7 +109,18 @@ test('index.html parses without HTML errors', () => {
 });
 
 test('header uses the Ruta G mark and split wordmark', () => {
-  assert.equal(allElements.filter(element => hasClass(element, 'brand-mark')).length, 1);
+  const brandMarks = allElements.filter(element => hasClass(element, 'brand-mark'));
+  assert.equal(brandMarks.length, 1);
+
+  const route = elementWithClass(brandMarks[0], 'path', 'route');
+  const destination = elementWithClass(brandMarks[0], 'path', 'destination');
+  const destinationDot = elementWithClass(brandMarks[0], 'circle', 'destination-dot');
+  assert.equal(attribute(route!, 'd'), 'M42.5 18.2A18 18 0 1 0 42 39.1');
+  assert.equal(attribute(destination!, 'd'), 'M28 28h15v11');
+  assert.deepEqual(
+    ['cx', 'cy', 'r'].map(name => attribute(destinationDot!, name)),
+    ['43', '43', '6'],
+  );
 
   const geo = allElements.find(element => hasClass(element, 'brand-geo'));
   const empleo = allElements.find(element => hasClass(element, 'brand-empleo'));
@@ -74,6 +128,62 @@ test('header uses the Ruta G mark and split wordmark', () => {
   assert.ok(empleo);
   assert.equal(textContent(geo).trim(), 'geo');
   assert.equal(textContent(empleo).trim(), 'empleo');
+});
+
+test('favicon encodes the Ruta G route, destination and destination dot', () => {
+  const favicon = allElements.find(
+    element => element.tagName === 'link' && attribute(element, 'rel') === 'icon',
+  );
+  assert.ok(favicon);
+
+  const href = attribute(favicon, 'href');
+  assert.ok(href);
+  assert.ok(href.startsWith('data:image/svg+xml,'));
+  const faviconSvg = parseFragment(decodeURIComponent(href.slice(href.indexOf(',') + 1)));
+  const route = elements(faviconSvg).find(
+    element => element.tagName === 'path' && attribute(element, 'd') === 'M42.5 18.2A18 18 0 1 0 42 39.1',
+  );
+  const destination = elements(faviconSvg).find(
+    element => element.tagName === 'path' && attribute(element, 'd') === 'M28 28h15v11',
+  );
+  const destinationDot = elements(faviconSvg).find(
+    element => element.tagName === 'circle'
+      && attribute(element, 'cx') === '43'
+      && attribute(element, 'cy') === '43'
+      && attribute(element, 'r') === '6',
+  );
+  assert.ok(route);
+  assert.ok(destination);
+  assert.ok(destinationDot);
+});
+
+test('page has one visually hidden GeoEmpleo heading', () => {
+  const headings = allElements.filter(element => element.tagName === 'h1');
+  assert.equal(headings.length, 1);
+  assert.equal(textContent(headings[0]).trim(), 'GeoEmpleo');
+  assert.ok(hasClass(headings[0], 'visually-hidden'));
+  assert.match(css, /\.visually-hidden\{[^}]*position:absolute[^}]*clip(?:-path)?:/);
+});
+
+test('muted text token meets WCAG AA contrast on white', () => {
+  const muted = css.match(/--muted:(#[0-9a-f]{6})/i)?.[1];
+  const white = css.match(/--white:(#[0-9a-f]{3,6})/i)?.[1];
+  assert.ok(muted);
+  assert.ok(white);
+  assert.ok(
+    contrastRatio(muted, white) >= 4.5,
+    `${muted} has insufficient contrast on ${white}`,
+  );
+  assert.match(css, /\.site-header nav a,\.site-header nav button\{[^}]*color:var\(--muted\)/);
+  assert.match(css, /\.field-label\{[^}]*color:var\(--muted\)/);
+});
+
+test('tablet header wraps its search without hiding controls at 800px', () => {
+  const tabletRules = mediaBlockForViewport(css, 800);
+  assert.ok(tabletRules, 'Expected a responsive header rule that applies at 800px');
+  assert.match(tabletRules, /\.site-header\{[^}]*flex-wrap:wrap/);
+  assert.match(tabletRules, /\.search-bar\{[^}]*order:3[^}]*flex-basis:100%[^}]*min-width:0/);
+  assert.doesNotMatch(tabletRules, /\.open-access\{[^}]*display:none/);
 });
 
 test('header contains the only public search form and open-access message', () => {
