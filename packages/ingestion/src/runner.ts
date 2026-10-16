@@ -14,7 +14,15 @@ import type {PublicCatalog,PublicJob} from './model.ts';
 const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi'] as const;
 type ImplementedSourceId=typeof implementedSourceIds[number];
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
+export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
 export interface RunOptions {catalogPath:string;placesPath:string;nationalPlacesPath?:string;reportPath:string;sourceIds?:readonly string[];checkedAt?:string;fetchImpl?:typeof fetch}
+
+export function formatRunReportLines(report:RunReportSummary):string[] {
+  return [
+    `${report.status.toUpperCase()}: catálogo ${report.published}`,
+    ...report.sources.map(source=>`${source.sourceId}: ${source.status}, ${source.received} ofertas, ${source.mapped} con ubicación${source.reason?`, ${source.reason}`:''}`),
+  ];
+}
 
 function isImplementedSourceId(sourceId:string):sourceId is ImplementedSourceId {
   return (implementedSourceIds as readonly string[]).includes(sourceId);

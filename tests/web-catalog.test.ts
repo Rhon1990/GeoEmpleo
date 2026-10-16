@@ -4,16 +4,18 @@ import { readFileSync } from 'node:fs';
 import { searchCalls } from '../apps/web-preview/public/catalog.mjs';
 
 const catalog = JSON.parse(readFileSync(new URL('../apps/web-preview/public/data/calls.json', import.meta.url), 'utf8'));
+// Use the fixed BOE selection for deterministic search assertions; other sources refresh daily.
+const searchFixture = catalog.calls.filter((call:{sourceId:string}) => call.sourceId === 'boe');
 
 test('busca sin distinguir tildes o mayúsculas', () => {
-  const result = searchCalls(catalog.calls, { q: 'TECNICO informatico' });
+  const result = searchCalls(searchFixture, { q: 'TECNICO informatico' });
   assert.deepEqual(result.map(call => call.id), ['BOE-A-2026-21006']);
 });
 
 test('combina texto, territorio y categoría sin resultados ajenos', () => {
-  const result = searchCalls(catalog.calls, { city: 'Comunidad de Madrid', category: 'administracion' });
+  const result = searchCalls(searchFixture, { city: 'Comunidad de Madrid', category: 'administracion' });
   assert.deepEqual(result.map(call => call.id), ['BOE-A-2026-21011']);
-  assert.equal(searchCalls(catalog.calls, { city: 'Comunidad de Madrid', category: 'cultura' }).length, 0);
+  assert.equal(searchCalls(searchFixture, { city: 'Comunidad de Madrid', category: 'cultura' }).length, 0);
 });
 
 test('limpiar consulta recupera los anuncios y preserva datos originales', () => {

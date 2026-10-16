@@ -5,7 +5,18 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {gzipSync} from 'node:zlib';
 import {fetchJson} from '../packages/ingestion/src/http.ts';
-import {runDaily} from '../packages/ingestion/src/runner.ts';
+import {formatRunReportLines,runDaily} from '../packages/ingestion/src/runner.ts';
+
+const windows1252Characters=new Map([['€',0x80],['“',0x93],['”',0x94],['–',0x96]]);
+function encodeWindows1252(value:string):Uint8Array {
+ return Uint8Array.from([...value].map(character=>{
+  const encoded=windows1252Characters.get(character);
+  if(encoded!==undefined) return encoded;
+  const codePoint=character.codePointAt(0);
+  if(codePoint===undefined||codePoint>0xff) throw new TypeError('Carácter no representable en Windows-1252');
+  return codePoint;
+ }));
+}
 
 test('HTTP limita tipos, tamaño declarado/real y redirecciones',async()=>{
  const response=(body:string,headers:Record<string,string>)=>(async()=>new Response(body,{headers})) as typeof fetch;
@@ -27,6 +38,27 @@ test('HTTP decodifica JSON Windows-1252 explícito y nunca acepta JSONP',async()
   fetchJson('https://example.test',{fetchImpl,encoding:'iso-8859-1' as 'utf-8'}),
   /codificación/i,
  );
+});
+test('formatea resúmenes success y partial por fuente',()=>{
+ const successful={status:'success' as const,published:4,sources:[
+  {sourceId:'sef-murcia',status:'success' as const,received:2,mapped:0,reason:null},
+  {sourceId:'ecyl-castilla-leon',status:'success' as const,received:1,mapped:1,reason:null},
+ ]};
+ const partial={status:'partial' as const,published:3,sources:[
+  {sourceId:'sef-murcia',status:'failed' as const,received:0,mapped:0,reason:'source_fetch_or_validation_failed'},
+  {sourceId:'lanbide-euskadi',status:'success' as const,received:1,mapped:0,reason:null},
+ ]};
+
+ assert.deepEqual(formatRunReportLines(successful),[
+  'SUCCESS: catálogo 4',
+  'sef-murcia: success, 2 ofertas, 0 con ubicación',
+  'ecyl-castilla-leon: success, 1 ofertas, 1 con ubicación',
+ ]);
+ assert.deepEqual(formatRunReportLines(partial),[
+  'PARTIAL: catálogo 3',
+  'sef-murcia: failed, 0 ofertas, 0 con ubicación, source_fetch_or_validation_failed',
+  'lanbide-euskadi: success, 1 ofertas, 0 con ubicación',
+ ]);
 });
 test('runner conserva catálogo ante fallo y publica una captura completa sin duplicados',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-runner-'));try{
@@ -57,12 +89,12 @@ test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',
  const cylId='1285689059828';
  const cylPath=`/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${cylId}/Empleo`;
  const cyl=[{titulo:'Técnico/a de mantenimiento',provincia:'SEGOVIA',fecha_publicacion:'2026-09-15',descripcion:'<p>Revisión de equipos.</p>',localidad_asset0:'RIAZA',identificador:cylId,actualizacionmetadatos:'2026-10-14',enlace_al_contenido:`https://empleo.jcyl.es${cylPath}`,geografico:{lon:-3.47787,lat:41.27826}}];
- const lanbide=[{codigo:'162026012345',desEmpleo:'Técnico/a de almacén',desPuesto:'Gestión y revisión.',pais:'ESPAÑA',provincia:'GIPUZKOA',municipio:'DONOSTIA/SAN SEBASTIÁN',fecPub:'15/09/2026',url:'https://web.lanbide.eus/apps/OF_DETALLE_OFERTA_TRABAJO?IDRG=162026012345'}];
+ const lanbide=[{codigo:'162026012345',desEmpleo:'Técnico/a de almacén',desPuesto:'Gestión “premium” – revisión por 1.500 €.',pais:'ESPAÑA',provincia:'GIPUZKOA',municipio:'DONOSTIA/SAN SEBASTIÁN',fecPub:'15/09/2026',url:'https://web.lanbide.eus/apps/OF_DETALLE_OFERTA_TRABAJO?IDRG=162026012345'}];
  const fetchImpl=(async(input:string|URL|Request)=>{
   const host=new URL(input instanceof Request?input.url:input).hostname;
   if(host==='sefapps.carm.es') throw new Error('secreto de red');
   if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(cyl),{headers:{'content-type':'application/json'}});
-  if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(Buffer.from(JSON.stringify(lanbide),'latin1')),{headers:{'content-type':'application/json'}});
+  if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
   throw new Error('host inesperado');
  }) as typeof fetch;
  const options={catalogPath,placesPath,nationalPlacesPath,reportPath,checkedAt:'2026-10-15T05:30:00Z',fetchImpl};
@@ -79,7 +111,43 @@ test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',
  assert.equal(second.status,'partial');
  const published=JSON.parse(await readFile(catalogPath,'utf8'));
  assert.deepEqual(published.calls.map((call:{id:string})=>call.id).sort(),['ECYL-1285689059828','LANBIDE-162026012345']);
+ assert.deepEqual(
+  published.calls.find((call:{id:string})=>call.id==='LANBIDE-162026012345')?.paragraphs,
+  ['Gestión “premium” – revisión por 1.500 €.'],
+ );
  assert.ok(!(await readFile(reportPath,'utf8')).includes('secreto'));
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('runner publica success con las tres fuentes activas',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-all-success-'));try{
+ const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+ const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+ await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-10-14T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+ await writeFile(placesPath,JSON.stringify({places:[]}));
+ await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-10-15',license:'test',places:[]})));
+ const murcia=await readFile(new URL('./fixtures/ingestion/murcia.json',import.meta.url),'utf8');
+ const cylId='1285689059828';
+ const cylPath=`/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${cylId}/Empleo`;
+ const cyl=[{titulo:'Técnico/a de mantenimiento',provincia:'SEGOVIA',fecha_publicacion:'2026-09-15',descripcion:'<p>Revisión de equipos.</p>',localidad_asset0:'RIAZA',identificador:cylId,actualizacionmetadatos:'2026-10-14',enlace_al_contenido:`https://empleo.jcyl.es${cylPath}`,geografico:{lon:-3.47787,lat:41.27826}}];
+ const lanbide=[{codigo:'162026012345',desEmpleo:'Técnico/a de almacén',desPuesto:'Gestión y revisión.',pais:'ESPAÑA',provincia:'GIPUZKOA',municipio:'DONOSTIA/SAN SEBASTIÁN',fecPub:'15/09/2026',url:'https://web.lanbide.eus/apps/OF_DETALLE_OFERTA_TRABAJO?IDRG=162026012345'}];
+ const fetchImpl=(async(input:string|URL|Request)=>{
+  const host=new URL(input instanceof Request?input.url:input).hostname;
+  if(host==='sefapps.carm.es') return new Response(murcia,{headers:{'content-type':'application/json'}});
+  if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(cyl),{headers:{'content-type':'application/json'}});
+  if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
+  throw new Error('host inesperado');
+ }) as typeof fetch;
+
+ const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,checkedAt:'2026-10-15T05:30:00Z',fetchImpl});
+
+ assert.equal(report.status,'success');
+ assert.deepEqual(report.sources,[
+  {sourceId:'sef-murcia',status:'success',received:2,mapped:0,reason:null},
+  {sourceId:'ecyl-castilla-leon',status:'success',received:1,mapped:0,reason:null},
+  {sourceId:'lanbide-euskadi',status:'success',received:1,mapped:0,reason:null},
+ ]);
+ assert.equal(report.published,4);
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 

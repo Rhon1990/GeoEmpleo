@@ -94,7 +94,7 @@ export async function createGoogleMap(host,config,events,initial={}) {
         pin.textContent=`${group.calls.length} ${group.calls.length===1?'oferta':'ofertas'}`;
         const severalLocations=new Set(group.calls.map(call=>call.location.point.join(','))).size>1;
         const title=severalLocations?`${group.calls.length} ofertas en esta zona; ampliar mapa`:`${group.calls.length} ofertas en ${group.calls[0].city} · ubicación municipal aproximada`;
-        const marker=new AdvancedMarkerElement({map,position:{lng:group.point[0],lat:group.point[1]},gmpClickable:true,title});
+        const marker=new AdvancedMarkerElement({map,position:{lng:group.point[0],lat:group.point[1]},gmpClickable:true,title,zIndex:1});
         marker.append(pin);
         marker.addListener('click',()=>{
           if(severalLocations){
@@ -139,7 +139,7 @@ export async function createGoogleMap(host,config,events,initial={}) {
       if (isPoint(origin)) {
         const position = {lat:origin[1],lng:origin[0]};
         const pin = document.createElement('div'); pin.className = 'origin-pin'; pin.textContent = 'Tu zona';
-        originMarker = new AdvancedMarkerElement({map,position,title:'Origen elegido para buscar'}); originMarker.append(pin);
+        originMarker = new AdvancedMarkerElement({map,position,title:'Origen elegido para buscar',zIndex:0}); originMarker.append(pin);
         if (radiusKm != null) radiusCircle = new google.maps.Circle({map,center:position,radius:radiusKm*1000,strokeColor:'#4e7950',strokeWeight:1,fillColor:'#6ea967',fillOpacity:.12,clickable:false});
       }
       for (const item of markers.values()) item.pin.classList.toggle('selected',item.ids.includes(selectedId));

@@ -11,6 +11,17 @@ test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>
  assert.ok(!jobPresentation(job).note.includes('bases del proceso'));
  assert.match(resultSummary([{places:null},{places:2}]),/2 plazas publicadas.*1 oferta/);
 });
+test('identifica ECYL y Lanbide sin atribuir su procedencia a Murcia',()=>{
+ for(const [sourceId,source] of [['ecyl-castilla-leon','ECYL Castilla y León'],['lanbide-euskadi','Lanbide']]) {
+  const view=jobPresentation({kind:'job',sourceId,source});
+  assert.ok(view.provenance.includes(source));
+  assert.ok(!view.provenance.includes('Murcia'));
+  assert.ok(view.provenance.includes('no identifica'));
+ }
+ const unknown=jobPresentation({kind:'job',source:'Otra fuente'});
+ assert.ok(unknown.provenance.includes('Otra fuente'));
+ assert.ok(!unknown.provenance.includes('Murcia'));
+});
 test('agrupa posiciones iguales sin desplazar puntos y conserva todas las ofertas',()=>{
  const calls=[{id:'a',location:{point:[-1,38]}},{id:'b',location:{point:[-1,38]}},{id:'c',location:{point:[-2,39]}},{id:'d',location:null}];
  const groups=markerGroups(calls);assert.equal(groups.length,2);
