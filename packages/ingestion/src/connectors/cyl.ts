@@ -66,6 +66,17 @@ function sourceUrl(value: unknown): string {
   return officialHttpsUrl(url.href, 'empleo.jcyl.es', 'ECYL');
 }
 
+function isOfficialOfferPath(sourceUrl: string, externalId: string): boolean {
+  const segments = new URL(sourceUrl).pathname.split('/').filter(Boolean);
+  return segments.length >= 7
+    && segments[0] === 'web'
+    && segments[1] === 'jcyl'
+    && segments[2] === 'Empleo'
+    && segments.at(-3) === 'OfertasEmpleo'
+    && segments.at(-2) === externalId
+    && segments.at(-1) === 'Empleo';
+}
+
 /** A malformed record invalidates the complete source snapshot. */
 export function adaptCylOffers(
   input: unknown,
@@ -86,7 +97,7 @@ export function adaptCylOffers(
     const sourceUrlKey = canonicalUrlKey(canonicalSourceUrl);
     if (seenUrls.has(sourceUrlKey)) throw new TypeError('URL ECYL duplicada');
     seenUrls.add(sourceUrlKey);
-    if (!new URL(canonicalSourceUrl).pathname.split('/').includes(externalId)) {
+    if (!isOfficialOfferPath(canonicalSourceUrl, externalId)) {
       throw new TypeError('URL ECYL no corresponde al identificador');
     }
 

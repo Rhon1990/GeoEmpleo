@@ -141,6 +141,8 @@ test('ECYL invalida la captura por identidad, URL o geografía publicada malform
     [cylOffer('../oferta')],
     [{ ...cylRaw, enlace_al_contenido: 'http://empleo.jcyl.es/oferta' }],
     [{ ...cylRaw, enlace_al_contenido: 'https://example.com/oferta' }],
+    [{ ...cylRaw, enlace_al_contenido: `https://empleo.jcyl.es:444${cylPath}` }],
+    [{ ...cylRaw, enlace_al_contenido: `https://empleo.jcyl.es/web/jcyl/Empleo/arbitraria/${cylIdentifier}/Empleo` }],
     [{ ...cylRaw, provincia: 'MADRID' }],
     [{ ...cylRaw, geografico: { lon: -3.7038, lat: 40.4168 } }],
     [{ ...cylRaw, geografico: { lon: -0.12, lat: 51.5 } }],
@@ -215,6 +217,8 @@ test('Lanbide aplica 30 días, no publica futuras e invalida identidad, fecha o 
     [{ ...lanbideRaw, fecPub: '2026-10-15' }],
     [{ ...lanbideRaw, url: 'http://web.lanbide.eus/oferta' }],
     [{ ...lanbideRaw, url: 'https://example.com/oferta' }],
+    [{ ...lanbideRaw, url: lanbideRaw.url.replace('web.lanbide.eus', 'web.lanbide.eus:444') }],
+    [{ ...lanbideRaw, url: lanbideRaw.url.replace('OF_DETALLE_OFERTA_TRABAJO', 'RUTA_ARBITRARIA') }],
   ]) {
     assert.throws(() => adaptLanbideOffers(input, checkedAt, () => null));
   }

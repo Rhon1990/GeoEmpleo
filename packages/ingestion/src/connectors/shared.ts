@@ -45,7 +45,8 @@ export function officialHttpsUrl(value: unknown, hostname: string, source: strin
   } catch {
     throw new TypeError(`URL ${source} no autorizada`);
   }
-  if (url.protocol !== 'https:' || url.hostname !== hostname || url.username || url.password) {
+  if (url.protocol !== 'https:' || url.hostname !== hostname || url.port
+    || url.username || url.password) {
     throw new TypeError(`URL ${source} no autorizada`);
   }
   return url.href;

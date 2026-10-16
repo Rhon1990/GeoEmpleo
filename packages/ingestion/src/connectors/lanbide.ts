@@ -32,8 +32,10 @@ export function adaptLanbideOffers(
     const sourceUrlKey = canonicalUrlKey(sourceUrl);
     if (seenUrls.has(sourceUrlKey)) throw new TypeError('URL Lanbide duplicada');
     seenUrls.add(sourceUrlKey);
-    const linkedIds = new URL(sourceUrl).searchParams.getAll('IDRG');
-    if (linkedIds.length !== 1 || linkedIds[0] !== externalId) {
+    const parsedSourceUrl = new URL(sourceUrl);
+    const linkedIds = parsedSourceUrl.searchParams.getAll('IDRG');
+    if (parsedSourceUrl.pathname !== '/apps/OF_DETALLE_OFERTA_TRABAJO'
+      || linkedIds.length !== 1 || linkedIds[0] !== externalId) {
       throw new TypeError('URL Lanbide no corresponde al código');
     }
 
