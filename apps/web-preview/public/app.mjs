@@ -1,7 +1,7 @@
 import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
-import {detailBadge,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
+import {cardVisualTheme,detailBadge,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
 import {locateOnce,createViewportSearch} from './map-search.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
@@ -130,6 +130,9 @@ function card(call) {
   article.addEventListener('pointerleave',()=>interaction.clearPreview(call.id));
   article.addEventListener('focusin',()=>interaction.preview(call.id));
   article.addEventListener('focusout',event=>{if(!article.contains(event.relatedTarget))interaction.clearPreview(call.id);});
+  const visual = element('div', undefined, `job-visual theme-${cardVisualTheme(call)}`);
+  visual.setAttribute('aria-hidden','true');
+  visual.append(element('span',call.source,'source-pill'));
   const top = element('div', undefined, 'card-top');
   top.append(element('span', call.city.slice(0,2).toLocaleUpperCase('es'), 'employer-avatar'), element('span', call.employer, 'employer-name'), element('span','↗','card-arrow'));
   const locationLine = element('p', `${call.city}, ${call.province}`, 'location-line');
@@ -140,7 +143,7 @@ function card(call) {
     const distance = distanceKm(origin,call.location?.point);
     if (Number.isFinite(distance)) tags.append(element('span',`≈ ${new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(distance)} km de tu zona`,'distance-tag'));
   }
-  button.append(top, element('h3',call.title), locationLine, tags, element('p',jobPresentation(call).salaryLabel,'salary-label'));
+  button.append(visual, top, element('h3',call.title), locationLine, tags, element('p',jobPresentation(call).salaryLabel,'salary-label'));
   const footer = element('div', undefined, 'card-footer');
   footer.append(element('span',`Publicado ${date(call.publishedAt)}`), externalLink(`${call.id} ↗`, call.sourceUrl));
   article.append(button, footer);

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {detailBadge,placesLabel,jobPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
+import {cardVisualTheme,detailBadge,placesLabel,jobPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
 import {markerGroups,expandedZoom} from '../apps/web-preview/public/google-map.mjs';
 test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>{
  assert.equal(placesLabel({places:null}),'Plazas no publicadas');
@@ -25,6 +25,11 @@ test('identifica ECYL y Lanbide sin atribuir su procedencia a Murcia',()=>{
 test('la etiqueta del detalle siempre procede de la oferta que se está abriendo',()=>{
  assert.equal(detailBadge({kind:'job',source:'Lanbide'}),'Oferta real · Lanbide');
  assert.equal(detailBadge({kind:'job',source:'ECYL Castilla y León'}),'Oferta real · ECYL Castilla y León');
+});
+test('deriva un tema decorativo estable sin inventar una imagen',()=>{
+ assert.equal(cardVisualTheme({category:'tecnico',kind:'job'}),'technical');
+ assert.equal(cardVisualTheme({category:'administracion',kind:'public_call'}),'public');
+ assert.equal(cardVisualTheme({category:'unknown',kind:'job'}),'local');
 });
 test('agrupa posiciones iguales sin desplazar puntos y conserva todas las ofertas',()=>{
  const calls=[{id:'a',location:{point:[-1,38]}},{id:'b',location:{point:[-1,38]}},{id:'c',location:{point:[-2,39]}},{id:'d',location:null}];

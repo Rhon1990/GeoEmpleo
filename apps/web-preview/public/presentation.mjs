@@ -1,4 +1,9 @@
 export const placesLabel = call => call.places == null ? 'Plazas no publicadas' : `${call.places} ${call.places === 1 ? 'plaza' : 'plazas'}`;
+export function cardVisualTheme(job) {
+  if(job.kind==='public_call'||job.category==='administracion')return 'public';
+  if(['tecnico','industria','construccion'].includes(job.category))return 'technical';
+  return 'local';
+}
 export function resultSummary(results) {
  const known=results.reduce((total,call)=>total+(call.places??0),0);
  const unknown=results.filter(call=>call.places==null).length;
