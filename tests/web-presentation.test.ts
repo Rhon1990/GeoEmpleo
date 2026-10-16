@@ -28,7 +28,7 @@ test('la etiqueta del detalle siempre procede de la oferta que se está abriendo
 });
 test('deriva un tema decorativo estable sin inventar una imagen',()=>{
  assert.equal(cardVisualTheme({category:'tecnico',kind:'job'}),'technical');
- assert.equal(cardVisualTheme({category:'administracion',kind:'public_call'}),'public');
+ assert.equal(cardVisualTheme({category:'tecnologia',kind:'public_call'}),'public');
  assert.equal(cardVisualTheme({category:'unknown',kind:'job'}),'local');
 });
 test('agrupa posiciones iguales sin desplazar puntos y conserva todas las ofertas',()=>{

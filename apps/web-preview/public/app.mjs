@@ -124,15 +124,16 @@ function card(call) {
   const article = element('article', undefined, 'job-card');
   article.dataset.jobId = call.id;
   const button = element('button', undefined, 'card-open');
-  button.type = 'button'; button.setAttribute('aria-label', `Ver oferta: ${call.title}`);
+  button.type = 'button'; button.setAttribute('aria-label', `Ver oferta: ${call.title}. Fuente: ${call.source}`);
   button.addEventListener('click', () => showDetail(call));
   article.addEventListener('pointerenter',()=>interaction.preview(call.id));
   article.addEventListener('pointerleave',()=>interaction.clearPreview(call.id));
   article.addEventListener('focusin',()=>interaction.preview(call.id));
   article.addEventListener('focusout',event=>{if(!article.contains(event.relatedTarget))interaction.clearPreview(call.id);});
+  const visualFrame = element('div', undefined, 'job-visual-frame');
   const visual = element('div', undefined, `job-visual theme-${cardVisualTheme(call)}`);
   visual.setAttribute('aria-hidden','true');
-  visual.append(element('span',call.source,'source-pill'));
+  visualFrame.append(visual, element('span',call.source,'source-pill'));
   const top = element('div', undefined, 'card-top');
   top.append(element('span', call.city.slice(0,2).toLocaleUpperCase('es'), 'employer-avatar'), element('span', call.employer, 'employer-name'), element('span','↗','card-arrow'));
   const locationLine = element('p', `${call.city}, ${call.province}`, 'location-line');
@@ -143,7 +144,7 @@ function card(call) {
     const distance = distanceKm(origin,call.location?.point);
     if (Number.isFinite(distance)) tags.append(element('span',`≈ ${new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(distance)} km de tu zona`,'distance-tag'));
   }
-  button.append(visual, top, element('h3',call.title), locationLine, tags, element('p',jobPresentation(call).salaryLabel,'salary-label'));
+  button.append(visualFrame, top, element('h3',call.title), locationLine, tags, element('p',jobPresentation(call).salaryLabel,'salary-label'));
   const footer = element('div', undefined, 'card-footer');
   footer.append(element('span',`Publicado ${date(call.publishedAt)}`), externalLink(`${call.id} ↗`, call.sourceUrl));
   article.append(button, footer);

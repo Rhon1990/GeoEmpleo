@@ -8,6 +8,7 @@ type Element = DefaultTreeAdapterTypes.Element;
 
 const html = await readFile(new URL('../apps/web-preview/public/index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../apps/web-preview/public/styles.css', import.meta.url), 'utf8');
+const app = await readFile(new URL('../apps/web-preview/public/app.mjs', import.meta.url), 'utf8');
 const parseErrors: ParserError[] = [];
 const document = parse(html, { onParseError: error => parseErrors.push(error) });
 
@@ -184,6 +185,27 @@ test('tablet header wraps its search without hiding controls at 800px', () => {
   assert.match(tabletRules, /\.site-header\{[^}]*flex-wrap:wrap/);
   assert.match(tabletRules, /\.search-bar\{[^}]*order:3[^}]*flex-basis:100%[^}]*min-width:0/);
   assert.doesNotMatch(tabletRules, /\.open-access\{[^}]*display:none/);
+});
+
+test('mobile cards use a single-column results grid', () => {
+  const mobileRules = mediaBlockForViewport(css, 780);
+  assert.ok(mobileRules, 'Expected a responsive rule that applies at 780px');
+  assert.match(mobileRules, /\.job-list\{[^}]*grid-template-columns:1fr/);
+});
+
+test('job cards expose their real source while decorative geometry stays hidden', () => {
+  assert.match(app, /visual\.setAttribute\('aria-hidden','true'\)/);
+  assert.match(
+    app,
+    /visualFrame\.append\(visual, element\('span',call\.source,'source-pill'\)\)/,
+    'Expected the source pill to be a sibling of the aria-hidden visual',
+  );
+  assert.doesNotMatch(app, /visual\.append\([^\n]*call\.source/);
+  assert.match(
+    app,
+    /setAttribute\('aria-label', `Ver oferta: \$\{call\.title\}\. Fuente: \$\{call\.source\}`\)/,
+    'Expected the card action to announce its real source once',
+  );
 });
 
 test('header contains the only public search form and open-access message', () => {
