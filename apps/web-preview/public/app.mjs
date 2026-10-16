@@ -4,7 +4,7 @@ import {createGoogleMap,markerGroups} from './google-map.mjs';
 import {detailBadge,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
 import {locateOnce,createViewportSearch} from './map-search.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
-import {createJobInteraction,restoreJobFocus} from './job-interaction.mjs';
+import {clearSelectionBeforeFocusRestore,createJobInteraction,restoreJobFocus} from './job-interaction.mjs';
 
 const form = document.querySelector('#search-form');
 const query = document.querySelector('#query');
@@ -361,11 +361,9 @@ document.querySelector('#close-detail').addEventListener('click',()=>detail.clos
 detail.addEventListener('close',()=>{
   detailRequest?.abort();detailRequest=null;
   const returnId=detailReturnJobId;detailReturnJobId=null;
-  interaction.clearSelection();
-  requestAnimationFrame(()=>{
+  clearSelectionBeforeFocusRestore(interaction,()=>requestAnimationFrame(()=>{
     restoreJobFocus(list,returnId,document.querySelector('#results'));
-    interaction.clearSelection();
-  });
+  }));
 });
 document.querySelector('#about-button').addEventListener('click',() => about.showModal());
 document.querySelector('#close-about').addEventListener('click',() => about.close());

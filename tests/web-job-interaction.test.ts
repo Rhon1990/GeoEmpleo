@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createJobInteraction,restoreJobFocus} from '../apps/web-preview/public/job-interaction.mjs';
+import {
+  clearSelectionBeforeFocusRestore,
+  createJobInteraction,
+  restoreJobFocus,
+} from '../apps/web-preview/public/job-interaction.mjs';
 
 test('el foco temporal resalta una oferta y al salir restaura la selección',() => {
   const states: unknown[] = [];
@@ -52,4 +56,35 @@ test('restaura el foco a la tarjeta regenerada o al panel de resultados',() => {
   assert.equal(restoreJobFocus(list as unknown as HTMLElement,'job-a',fallback as unknown as HTMLElement),'card');
   assert.equal(restoreJobFocus(list as unknown as HTMLElement,'missing',fallback as unknown as HTMLElement),'fallback');
   assert.deepEqual(focused,['card','results']);
+});
+
+test('al cerrar limpia la selección antes de restaurar el foco y conserva la previsualización',() => {
+  const interaction=createJobInteraction();
+  interaction.select('job-a');
+  const button={focus:()=>interaction.preview('job-a')};
+  const list={querySelectorAll:()=>[
+    {dataset:{jobId:'job-a'},querySelector:()=>button},
+  ]};
+
+  clearSelectionBeforeFocusRestore(interaction,()=>{
+    assert.equal(restoreJobFocus(list as unknown as HTMLElement,'job-a'),'card');
+  });
+
+  assert.deepEqual(interaction.snapshot(),{
+    selectedId:null,previewId:'job-a',activeId:'job-a',
+  });
+});
+
+test('informa fallback cuando la tarjeta existe pero no contiene el botón enfocable',() => {
+  const focused:string[]=[];
+  const fallback={focus:()=>focused.push('results')};
+  const list={querySelectorAll:()=>[
+    {dataset:{jobId:'job-a'},querySelector:()=>null},
+  ]};
+
+  assert.equal(
+    restoreJobFocus(list as unknown as HTMLElement,'job-a',fallback as unknown as HTMLElement),
+    'fallback',
+  );
+  assert.deepEqual(focused,['results']);
 });

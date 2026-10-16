@@ -35,13 +35,23 @@ export function createJobInteraction(onChange=()=>{}) {
 }
 
 /**
+ * @param {{clearSelection:()=>void}} interaction
+ * @param {()=>void} restoreFocus
+ */
+export function clearSelectionBeforeFocusRestore(interaction,restoreFocus) {
+  interaction.clearSelection();
+  restoreFocus();
+}
+
+/**
  * @param {HTMLElement} list
  * @param {string|null} id
  * @param {HTMLElement|null} fallback
  */
 export function restoreJobFocus(list,id,fallback=null) {
   const article=[...list.querySelectorAll('[data-job-id]')].find(node=>node.dataset.jobId===id);
-  const target=article?.querySelector('.card-open')??fallback;
+  const cardTarget=article?.querySelector('.card-open');
+  const target=cardTarget??fallback;
   target?.focus({preventScroll:true});
-  return article&&target?'card':target?'fallback':'none';
+  return cardTarget?'card':target?'fallback':'none';
 }
