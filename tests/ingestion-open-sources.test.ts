@@ -67,8 +67,10 @@ function lanbideOffer(
 }
 
 test('adapta ECYL reciente con texto completo seguro, procedencia y punto publicado', () => {
-  const jobs = adaptCylOffers([cylRaw], checkedAt, () => {
-    assert.fail('no debe resolver cuando ECYL publica un punto válido');
+  const jobs = adaptCylOffers([cylRaw], checkedAt, (city, province) => {
+    assert.equal(city, 'RIAZA');
+    assert.equal(province, 'Segovia');
+    return location;
   });
 
   assert.equal(jobs.length, 1);
@@ -99,6 +101,28 @@ test('ECYL resuelve nacionalmente solo cuando no publica geográfico', () => {
   });
 
   assert.deepEqual(jobs[0]?.location, location);
+});
+
+test('ECYL no publica un punto oficial alejado del municipio resuelto', () => {
+  const conflictingPoint = {
+    ...cylRaw,
+    geografico: { lon: -3.7, lat: 40.8 },
+  };
+  const jobs = adaptCylOffers([conflictingPoint], checkedAt, (city, province) => {
+    assert.equal(city, 'RIAZA');
+    assert.equal(province, 'Segovia');
+    return location;
+  });
+
+  assert.equal(jobs.length, 1);
+  assert.equal(jobs[0]?.location, null);
+});
+
+test('ECYL conserva la oferta sin ubicación si no resuelve el municipio publicado', () => {
+  const jobs = adaptCylOffers([cylRaw], checkedAt, () => null);
+
+  assert.equal(jobs.length, 1);
+  assert.equal(jobs[0]?.location, null);
 });
 
 test('ECYL admite el extremo occidental publicado de Valladolid', () => {
@@ -216,6 +240,7 @@ test('Lanbide aplica 30 días, no publica futuras e invalida identidad, fecha o 
     [lanbideRaw, lanbideRaw],
     [lanbideOffer('X')],
     [{ ...lanbideRaw, codigo: 'código inválido' }],
+    [{ ...lanbideRaw, pais: 'FRANCIA' }],
     [{ ...lanbideRaw, fecPub: '2026-10-15' }],
     [{ ...lanbideRaw, url: 'http://web.lanbide.eus/oferta' }],
     [{ ...lanbideRaw, url: 'https://example.com/oferta' }],

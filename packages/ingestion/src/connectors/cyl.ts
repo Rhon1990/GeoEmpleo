@@ -27,6 +27,28 @@ const provinceCentreBounds: Readonly<Record<string, CoordinateBounds>> = Object.
   Zamora: { west: -6.9, south: 41.1, east: -4.8, north: 42.4 },
 });
 
+// Evita atribuir un punto oficial a otro municipio cercano dentro de la misma provincia.
+const maximumMunicipalityDistanceKm = 25;
+
+function distanceKm(
+  [leftLongitude, leftLatitude]: readonly [number, number],
+  [rightLongitude, rightLatitude]: readonly [number, number],
+): number {
+  const radians = Math.PI / 180;
+  const latitudeDelta = (rightLatitude - leftLatitude) * radians;
+  const longitudeDelta = (rightLongitude - leftLongitude) * radians;
+  const leftLatitudeRadians = leftLatitude * radians;
+  const rightLatitudeRadians = rightLatitude * radians;
+  const haversine = Math.sin(latitudeDelta / 2) ** 2
+    + Math.cos(leftLatitudeRadians) * Math.cos(rightLatitudeRadians)
+      * Math.sin(longitudeDelta / 2) ** 2;
+  const centralAngle = 2 * Math.atan2(
+    Math.sqrt(haversine),
+    Math.sqrt(Math.max(0, 1 - haversine)),
+  );
+  return 6_371 * centralAngle;
+}
+
 function normalize(value: string): string {
   return value.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('es-ES').trim();
 }
@@ -107,13 +129,21 @@ export function adaptCylOffers(
       : isoDate(offer.actualizacionmetadatos, 'ECYL');
     const bounds = provinceCentreBounds[province];
     if (!bounds) throw new TypeError('Provincia ECYL sin límites validados');
-    const location = publishedPoint(
+    const officialLocation = publishedPoint(
       offer.geografico,
       canonicalSourceUrl,
       sourceUpdatedAt,
       bounds,
-    )
-      ?? resolve(city, province);
+    );
+    const municipalLocation = resolve(city, province);
+    let location = municipalLocation;
+    if (officialLocation !== null) {
+      location = municipalLocation !== null
+        && distanceKm(officialLocation.point, municipalLocation.point)
+          <= maximumMunicipalityDistanceKm
+        ? officialLocation
+        : null;
+    }
 
     if (!isRecentPublication(publishedAt, checkedAt)) continue;
     jobs.push({

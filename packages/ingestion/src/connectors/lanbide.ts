@@ -39,7 +39,10 @@ export function adaptLanbideOffers(
       throw new TypeError('URL Lanbide no corresponde al código');
     }
 
-    requiredText(offer.pais, 'Lanbide');
+    const country = requiredText(offer.pais, 'Lanbide')
+      .normalize('NFC')
+      .toLocaleUpperCase('es-ES');
+    if (country !== 'ESPAÑA') throw new TypeError('País Lanbide no autorizado');
     const publishedAt = dateFromSpanish(offer.fecPub, 'Lanbide');
     const title = requiredText(offer.desEmpleo, 'Lanbide');
     const paragraphs = sanitizedParagraphs(offer.desPuesto, 'Lanbide');
