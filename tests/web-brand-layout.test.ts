@@ -38,6 +38,17 @@ function elementWithClass(root: Node, tagName: string, className: string): Eleme
   return elements(root).find(element => element.tagName === tagName && hasClass(element, className));
 }
 
+function directElementChildren(element: Element): Element[] {
+  return element.childNodes.filter((child): child is Element => 'tagName' in child);
+}
+
+function ruleForSelector(cssText: string, selector: string): string {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = new RegExp(`(?:^|})\\s*${escapedSelector}\\{([^}]*)\\}`).exec(cssText);
+  assert.ok(match, `Expected a CSS rule for ${selector}`);
+  return match[1];
+}
+
 function mediaBlockForViewport(cssText: string, viewportWidth: number): string | undefined {
   const mediaPattern = /@media\(max-width:(\d+)px\)\{/g;
   const matches = [...cssText.matchAll(mediaPattern)]
@@ -245,4 +256,121 @@ test('open-access message must be informational and inside the site header', () 
 test('legacy intro is absent and the page keeps one Google Map', () => {
   assert.equal(allElements.filter(element => hasClass(element, 'intro')).length, 0);
   assert.equal(allElements.filter(element => attribute(element, 'id') === 'google-map').length, 1);
+});
+
+test('workspace composes results and map as its only visual columns', () => {
+  const workspaces = allElements.filter(element => hasClass(element, 'workspace'));
+  assert.equal(workspaces.length, 1);
+
+  const columns = directElementChildren(workspaces[0]);
+  assert.equal(columns.length, 2);
+  assert.ok(hasClass(columns[0], 'results-panel'));
+  assert.equal(attribute(columns[0], 'id'), 'results');
+  assert.ok(hasClass(columns[1], 'map-panel'));
+});
+
+test('map controls overlay the single map and keep approved labels and legend', () => {
+  const mapPanel = allElements.find(element => hasClass(element, 'map-panel'));
+  const mapOverlay = allElements.find(element => hasClass(element, 'map-overlay'));
+  const googleMaps = allElements.filter(element => attribute(element, 'id') === 'google-map');
+  assert.ok(mapPanel);
+  assert.ok(mapOverlay);
+  assert.equal(mapOverlay.parentNode, mapPanel);
+  assert.equal(googleMaps.length, 1);
+
+  const mapPanelChildren = directElementChildren(mapPanel);
+  const overlayIndex = mapPanelChildren.indexOf(mapOverlay);
+  assert.notEqual(overlayIndex, -1);
+  assert.equal(mapPanelChildren[overlayIndex + 1], googleMaps[0]);
+
+  const mapActions = elements(mapOverlay).find(element => hasClass(element, 'map-actions'));
+  assert.ok(mapActions);
+  const approvedLabels = new Map([
+    ['return-origin', 'Volver a mi ubicación'],
+    ['choose-origin', 'Elegir mi zona'],
+    ['search-area', 'Rehacer en esta zona'],
+    ['show-all-map', 'Ver España'],
+  ]);
+  for (const [id, label] of approvedLabels) {
+    const action: Element | undefined = elements(mapActions).find(
+      element => attribute(element, 'id') === id,
+    );
+    assert.ok(action, `Expected #${id} inside the map overlay`);
+    assert.equal(textContent(action).trim(), label);
+  }
+
+  const legendLead = elements(mapPanel).find(
+    element => element.tagName === 'strong'
+      && textContent(element).trim() === 'Ubicaciones municipales aproximadas',
+  );
+  assert.ok(legendLead);
+});
+
+test('desktop shell gives the workspace the actual remaining viewport height', () => {
+  const rootRule = ruleForSelector(css, ':root');
+  const bodyRule = ruleForSelector(css, 'body');
+  const mainRule = ruleForSelector(css, 'main');
+  const workspaceRule = ruleForSelector(css, '.workspace');
+  const resultsRule = ruleForSelector(css, '.results-panel');
+  const mapPanelRule = ruleForSelector(css, '.map-panel');
+  const mapRule = ruleForSelector(css, '.dynamic-map');
+  const footerRule = ruleForSelector(css, '.site-footer');
+
+  assert.doesNotMatch(rootRule, /--workspace-offset/);
+  assert.match(bodyRule, /height:100vh/);
+  assert.match(bodyRule, /height:100dvh/);
+  assert.match(bodyRule, /display:grid/);
+  assert.match(bodyRule, /grid-template-rows:auto minmax\(0,1fr\) auto/);
+
+  assert.match(mainRule, /width:100%/);
+  assert.match(mainRule, /max-width:none/);
+  assert.match(mainRule, /padding:0/);
+  assert.match(mainRule, /display:grid/);
+  assert.match(mainRule, /grid-template-rows:auto minmax\(0,1fr\)/);
+  assert.match(mainRule, /min-height:0/);
+
+  assert.match(workspaceRule, /display:grid/);
+  assert.match(
+    workspaceRule,
+    /grid-template-columns:minmax\(480px,1fr\) minmax\(480px,1fr\)/,
+  );
+  assert.match(workspaceRule, /min-height:0/);
+  assert.doesNotMatch(workspaceRule, /(?:d)?vh|workspace-offset/);
+  assert.match(resultsRule, /overflow:auto/);
+  assert.match(resultsRule, /min-height:0/);
+  assert.doesNotMatch(resultsRule, /max-height|(?:d)?vh|workspace-offset/);
+  assert.match(mapPanelRule, /min-height:0/);
+  assert.match(mapRule, /height:100%/);
+  assert.match(mapRule, /min-height:0/);
+  assert.doesNotMatch(mapRule, /(?:d)?vh|workspace-offset/);
+  assert.doesNotMatch(footerRule, /position:(?:absolute|fixed|sticky)/);
+
+  assert.match(
+    css,
+    /#search-area\{[^}]*background:var\(--petrol\)[^}]*border-color:var\(--petrol\)[^}]*color:#fff/,
+  );
+  assert.match(
+    css,
+    /\.map-overlay\{[^}]*width:calc\(100% - 24px\)[^}]*justify-content:center[^}]*overflow:visible/,
+  );
+  assert.match(css, /\.map-actions\{[^}]*flex-wrap:wrap[^}]*justify-content:center/);
+  assert.match(css, /\.map-footer\{[^}]*bottom:36px/);
+});
+
+test('tablet layout avoids minimum-column horizontal overflow', () => {
+  const tabletRules = mediaBlockForViewport(css, 900);
+  assert.ok(tabletRules, 'Expected a responsive workspace rule that applies at 900px');
+  assert.match(
+    tabletRules,
+    /\.workspace\{[^}]*(?:grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)|flex-direction:column)/,
+  );
+  assert.doesNotMatch(tabletRules, /\.workspace\{[^}]*minmax\((?:4[8-9]\d|[5-9]\d\d)px/);
+});
+
+test('mobile restores natural document flow for the stacked workspace', () => {
+  const mobileRules = mediaBlockForViewport(css, 780);
+  assert.ok(mobileRules, 'Expected a responsive workspace rule that applies at 780px');
+  assert.match(mobileRules, /body\{[^}]*display:block[^}]*height:auto/);
+  assert.match(mobileRules, /main\{[^}]*display:block/);
+  assert.match(mobileRules, /\.workspace\{[^}]*display:flex[^}]*flex-direction:column/);
 });
