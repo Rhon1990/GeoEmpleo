@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { resolvePreviewPath } from './routing.mjs';
+import { previewAsset,resolvePreviewPath } from './routing.mjs';
 import { publicMapConfig } from './config.mjs';
 import { parseEnv } from 'node:util';
 import {createJobStore} from './job-store.mjs';
@@ -10,21 +10,6 @@ import { randomBytes } from 'node:crypto';
 const root = new URL('./public/', import.meta.url);
 const jobStore=createJobStore(new URL('./public/data/calls.json',import.meta.url));
 const placesStore=createPlacesStore(new URL('./data/spain-places.json.gz',import.meta.url));
-const routes = new Map([
-  ['/', ['index.html','text/html; charset=utf-8']],
-  ['/index.html', ['index.html','text/html; charset=utf-8']],
-  ['/styles.css', ['styles.css','text/css; charset=utf-8']],
-  ['/app.mjs', ['app.mjs','text/javascript; charset=utf-8']],
-  ['/presentation.mjs', ['presentation.mjs','text/javascript; charset=utf-8']],
-  ['/catalog.mjs', ['catalog.mjs','text/javascript; charset=utf-8']],
-  ['/geography.mjs', ['geography.mjs','text/javascript; charset=utf-8']],
-  ['/google-map.mjs', ['google-map.mjs','text/javascript; charset=utf-8']],
-  ['/map-search.mjs', ['map-search.mjs','text/javascript; charset=utf-8']],
-  ['/reference-places.mjs', ['reference-places.mjs','text/javascript; charset=utf-8']],
-  ['/map-state.mjs', ['map-state.mjs','text/javascript; charset=utf-8']],
-  ['/data/calls.json', ['data/calls.json','application/json; charset=utf-8']],
-  ['/data/places.json', ['data/places.json','application/json; charset=utf-8']],
-]);
 const server = createServer(async (request,response) => {
   if (!['GET','HEAD'].includes(request.method)) {
     response.writeHead(405, {'Allow':'GET, HEAD'}); response.end(); return;
@@ -56,7 +41,7 @@ const server = createServer(async (request,response) => {
     } catch {response.writeHead(503); response.end('Configuración no disponible');}
     return;
   }
-  const asset = routes.get(path);
+  const asset = previewAsset(path);
   if (!asset) {response.writeHead(404); response.end('No encontrado'); return;}
   try {
     const nonce = randomBytes(18).toString('base64');

@@ -14,3 +14,6 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 @media(max-width:780px){.proximity-bar{flex-wrap:wrap;gap:12px}.proximity-bar label:first-child{min-width:200px}.proximity-bar>span{max-width:none;flex-basis:100%}.dynamic-map{height:380px}.map-state{padding:20px}.map-state h3{font-size:20px}}
 
 .map-job-group{max-height:300px;max-width:340px;overflow:auto;color:#233c28}.map-job-group h3{font-size:16px;margin:8px 0}.map-job-group button{display:block;width:100%;text-align:left;padding:10px 6px;border:0;border-bottom:1px solid #dce5d9;background:#fff;cursor:pointer;font:inherit}.map-job-group button:hover,.map-job-group button:focus-visible{background:#edf4e8}
+
+.job-card{transition:border-color .15s,box-shadow .15s,transform .15s}.job-card.previewed{border-color:#afc199;box-shadow:0 6px 16px #223d3008}.job-card.selected{border-color:#6f9349;box-shadow:0 0 0 2px #dbeabf,0 8px 22px #223d3014;transform:translateY(-1px)}
+.job-pin{transition:transform .15s,background .15s,color .15s}.job-pin.previewed{background:#6f8f47;transform:scale(1.08)}

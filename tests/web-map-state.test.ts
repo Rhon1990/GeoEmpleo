@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createOriginSelection} from '../apps/web-preview/public/map-state.mjs';
-import {cameraPlan,viewportPoints} from '../apps/web-preview/public/google-map.mjs';
+import {cameraPlan,markerVisualState,viewportPoints} from '../apps/web-preview/public/google-map.mjs';
 
 test('cancelar la selección evita que un clic posterior reactive el origen',() => {
   const origins: number[][] = [];
@@ -43,4 +43,16 @@ test('el movimiento de cámara se decide fuera de la actualización de marcadore
   });
   assert.deepEqual(cameraPlan([],origin),{mode:'focus',points:[origin]});
   assert.deepEqual(cameraPlan([],null),{mode:'none',points:[]});
+});
+
+test('la previsualización resalta el pin sin reemplazar la selección persistente',() => {
+  assert.deepEqual(markerVisualState(['job-a'],'job-a','job-b'),{
+    selected:true,previewed:false,zIndex:100,
+  });
+  assert.deepEqual(markerVisualState(['job-b'],'job-a','job-b'),{
+    selected:false,previewed:true,zIndex:50,
+  });
+  assert.deepEqual(markerVisualState(['job-c'],'job-a','job-b'),{
+    selected:false,previewed:false,zIndex:1,
+  });
 });

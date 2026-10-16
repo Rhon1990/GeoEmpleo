@@ -12,3 +12,4 @@ export function jobPresentation(call) {
  salaryLabel:isPublic?'Salario no publicado':'Retribución: consulta la descripción',
  provenance:isPublic?'El título corto y el área son adaptación editorial. Reproducción informativa sin carácter oficial.':`Origen de los datos: ${source}. La etiqueta de anunciante identifica al publicador; no identifica necesariamente a la empresa contratante. Consulta la descripción original. Clasificación de GeoEmpleo; sin vínculo de patrocinio.`};
 }
+export const detailBadge=call=>`Oferta real · ${jobPresentation(call).source}`;

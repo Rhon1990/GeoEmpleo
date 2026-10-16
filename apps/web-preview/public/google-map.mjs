@@ -43,6 +43,12 @@ export function markerGroups(calls,zoom=20) {
 
 export const expandedZoom=(current,fitted)=>fitted>current?fitted:current+1;
 
+export function markerVisualState(ids,selectedId,previewId) {
+  const selected=selectedId!==null&&ids.includes(selectedId);
+  const previewed=!selected&&previewId!==null&&ids.includes(previewId);
+  return {selected,previewed,zIndex:selected?100:previewed?50:1};
+}
+
 function loadSdk(key) {
   if (sdkPromise) return sdkPromise;
   sdkPromise = new Promise((resolve,reject) => {
@@ -69,22 +75,29 @@ export async function createGoogleMap(host,config,events,initial={}) {
   let radiusCircle;
   const originSelection = createOriginSelection(point => events.onOrigin(point));
   let selectedId = null;
+  let previewId = null;
   let knownCalls = [];
   const infoWindow=new google.maps.InfoWindow({disableAutoPan:true});
   map.addListener('click',event => {
     if (!event.latLng) return;
     originSelection.capture([event.latLng.lng(),event.latLng.lat()]);
   });
-  function select(id) {
-    selectedId = id;
-    for (const [markerId,item] of markers) {
-      const selected=item.ids.includes(id);
-      item.pin.classList.toggle('selected',selected);
-      item.marker.zIndex = selected ? 100 : 1;
+  function updateMarkerVisuals() {
+    for (const item of markers.values()) {
+      const state=markerVisualState(item.ids,selectedId,previewId);
+      item.pin.classList.toggle('selected',state.selected);
+      item.pin.classList.toggle('previewed',state.previewed);
+      item.marker.zIndex=state.zIndex;
     }
-    const call = knownCalls.find(item => item.id === id);
-    if (call && isPoint(call.location?.point)) map.panTo({lat:call.location.point[1],lng:call.location.point[0]});
   }
+  function select(id,{pan=true}={}) {
+    selectedId = id;
+    previewId = null;
+    updateMarkerVisuals();
+    const call = knownCalls.find(item => item.id === id);
+    if (pan&&call&&isPoint(call.location?.point)) map.panTo({lat:call.location.point[1],lng:call.location.point[0]});
+  }
+  function preview(id) {previewId=id;updateMarkerVisuals();}
   function renderMarkers() {
       infoWindow.close();
       for(const item of markers.values()) item.marker.map=null;
@@ -109,23 +122,25 @@ export async function createGoogleMap(host,config,events,initial={}) {
             });
             map.fitBounds(bounds,40);return;
           }
-          if(group.calls.length===1){select(group.calls[0].id);events.onSelect(group.calls[0].id);return;}
+          if(group.calls.length===1){select(group.calls[0].id,{pan:false});events.onSelect(group.calls[0].id);return;}
           const panel=document.createElement('div');panel.className='map-job-group';
           const heading=document.createElement('h3');heading.textContent=`${group.calls.length} ofertas · ${group.calls[0].city}`;panel.append(heading);
           for(const call of group.calls){
             const button=document.createElement('button');button.type='button';button.textContent=call.title;
-            button.addEventListener('click',()=>{infoWindow.close();select(call.id);events.onSelect(call.id);});panel.append(button);
+            button.addEventListener('click',()=>{infoWindow.close();select(call.id,{pan:false});events.onSelect(call.id);});panel.append(button);
           }
           infoWindow.setContent(panel);infoWindow.open({map,anchor:marker});
         });
         markers.set(group.key,{marker,pin,ids:group.calls.map(call=>call.id)});
       }
-    for(const item of markers.values()) item.pin.classList.toggle('selected',item.ids.includes(selectedId));
+    updateMarkerVisuals();
   }
   map.addListener('zoom_changed',renderMarkers);
   map.addListener('idle',()=>events.onViewport?.());
   return {
     select,
+    preview,
+    clearSelection() {selectedId=null;previewId=null;updateMarkerVisuals();},
     focus(point,zoom=12) {if(!isPoint(point))return;map.setCenter({lng:point[0],lat:point[1]});map.setZoom(zoom);},
     overview() {map.setCenter({lat:39.7,lng:-3.5});map.setZoom(6);},
     chooseOrigin() {originSelection.arm();map.setOptions({draggableCursor:'crosshair'});},
@@ -142,7 +157,7 @@ export async function createGoogleMap(host,config,events,initial={}) {
         originMarker = new AdvancedMarkerElement({map,position,title:'Origen elegido para buscar',zIndex:0}); originMarker.append(pin);
         if (radiusKm != null) radiusCircle = new google.maps.Circle({map,center:position,radius:radiusKm*1000,strokeColor:'#4e7950',strokeWeight:1,fillColor:'#6ea967',fillOpacity:.12,clickable:false});
       }
-      for (const item of markers.values()) item.pin.classList.toggle('selected',item.ids.includes(selectedId));
+      updateMarkerVisuals();
       map.setOptions({draggableCursor:originSelection.isActive() ? 'crosshair' : null});
     },
     fit(calls,origin) {
