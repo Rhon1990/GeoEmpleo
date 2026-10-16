@@ -67,14 +67,8 @@ function sourceUrl(value: unknown): string {
 }
 
 function isOfficialOfferPath(sourceUrl: string, externalId: string): boolean {
-  const segments = new URL(sourceUrl).pathname.split('/').filter(Boolean);
-  return segments.length >= 7
-    && segments[0] === 'web'
-    && segments[1] === 'jcyl'
-    && segments[2] === 'Empleo'
-    && segments.at(-3) === 'OfertasEmpleo'
-    && segments.at(-2) === externalId
-    && segments.at(-1) === 'Empleo';
+  return new URL(sourceUrl).pathname
+    === `/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${externalId}/Empleo`;
 }
 
 /** A malformed record invalidates the complete source snapshot. */
@@ -90,7 +84,7 @@ export function adaptCylOffers(
 
   for (const raw of input) {
     const offer = record(raw, 'ECYL');
-    const externalId = numericIdentifier(offer.identificador, 'ECYL');
+    const externalId = numericIdentifier(offer.identificador, 'ECYL', 13);
     if (seen.has(externalId)) throw new TypeError('Identidad ECYL inválida o duplicada');
     seen.add(externalId);
     const canonicalSourceUrl = sourceUrl(offer.enlace_al_contenido);

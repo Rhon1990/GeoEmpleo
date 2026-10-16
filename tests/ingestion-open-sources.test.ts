@@ -138,11 +138,13 @@ test('ECYL invalida la captura por identidad, URL o geografía publicada malform
   const invalidInputs = [
     [cylRaw, cylRaw],
     [cylOffer('X')],
+    [cylOffer('1')],
     [cylOffer('../oferta')],
     [{ ...cylRaw, enlace_al_contenido: 'http://empleo.jcyl.es/oferta' }],
     [{ ...cylRaw, enlace_al_contenido: 'https://example.com/oferta' }],
     [{ ...cylRaw, enlace_al_contenido: `https://empleo.jcyl.es:444${cylPath}` }],
     [{ ...cylRaw, enlace_al_contenido: `https://empleo.jcyl.es/web/jcyl/Empleo/arbitraria/${cylIdentifier}/Empleo` }],
+    [{ ...cylRaw, enlace_al_contenido: `https://empleo.jcyl.es/web/jcyl/Empleo/es/SegmentoFalso/1284216458054/OfertasEmpleo/${cylIdentifier}/Empleo` }],
     [{ ...cylRaw, provincia: 'MADRID' }],
     [{ ...cylRaw, geografico: { lon: -3.7038, lat: 40.4168 } }],
     [{ ...cylRaw, geografico: { lon: -0.12, lat: 51.5 } }],
