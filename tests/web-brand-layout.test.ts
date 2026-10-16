@@ -32,6 +32,35 @@ function textContent(node: Node): string {
   return node.childNodes.map(textContent).join('');
 }
 
+function openAccessMessageInHeader(root: Node): Element | undefined {
+  const siteHeader = elements(root).find(
+    element => element.tagName === 'header' && hasClass(element, 'site-header'),
+  );
+  if (!siteHeader) return undefined;
+
+  return elements(siteHeader).find(element => {
+    const containsMessage = element.childNodes.some(
+      child => 'value' in child && child.value.trim() === 'Sin registro',
+    );
+    if (!containsMessage) return false;
+
+    let container: Node | null = element;
+    while (container && 'tagName' in container) {
+      const role = attribute(container, 'role')?.toLowerCase();
+      if (
+        ['a', 'button', 'input'].includes(container.tagName) ||
+        role === 'button' ||
+        role === 'link'
+      ) {
+        return false;
+      }
+      if (container === siteHeader) break;
+      container = container.parentNode;
+    }
+    return true;
+  });
+}
+
 test('index.html parses without HTML errors', () => {
   assert.deepEqual(parseErrors, []);
 });
@@ -62,7 +91,23 @@ test('header contains the only public search form and open-access message', () =
     ancestor = 'parentNode' in ancestor ? ancestor.parentNode : null;
   }
   assert.equal(belongsToHeader, true);
-  assert.match(textContent(document), /Sin registro/);
+  assert.ok(openAccessMessageInHeader(document));
+});
+
+test('open-access message must be informational and inside the site header', () => {
+  const invalidExamples = [
+    '<header class="site-header"></header><footer><span>Sin registro</span></footer>',
+    '<header class="site-header"><button>Sin registro</button></header>',
+    '<header class="site-header"><a href="/registro">Sin registro</a></header>',
+    '<header class="site-header"><input value="Sin registro"></header>',
+    '<header class="site-header"><span role="button">Sin registro</span></header>',
+    '<header class="site-header"><span role="link">Sin registro</span></header>',
+    '<header class="site-header"><button><span>Sin registro</span></button></header>',
+  ];
+
+  for (const invalidHtml of invalidExamples) {
+    assert.equal(openAccessMessageInHeader(parse(invalidHtml)), undefined);
+  }
 });
 
 test('legacy intro is absent and the page keeps one Google Map', () => {
