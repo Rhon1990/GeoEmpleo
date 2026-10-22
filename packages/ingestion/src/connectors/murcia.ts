@@ -28,14 +28,15 @@ export function adaptMurciaOffers(input:unknown,checkedAt:string,resolve:PlaceRe
     const province=object(municipality.provincia);
     const city=text(municipality.municipio);
     const provinceName=text(province.provincia);
-    const sourceUrl=new URL(text(offer.urlDetalles));
-    if(sourceUrl.protocol!=='https:' || sourceUrl.hostname!=='sefoficinavirtual.carm.es' || sourceUrl.username || sourceUrl.password) throw new TypeError('URL SEF no autorizada');
+    const sourceValue=offer.urlDetalles;
+    const sourceUrl=sourceValue===null||sourceValue===undefined||sourceValue===''?null:new URL(text(sourceValue));
+    if(sourceUrl&&(sourceUrl.protocol!=='https:' || sourceUrl.hostname!=='sefoficinavirtual.carm.es' || sourceUrl.username || sourceUrl.password)) throw new TypeError('URL SEF no autorizada');
     const title=text(offer.descripcion);
     const paragraphs=htmlToParagraphs(text(offer.adicionales));
     if(!paragraphs.length) throw new TypeError('Descripción SEF vacía');
     const sector=object(offer.sectorProfesional);
     const category=categoryForSector(typeof sector.id==='string'?sector.id:'');
-    if(closingDate<today || publishedAt>today) continue;
+    if(closingDate<today || publishedAt>today || !sourceUrl) continue;
     jobs.push({kind:'job',sourceId:'sef-murcia',source:'SEF Murcia',id:`SEF-MURCIA-${externalId}`,title,employer:'Oferta gestionada por SEF Murcia',city,province:provinceName,region:'Región de Murcia',category:category.category,categoryLabel:category.label,regime:'Oferta de empleo',places:null,paragraphs,sourceUrl:sourceUrl.href,publishedAt,checkedAt,closingDate,salary:null,applicationRegistration:'external_required',selection:null,location:resolve(city,provinceName)});
   }
   return jobs;

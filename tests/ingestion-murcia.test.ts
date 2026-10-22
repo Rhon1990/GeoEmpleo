@@ -23,3 +23,8 @@ test('filtra caducadas y publicaciones futuras por fecha de España sin inventar
   assert.equal(active.length,1);assert.equal(active[0].location,null);
   assert.equal(adaptMurciaOffers([raw],'2026-10-26T23:30:00Z',()=>null).length,0);
 });
+test('omite ofertas sin ficha pública sin invalidar el resto de la captura',()=>{
+ const missing={...raw,numeroOferta:'142026005928',urlDetalles:null};
+ const jobs=adaptMurciaOffers([missing,raw],checkedAt,()=>null);
+ assert.deepEqual(jobs.map(job=>job.id),['SEF-MURCIA-142026005875']);
+});
