@@ -9,6 +9,7 @@ type Element = DefaultTreeAdapterTypes.Element;
 const html = await readFile(new URL('../apps/web-preview/public/index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../apps/web-preview/public/styles.css', import.meta.url), 'utf8');
 const app = await readFile(new URL('../apps/web-preview/public/app.mjs', import.meta.url), 'utf8');
+const googleMap = await readFile(new URL('../apps/web-preview/public/google-map.mjs', import.meta.url), 'utf8');
 const parseErrors: ParserError[] = [];
 const document = parse(html, { onParseError: error => parseErrors.push(error) });
 
@@ -180,14 +181,47 @@ test('page has one visually hidden GeoEmpleo heading', () => {
 test('muted text token meets WCAG AA contrast on white', () => {
   const muted = css.match(/--muted:(#[0-9a-f]{6})/i)?.[1];
   const white = css.match(/--white:(#[0-9a-f]{3,6})/i)?.[1];
+  const paper = css.match(/--paper:(#[0-9a-f]{3,6})/i)?.[1];
   assert.ok(muted);
   assert.ok(white);
+  assert.ok(paper);
   assert.ok(
     contrastRatio(muted, white) >= 4.5,
     `${muted} has insufficient contrast on ${white}`,
   );
+  assert.ok(
+    contrastRatio(muted, paper) >= 4.5,
+    `${muted} has insufficient contrast on ${paper}`,
+  );
   assert.match(css, /\.site-header nav a,\.site-header nav button\{[^}]*color:var\(--muted\)/);
   assert.match(css, /\.field-label\{[^}]*color:var\(--muted\)/);
+  for (const selector of [
+    '.search-bar input::placeholder',
+    '.location-line',
+    '.meta-tag',
+    '.card-footer',
+    '.catalog-note',
+    '.site-footer',
+    '.detail-employer',
+    '.detail-facts dt',
+    '.detail-note',
+    '.detail-provenance',
+  ]) assert.match(ruleForSelector(css, selector), /color:var\(--muted\)/, selector);
+});
+
+test('map interactions use the approved petroleum and saffron identity', () => {
+  assert.match(ruleForSelector(css, '.job-pin'), /background:var\(--petrol\)/);
+  assert.match(ruleForSelector(css, '.job-pin.selected'), /background:var\(--saffron\)[^}]*color:#392d0f/);
+  assert.match(ruleForSelector(css, '.origin-pin'), /background:var\(--saffron\)[^}]*color:#392d0f/);
+  assert.match(ruleForSelector(css, '.job-card.selected'), /border-color:var\(--petrol\)/);
+  assert.match(googleMap, /strokeColor:'#086071'/);
+  assert.match(googleMap, /fillColor:'#f5b944'/);
+  assert.doesNotMatch(`${css}\n${googleMap}`, /#254631|#d5ec83|#6f8f47|#4e7950|#6ea967/i);
+});
+
+test('advanced markers use the current Google Maps click event', () => {
+  assert.match(googleMap, /marker\.addEventListener\('gmp-click'/);
+  assert.doesNotMatch(googleMap, /marker\.addListener\('click'/);
 });
 
 test('tablet header wraps its search without hiding controls at 800px', () => {
@@ -367,10 +401,20 @@ test('tablet layout avoids minimum-column horizontal overflow', () => {
   assert.doesNotMatch(tabletRules, /\.workspace\{[^}]*minmax\((?:4[8-9]\d|[5-9]\d\d)px/);
 });
 
-test('mobile restores natural document flow for the stacked workspace', () => {
+test('mobile preserves document flow with a single visible workspace panel', () => {
   const mobileRules = mediaBlockForViewport(css, 780);
   assert.ok(mobileRules, 'Expected a responsive workspace rule that applies at 780px');
   assert.match(mobileRules, /body\{[^}]*display:block[^}]*height:auto/);
   assert.match(mobileRules, /main\{[^}]*display:block/);
   assert.match(mobileRules, /\.workspace\{[^}]*display:flex[^}]*flex-direction:column/);
+  assert.match(mobileRules, /\.workspace\[data-view="jobs"\] \.map-panel[^}]*display:none/);
+  assert.match(mobileRules, /\.workspace\[data-view="map"\] \.results-panel[^}]*display:none/);
+  assert.match(ruleForSelector(css,'.mobile-view-switch'), /display:none/);
+  const switcher=allElements.find(node=>hasClass(node,'mobile-view-switch'));
+  assert.ok(switcher);
+  assert.equal(attribute(switcher,'role'),'group');
+  assert.equal(attribute(switcher,'aria-label'),'Vista principal');
+  const buttons=elements(switcher).filter(node=>node.tagName==='button');
+  assert.deepEqual(buttons.map(node=>attribute(node,'data-workspace-view')),['jobs','map']);
+  assert.deepEqual(buttons.map(node=>attribute(node,'aria-pressed')),['true','false']);
 });

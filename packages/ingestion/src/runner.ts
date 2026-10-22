@@ -1,5 +1,6 @@
 import {readFile,mkdir,open,rm} from 'node:fs/promises';
 import {dirname} from 'node:path';
+import {adaptAndaluciaOffers} from './connectors/andalucia.ts';
 import {adaptCylOffers} from './connectors/cyl.ts';
 import {adaptLanbideOffers} from './connectors/lanbide.ts';
 import {adaptMurciaOffers} from './connectors/murcia.ts';
@@ -11,7 +12,7 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi'] as const;
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades'] as const;
 type ImplementedSourceId=typeof implementedSourceIds[number];
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
@@ -42,6 +43,7 @@ async function loadNationalResolver(path:string|undefined):Promise<PlaceResolver
 function adaptSource(sourceId:ImplementedSourceId,input:unknown,checkedAt:string,resolve:PlaceResolver):PublicJob[] {
   if(sourceId==='sef-murcia') return adaptMurciaOffers(input,checkedAt,resolve);
   if(sourceId==='ecyl-castilla-leon') return adaptCylOffers(input,checkedAt,resolve);
+  if(sourceId==='andalucia-entidades') return adaptAndaluciaOffers(input,checkedAt,resolve);
   return adaptLanbideOffers(input,checkedAt,resolve);
 }
 
@@ -62,7 +64,7 @@ export async function runDaily(options:RunOptions) {
     if(!Array.isArray(catalog.calls)) throw new TypeError('Catálogo local inválido');
     const sourceIds=options.sourceIds??implementedSourceIds;
     const needsMurcia=sourceIds.includes('sef-murcia');
-    const needsNational=sourceIds.some(sourceId=>sourceId==='ecyl-castilla-leon'||sourceId==='lanbide-euskadi');
+    const needsNational=sourceIds.some(sourceId=>sourceId!=='sef-murcia');
     const [murciaResolver,nationalResolver]=await Promise.allSettled([
       needsMurcia?loadMurciaResolver(placesPath):Promise.resolve(null),
       needsNational?loadNationalResolver(options.nationalPlacesPath):Promise.resolve(null),

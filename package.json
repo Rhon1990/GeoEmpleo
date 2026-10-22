@@ -14,7 +14,8 @@
     "generate:openapi": "node packages/contracts/tools/generate-openapi.ts",
     "check:openapi": "node packages/contracts/tools/generate-openapi.ts --check",
     "test:contracts:python": "node packages/contracts/tools/check-python.mjs",
-    "ingest:daily": "node packages/ingestion/src/cli.ts"
+    "ingest:daily": "node packages/ingestion/src/cli.ts",
+    "report:coverage": "node packages/ingestion/src/coverage-cli.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

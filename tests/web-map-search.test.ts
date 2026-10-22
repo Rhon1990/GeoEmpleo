@@ -1,6 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {locateOnce,createViewportSearch} from '../apps/web-preview/public/map-search.mjs';
+import {locateOnce,createViewportSearch,resolveSearchBounds} from '../apps/web-preview/public/map-search.mjs';
+
+test('un mapa oculto al arrancar sin GPS permite buscar sin un área degenerada',()=>{
+ assert.equal(resolveSearchBounds([-3.5,39.7,-3.5,39.7],false),null);
+ assert.equal(resolveSearchBounds(null,false),null);
+ assert.equal(resolveSearchBounds([-3.5,39.7,-3.5,39.7],true),null);
+});
+
+test('mantiene el último ámbito visible al ocultar mapa y lo actualiza al volver',()=>{
+ const previous=resolveSearchBounds([-4,39,-3,40],true);
+ assert.deepEqual(previous,[-4,39,-3,40]);
+ assert.deepEqual(resolveSearchBounds([-3.5,39.7,-3.5,39.7],false,previous),previous);
+ assert.deepEqual(resolveSearchBounds([-5,38,-2,42],false,previous),previous);
+ assert.deepEqual(resolveSearchBounds(null,true,previous),previous);
+ assert.deepEqual(resolveSearchBounds([-5,38,-2,42],true,previous),[-5,38,-2,42]);
+});
 
 test('localización de una sola lectura con precisión moderada y fallo controlado',async()=>{
  let options:unknown;

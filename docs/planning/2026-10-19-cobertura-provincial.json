@@ -1,0 +1,557 @@
+{
+  "catalogCheckedAt": "2026-10-19T10:44:19.243Z",
+  "note": "Publicaciones conservadas, no vacantes únicas ni cobertura suficiente. Los puntos no acreditan direcciones exactas; las fechas de observación no certifican vigencia.",
+  "summary": {
+    "totalPostings": 1518,
+    "mapped": 1434,
+    "invalidLocations": 0,
+    "territories": 52,
+    "withPostings": 21,
+    "withoutPostings": 31
+  },
+  "unassigned": {
+    "postings": 0,
+    "mapped": 0
+  },
+  "territories": [
+    {
+      "province": "A Coruña",
+      "region": "Galicia",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Álava",
+      "region": "País Vasco",
+      "postings": 122,
+      "mapped": 117,
+      "sources": [
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 122,
+          "mapped": 117,
+          "oldestCheckedAt": "2026-10-16T10:40:05.962Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Albacete",
+      "region": "Castilla-La Mancha",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Alicante",
+      "region": "Comunidad Valenciana",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Almería",
+      "region": "Andalucía",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Asturias",
+      "region": "Principado de Asturias",
+      "postings": 1,
+      "mapped": 1,
+      "sources": [
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 1,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-19T10:44:19.243Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Ávila",
+      "region": "Castilla y León",
+      "postings": 12,
+      "mapped": 11,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 12,
+          "mapped": 11,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Badajoz",
+      "region": "Extremadura",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Barcelona",
+      "region": "Cataluña",
+      "postings": 1,
+      "mapped": 1,
+      "sources": [
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 1,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-19T10:44:19.243Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Burgos",
+      "region": "Castilla y León",
+      "postings": 112,
+      "mapped": 98,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 110,
+          "mapped": 97,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        },
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 2,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-19T10:44:19.243Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Cáceres",
+      "region": "Extremadura",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Cádiz",
+      "region": "Andalucía",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Cantabria",
+      "region": "Cantabria",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Castellón",
+      "region": "Comunidad Valenciana",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Ceuta",
+      "region": "Ciudad Autónoma de Ceuta",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Ciudad Real",
+      "region": "Castilla-La Mancha",
+      "postings": 1,
+      "mapped": 1,
+      "sources": [
+        {
+          "sourceId": "boe",
+          "postings": 1,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-14T11:34:41.000Z",
+          "newestCheckedAt": "2026-10-14T11:34:41.000Z"
+        }
+      ]
+    },
+    {
+      "province": "Córdoba",
+      "region": "Andalucía",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Cuenca",
+      "region": "Castilla-La Mancha",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Girona",
+      "region": "Cataluña",
+      "postings": 1,
+      "mapped": 1,
+      "sources": [
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 1,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-19T10:44:19.243Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Granada",
+      "region": "Andalucía",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Guadalajara",
+      "region": "Castilla-La Mancha",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Guipúzcoa",
+      "region": "País Vasco",
+      "postings": 255,
+      "mapped": 251,
+      "sources": [
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 255,
+          "mapped": 251,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Huelva",
+      "region": "Andalucía",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Huesca",
+      "region": "Aragón",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Illes Balears",
+      "region": "Islas Baleares",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Jaén",
+      "region": "Andalucía",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "La Rioja",
+      "region": "La Rioja",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Las Palmas",
+      "region": "Canarias",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "León",
+      "region": "Castilla y León",
+      "postings": 151,
+      "mapped": 140,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 151,
+          "mapped": 140,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Lleida",
+      "region": "Cataluña",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Lugo",
+      "region": "Galicia",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Madrid",
+      "region": "Comunidad de Madrid",
+      "postings": 1,
+      "mapped": 1,
+      "sources": [
+        {
+          "sourceId": "boe",
+          "postings": 1,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-14T11:34:41.000Z",
+          "newestCheckedAt": "2026-10-14T11:34:41.000Z"
+        }
+      ]
+    },
+    {
+      "province": "Málaga",
+      "region": "Andalucía",
+      "postings": 1,
+      "mapped": 1,
+      "sources": [
+        {
+          "sourceId": "boe",
+          "postings": 1,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-14T11:34:41.000Z",
+          "newestCheckedAt": "2026-10-14T11:34:41.000Z"
+        }
+      ]
+    },
+    {
+      "province": "Melilla",
+      "region": "Ciudad Autónoma de Melilla",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Murcia",
+      "region": "Región de Murcia",
+      "postings": 224,
+      "mapped": 195,
+      "sources": [
+        {
+          "sourceId": "sef-murcia",
+          "postings": 224,
+          "mapped": 195,
+          "oldestCheckedAt": "2026-10-15T12:12:59.693Z",
+          "newestCheckedAt": "2026-10-16T10:38:42.163Z"
+        }
+      ]
+    },
+    {
+      "province": "Navarra",
+      "region": "Comunidad Foral de Navarra",
+      "postings": 1,
+      "mapped": 0,
+      "sources": [
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 1,
+          "mapped": 0,
+          "oldestCheckedAt": "2026-10-19T10:44:19.243Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Ourense",
+      "region": "Galicia",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Palencia",
+      "region": "Castilla y León",
+      "postings": 63,
+      "mapped": 61,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 63,
+          "mapped": 61,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Pontevedra",
+      "region": "Galicia",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Salamanca",
+      "region": "Castilla y León",
+      "postings": 47,
+      "mapped": 46,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 47,
+          "mapped": 46,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Santa Cruz de Tenerife",
+      "region": "Canarias",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Segovia",
+      "region": "Castilla y León",
+      "postings": 48,
+      "mapped": 45,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 48,
+          "mapped": 45,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Sevilla",
+      "region": "Andalucía",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Soria",
+      "region": "Castilla y León",
+      "postings": 46,
+      "mapped": 42,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 46,
+          "mapped": 42,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Tarragona",
+      "region": "Cataluña",
+      "postings": 1,
+      "mapped": 1,
+      "sources": [
+        {
+          "sourceId": "boe",
+          "postings": 1,
+          "mapped": 1,
+          "oldestCheckedAt": "2026-10-14T11:34:41.000Z",
+          "newestCheckedAt": "2026-10-14T11:34:41.000Z"
+        }
+      ]
+    },
+    {
+      "province": "Teruel",
+      "region": "Aragón",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Toledo",
+      "region": "Castilla-La Mancha",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Valencia",
+      "region": "Comunidad Valenciana",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    },
+    {
+      "province": "Valladolid",
+      "region": "Castilla y León",
+      "postings": 59,
+      "mapped": 59,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 59,
+          "mapped": 59,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Vizcaya",
+      "region": "País Vasco",
+      "postings": 300,
+      "mapped": 293,
+      "sources": [
+        {
+          "sourceId": "lanbide-euskadi",
+          "postings": 300,
+          "mapped": 293,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Zamora",
+      "region": "Castilla y León",
+      "postings": 71,
+      "mapped": 69,
+      "sources": [
+        {
+          "sourceId": "ecyl-castilla-leon",
+          "postings": 71,
+          "mapped": 69,
+          "oldestCheckedAt": "2026-10-16T10:45:57.860Z",
+          "newestCheckedAt": "2026-10-19T10:44:19.243Z"
+        }
+      ]
+    },
+    {
+      "province": "Zaragoza",
+      "region": "Aragón",
+      "postings": 0,
+      "mapped": 0,
+      "sources": []
+    }
+  ]
+}

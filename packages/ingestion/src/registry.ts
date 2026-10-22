@@ -2,6 +2,12 @@ import type { SourceDefinition } from './model.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
+    id: 'andalucia-entidades', name: 'Junta de Andalucía · Entidades instrumentales',
+    countryCode: 'ES', kind: 'open_data', status: 'active',
+    endpoint: 'https://datos.juntadeandalucia.es/api/v0/job-offering-public-sector/search?announcement_status=En%20curso&job_official_degree_requirements=-&announcement_type=-&provinces=-&job_agreement=-&order_by=id&mode=DESC&format=json&size=0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  {
     id: 'sef-murcia',
     name: 'SEF Murcia',
     countryCode: 'ES',

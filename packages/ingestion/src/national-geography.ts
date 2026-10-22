@@ -114,6 +114,10 @@ registerProvince('Vizcaya', 'País Vasco', 'Bizkaia');
 registerProvince('Zamora', 'Castilla y León');
 registerProvince('Zaragoza', 'Aragón');
 
+export function listSpanishProvinces(): readonly SpanishProvince[] {
+  return [...new Set(spanishProvinces.values())];
+}
+
 export function canonicalSpanishProvince(value: string): SpanishProvince | null {
   for (const candidate of variants(value)) {
     const province = spanishProvinces.get(candidate);

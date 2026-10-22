@@ -18,7 +18,8 @@ function parseFilters(params) {
   return filters;
 }
 /** Snapshot-backed local read model. Replaced atomically by ingestion; no per-request full JSON download. */
-export function createJobStore(path) {
+/** @param {string|URL} path @param {()=>any[]} publicJobs */
+export function createJobStore(path,publicJobs=()=>[]) {
   let cached;
   let signature;
   async function load() {
@@ -27,22 +28,24 @@ export function createJobStore(path) {
     if(cached && signature===nextSignature) return cached;
     const catalog=JSON.parse(await readFile(path,'utf8'));
     if(!Array.isArray(catalog.calls)) throw new Error('Catálogo inválido');
-    const categories=new Map(catalog.calls.map(job=>[job.category,job.categoryLabel]));
-    const next={catalog,byId:new Map(catalog.calls.map(job=>[job.id,job])),facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(catalog.calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es'))}};
+    const next={catalog,byId:new Map(catalog.calls.map(job=>[job.id,job]))};
     cached=next;signature=nextSignature;
     return next;
   }
   return {
     async query(params) {
       const filters=parseFilters(params);
-      const {catalog,facets}=await load();
-      const matches=searchCalls(catalog.calls,filters);
-      return {checkedAt:catalog.checkedAt,sources:[...new Set(catalog.calls.map(job=>job.source))],facets,total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>Object.fromEntries(summaryFields.map(field=>[field,job[field]])))};
+      const {catalog}=await load();
+      const calls=[...catalog.calls,...publicJobs()];
+      const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
+      const facets={categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es'))};
+      const matches=searchCalls(calls,filters);
+      return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>Object.fromEntries(summaryFields.map(field=>[field,job[field]])))};
     },
     async detail(id) {
       if(typeof id!=='string' || !id || id.length>120) throw new TypeError('Parámetros de detalle inválidos');
       const {byId}=await load();
-      return byId.get(id)??null;
+      return publicJobs().find(job=>job.id===id)??byId.get(id)??null;
     },
   };
 }

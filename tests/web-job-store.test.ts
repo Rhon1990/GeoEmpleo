@@ -27,3 +27,13 @@ test('limita la transferencia y detecta cambios de snapshot sin reiniciar',()=>f
  await writeFile(path,JSON.stringify({checkedAt:'2026-10-17',calls:[job('new',[-1,38])]}));
  const next=await store.query(new URLSearchParams());assert.equal(next.total,1);assert.equal(next.jobs[0].id,'new');assert.equal(await store.detail('job-0'),null);
 }));
+test('incluye ofertas directas publicadas en resultados, detalle, fuentes y filtros',()=>fixture(async(_store,path)=>{
+ const direct={...job('direct-1',[-4.4,40.8]),sourceId:'direct-employer',source:'Anunciante en GeoEmpleo',region:'Castilla y León',category:'otros',categoryLabel:'Otras oportunidades'};
+ const store=createJobStore(path,()=>[direct]);
+ const page=await store.query(new URLSearchParams({city:'Castilla y León'}));
+ assert.deepEqual(page.jobs.map(item=>item.id),['direct-1']);
+ assert.ok(page.sources.includes('Anunciante en GeoEmpleo'));
+ assert.ok(page.facets.regions.includes('Castilla y León'));
+ assert.ok(page.facets.categories.some(item=>item.id==='otros'&&item.label==='Otras oportunidades'));
+ assert.equal((await store.detail('direct-1'))?.sourceId,'direct-employer');
+}));

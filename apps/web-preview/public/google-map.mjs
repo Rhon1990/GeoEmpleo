@@ -49,7 +49,7 @@ export function markerVisualState(ids,selectedId,previewId) {
   return {selected,previewed,zIndex:selected?100:previewed?50:1};
 }
 
-function loadSdk(key) {
+export function loadSdk(key) {
   if (sdkPromise) return sdkPromise;
   sdkPromise = new Promise((resolve,reject) => {
     const timer = setTimeout(() => reject(new Error('Google Maps no respondió. Revisa conexión y clave.')),20000);
@@ -109,7 +109,7 @@ export async function createGoogleMap(host,config,events,initial={}) {
         const title=severalLocations?`${group.calls.length} ofertas en esta zona; ampliar mapa`:`${group.calls.length} ofertas en ${group.calls[0].city} · ubicación municipal aproximada`;
         const marker=new AdvancedMarkerElement({map,position:{lng:group.point[0],lat:group.point[1]},gmpClickable:true,title,zIndex:1});
         marker.append(pin);
-        marker.addListener('click',()=>{
+        marker.addEventListener('gmp-click',()=>{
           if(severalLocations){
             const bounds=new google.maps.LatLngBounds();
             for(const call of group.calls) bounds.extend({lng:call.location.point[0],lat:call.location.point[1]});
@@ -155,7 +155,7 @@ export async function createGoogleMap(host,config,events,initial={}) {
         const position = {lat:origin[1],lng:origin[0]};
         const pin = document.createElement('div'); pin.className = 'origin-pin'; pin.textContent = 'Tu zona';
         originMarker = new AdvancedMarkerElement({map,position,title:'Origen elegido para buscar',zIndex:0}); originMarker.append(pin);
-        if (radiusKm != null) radiusCircle = new google.maps.Circle({map,center:position,radius:radiusKm*1000,strokeColor:'#4e7950',strokeWeight:1,fillColor:'#6ea967',fillOpacity:.12,clickable:false});
+        if (radiusKm != null) radiusCircle = new google.maps.Circle({map,center:position,radius:radiusKm*1000,strokeColor:'#086071',strokeWeight:1,fillColor:'#f5b944',fillOpacity:.14,clickable:false});
       }
       updateMarkerVisuals();
       map.setOptions({draggableCursor:originSelection.isActive() ? 'crosshair' : null});

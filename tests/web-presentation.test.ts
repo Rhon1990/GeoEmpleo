@@ -26,6 +26,14 @@ test('la etiqueta del detalle siempre procede de la oferta que se está abriendo
  assert.equal(detailBadge({kind:'job',source:'Lanbide'}),'Oferta real · Lanbide');
  assert.equal(detailBadge({kind:'job',source:'ECYL Castilla y León'}),'Oferta real · ECYL Castilla y León');
 });
+test('presenta ofertas directas sin inventar un enlace externo ni degradar salario y ubicación',()=>{
+ const direct={kind:'job',sourceId:'direct-employer',source:'Anunciante en GeoEmpleo',salary:{minMinor:150000,maxMinor:170000,currency:'EUR',period:'month',basis:'gross',paymentsPerYear:14},location:{precision:'employer_declared'}};
+ const view=jobPresentation(direct);
+ assert.equal(view.sourceLink,null);
+ assert.equal(view.salaryLabel,'1.500–1.700 € brutos al mes · 14 pagas');
+ assert.equal(view.locationLabel,'Punto declarado por el anunciante; no verificado por GeoEmpleo');
+ assert.match(view.note,/contacto publicado/);
+});
 test('deriva un tema decorativo estable sin inventar una imagen',()=>{
  assert.equal(cardVisualTheme({category:'tecnico',kind:'job'}),'technical');
  assert.equal(cardVisualTheme({category:'tecnologia',kind:'public_call'}),'public');

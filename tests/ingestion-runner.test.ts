@@ -97,7 +97,7 @@ test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',
   if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
   throw new Error('host inesperado');
  }) as typeof fetch;
- const options={catalogPath,placesPath,nationalPlacesPath,reportPath,checkedAt:'2026-10-15T05:30:00Z',fetchImpl};
+ const options={catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['sef-murcia','ecyl-castilla-leon','lanbide-euskadi'],checkedAt:'2026-10-15T05:30:00Z',fetchImpl};
 
  const first=await runDaily(options);
  const second=await runDaily(options);
@@ -119,7 +119,7 @@ test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
-test('runner publica success con las tres fuentes activas',async()=>{
+test('runner publica success con tres fuentes seleccionadas',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-all-success-'));try{
  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
@@ -139,7 +139,7 @@ test('runner publica success con las tres fuentes activas',async()=>{
   throw new Error('host inesperado');
  }) as typeof fetch;
 
- const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,checkedAt:'2026-10-15T05:30:00Z',fetchImpl});
+ const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['sef-murcia','ecyl-castilla-leon','lanbide-euskadi'],checkedAt:'2026-10-15T05:30:00Z',fetchImpl});
 
  assert.equal(report.status,'success');
  assert.deepEqual(report.sources,[
@@ -159,7 +159,7 @@ test('runner no publica catálogo cuando fallan todas las fuentes',async()=>{
  const serialized=JSON.stringify(initial);
  await writeFile(catalogPath,serialized);await writeFile(placesPath,JSON.stringify({places:[]}));
  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-10-15',license:'test',places:[]})));
- const options={catalogPath,placesPath,nationalPlacesPath,reportPath,checkedAt:'2026-10-15T05:30:00Z',fetchImpl:(async()=>{throw new Error('credential=secret');}) as typeof fetch};
+ const options={catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['sef-murcia','ecyl-castilla-leon','lanbide-euskadi'],checkedAt:'2026-10-15T05:30:00Z',fetchImpl:(async()=>{throw new Error('credential=secret');}) as typeof fetch};
 
  await assert.rejects(runDaily(options),/Todas las fuentes/);
 

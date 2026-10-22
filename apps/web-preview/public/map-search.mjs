@@ -1,6 +1,20 @@
 import {isPoint} from './geography.mjs';
 
 /**
+ * A hidden map has no usable viewport. Keep its last visible area, or use list search.
+ * @param {number[]|null|undefined} bounds
+ * @param {boolean} visible
+ * @param {number[]|null} [previous]
+ * @returns {number[]|null}
+ */
+export function resolveSearchBounds(bounds,visible,previous=null) {
+  if(!visible||!bounds||bounds.length!==4||!bounds.every(Number.isFinite))return previous;
+  const [west,south,east,north]=bounds;
+  if(west===east||south>=north)return previous;
+  return [...bounds];
+}
+
+/**
  * One position request, no tracking, persistence or compulsory high-accuracy GPS.
  * @param {Pick<Geolocation,'getCurrentPosition'> | null | undefined} provider
  * @returns {Promise<{status:string,point?:number[],zoom?:number}>}
