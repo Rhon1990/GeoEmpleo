@@ -39,12 +39,22 @@ test('el catálogo estático devuelve solo ofertas del área y conserva el detal
   assert.equal(result.total,1);
   assert.equal(result.jobs[0].id,'segovia-1');
   assert.equal(result.jobs[0].paragraphs,undefined);
+  assert.deepEqual(result.mapJobs.map((item:{id:string})=>item.id),['segovia-1']);
   assert.equal(result.checkedAt,catalog.checkedAt);
   const detail=await (await fetchData('/api/job?id=segovia-1')).json();
   assert.deepEqual(detail.paragraphs,['Texto original']);
   const localities=await (await fetchData('/api/places?q=San%20Isidro')).json();
   assert.equal(localities.places[0].name,'Coto de San Isidro');
   assert.equal(catalogLoads,1);
+});
+
+test('la entrega estática conserva todos los puntos del área aunque limite la lista', async () => {
+  const many={checkedAt:catalog.checkedAt,calls:Array.from({length:350},(_,index)=>({...jobs[0],id:`segovia-${index}`}))};
+  const fetchData=createStaticDataFetch({fetchImpl:async () => new Response(JSON.stringify(many))});
+  const result=await (await fetchData('/api/jobs?bounds=-4.5,40.6,-4,40.9')).json();
+  assert.equal(result.jobs.length,300);
+  assert.equal(result.mapJobs.length,350);
+  assert.equal(result.truncated,true);
 });
 
 test('si falla una descarga no se guarda un catálogo vacío como éxito', async () => {

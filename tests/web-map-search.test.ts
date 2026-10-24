@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {locateOnce,createViewportSearch,resolveSearchBounds} from '../apps/web-preview/public/map-search.mjs';
+import {locateOnce,createViewportSearch,resolveSearchBounds,visibleMapJobs} from '../apps/web-preview/public/map-search.mjs';
+
+test('el mapa conserva puntos fuera de las primeras 300 tarjetas y respeta el radio',()=>{
+ const page={jobs:[{id:'first',location:{point:[-3.7,40.4]}}],mapJobs:[{id:'first',location:{point:[-3.7,40.4]}},{id:'later',location:{point:[-3.71,40.4]}},{id:'far',location:{point:[-4.5,40.4]}}]};
+ assert.deepEqual(visibleMapJobs(page,[-3.7,40.4],5).map((job:{id:string})=>job.id),['first','later']);
+ assert.deepEqual(visibleMapJobs(page,null,null).map((job:{id:string})=>job.id),['first','later','far']);
+});
 
 test('un mapa oculto al arrancar sin GPS permite buscar sin un área degenerada',()=>{
  assert.equal(resolveSearchBounds([-3.5,39.7,-3.5,39.7],false),null);

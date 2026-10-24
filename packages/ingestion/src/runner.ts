@@ -3,6 +3,7 @@ import {dirname} from 'node:path';
 import {adaptAndaluciaOffers} from './connectors/andalucia.ts';
 import {adaptCylOffers} from './connectors/cyl.ts';
 import {adaptLanbideOffers} from './connectors/lanbide.ts';
+import {adaptLeverOffers,leverBoards} from './connectors/lever.ts';
 import {adaptMurciaOffers} from './connectors/murcia.ts';
 import {reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
@@ -12,8 +13,8 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades'] as const;
-type ImplementedSourceId=typeof implementedSourceIds[number];
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId)] as const;
+type ImplementedSourceId=string;
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
 export interface RunOptions {catalogPath:string;placesPath:string;nationalPlacesPath?:string;reportPath:string;sourceIds?:readonly string[];checkedAt?:string;fetchImpl?:typeof fetch}
@@ -41,10 +42,13 @@ async function loadNationalResolver(path:string|undefined):Promise<PlaceResolver
 }
 
 function adaptSource(sourceId:ImplementedSourceId,input:unknown,checkedAt:string,resolve:PlaceResolver):PublicJob[] {
+  const leverBoard=leverBoards.find(board=>board.sourceId===sourceId);
+  if(leverBoard) return adaptLeverOffers(input,checkedAt,resolve,leverBoard);
   if(sourceId==='sef-murcia') return adaptMurciaOffers(input,checkedAt,resolve);
   if(sourceId==='ecyl-castilla-leon') return adaptCylOffers(input,checkedAt,resolve);
   if(sourceId==='andalucia-entidades') return adaptAndaluciaOffers(input,checkedAt,resolve);
-  return adaptLanbideOffers(input,checkedAt,resolve);
+  if(sourceId==='lanbide-euskadi') return adaptLanbideOffers(input,checkedAt,resolve);
+  throw new TypeError('Fuente sin adaptador');
 }
 
 function encodingFor(sourceId:ImplementedSourceId):JsonEncoding {
@@ -83,7 +87,7 @@ export async function runDaily(options:RunOptions) {
         if(resolverResult.status==='rejected'||resolverResult.value===null) throw new TypeError('Geografía no disponible');
         const input=await fetchJson(source.endpoint,{fetchImpl:options.fetchImpl,encoding:encodingFor(sourceId)});
         const jobs=adaptSource(sourceId,input,checkedAt,resolverResult.value);
-        next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{missingRetentionDays:7});
+        next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{missingRetentionDays:source.kind==='ats'?0:7});
         sources.push({sourceId,status:'success',received:jobs.length,mapped:jobs.filter(job=>job.location!==null).length,reason:null});
         successes+=1;
       } catch {

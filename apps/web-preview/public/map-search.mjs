@@ -1,4 +1,8 @@
-import {isPoint} from './geography.mjs';
+import {isPoint,matchesGeography} from './geography.mjs';
+
+export function visibleMapJobs(page,origin,radiusKm) {
+  return (page?.mapJobs??page?.jobs??[]).filter(job=>matchesGeography(job,{origin,radiusKm}));
+}
 
 export function updateMapWithoutLosingJobs(controller,jobs,origin,radiusKm,onFailure=()=>{}) {
   if(!controller)return true;

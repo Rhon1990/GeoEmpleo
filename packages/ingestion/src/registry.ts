@@ -1,4 +1,5 @@
 import type { SourceDefinition } from './model.ts';
+import { leverBoards } from './connectors/lever.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -69,6 +70,15 @@ const definitions: readonly SourceDefinition[] = [
     endpoint: null,
     licenseUrl: 'https://learn.microsoft.com/en-us/linkedin/talent/',
   },
+  ...leverBoards.map(board => ({
+    id: board.sourceId,
+    name: `${board.employer} · Lever`,
+    countryCode: 'ES' as const,
+    kind: 'ats' as const,
+    status: 'active' as const,
+    endpoint: `https://api.lever.co/v0/postings/${board.boardToken}?mode=json`,
+    licenseUrl: 'https://github.com/lever/postings-api',
+  })),
 ];
 
 export interface SourceRegistry {

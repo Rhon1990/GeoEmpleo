@@ -24,8 +24,11 @@ test('valida coordenadas, duplicados y tamaño de parámetros antes de consultar
 test('limita la transferencia y detecta cambios de snapshot sin reiniciar',()=>fixture(async(store,path)=>{
  await writeFile(path,JSON.stringify({checkedAt:'2026-10-16',calls:Array.from({length:350},(_,i)=>job(`job-${i}`,[-1,38]))}));
  const first=await store.query(new URLSearchParams({bounds:'-2,37,0,39'}));assert.equal(first.total,350);assert.equal(first.jobs.length,300);assert.equal(first.truncated,true);
+ assert.equal(first.mapJobs.length,350);
+ assert.ok(first.mapJobs.every((item:{location?:{point?:number[]}})=>item.location?.point));
  await writeFile(path,JSON.stringify({checkedAt:'2026-10-17',calls:[job('new',[-1,38])]}));
  const next=await store.query(new URLSearchParams());assert.equal(next.total,1);assert.equal(next.jobs[0].id,'new');assert.equal(await store.detail('job-0'),null);
+ assert.deepEqual(next.mapJobs.map((item:{id:string})=>item.id),['new']);
 }));
 test('incluye ofertas directas publicadas en resultados, detalle, fuentes y filtros',()=>fixture(async(_store,path)=>{
  const direct={...job('direct-1',[-4.4,40.8]),sourceId:'direct-employer',source:'Anunciante en GeoEmpleo',region:'Castilla y León',category:'otros',categoryLabel:'Otras oportunidades'};

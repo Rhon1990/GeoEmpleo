@@ -1,7 +1,6 @@
 import {readFile,stat} from 'node:fs/promises';
 import {searchCalls} from './public/catalog.mjs';
-
-const summaryFields=['id','kind','source','sourceId','title','employer','city','province','region','category','categoryLabel','regime','places','sourceUrl','publishedAt','checkedAt','closingDate','salary','applicationRegistration','selection','location'];
+import {summaryFields,projectFields,mapSummaries} from './public/job-projections.mjs';
 function parseFilters(params) {
   const filters={};
   for(const [name,max] of [['q',200],['city',120],['category',80]]) {
@@ -40,7 +39,7 @@ export function createJobStore(path,publicJobs=()=>[]) {
       const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
       const facets={categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es'))};
       const matches=searchCalls(calls,filters);
-      return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>Object.fromEntries(summaryFields.map(field=>[field,job[field]])))};
+      return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)};
     },
     async detail(id) {
       if(typeof id!=='string' || !id || id.length>120) throw new TypeError('Parámetros de detalle inválidos');

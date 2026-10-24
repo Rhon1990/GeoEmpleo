@@ -2,7 +2,7 @@ import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
 import {cardVisualTheme,detailBadge,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
-import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs} from './map-search.mjs';
+import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
@@ -176,21 +176,23 @@ function card(call) {
 function render() {
   document.querySelector('#return-origin').disabled=!origin||!mapController;
   const results=searchCalls(calls,{origin,radiusKm:radiusKm()});
+  const mapResults=visibleMapJobs(page,origin,radiusKm());
   if(origin)results.sort((a,b)=>distanceKm(origin,a.location?.point)-distanceKm(origin,b.location?.point));
   list.replaceChildren(...results.map(card));
-  document.querySelector('#result-count').textContent=`${results.length} ${results.length===1?'oferta real':'ofertas reales'}${searchBounds?' en esta zona':''}`;
+  const count=radiusKm()===null?page?.total??results.length:mapResults.length;
+  document.querySelector('#result-count').textContent=`${count} ${count===1?'oferta real':'ofertas reales'}${searchBounds?' en esta zona':''}`;
   const summary=resultSummary(results);
-  document.querySelector('#result-summary').textContent=page?.truncated?`${summary} · Mostrando hasta 300 de ${page.total}; acerca el mapa para acotar.`:summary;
-  document.querySelector('#empty-state').hidden=loadError||results.length>0;
+  document.querySelector('#result-summary').textContent=page?.truncated?`${summary} · Mostrando hasta 300 tarjetas de ${page.total}; el mapa conserva todos los puntos de esta zona.`:summary;
+  document.querySelector('#empty-state').hidden=loadError||results.length>0||mapResults.length>0;
   document.querySelector('#clear-filters').hidden=!query.value&&!location.value&&!category&&!origin;
-  updateMapWithoutLosingJobs(mapController,results,origin,radiusKm(),()=>{
+  updateMapWithoutLosingJobs(mapController,mapResults,origin,radiusKm(),()=>{
     mapController=null;
     mapHost.replaceChildren(mapState);
     mapMessage.textContent='El mapa no está disponible ahora. Puedes seguir consultando las ofertas en la lista.';
   });
   syncJobInteraction(interaction.snapshot());
-  const mapped=results.filter(call=>call.location?.point).length;
-  const municipalities=markerGroups(results).length;
+  const mapped=mapResults.length;
+  const municipalities=markerGroups(mapResults).length;
   document.querySelector('#map-footnote').textContent=`${mapped} ofertas en ${municipalities} ${municipalities===1?'punto municipal':'puntos municipales'} de la búsqueda. Ubicaciones municipales aproximadas; no direcciones exactas.`;
   const params=new URLSearchParams();
   if(query.value)params.set('q',query.value);
@@ -219,7 +221,7 @@ const search=createViewportSearch({
   fetchImpl:siteFetch,
   onLoading(){list.setAttribute('aria-busy','true');document.querySelector('#search-status').textContent='Actualizando ofertas de la zona…';},
   onResult(result){
-    if(!Array.isArray(result.jobs)||!result.facets)throw new Error('Respuesta de catálogo inválida');
+    if(!Array.isArray(result.jobs)||!Array.isArray(result.mapJobs)||!result.facets)throw new Error('Respuesta de catálogo inválida');
     calls=result.jobs;page=result;loadError=false;
     updateFacets(result.facets);
     document.querySelector('#snapshot-label').textContent=`Fuentes: ${result.sources.join(' · ')} · Catálogo actualizado el ${date(result.checkedAt)}`;
@@ -360,7 +362,7 @@ async function startMap() {
     mapMessage.textContent='Cargando el mapa y las ofertas de tu zona…';
     const mapRevision=originRevision;
     mapController=await createGoogleMap(mapHost,config,{
-      onSelect(id){const call=calls.find(item=>item.id===id);if(call)void showDetail(call,{panMap:false,revealCard:true});},
+      onSelect(id){const call=calls.find(item=>item.id===id)??page?.mapJobs.find(item=>item.id===id);if(call)void showDetail(call,{panMap:false,revealCard:true});},
       onOrigin(point){originInput.value='';setOrigin(point,'Zona elegida en el mapa');},
       onViewport(){if(mapController&&mapIsVisible())requestSearch();},
     },{point:origin,zoom:origin?(position?.zoom??12):6});
