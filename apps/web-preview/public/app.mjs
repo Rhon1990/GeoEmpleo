@@ -2,11 +2,11 @@ import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
 import {cardVisualTheme,detailBadge,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
-import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs';
+import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261024-viewport';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
-import {siteFetch} from './static-data.mjs';
+import {siteFetch} from './static-data.mjs?v=20261024-viewport';
 
 const form = document.querySelector('#search-form');
 const query = document.querySelector('#query');
