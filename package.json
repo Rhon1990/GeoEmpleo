@@ -15,7 +15,9 @@
     "check:openapi": "node packages/contracts/tools/generate-openapi.ts --check",
     "test:contracts:python": "node packages/contracts/tools/check-python.mjs",
     "ingest:daily": "node packages/ingestion/src/cli.ts",
-    "report:coverage": "node packages/ingestion/src/coverage-cli.ts"
+    "report:coverage": "node packages/ingestion/src/coverage-cli.ts",
+    "audit:aragon": "node packages/ingestion/src/aragon-audit-cli.ts",
+    "build:web:static": "node tools/build-static-site.mjs"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

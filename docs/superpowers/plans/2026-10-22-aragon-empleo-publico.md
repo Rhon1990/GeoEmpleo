@@ -1,5 +1,13 @@
 # Aragón Public Employment Connector Implementation Plan
 
+## Execution update — 22 October 2026
+
+The original plan below is retained as history, not as evidence of completed activation. Live bulletin verification found that all four initially admitted candidates depend on an unlinked BOE publication for their application window. The machine-derived place counts are also incorrect (47 reported versus one actual vacancy in one bulletin). Sorting the navigable BOA URL query produces an HTTP-200 error page. See the revised specification and `docs/planning/2026-10-22-aragon-auditoria.md`.
+
+Replacement delivery: a candidate audit parser and `audit:aragon` CLI, with source registry status `candidate`. The daily runner and public catalogue must remain unaffected. No activation, new map points, active-source attribution or automation changes until bulletin/BOE evidence verifies the application window and workplace. Estimated dates and counts remain explicitly named `reported*` in a separate operational report. Tests must prove original query order preservation, false-positive exclusion, conflict rejection and prevention of candidate ingestion. The implementation is reviewed and validated against this gate, rather than silently relaxing it to publish records.
+
+Original tasks 2 (map placement), 3 (activation), 4 (public attribution) and 5 (public ingestion/automation) are blocked by that source-data dependency. Finish the safe audit implementation, test it and push it; leave these tasks uncompleted.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a strict, free and daily Aragón public-employment connector that publishes only current open-access calls with truthful provenance and municipal geography.

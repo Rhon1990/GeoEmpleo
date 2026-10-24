@@ -92,6 +92,13 @@ test('adapta ECYL reciente con texto completo seguro, procedencia y punto public
   });
 });
 
+test('ECYL acepta el nuevo dominio oficial de datos abiertos y conserva el enlace canónico verificable', () => {
+  const sourceUrl=`https://datosabiertos.jcyl.es${cylPath}`;
+  const jobs=adaptCylOffers([{...cylRaw,enlace_al_contenido:sourceUrl}],checkedAt,()=>location);
+  assert.equal(jobs[0]?.sourceUrl,cylOfficialUrl);
+  assert.equal(jobs[0]?.location?.sourceUrl,cylOfficialUrl);
+});
+
 test('ECYL resuelve nacionalmente solo cuando no publica geográfico', () => {
   const withoutPoint = { ...cylRaw, geografico: null };
   const jobs = adaptCylOffers([withoutPoint], checkedAt, (city, province) => {

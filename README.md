@@ -19,7 +19,7 @@ La primera biblioteca contiene contratos y registro de políticas de país, norm
 
 El paquete [contracts](packages/contracts/README.md) añade seis contratos JSON Schema 2020-12, validadores TypeScript/Python y una descripción OpenAPI 3.1 de búsqueda, detalle y mapa sin autenticación. Validar transporte no sustituye las reglas de negocio ni permite publicar automáticamente datos de una fuente.
 
-La biblioteca no requiere cuentas ni fuentes externas. Existe una primera web local con datos reales del BOE, SEF Murcia, ECYL Castilla y León y Lanbide, búsqueda, filtros, detalle, proximidad y Google Maps con agrupación según zoom. El entorno local del titular tiene una clave web restringida en `.env.local`; la suite no depende de ella. Existe ingesta diaria de las tres fuentes abiertas y API local de lectura acotada; faltan persistencia canónica, índice nacional y control distribuido de consumo para producción.
+La biblioteca no requiere cuentas. La web consulta datos reales del BOE, SEF Murcia, ECYL Castilla y León, Lanbide y Junta de Andalucía, con búsqueda, filtros, detalle, proximidad y Google Maps. La clave web restringida está en `.env.local` y no se publica en Git. Cuatro conectores oficiales se ejecutan en la ingesta diaria; faltan persistencia canónica, índice nacional y control distribuido de consumo para escalar.
 
 ## Documentación
 
@@ -36,7 +36,7 @@ La biblioteca no requiere cuentas ni fuentes externas. Existe una primera web lo
 npm run dev:web
 ```
 
-Abrir `http://127.0.0.1:4310`. El catálogo verificado el 16/10/2026 contiene 1.429 publicaciones reales: 570 ECYL, 631 Lanbide, 224 SEF Murcia y cuatro convocatorias BOE (9 plazas) consultadas el 14/10. Hay 1.348 publicaciones con punto municipal. La selección BOE permanece estática y su inscripción vigente no se infiere. No hay datos de muestra en la página. Los totales cambian con cada actualización y pueden incluir publicaciones distintas de una misma vacante.
+Abrir `http://127.0.0.1:4310`. La captura completa del 24/10/2026 contiene 1.797 publicaciones reales y 1.686 con punto municipal. La selección BOE permanece estática y su inscripción vigente no se infiere. No hay datos de muestra en la página. Los totales cambian con cada actualización y pueden incluir publicaciones distintas de una misma vacante.
 
 Al abrir, se solicita una posición del navegador para centrar el mapa; si falla, puedes elegir localidad o zona manualmente. Al terminar cada movimiento se consultan solo las ofertas del área visible, con debounce/cancelación y hasta 300 resúmenes. El detalle completo se pide al abrirlo. El radio adicional se aplica en el navegador. El origen no se guarda ni se añade a la URL; el servidor recibe el área visible y Google recibe el centro/área para dibujar el mapa. Los puntos de ofertas son municipales aproximados.
 
@@ -50,12 +50,23 @@ Al abrir, se solicita una posición del navegador para centrar el mapa; si falla
 npm run ingest:daily
 ```
 
-El runner obtiene las ofertas del [SEF Murcia](https://sefapps.carm.es/sefApps/rest/ofertas/ofertas), [ECYL](https://analisis.datosabiertos.jcyl.es/explore/dataset/ofertas-de-empleo/) y [Lanbide](https://opendata.euskadi.eus/catalogo/-/ofertas-de-empleo-de-lanbide/). Usa las [condiciones SEF](https://datosabiertos.regiondemurcia.es/avisolegal) y CC BY 4.0 para ECYL/Lanbide, con atribución visible. Conserva IDs, texto publicado, fechas y procedencia; no inventa empresa, salario, plazas ni coordenadas. Algunos textos de ECYL son breves remisiones a la Oficina Virtual: los requisitos completos no están enriquecidos y se consultan en el origen. No se promete cobertura de todos los portales ni fichas completas para todas las publicaciones.
+El runner obtiene las ofertas del [SEF Murcia](https://sefapps.carm.es/sefApps/rest/ofertas/ofertas), [ECYL](https://analisis.datosabiertos.jcyl.es/explore/dataset/ofertas-de-empleo/), [Lanbide](https://opendata.euskadi.eus/catalogo/-/ofertas-de-empleo-de-lanbide/) y [Junta de Andalucía](https://www.juntadeandalucia.es/datosabiertos/portal/dataset/ofertas-de-empleo-de-entidades-instrumentales). Respeta las condiciones de cada fuente y muestra atribución. Conserva IDs, texto publicado, fechas y procedencia; no inventa empresa, salario, plazas ni coordenadas. Algunos textos de ECYL son breves remisiones a la Oficina Virtual: los requisitos completos se consultan en el origen. No se promete cobertura de todos los portales ni fichas completas para todas las publicaciones.
 
 Cada fuente se valida y reconcilia por separado y el JSON público se publica una sola vez, atómicamente. Un fallo conserva los datos de esa fuente. El informe `var/ingestion/latest.json` distingue `success`, `partial` y `failed`; el CLI devuelve código 1 en los dos últimos casos, aunque `partial` sí publica las fuentes correctas. ECYL/Lanbide solo incorporan publicaciones de los últimos 30 días; una ausencia se conserva hasta siete días desde su última observación. Murcia conserva su política de caducidad declarada. Se rechazan capturas vacías, IDs/URLs incoherentes y ubicaciones inválidas; las ubicaciones no resolubles quedan nulas.
 
-Se verificaron una captura completa y repeticiones parciales sin IDs duplicados: en la última, ECYL y Lanbide se actualizaron y Murcia devolvió contenido no JSON, conservándose sus datos anteriores. De las 1.429 publicaciones, 81 sin punto están disponibles en la lista de respaldo; se excluyen del radio/viewport. Segovia tiene 44 publicaciones, 42 con punto, en 22 localidades. Google Maps se comprobó con tres ofertas de Riaza y detalle desde el marcador. Los puntos son aproximados, nunca direcciones laborales verificadas.
+La captura del 24/10/2026 terminó `success` para las cuatro fuentes; el JSON resultante tiene IDs únicos. Las publicaciones sin punto se excluyen del radio/viewport. Google Maps se comprobó con ofertas de Riaza y detalle desde el marcador. Los puntos son aproximados, nunca direcciones laborales verificadas.
 
-La tarea diaria de este chat está activa a las 05:30 Europe/Madrid sobre el worktree `web-preview`; su instrucción se actualizó para las tres fuentes y avisa ante fallos. Requiere este equipo encendido, la aplicación abierta y red. Las capturas multifuente verificadas son manuales; aún no se observó un ciclo programado con las tres fuentes. Usa reglas deterministas y no una API de IA de pago. Adzuna está pausado porque el acceso completo requiere tarjeta/suscripción; InfoJobs y LinkedIn no están conectados. No se activan servicios de pago automáticamente.
+La tarea diaria de este chat está activa sobre el worktree `web-preview`. Requiere este equipo encendido, la aplicación abierta y red; no es un servicio 24/7. Usa reglas deterministas y no una API de IA de pago. Adzuna está pausado porque el acceso completo requiere tarjeta/suscripción; InfoJobs y LinkedIn no están conectados. No se activan servicios de pago automáticamente.
 
 En un worktree, se puede reutilizar la configuración Maps ya existente sin copiar claves: `GEOEMPLEO_ENV_FILE=/ruta/al/.env.local npm run dev:web`. El control de coste de Maps sigue descrito en su documento: esta ingesta gratuita no garantiza coste cero de Maps en producción.
+
+## Publicación estática en Firebase Hosting Spark
+
+El build estático usa el catálogo validado y genera consultas de lectura y localidades en el navegador. No requiere Functions, Firestore ni cuenta de visitante. El formulario de ofertas directas sigue siendo solo local hasta disponer de moderación y almacenamiento productivos; la versión pública no ofrece un formulario sin backend.
+
+```sh
+GEOEMPLEO_ENV_FILE=/ruta/segura/.env.local npm run build:web:static
+firebase deploy --only hosting --project geoempleo-49978
+```
+
+`firebase.json` publica `var/public-site/` (ignorado por Git); `config.json` se genera con la clave **pública de navegador** restringida en Google Cloud a Maps JavaScript API y a los orígenes autorizados. Para publicar en cualquier dominio futuro no hace falta cambiar la aplicación: añade el dominio HTTPS concreto a las restricciones de esa clave, asocia el dominio en Firebase Hosting y vuelve a desplegar. No retires la restricción de sitios web, porque terceros podrían consumir la cuota de Maps. El plan Spark no exige tarjeta para este Hosting, pero tiene límites de transferencia; Google Maps pertenece a otro proyecto con prueba gratuita y su cuota no está garantizada por Spark.

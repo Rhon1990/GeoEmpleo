@@ -7,5 +7,7 @@ __pycache__/
 var/ingestion/
 
 var/submissions/
+var/public-site/
+.firebase/
 firebase-debug.log
 .superpowers/

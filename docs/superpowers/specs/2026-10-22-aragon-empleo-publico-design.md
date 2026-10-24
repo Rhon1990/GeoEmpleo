@@ -1,5 +1,23 @@
 # Conector estricto de empleo público de Aragón
 
+## Revisión de seguridad tras contrastar los boletines — 22/10/2026
+
+**La activación descrita en el diseño inicial de abajo queda suspendida.** La auditoría real demuestra que los campos calculados del feed no bastan para cumplir el requisito de ofertas vigentes. Esta revisión prevalece sobre el mapeo, la arquitectura y los criterios de activación iniciales.
+
+Alcance ejecutable actual: `auditAragonOffers` captura candidatos tipados, sin convertirlos en `PublicJob`. Los campos estimados se llaman `reportedPublishedAt`, `reportedStartsAt`, `reportedClosingDate` y `reportedPlaces`; ninguna de esas estimaciones es un dato confirmado del catálogo. Cada candidato queda en `requires_bulletin_verification`.
+
+El registro declara `aragon-empleo-publico` como **candidate**. `npm run audit:aragon` genera exclusivamente `var/ingestion/aragon-audit.json`, con instante de comprobación, candidatos, número de filas recibidas y cero publicaciones. No actualiza `calls.json` ni `latest.json`. Ante fallo conserva el informe anterior y devuelve código de error. La ingesta diaria mantiene sus cuatro conectores activos; una petición explícita de ingesta de la fuente candidata debe fallar sin consultar red ni cambiar el catálogo.
+
+Los enlaces de navegación conservan el orden original de sus parámetros: reordenarlos produjo «Error durante la búsqueda» con HTTP 200. Solo la clave interna de deduplicación usa canonicalización. Filas con la misma identidad y diferentes fechas, plazas estimadas o modalidad invalidan la auditoría; no se escoge arbitrariamente la primera. Se filtran también nombramientos, convocatorias desiertas y anuncios de recursos.
+
+No se infiere un centro laboral del organismo o boletín. El punto municipal se implementará cuando exista evidencia del lugar de trabajo y la convocatoria supere la verificación de vigencia.
+
+Prueba real: los cuatro candidatos admitidos por el filtro inicial vinculan la apertura a una publicación en el BOE ausente del feed. Una convocatoria de la Universidad de Zaragoza contiene **una plaza** mientras el campo automático informa **47**. Véase [auditoría y condiciones para desbloquear la publicación](../../planning/2026-10-22-aragon-auditoria.md).
+
+Criterios de esta entrega: captura reproducible gratuita; destinos oficiales preservados; duplicados y conflictos controlados; estimaciones diferenciadas por tipo de los datos publicables; catálogo y reporte diario intactos ante éxito o fallo; pruebas del bloqueo en el runner; fuente candidata documentada. La integración pública nacional continúa pendiente, sin sustituirla por un resultado de auditoría.
+
+## Diseño inicial de referencia (activación suspendida)
+
 ## Objetivo
 
 Incorporar a GeoEmpleo convocatorias públicas reales de Aragón mediante el recurso oficial «Ofertas en plazo de presentación» sin publicar promoción interna, resoluciones de procesos ya terminados ni contenido clasificado erróneamente como empleo.

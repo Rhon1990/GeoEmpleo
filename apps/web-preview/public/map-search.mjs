@@ -1,5 +1,11 @@
 import {isPoint} from './geography.mjs';
 
+export function updateMapWithoutLosingJobs(controller,jobs,origin,radiusKm,onFailure=()=>{}) {
+  if(!controller)return true;
+  try {controller.update(jobs,origin,radiusKm);return true;}
+  catch {onFailure();return false;}
+}
+
 /**
  * A hidden map has no usable viewport. Keep its last visible area, or use list search.
  * @param {number[]|null|undefined} bounds

@@ -81,7 +81,7 @@ function sourceUrl(value: unknown): string {
   if (url.protocol !== 'https:' || url.username || url.password) {
     throw new TypeError('URL ECYL no autorizada');
   }
-  if (url.hostname === 'gestorcontenidos.jcyl.es'
+  if (['gestorcontenidos.jcyl.es', 'datosabiertos.jcyl.es'].includes(url.hostname)
     && url.pathname.startsWith('/web/jcyl/Empleo/')) {
     url.hostname = 'empleo.jcyl.es';
   }

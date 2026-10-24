@@ -2,10 +2,11 @@ import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
 import {cardVisualTheme,detailBadge,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
-import {locateOnce,createViewportSearch,resolveSearchBounds} from './map-search.mjs';
+import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs} from './map-search.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
+import {siteFetch} from './static-data.mjs';
 
 const form = document.querySelector('#search-form');
 const query = document.querySelector('#query');
@@ -124,7 +125,7 @@ async function showDetail(call,{panMap=true,revealCard=false}={}) {
   content.replaceChildren(loadingTitle,element('p','Cargando el texto de la oferta…'));
   if(!detail.open) detail.showModal();
   try {
-    const response=await fetch(`/api/job?id=${encodeURIComponent(call.id)}`,{signal:request.signal});
+    const response=await siteFetch(`/api/job?id=${encodeURIComponent(call.id)}`,{signal:request.signal});
     if(!response.ok) throw new Error('Detalle no disponible');
     const job=await response.json();
     if(request.signal.aborted||detailRequest!==request||!detail.open)return;
@@ -182,7 +183,11 @@ function render() {
   document.querySelector('#result-summary').textContent=page?.truncated?`${summary} · Mostrando hasta 300 de ${page.total}; acerca el mapa para acotar.`:summary;
   document.querySelector('#empty-state').hidden=loadError||results.length>0;
   document.querySelector('#clear-filters').hidden=!query.value&&!location.value&&!category&&!origin;
-  mapController?.update(results,origin,radiusKm());
+  updateMapWithoutLosingJobs(mapController,results,origin,radiusKm(),()=>{
+    mapController=null;
+    mapHost.replaceChildren(mapState);
+    mapMessage.textContent='El mapa no está disponible ahora. Puedes seguir consultando las ofertas en la lista.';
+  });
   syncJobInteraction(interaction.snapshot());
   const mapped=results.filter(call=>call.location?.point).length;
   const municipalities=markerGroups(results).length;
@@ -211,6 +216,7 @@ function updateFacets(facets) {
 }
 
 const search=createViewportSearch({
+  fetchImpl:siteFetch,
   onLoading(){list.setAttribute('aria-busy','true');document.querySelector('#search-status').textContent='Actualizando ofertas de la zona…';},
   onResult(result){
     if(!Array.isArray(result.jobs)||!result.facets)throw new Error('Respuesta de catálogo inválida');
@@ -296,6 +302,7 @@ function applyReferencePlace() {
 
 const placeSearch=createViewportSearch({
   endpoint:'/api/places',
+  fetchImpl:siteFetch,
   onLoading(){originInput.setAttribute('aria-busy','true');},
   onResult(result){
     originInput.setAttribute('aria-busy','false');
