@@ -20,6 +20,12 @@ export function reconcileSource(catalog:PublicCatalog,sourceId:string,incoming:P
     identities.add(job.id);
   }
   const retained=catalog.calls.filter(job=>job.sourceId!==sourceId || (!identities.has(job.id) && retainMissing(job,today,checkedAt,policy)));
-  const calls=[...retained,...incoming].sort((a,b)=>b.publishedAt.localeCompare(a.publishedAt)||a.id.localeCompare(b.id));
+  const previousById=new Map(catalog.calls.filter(job=>job.sourceId===sourceId).map(job=>[job.id,job]));
+  const current=incoming.map(job=>{
+    const previous=previousById.get(job.id);
+    return job.dateKind==='observed'&&previous?.dateKind==='observed'
+      ? {...job,publishedAt:previous.publishedAt}:job;
+  });
+  const calls=[...retained,...current].sort((a,b)=>b.publishedAt.localeCompare(a.publishedAt)||a.id.localeCompare(b.id));
   return {...catalog,checkedAt,mode:'daily_sources',publishedAt:calls[0]?.publishedAt??null,calls};
 }

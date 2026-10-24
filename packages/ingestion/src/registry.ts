@@ -1,5 +1,9 @@
 import type { SourceDefinition } from './model.ts';
 import { leverBoards } from './connectors/lever.ts';
+import { bizneoBoards } from './connectors/bizneo.ts';
+import { talentClueListingUrl } from './connectors/talentclue.ts';
+import { kfcListingUrl } from './connectors/kfc.ts';
+import { disaEndpoint } from './connectors/disa.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -79,6 +83,16 @@ const definitions: readonly SourceDefinition[] = [
     endpoint: `https://api.lever.co/v0/postings/${board.boardToken}?mode=json`,
     licenseUrl: 'https://github.com/lever/postings-api',
   })),
+  ...bizneoBoards.map(board=>({
+    id:board.sourceId,name:`${board.employer} · portal de empleo`,countryCode:'ES' as const,
+    kind:'ats' as const,status:'active' as const,endpoint:`https://${board.hostname}/jobs`,licenseUrl:null,
+  })),
+  {id:'talentclue-mcdonalds',name:"McDonald's · TalentClue",countryCode:'ES',kind:'ats',status:'active',
+    endpoint:talentClueListingUrl,licenseUrl:null},
+  {id:'amrest-kfc',name:'KFC · AmRest',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:kfcListingUrl,licenseUrl:null},
+  {id:'disa-empleo',name:'Grupo DISA · estaciones de servicio',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:disaEndpoint,licenseUrl:null},
 ];
 
 export interface SourceRegistry {

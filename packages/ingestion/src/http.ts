@@ -1,5 +1,15 @@
 export type JsonEncoding='utf-8'|'windows-1252';
 export interface FetchOptions {fetchImpl?:typeof fetch;timeoutMs?:number;maxBytes?:number;encoding?:JsonEncoding}
+export async function fetchHtml(url:string,options:FetchOptions={}):Promise<string> {
+  const address=new URL(url);
+  if(address.protocol!=='https:'||address.username||address.password) throw new TypeError('URL HTTPS requerida');
+  const response=await (options.fetchImpl??fetch)(address,{headers:{accept:'text/html'},redirect:'error',signal:AbortSignal.timeout(options.timeoutMs??40_000)});
+  if(!response.ok) throw new Error(`HTTP ${response.status}`);
+  if(!response.headers.get('content-type')?.toLowerCase().includes('html')) throw new TypeError('La fuente no devolvió HTML');
+  const html=await response.text();
+  if(html.length>(options.maxBytes??2_000_000)) throw new TypeError('HTML demasiado grande');
+  return html;
+}
 export async function fetchJson(url:string,options:FetchOptions={}):Promise<unknown> {
   if(options.encoding!==undefined&&options.encoding!=='utf-8'&&options.encoding!=='windows-1252') throw new TypeError('Codificación JSON no permitida');
   const address=new URL(url);

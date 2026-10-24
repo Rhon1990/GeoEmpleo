@@ -97,7 +97,7 @@ function renderDetail(call) {
   const title = element('h2', call.title); title.id = 'detail-title';
   body.append(title, element('p', `${call.employer} · ${call.city}, ${call.province}`, 'detail-employer'));
   const facts = element('dl', undefined, 'detail-facts');
-  for (const [label, value] of [['Plazas',placesLabel(call)],['Régimen',call.regime],['Retribución',presentation.salaryLabel],['Ubicación',presentation.locationLabel],['Publicación',date(call.publishedAt)],['Fin de publicación',call.closingDate?date(call.closingDate):'Consultar bases; no calculado']]) {
+  for (const [label, value] of [['Plazas',placesLabel(call)],['Régimen',call.regime],['Retribución',presentation.salaryLabel],['Ubicación',presentation.locationLabel],[call.dateKind==='observed'?'Detectada en GeoEmpleo':'Publicación',date(call.publishedAt)],['Fin de publicación',call.closingDate?date(call.closingDate):'No indicada; comprueba vigencia en el origen']]) {
     const fact = element('div'); fact.append(element('dt', label), element('dd', value)); facts.append(fact);
   }
   body.append(facts, element('h3','Texto del anuncio publicado'));
@@ -166,7 +166,7 @@ function card(call) {
   }
   button.append(visualFrame, top, element('h3',call.title), locationLine, tags, element('p',jobPresentation(call).salaryLabel,'salary-label'));
   const footer = element('div', undefined, 'card-footer');
-  footer.append(element('span',`Publicado ${date(call.publishedAt)}`));
+  footer.append(element('span',`${call.dateKind==='observed'?'Detectada':'Publicado'} ${date(call.publishedAt)}`));
   const original=sourceLink(call.sourceUrl?`${call.id} ↗`:call.id,call.sourceUrl);
   footer.append(original??element('span',call.id));
   article.append(button, footer);

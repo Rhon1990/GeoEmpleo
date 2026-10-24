@@ -41,6 +41,8 @@ export interface PublicJob {
   paragraphs: string[];
   sourceUrl: string;
   publishedAt: string;
+  /** 'observed' means the board does not publish a full date; publishedAt is first seen by GeoEmpleo. */
+  dateKind?: 'observed';
   checkedAt: string;
   closingDate: string | null;
   salary: null;

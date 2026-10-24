@@ -3,6 +3,7 @@ import { promisify } from 'node:util';
 import { gunzip } from 'node:zlib';
 import type { PlaceResolver } from './geography.ts';
 import { approximateMunicipalNote } from './connectors/shared.ts';
+import type { CityResolver } from './connectors/bizneo.ts';
 
 const gunzipAsync = promisify(gunzip);
 const postponedArticles = new Set(['a', 'as', 'el', 'la', 'los', 'las', 'o', 'os']);
@@ -225,5 +226,29 @@ export function createNationalPlaceResolver(
       sourceUpdatedAt: place.updatedAt ?? null,
       note: approximateMunicipalNote,
     };
+  };
+}
+
+/** A city-only employer board may be mapped only when exactly one locality matches nationwide. */
+export function createNationalCityResolver(places:readonly NationalGazetteerPlace[]):CityResolver {
+  const indexed=new Map<string,Map<string,NationalGazetteerPlace>>();
+  for(const place of places){
+    if(!hasValidCoordinates(place)||place.precision!=='locality') continue;
+    for(const name of [place.name,...place.aliases??[]]) for(const variant of variants(name)){
+      let matches=indexed.get(variant);
+      if(!matches){matches=new Map();indexed.set(variant,matches);}
+      matches.set(place.id,place);
+    }
+  }
+  return city=>{
+    const matches=new Map<string,NationalGazetteerPlace>();
+    for(const variant of variants(city)) for(const [id,place] of indexed.get(variant)??[]) matches.set(id,place);
+    if(matches.size!==1) return null;
+    const place=[...matches.values()][0]!;
+    const province=canonicalSpanishProvince(place.province);
+    if(!province) return null;
+    return {city:place.name,province:province.name,region:province.region,
+      location:{point:[place.longitude,place.latitude],precision:'municipality',sourceUrl:place.sourceUrl,
+        sourceUpdatedAt:place.updatedAt??null,note:approximateMunicipalNote}};
   };
 }

@@ -1,0 +1,83 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { parseBizneoListing, adaptBizneoDetail } from '../packages/ingestion/src/connectors/bizneo.ts';
+import { adaptTalentClueListing } from '../packages/ingestion/src/connectors/talentclue.ts';
+import { createNationalCityResolver } from '../packages/ingestion/src/national-geography.ts';
+import { parseKfcListing, adaptKfcDetail } from '../packages/ingestion/src/connectors/kfc.ts';
+import { adaptDisaOffer, parseDisaListing } from '../packages/ingestion/src/connectors/disa.ts';
+import { reconcileSource } from '../packages/ingestion/src/catalog.ts';
+import type { PublicCatalog } from '../packages/ingestion/src/model.ts';
+
+const checkedAt = '2026-10-24T13:00:00.000Z';
+const place = { id:'vicar', name:'Vícar', province:'Almería', municipality:'Vícar', latitude:36.83, longitude:-2.64, sourceUrl:'https://example.org/vicar', precision:'locality' as const };
+const resolveCity = createNationalCityResolver([place]);
+const board = { sourceId:'bizneo-plenergy', hostname:'empleo.plenergy.es', employer:'Plenergy', category:'servicios', categoryLabel:'Servicios y comercio' };
+
+test('Bizneo publica solo fichas del dominio verificado y geolocaliza un municipio único', () => {
+  const listing = '<div id="job-board"><a class="job-card" href="https://empleo.plenergy.es/jobs/expendedor-vicar"><div class="title">Expendedor/a</div><div class="details"><span>Vícar</span><span>Presencial</span></div></a><a class="next" href="/jobs?page=2">Siguiente</a></div>';
+  const parsed = parseBizneoListing(listing, board);
+  assert.equal(parsed.offers.length,1);
+  assert.equal(parsed.nextPage,2);
+  const detail = '<h1>Expendedor/a</h1><div class="general-content"><p>Atención al cliente y repostaje.</p></div><div title="Ubicación"><span>Vícar</span></div>';
+  const job = adaptBizneoDetail(parsed.offers[0]!,detail,checkedAt,resolveCity,board);
+  assert.equal(job.city,'Vícar');
+  assert.equal(job.province,'Almería');
+  assert.deepEqual(job.location?.point,[-2.64,36.83]);
+  assert.equal(job.dateKind,'observed');
+  assert.match(job.paragraphs.join(' '),/repostaje/);
+});
+
+test('Bizneo rechaza enlaces externos y no sitúa anuncios remotos', () => {
+  assert.throws(()=>parseBizneoListing('<div id="job-board"><a class="job-card" href="https://evil.test/jobs/falso"><div class="title">Falso</div><div class="details"><span>Vícar</span></div></a></div>',board));
+  const parsed = parseBizneoListing('<div id="job-board"><a class="job-card" href="https://empleo.plenergy.es/jobs/remoto"><div class="title">Atención</div><div class="details"><span>Vícar</span><span>Remoto</span></div></a></div>',board);
+  const job = adaptBizneoDetail(parsed.offers[0]!, '<h1>Atención</h1><div class="general-content"><p>Atención telefónica.</p></div>', checkedAt, resolveCity, board);
+  assert.equal(job.location,null);
+});
+
+test('Bizneo reconoce una categoría previa a la localidad en Telepizza',()=>{
+  const telepizza={sourceId:'bizneo-telepizza',hostname:'ofertas.fooddeliverybrands.com',employer:'Telepizza',category:'hosteleria',categoryLabel:'Turismo y hostelería'};
+  const html='<div id="job-board"><a class="job-card" href="https://ofertas.fooddeliverybrands.com/jobs/repartidor-villacastin"><div class="title">Repartidor/a</div><div class="details"><span class="aggregation">REPARTID@R</span><span>Villacastín</span><span>Presencial</span></div></a></div>';
+  assert.equal(parseBizneoListing(html,telepizza).offers[0]?.city,'Villacastín');
+});
+
+test('TalentClue conserva fecha real y no añade una localidad ambigua', () => {
+  const html = '<table><tr><td><a href="https://careers.talentclue.com/es/node/129742113/4590/modal">Personal de equipo</a></td><td>McDonald’s Rosaleda</td><td>Málaga</td><td>Málaga</td><td>Ventas</td><td>23/10/2026</td></tr></table>';
+  const jobs = adaptTalentClueListing(html,checkedAt,() => null);
+  assert.equal(jobs.length,1);
+  assert.equal(jobs[0]?.publishedAt,'2026-10-23');
+  assert.equal(jobs[0]?.location,null);
+  assert.equal(jobs[0]?.sourceUrl,'https://careers.talentclue.com/es/node/129742113/4590/modal');
+});
+
+test('la primera observación de Bizneo se mantiene en refrescos diarios', () => {
+  const listing = parseBizneoListing('<div id="job-board"><a class="job-card" href="https://empleo.plenergy.es/jobs/expendedor-vicar"><div class="title">Expendedor/a</div><div class="details"><span>Vícar</span><span>Presencial</span></div></a></div>',board);
+  const detail = '<h1>Expendedor/a</h1><div class="general-content"><p>Atención al cliente.</p></div>';
+  const first = adaptBizneoDetail(listing.offers[0]!,detail,checkedAt,resolveCity,board);
+  const initial:PublicCatalog = {checkedAt,mode:'daily_sources',publishedAt:first.publishedAt,sourceConditions:'',calls:[first]};
+  const second = adaptBizneoDetail(listing.offers[0]!,detail,'2026-10-25T13:00:00.000Z',resolveCity,board);
+  const refreshed = reconcileSource(initial,board.sourceId,[second],'2026-10-25T13:00:00.000Z',{missingRetentionDays:0});
+  assert.equal(refreshed.calls[0]?.publishedAt,'2026-10-24');
+});
+
+test('KFC obtiene fecha, municipio y descripción de una ficha pública',()=>{
+  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/KFC/job/VICAR-CREW-MEMBER-04738/1234567890/">CREW MEMBER</a></td><td class="colLocation"><span class="jobLocation">VÍCAR (ALMERÍA), ES, 04738</span></td><td class="colDate"><span class="jobDate">24 oct 2026</span></td></tr></table>';
+  const [offer]=parseKfcListing(listing).offers;
+  assert.equal(offer?.city,'VÍCAR');
+  const detail='<div class="jobDisplayShell"><meta itemprop="datePosted" content="Sat Oct 24 02:00:00 UTC 2026"><h1 id="job-title">CREW MEMBER</h1><span itemprop="description" class="jobdescription"><p>Atender clientes en restaurante.</p></span></div>';
+  const job=adaptKfcDetail(offer!,detail,checkedAt,resolveCity);
+  assert.equal(job.publishedAt,'2026-10-24');
+  assert.equal(job.province,'Almería');
+  assert.deepEqual(job.location?.point,[-2.64,36.83]);
+});
+
+test('DISA valida identidad y solo mapea el municipio indicado en su detalle',()=>{
+  const id='39750a01-4138-4195-a19b-38f0340a5640';
+  const offers=parseDisaListing({Offers:[{OfferId:id,JobName:'Expendedor/a Shell Vícar',WorkPlaceName:'Shell Vícar',Province:'ALMERÍA',CategoryName:'Estaciones de Servicio',ModalityName:'Empleo',OfferReference:'O.974-26'}],TotalOfertas:1});
+  const detail='<h1>Expendedor/a Shell Vícar</h1><dl><dt>Provincias:</dt><dd><div>ALMERÍA</div></dd><dt>Municipios:</dt><dd><div>VÍCAR</div></dd><dt>Centro de trabajo:</dt><dd>Shell Vícar</dd></dl><div class="mb-7"><h4>Descripción de la oferta</h4><p>Atención al cliente en estación de servicio.</p></div>';
+  const job=adaptDisaOffer(offers[0]!,detail,checkedAt,(city,province)=>{
+    assert.equal(city,'VÍCAR');assert.equal(province,'Almería');return resolveCity(city)?.location??null;
+  });
+  assert.deepEqual(job.location?.point,[-2.64,36.83]);
+  assert.equal(job.dateKind,'observed');
+  assert.equal(job.sourceUrl,`https://empleo.disagrupo.es/offer/detail/${id}`);
+});
