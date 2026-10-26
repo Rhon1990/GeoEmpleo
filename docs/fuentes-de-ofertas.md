@@ -94,7 +94,8 @@ despliega Hosting y compara por HTTPS el catálogo publicado. Una fuente fallida
 conserva su catálogo anterior, como en la ingesta normal.
 
 El workflow no está operativo hasta subirlo a la rama por defecto y configurar
-estos secretos en la configuración del repositorio GitHub:
+los dos secretos obligatorios en la configuración del repositorio GitHub. El
+ID del mapa es opcional; `GITHUB_TOKEN` lo proporciona automáticamente GitHub:
 
 | Secreto | Uso |
 |---|---|
