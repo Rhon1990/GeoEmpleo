@@ -1,7 +1,7 @@
 # Monetización web GeoEmpleo con Google AdSense
 
 Fecha: 26 de octubre de 2026  
-Estado: implementación preparada en la rama; activación de anuncios pendiente de aprobación del sitio en AdSense e IDs reales de editor y unidad.
+Estado: implementación desplegada con anuncios desactivados; propiedad del sitio verificada en AdSense y revisión solicitada. La aprobación y el ID de unidad siguen pendientes.
 
 ## Objetivo
 
