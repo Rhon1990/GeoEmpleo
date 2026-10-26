@@ -21,4 +21,10 @@ export const successFactorsBoards: readonly SuccessFactorsBoard[] = [
     category:'tecnologia',categoryLabel:'Tecnología y consultoría',sourceLabel:'Capgemini · empleo oficial',
     pageSize:25,maxPages:40,
   },
+  {
+    sourceId:'successfactors-melia',hostname:'careers.melia.com',employer:'Meliá Hotels International',
+    listingPath:'/go/Profesionales-de-hotel/8861001/',jobPathPattern,
+    category:'hosteleria',categoryLabel:'Turismo y hostelería',sourceLabel:'Meliá · empleo oficial',
+    requireCityMentionInTitle:true,skipVerifiedClosed:true,pageSize:25,maxPages:40,
+  },
 ];

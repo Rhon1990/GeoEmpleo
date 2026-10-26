@@ -11,7 +11,7 @@ test('el registro distingue fuentes activas y bloqueadas sin credenciales', () =
 });
 
 test('los tablones empresariales verificados figuran activos en el registro',()=>{
-  for(const id of ['successfactors-vithas','successfactors-mapfre','successfactors-capgemini']) {
+  for(const id of ['successfactors-vithas','successfactors-mapfre','successfactors-capgemini','successfactors-melia']) {
     const source=sourceRegistry.get(id);
     assert.equal(source?.kind,'ats');
     assert.equal(source?.status,'active');

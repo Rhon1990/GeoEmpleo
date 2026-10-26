@@ -28,7 +28,7 @@ const successFactorsBoard:SuccessFactorsBoard={
 
 test('tablones SuccessFactors oficiales tienen identidad, categoría y URL propias',()=>{
   assert.deepEqual(successFactorsBoards.map(item=>item.sourceId),[
-    'successfactors-vithas','successfactors-mapfre','successfactors-capgemini',
+    'successfactors-vithas','successfactors-mapfre','successfactors-capgemini','successfactors-melia',
   ]);
   for(const item of successFactorsBoards) {
     assert.match(item.hostname,/^[a-z0-9.-]+$/);
@@ -164,6 +164,31 @@ test('SuccessFactors conserva el filtro de España al paginar una búsqueda',asy
   const jobs=await fetchSuccessFactorsOffers(spanishBoard,'2026-10-26T12:00:00Z',()=>null,fetchImpl);
   assert.equal(jobs.length,2);
   assert.equal(fetched.filter(url=>url.includes('/search/')).length,2);
+});
+
+test('Meliá omite una ficha confirmada como cubierta y conserva las vigentes',async()=>{
+  const meliaBoard={...successFactorsBoard,hostname:'careers.melia.com',skipVerifiedClosed:true};
+  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Cubierta/111/">Puesto cubierto</a></td><td class="colLocation">Madrid, ES</td></tr><tr class="data-row"><td><a class="jobTitle-link" href="/job/Sevilla-Vigente/222/">Camarero/a Sevilla</a></td><td class="colLocation">Sevilla, ES</td></tr></table>';
+  const closed='<div class="jobDisplayShell"><div class="job"><p><strong>Lo sentimos, esta posición ya está cubierta.</strong></p></div></div>';
+  const current='<meta itemprop="datePosted" content="2026-10-24"><h1>Camarero/a Sevilla</h1><span itemprop="description"><p>Servicio en sala.</p></span>';
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    return new Response(url.pathname.includes('111')?closed:url.pathname.includes('222')?current:listing,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(meliaBoard,'2026-10-26T12:00:00Z',()=>null,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.title),['Camarero/a Sevilla']);
+});
+
+test('SuccessFactors tolera un solapamiento entre páginas sin duplicar la oferta',async()=>{
+  const pagedBoard={...successFactorsBoard,hostname:'careers.melia.com'};
+  const row=(id:string)=>`<tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Agente/${id}/">Agente ${id}</a></td><td class="colLocation">Madrid, ES</td></tr>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    if(url.pathname.startsWith('/job/'))return new Response(`<meta itemprop="datePosted" content="2026-10-24"><h1>Agente ${url.pathname.includes('111')?'111':'222'}</h1><span itemprop="description"><p>Atención a clientes.</p></span>`,{headers:{'content-type':'text/html'}});
+    return new Response(`<span class="paginationLabel">Resultados 1 – 25 de 26</span><table>${url.pathname.includes('/25/')?row('111')+row('222'):row('111')}</table>`,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(pagedBoard,'2026-10-26T12:00:00Z',()=>null,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.title),['Agente 111','Agente 222']);
 });
 
 test('DISA valida identidad y solo mapea el municipio indicado en su detalle',()=>{

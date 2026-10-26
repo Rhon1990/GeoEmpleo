@@ -17,6 +17,7 @@ export interface SuccessFactorsBoard {
   readonly sourceLabel:string;
   readonly idPrefix?:string;
   readonly requireCityMentionInTitle?:boolean;
+  readonly skipVerifiedClosed?:boolean;
   readonly pageSize:number;
   readonly maxPages:number;
 }
@@ -128,6 +129,13 @@ export function adaptSuccessFactorsDetail(
   };
 }
 
+function isVerifiedClosedDetail(html:string):boolean {
+  const document=documentOf(html);
+  const shell=descendants(document,element=>hasClass(element,'jobDisplayShell'))[0];
+  const date=descendants(document,element=>element.tagName==='meta'&&attribute(element,'itemprop')==='datePosted')[0];
+  return Boolean(shell&&!date&&textOf(shell).trim()==='Lo sentimos, esta posición ya está cubierta.');
+}
+
 export async function fetchSuccessFactorsOffers(
   board:SuccessFactorsBoard,
   checkedAt:string,
@@ -144,17 +152,25 @@ export async function fetchSuccessFactorsOffers(
     url.searchParams.set('sortColumn','referencedate');
     url.searchParams.set('sortDirection','desc');
     const parsed=parseSuccessFactorsListing(await fetchHtml(url.href,{fetchImpl}),board);
+    let added=0;
     for(const offer of parsed.offers) {
-      if(found.has(offer.url)) throw new TypeError('Oferta SuccessFactors duplicada');
+      if(found.has(offer.url)) continue;
       found.set(offer.url,offer);
+      added++;
     }
+    if(!added) throw new TypeError('Paginación SuccessFactors repetida');
   }
   if(found.size===0||found.size>board.pageSize*board.maxPages) throw new TypeError('Volumen SuccessFactors inesperado');
   const offers=[...found.values()];
   const jobs:PublicJob[]=[];
   for(let index=0;index<offers.length;index+=5) {
-    jobs.push(...await Promise.all(offers.slice(index,index+5).map(async offer=>
-      adaptSuccessFactorsDetail(offer,await fetchHtml(offer.url,{fetchImpl}),checkedAt,resolveCity,board))));
+    const batch=await Promise.all(offers.slice(index,index+5).map(async offer=>{
+      const html=await fetchHtml(offer.url,{fetchImpl});
+      return board.skipVerifiedClosed&&isVerifiedClosedDetail(html)?null:
+        adaptSuccessFactorsDetail(offer,html,checkedAt,resolveCity,board);
+    }));
+    jobs.push(...batch.filter((job):job is PublicJob=>job!==null));
   }
+  if(!jobs.length) throw new TypeError('Sin ofertas SuccessFactors vigentes verificables');
   return jobs;
 }
