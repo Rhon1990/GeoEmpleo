@@ -1,4 +1,12 @@
 export const placesLabel = call => call.places == null ? 'Plazas no publicadas' : `${call.places} ${call.places === 1 ? 'plaza' : 'plazas'}`;
+export const formatDate = value => new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',year:'numeric',timeZone:'Europe/Madrid'}).format(new Date(value));
+export function offerDates(call) {
+ const observed=call.dateKind==='observed';
+ return {
+  publication:{label:observed?'Detectada en GeoEmpleo':'Publicación',short:observed?'Detectada':'Publicada',value:formatDate(call.publishedAt)},
+  checked:{label:'Última comprobación en GeoEmpleo',short:'Comprobada',value:formatDate(call.checkedAt)},
+ };
+}
 const employerBrands={
   'talentclue-mcdonalds':{src:'/brands/mcdonalds.svg',alt:'McDonald’s'},
   'bizneo-burger-king':{src:'/brands/burger-king.svg',alt:'Burger King'},

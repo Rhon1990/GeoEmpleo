@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cardVisualTheme,detailBadge,placesLabel,jobPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
+import {cardVisualTheme,detailBadge,offerDates,placesLabel,jobPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
 import {markerGroups,expandedZoom} from '../apps/web-preview/public/google-map.mjs';
 test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>{
  assert.equal(placesLabel({places:null}),'Plazas no publicadas');
@@ -26,6 +26,14 @@ test('identifica ECYL y Lanbide sin atribuir su procedencia a Murcia',()=>{
 test('la etiqueta del detalle siempre procede de la oferta que se está abriendo',()=>{
  assert.equal(detailBadge({kind:'job',source:'Lanbide'}),'Oferta real · Lanbide');
  assert.equal(detailBadge({kind:'job',source:'ECYL Castilla y León'}),'Oferta real · ECYL Castilla y León');
+});
+test('distingue la primera detección de la última comprobación individual en hora de España',()=>{
+ const dates=offerDates({dateKind:'observed',publishedAt:'2026-10-19',checkedAt:'2026-10-25T23:30:00Z'});
+ assert.deepEqual(dates.publication,{label:'Detectada en GeoEmpleo',short:'Detectada',value:'19 oct 2026'});
+ assert.deepEqual(dates.checked,{label:'Última comprobación en GeoEmpleo',short:'Comprobada',value:'26 oct 2026'});
+ const published=offerDates({publishedAt:'2026-10-20',checkedAt:'2026-10-21T12:00:00Z'});
+ assert.deepEqual(published.publication,{label:'Publicación',short:'Publicada',value:'20 oct 2026'});
+ assert.equal(published.checked.value,'21 oct 2026');
 });
 test('presenta ofertas directas sin inventar un enlace externo ni degradar salario y ubicación',()=>{
  const direct={kind:'job',sourceId:'direct-employer',source:'Anunciante en GeoEmpleo',salary:{minMinor:150000,maxMinor:170000,currency:'EUR',period:'month',basis:'gross',paymentsPerYear:14},location:{precision:'employer_declared'}};

@@ -10,7 +10,7 @@ import {gzipSync} from 'node:zlib';
 
 const point = (longitude:number,latitude:number) => ({point:[longitude,latitude]});
 const jobs = [
-  {id:'segovia-1',title:'Operario rural',employer:'Empresa real',city:'Villacastín',province:'Segovia',region:'Castilla y León',category:'industria',categoryLabel:'Industria',source:'ECYL',sourceId:'ecyl-castilla-leon',location:point(-4.1,40.7),paragraphs:['Texto original']},
+  {id:'segovia-1',title:'Operario rural',employer:'Empresa real',city:'Villacastín',province:'Segovia',region:'Castilla y León',category:'industria',categoryLabel:'Industria',source:'ECYL',sourceId:'ecyl-castilla-leon',location:point(-4.1,40.7),paragraphs:['Texto original'],dateKind:'observed',publishedAt:'2026-10-20',checkedAt:'2026-10-23T09:00:00Z'},
   {id:'madrid-1',title:'Técnico',employer:'Empresa real',city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',category:'tecnologia',categoryLabel:'Tecnología',source:'ECYL',sourceId:'ecyl-castilla-leon',location:point(-3.7,40.4),paragraphs:['Otro texto']},
 ];
 const catalog = {checkedAt:'2026-10-24T08:00:00Z',calls:jobs};
@@ -38,6 +38,8 @@ test('el catálogo estático devuelve solo ofertas del área y conserva el detal
   const result=await (await fetchData('/api/jobs?bounds=-4.5,40.6,-4,40.9')).json();
   assert.equal(result.total,1);
   assert.equal(result.jobs[0].id,'segovia-1');
+  assert.equal(result.jobs[0].dateKind,'observed');
+  assert.equal(result.jobs[0].checkedAt,'2026-10-23T09:00:00Z');
   assert.equal(result.jobs[0].paragraphs,undefined);
   assert.deepEqual(result.mapJobs.map((item:{id:string})=>item.id),['segovia-1']);
   assert.equal(result.checkedAt,catalog.checkedAt);

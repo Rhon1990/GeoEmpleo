@@ -1,7 +1,7 @@
 import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
-import {cardVisualTheme,detailBadge,employerBrand,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
+import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,offerDates,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
 import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261024-viewport';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
@@ -47,7 +47,6 @@ const workspaceView = createWorkspaceView(view=>{
 for(const button of viewButtons)button.addEventListener('click',()=>workspaceView.select(button.dataset.workspaceView));
 for(const link of document.querySelectorAll('a[href="#results"]'))link.addEventListener('click',()=>workspaceView.select('jobs'));
 const radiusKm = () => origin && radiusSelect.value ? Number(radiusSelect.value) : null;
-const date = value => new Intl.DateTimeFormat('es-ES', {day:'numeric', month:'short', year:'numeric', timeZone:'Europe/Madrid'}).format(new Date(value));
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -90,6 +89,7 @@ function scrollCardIntoView(id) {
 
 function renderDetail(call) {
   const presentation=jobPresentation(call);
+  const dates=offerDates(call);
   detail.querySelector('.public-badge').textContent=detailBadge(call);
   const content = document.querySelector('#detail-content');
   content.replaceChildren();
@@ -97,7 +97,7 @@ function renderDetail(call) {
   const title = element('h2', call.title); title.id = 'detail-title';
   body.append(title, element('p', `${call.employer} · ${call.city}, ${call.province}`, 'detail-employer'));
   const facts = element('dl', undefined, 'detail-facts');
-  for (const [label, value] of [['Plazas',placesLabel(call)],['Régimen',call.regime],['Retribución',presentation.salaryLabel],['Ubicación',presentation.locationLabel],[call.dateKind==='observed'?'Detectada en GeoEmpleo':'Publicación',date(call.publishedAt)],['Fin de publicación',call.closingDate?date(call.closingDate):'No indicada; comprueba vigencia en el origen']]) {
+  for (const [label, value] of [['Plazas',placesLabel(call)],['Régimen',call.regime],['Retribución',presentation.salaryLabel],['Ubicación',presentation.locationLabel],[dates.publication.label,dates.publication.value],[dates.checked.label,dates.checked.value],['Fin de publicación',call.closingDate?date(call.closingDate):'No indicada; comprueba vigencia en el origen']]) {
     const fact = element('div'); fact.append(element('dt', label), element('dd', value)); facts.append(fact);
   }
   body.append(facts, element('h3','Texto del anuncio publicado'));
@@ -107,7 +107,7 @@ function renderDetail(call) {
   const original=sourceLink(presentation.sourceLink,call.sourceUrl,'primary-button');
   if(original)links.append(original);
   links.append(externalLink('Ver ubicación en Google Maps ↗', `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(call.location?.point?.slice().reverse().join(',')??`${call.city}, ${call.province}, España`)}`, 'secondary-button'));
-  body.append(links, element('p', `${call.id} · Consultado el ${date(call.checkedAt)}. Fuente: ${presentation.source}. ${presentation.provenance}`, 'detail-provenance'));
+  body.append(links, element('p', `${call.id} · Fuente: ${presentation.source}. ${presentation.provenance}`, 'detail-provenance'));
   content.append(body);
   if(!detail.open) detail.showModal();
 }
@@ -141,6 +141,7 @@ async function showDetail(call,{panMap=true,revealCard=false}={}) {
 }
 
 function card(call) {
+  const dates=offerDates(call);
   const article = element('article', undefined, 'job-card');
   article.dataset.jobId = call.id;
   const button = element('button', undefined, 'card-open');
@@ -169,7 +170,9 @@ function card(call) {
   }
   button.append(visualFrame, top, element('h3',call.title), locationLine, tags, element('p',jobPresentation(call).salaryLabel,'salary-label'));
   const footer = element('div', undefined, 'card-footer');
-  footer.append(element('span',`${call.dateKind==='observed'?'Detectada':'Publicado'} ${date(call.publishedAt)}`));
+  const cardDates=element('div',undefined,'card-dates');
+  cardDates.append(element('span',`${dates.publication.short} ${dates.publication.value}`),element('span',`${dates.checked.short} ${dates.checked.value}`));
+  footer.append(cardDates);
   const original=sourceLink(call.sourceUrl?`${call.id} ↗`:call.id,call.sourceUrl);
   footer.append(original??element('span',call.id));
   article.append(button, footer);

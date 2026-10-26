@@ -1,6 +1,6 @@
 # GeoEmpleo — Contexto del proyecto
 
-Última revisión: 24 de octubre de 2026, Europe/Madrid.
+Última revisión: 26 de octubre de 2026, Europe/Madrid.
 
 ## Propósito y alcance confirmado
 
@@ -255,3 +255,5 @@ La entrega estática elimina el enlace local de publicación sin mostrar «Publi
 QA: `npm run check` con el entorno Python existente pasó 290 pruebas Node, 76 fixtures Python, tipos y OpenAPI. En navegador se comprobaron búsqueda McDonald's, su logo y 42 resultados en el área observada; detalle con enlace de origen; «Cómo funciona»; filtro de categoría; limpieza; selección de Villacastín (40150), 20 ofertas en el área y 2 a 25 km; vista de España, retorno al origen y selección de zona. El mapa depende de Google Maps y solo se probó en `127.0.0.1:4310`, dominio admitido por la clave. Las cifras de área cambian con el mapa y no son una promesa de cobertura nacional.
 
 La versión estática se desplegó en Firebase Hosting Spark el 26/10/2026. La respuesta pública HTTPS confirmó `checkedAt=2026-10-26T09:19:10.126Z`, 2.413 IDs únicos, logo McDonald's accesible y ausencia de «Publicación próximamente». En navegador público Google Maps mostró 2.157 ofertas y 512 puntos municipales en el área inicial observada; la lista y el mapa siguieron conectados. La geolocalización fue denegada en ese navegador y la vista usó el encuadre general, sin almacenar posición.
+
+La tarjeta y el detalle muestran por separado la fecha de publicación o primera detección y la última comprobación de **cada oferta**, a partir de `checkedAt` del anuncio. La proyección de resultados conserva `dateKind` para identificar correctamente los tablones sin fecha propia. La fecha global del catálogo permanece aparte; una fuente fallida puede conservar anuncios con comprobación anterior. «Última comprobación» no afirma que la empresa haya modificado el contenido ni garantiza que la vacante siga abierta: la vigencia debe verificarse en el enlace original.
