@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseBizneoListing, adaptBizneoDetail } from '../packages/ingestion/src/connectors/bizneo.ts';
+import { parseBizneoListing, adaptBizneoDetail, fetchBizneoOffers } from '../packages/ingestion/src/connectors/bizneo.ts';
 import { adaptTalentClueListing } from '../packages/ingestion/src/connectors/talentclue.ts';
 import { createNationalCityResolver } from '../packages/ingestion/src/national-geography.ts';
 import { parseKfcListing, adaptKfcDetail } from '../packages/ingestion/src/connectors/kfc.ts';
@@ -25,6 +25,18 @@ const successFactorsBoard:SuccessFactorsBoard={
   category:'servicios',categoryLabel:'Servicios y comercio',sourceLabel:'Empresa Ejemplo · portal de empleo',
   pageSize:25,maxPages:3,
 };
+
+test('Bizneo reconcilia páginas solapadas sin duplicar una oferta real',async()=>{
+  const domusvi={sourceId:'bizneo-domusvi',hostname:'empleo.domusvi.es',employer:'DomusVi',category:'cuidados',categoryLabel:'Cuidados y servicios'};
+  const card=(slug:string)=>`<a class="job-card" href="/jobs/${slug}"><div class="title">Oferta ${slug}</div><div class="details"><span>${slug==='vigo'?'Vigo':'Madrid'}</span><span>Presencial</span></div></a>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    if(url.pathname.startsWith('/jobs/')&&url.pathname!=='/jobs/')return new Response(`<h1>Oferta ${url.pathname.slice('/jobs/'.length)}</h1><div class="general-content"><p>Atención a personas.</p></div><div title="Ubicación">${url.pathname.includes('vigo')?'Vigo':'Madrid'}</div>`,{headers:{'content-type':'text/html'}});
+    return new Response(`<div id="job-board">${url.searchParams.has('page')?card('vigo')+card('madrid'):card('vigo')}</div>${url.searchParams.has('page')?'':'<a class="next" href="/jobs?page=2">Siguiente</a>'}`,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchBizneoOffers(domusvi,checkedAt,()=>null,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.title),['Oferta vigo','Oferta madrid']);
+});
 
 test('tablones SuccessFactors oficiales tienen identidad, categoría y URL propias',()=>{
   assert.deepEqual(successFactorsBoards.map(item=>item.sourceId),[

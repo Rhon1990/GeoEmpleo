@@ -88,7 +88,9 @@ export async function fetchBizneoOffers(board:BizneoBoard,checkedAt:string,resol
     const url=new URL(`https://${board.hostname}/jobs`);
     if(page>1) url.searchParams.set('page',String(page));
     const parsed=parseBizneoListing(await fetchHtml(url.href,{fetchImpl}),board);
-    for(const offer of parsed.offers){if(found.has(offer.url)) throw new TypeError('Oferta Bizneo duplicada');found.set(offer.url,offer);}
+    let added=0;
+    for(const offer of parsed.offers){if(found.has(offer.url))continue;found.set(offer.url,offer);added++;}
+    if(!added) throw new TypeError('Paginación Bizneo repetida');
     if(!parsed.nextPage) break;
     if(parsed.nextPage!==page+1) throw new TypeError('Salto de página Bizneo inválido');
     page=parsed.nextPage;
