@@ -1,7 +1,7 @@
 import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
-import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,offerDates,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
+import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,offerDates,placesLabel,jobPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261026-origin';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
@@ -97,7 +97,12 @@ function renderDetail(call) {
   content.replaceChildren();
   const body = element('div', undefined, 'detail-body');
   const title = element('h2', call.title); title.id = 'detail-title';
-  body.append(title, element('p', `${call.employer} · ${call.city}, ${call.province}`, 'detail-employer'));
+  const brand=employerBrand(call);
+  const brandHeader=element('div',undefined,'detail-brand');
+  const brandLogo=setBrandImageFallback(element('img'));
+  brandLogo.src=brand.src; brandLogo.alt=brand.alt; brandLogo.loading='lazy'; brandLogo.decoding='async';
+  brandHeader.append(brandLogo,element('p',`${call.employer} · ${call.city}, ${call.province}`,'detail-employer'));
+  body.append(brandHeader,title);
   const facts = element('dl', undefined, 'detail-facts');
   for (const [label, value] of [['Plazas',placesLabel(call)],['Régimen',call.regime],['Retribución',presentation.salaryLabel],['Ubicación',presentation.locationLabel],[dates.publication.label,dates.publication.value],[dates.checked.label,dates.checked.value],['Fin de publicación',call.closingDate?date(call.closingDate):'No indicada; comprueba vigencia en el origen']]) {
     const fact = element('div'); fact.append(element('dt', label), element('dd', value)); facts.append(fact);
@@ -157,7 +162,7 @@ function card(call) {
   const brand=employerBrand(call);
   const visual = element('div', undefined, `job-visual theme-${cardVisualTheme(call)} ${brand.alt==='GeoEmpleo'?'logo-generic':'logo-brand'}`);
   visual.setAttribute('aria-hidden','true');
-  const logo=element('img');logo.src=brand.src;logo.alt='';logo.loading='lazy';
+  const logo=setBrandImageFallback(element('img'));logo.src=brand.src;logo.alt='';logo.loading='lazy';logo.decoding='async';logo.draggable=false;
   visual.append(logo);
   visualFrame.append(visual, element('span',call.source,'source-pill'));
   const top = element('div', undefined, 'card-top');

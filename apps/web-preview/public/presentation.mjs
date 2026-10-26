@@ -11,8 +11,27 @@ const employerBrands={
   'talentclue-mcdonalds':{src:'/brands/mcdonalds.svg',alt:'McDonald’s'},
   'bizneo-burger-king':{src:'/brands/burger-king.svg',alt:'Burger King'},
   'amrest-kfc':{src:'/brands/kfc.svg',alt:'KFC'},
+  'lever-jobandtalent':{src:'/brands/jobandtalent.png',alt:'Job&Talent'},
+  'lever-skydance':{src:'/brands/skydance.jpg',alt:'Skydance'},
+  'bizneo-plenergy':{src:'/brands/plenergy.png',alt:'Plenergy'},
+  'bizneo-telepizza':{src:'/brands/telepizza.svg',alt:'Telepizza'},
+  'successfactors-vithas':{src:'/brands/vithas.png',alt:'Vithas'},
+  'successfactors-mapfre':{src:'/brands/mapfre.png',alt:'MAPFRE'},
+  'successfactors-capgemini':{src:'/brands/capgemini.png',alt:'Capgemini'},
+  'successfactors-melia':{src:'/brands/melia.svg',alt:'Meliá Hotels International'},
+  'teamtailor-dia':{src:'/brands/dia.png',alt:'DIA'},
+  'disa-empleo':{src:'/brands/disa.png',alt:'Grupo DISA'},
 };
-export const employerBrand=job=>employerBrands[job.sourceId]??{src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo'};
+export const neutralBrand={src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo'};
+export const employerBrand=job=>employerBrands[job.sourceId]??neutralBrand;
+export function setBrandImageFallback(image) {
+ image.onerror=()=>{
+  image.onerror=null;
+  image.src=neutralBrand.src;
+  image.alt=neutralBrand.alt;
+ };
+ return image;
+}
 export function cardVisualTheme(job) {
   if(job.kind==='public_call'||job.category==='administracion')return 'public';
   if(['tecnico','industria','construccion'].includes(job.category))return 'technical';

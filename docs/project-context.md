@@ -275,3 +275,9 @@ Se activó el conector `teamtailor-dia` para el tablón público [empleo.dia.es/
 La captura `2026-10-26T12:49:43.434Z` terminó `partial`: DIA y otras 15 fuentes se actualizaron; SEF Murcia falló y conservó su catálogo anterior. El catálogo tiene 2.806 IDs únicos, 2.361 ofertas con punto y 118 anuncios DIA, 95 con punto. El build estático conservó ese instante, cantidad e IDs y excluyó `/publicar`. Firebase Hosting se desplegó; la respuesta HTTPS pública confirmó la misma captura, las 118 ofertas DIA, 95 puntos y el enlace de atribución al portal oficial.
 
 QA: tipos correctos; `npm run check` pasó con 307 pruebas Node, OpenAPI y 76 fixtures Python. No se pudo hacer la inspección visual interactiva desde el navegador integrado porque el uso del navegador local está deshabilitado en Work; se comprobó el catálogo servido, su procedencia y sus ubicaciones por HTTPS.
+
+## Logos de ofertas empresariales — 26/10/2026
+
+Las tarjetas y el detalle usan un mismo resolver basado exclusivamente en los IDs de fuentes empresariales verificadas. Hay recursos locales para McDonald's, Burger King, KFC, Job&Talent, Skydance, Plenergy, Telepizza, Vithas, MAPFRE, Capgemini, Meliá, DIA y Grupo DISA. Las fuentes administrativas, los anuncios directos y las ofertas sin marca confirmada conservan el recurso neutral de GeoEmpleo. Si falla la carga de un logo, la interfaz cambia al recurso neutral local. El inventario de procedencia está en [brands/README.md](../apps/web-preview/public/brands/README.md); no se usan favicons genéricos de ATS como logos de empresa.
+
+QA: `npm run check` pasó con 311 pruebas Node, tipos, OpenAPI y 76 fixtures Python. La compilación estática conservó el catálogo `2026-10-26T12:49:43.434Z` con 2.806 IDs y excluyó `/publicar` y `/gestionar`. Firebase Hosting se actualizó y se verificó por HTTPS: la portada apunta al bundle nuevo, los 13 logos empresariales responden correctamente y el catálogo público conserva 2.806 IDs únicos.
