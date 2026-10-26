@@ -24,6 +24,8 @@ Versiones verificadas: Node.js 24.19.0, TypeScript 7.0.2 y tipos de Node 24.19.2
 
 ## Índice funcional
 
+La analítica web se habilitó en Firebase para el proyecto Spark `geoempleo-49978`. Su comportamiento opt-in, ubicación geográfica aproximada por conexión (país/región/ciudad) y límites de privacidad están descritos en [diseño Firebase Analytics](superpowers/specs/2026-10-26-firebase-analytics-consent-design.md) y [plan de integración](superpowers/plans/2026-10-26-firebase-analytics.md). La geografía procede de la inferencia de Google Analytics; no se solicita GPS ni se envían las localidades consultadas. El SDK solo se carga tras aceptar y la preferencia puede cambiarse desde Privacidad.
+
 La especificación principal está en [Análisis de Bandana y arquitectura de GeoEmpleo](architecture/2026-10-14-geoempleo-arquitectura.md).
 
 Planificación: [Backlog y plan técnico nacional](planning/2026-10-14-backlog-tecnico.md), [Primera iteración de dominio](superpowers/plans/2026-10-14-contratos-dominio.md), [Contratos v1](superpowers/plans/2026-10-14-contratos-v1.md), [Mapas/coste](architecture/2026-10-14-google-maps-coste.md), [Fuentes rurales y ciudades](superpowers/plans/2026-10-15-fuentes-rurales.md), [interacción mapa-lista inspirada en Bandana](superpowers/plans/2026-10-16-bandana-map-list-interaction.md), [identidad visual y composición final](superpowers/specs/2026-10-16-identidad-bandana-geoempleo-design.md) con su [plan de implementación](superpowers/plans/2026-10-16-identidad-bandana-geoempleo.md), y [portales empresariales oficiales](superpowers/specs/2026-10-26-portales-empresariales-oficiales-design.md) con el [primer plan SuccessFactors](superpowers/plans/2026-10-26-successfactors-empresas.md).
