@@ -7,6 +7,26 @@ import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
 import {siteFetch} from './static-data.mjs?v=20261026-employer-group';
+import {createAnalyticsController,loadFirebaseAnalytics} from './analytics.mjs';
+
+const analyticsController=createAnalyticsController({config:null,loadSdk:()=>loadFirebaseAnalytics()});
+const analyticsPanel=document.querySelector('#analytics-consent-panel');
+document.querySelector('#analytics-consent').hidden=false;
+analyticsPanel.hidden=Boolean(analyticsController.getPreference());
+document.querySelector('#privacy-settings').addEventListener('click',()=>{analyticsPanel.hidden=!analyticsPanel.hidden;});
+document.querySelector('#analytics-accept').addEventListener('click',async()=>{
+  await analyticsController.accept();analyticsPanel.hidden=true;
+  void analyticsController.track('page_view');
+});
+document.querySelector('#analytics-reject').addEventListener('click',async()=>{
+  await analyticsController.reject();analyticsPanel.hidden=true;
+});
+void fetch('/config.json').then(response=>response.ok?response.json():null).then(config=>{
+  if(config?.firebaseAnalytics)analyticsController.setConfig(config.firebaseAnalytics);
+  if(analyticsController.getPreference()==='accepted')return analyticsController.initializeFromPreference().then(()=>analyticsController.track('page_view'));
+  if(!analyticsController.getPreference())analyticsPanel.hidden=false;
+  return undefined;
+}).catch(()=>{if(!analyticsController.getPreference())analyticsPanel.hidden=false;});
 
 const form = document.querySelector('#search-form');
 const query = document.querySelector('#query');
@@ -120,6 +140,7 @@ function renderDetail(call) {
 }
 
 async function showDetail(call,{panMap=true,revealCard=false}={}) {
+  void analyticsController.track('offer_detail_opened');
   detailRequest?.abort();
   detailReturnJobId=call.id;
   detail.querySelector('.public-badge').textContent=detailBadge(call);
@@ -362,15 +383,17 @@ originInput.addEventListener('change',()=>{
   pendingPlace=originInput.value;searchPlaces(true);
 });
 originInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();pendingPlace=originInput.value;searchPlaces(true);}});
-radiusSelect.addEventListener('change',render);
+radiusSelect.addEventListener('change',()=>{void analyticsController.track('filter_used',{filter_type:'distance'});render();});
 document.querySelector('#choose-origin').addEventListener('click',() => {
+  void analyticsController.track('map_action',{action:'choose_zone'});
   mapController?.chooseOrigin(); document.querySelector('#origin-status').textContent = 'Haz clic en el mapa para situar tu zona de búsqueda.';
 });
-document.querySelector('#search-area').addEventListener('click',()=>requestSearch({immediate:true,force:true}));
-document.querySelector('#show-all-map').addEventListener('click',()=>mapController?.overview());
-document.querySelector('#use-location').addEventListener('click',()=>{if(mapController)void useMyLocation();else void startMap();});
+document.querySelector('#search-area').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'search_visible_area'});requestSearch({immediate:true,force:true});});
+document.querySelector('#show-all-map').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'show_spain'});mapController?.overview();});
+document.querySelector('#use-location').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'use_my_location'});if(mapController)void useMyLocation();else void startMap();});
 document.querySelector('#return-origin').addEventListener('click',()=>{
   if(!origin||!mapController)return;
+  void analyticsController.track('map_action',{action:'return_origin'});
   mapController.cancelOriginSelection();
   cancelPlaceSearch();originRevision++;
   originInput.value=originPresentation.input;
@@ -404,7 +427,7 @@ async function startMap() {
     mapHost.replaceChildren(mapState);requestSearch({immediate:true,allowList:true});
   }finally{mapStarting=false;loadMapButton.disabled=false;}
 }
-loadMapButton.addEventListener('click',()=>void startMap());
+loadMapButton.addEventListener('click',()=>{void analyticsController.track('map_action',{action:'show_map'});void startMap();});
 
 function syncCategories() {
   for (const button of document.querySelectorAll('[data-category]')) {
@@ -413,14 +436,16 @@ function syncCategories() {
   }
 }
 
-form.addEventListener('submit',event=>{event.preventDefault();requestSearch({immediate:true,force:true});});
-location.addEventListener('change',()=>{territoryFocusPending=location.value;radiusSelect.value='';requestSearch({immediate:true,force:true});});
+form.addEventListener('submit',event=>{event.preventDefault();void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true});});
+location.addEventListener('change',()=>{territoryFocusPending=location.value;radiusSelect.value='';void analyticsController.track('filter_used',{filter_type:'territory'});requestSearch({immediate:true,force:true});});
 document.querySelector('#categories').addEventListener('click',event => {
   const button = event.target.closest('[data-category]');
   if (!button) return;
+  void analyticsController.track('filter_used',{filter_type:'category'});
   category = button.dataset.category; syncCategories(); requestSearch({immediate:true});
 });
 document.querySelector('#employer-filter').addEventListener('change',event=>{
+  void analyticsController.track('filter_used',{filter_type:'employer'});
   employer=event.currentTarget.value;
   requestSearch({immediate:true,force:true});
 });
