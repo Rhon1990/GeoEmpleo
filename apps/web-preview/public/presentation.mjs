@@ -13,7 +13,8 @@ export function cardVisualTheme(job) {
 export function resultSummary(results) {
  const known=results.reduce((total,call)=>total+(call.places??0),0);
  const unknown=results.filter(call=>call.places==null).length;
- return `${known} plazas publicadas${unknown?` · ${unknown} ${unknown===1?'oferta sin número de plazas':'ofertas sin número de plazas'}`:''} · Consulta el plazo en cada oferta`;
+ if(known===0)return 'Consulta condiciones y vigencia en cada anuncio';
+ return `${known} plazas indicadas${unknown?` · ${unknown} ${unknown===1?'oferta sin cifra de plazas':'ofertas sin cifra de plazas'}`:''}`;
 }
 function salaryLabel(salary) {
  if(!salary)return 'Retribución no publicada';

@@ -9,7 +9,8 @@ test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>
  assert.equal(jobPresentation(job).source,'SEF Murcia');
  assert.equal(jobPresentation(job).sourceLink,'Ver oferta original en SEF Murcia ↗');
  assert.ok(!jobPresentation(job).note.includes('bases del proceso'));
- assert.match(resultSummary([{places:null},{places:2}]),/2 plazas publicadas.*1 oferta/);
+ assert.match(resultSummary([{places:null},{places:2}]),/2 plazas indicadas.*1 oferta/);
+ assert.equal(resultSummary([{places:null},{places:null}]),'Consulta condiciones y vigencia en cada anuncio');
 });
 test('identifica ECYL y Lanbide sin atribuir su procedencia a Murcia',()=>{
  for(const [sourceId,source] of [['ecyl-castilla-leon','ECYL Castilla y León'],['lanbide-euskadi','Lanbide']]) {
