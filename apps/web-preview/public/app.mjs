@@ -2,7 +2,7 @@ import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,offerDates,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
-import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261024-viewport';
+import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261026-origin';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
@@ -30,6 +30,7 @@ let places = [];
 let pendingPlace = null;
 let mapController = null;
 let searchBounds = null;
+let territoryFocusPending = null;
 const interaction=createJobInteraction(syncJobInteraction);
 const originInput = document.querySelector('#origin-city');
 const radiusSelect = document.querySelector('#radius');
@@ -46,7 +47,7 @@ const workspaceView = createWorkspaceView(view=>{
 },'jobs',()=>requestAnimationFrame(()=>requestSearch({immediate:true,force:true})));
 for(const button of viewButtons)button.addEventListener('click',()=>workspaceView.select(button.dataset.workspaceView));
 for(const link of document.querySelectorAll('a[href="#results"]'))link.addEventListener('click',()=>workspaceView.select('jobs'));
-const radiusKm = () => origin && radiusSelect.value ? Number(radiusSelect.value) : null;
+const activeGeography = () => searchGeography(origin,radiusSelect.value,Boolean(location.value));
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -181,17 +182,18 @@ function card(call) {
 
 function render() {
   document.querySelector('#return-origin').disabled=!origin||!mapController;
-  const results=searchCalls(calls,{origin,radiusKm:radiusKm()});
-  const mapResults=visibleMapJobs(page,origin,radiusKm());
-  if(origin)results.sort((a,b)=>distanceKm(origin,a.location?.point)-distanceKm(origin,b.location?.point));
+  const geography=activeGeography();
+  const results=searchCalls(calls,geography);
+  const mapResults=visibleMapJobs(page,geography.origin,geography.radiusKm);
+  if(geography.origin)results.sort((a,b)=>distanceKm(geography.origin,a.location?.point)-distanceKm(geography.origin,b.location?.point));
   list.replaceChildren(...results.map(card));
-  const count=radiusKm()===null?page?.total??results.length:mapResults.length;
+  const count=geography.radiusKm===null?page?.total??results.length:mapResults.length;
   document.querySelector('#result-count').textContent=`${count} ${count===1?'oferta real':'ofertas reales'}${searchBounds?' en esta zona':''}`;
   const summary=resultSummary(results);
   document.querySelector('#result-summary').textContent=page?.truncated?`Mostrando 300 de ${page.total} tarjetas · El mapa incluye todos los puntos`:summary;
   document.querySelector('#empty-state').hidden=loadError||results.length>0||mapResults.length>0;
   document.querySelector('#clear-filters').hidden=!query.value&&!location.value&&!category&&!origin;
-  updateMapWithoutLosingJobs(mapController,mapResults,origin,radiusKm(),()=>{
+  updateMapWithoutLosingJobs(mapController,mapResults,geography.origin,geography.radiusKm,()=>{
     mapController=null;
     mapHost.replaceChildren(mapState);
     mapMessage.textContent='El mapa no está disponible ahora. Puedes seguir consultando las ofertas en la lista.';
@@ -234,6 +236,10 @@ const search=createViewportSearch({
     list.setAttribute('aria-busy','false');render();
     document.querySelector('#results').scrollTop=0;
     document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
+    if(territoryFocusPending!==null){
+      const territory=territoryFocusPending;territoryFocusPending=null;
+      if(territory===location.value&&mapController&&result.mapJobs.length)mapController.fit(result.mapJobs,null);
+    }
   },
   onError(){
     calls=[];loadError=true;list.setAttribute('aria-busy','false');render();
@@ -244,7 +250,7 @@ const search=createViewportSearch({
 
 function requestSearch({immediate=false,force=false,allowList=false}={}) {
   if(mapStarting&&!mapController&&!allowList)return;
-  searchBounds=resolveSearchBounds(mapController?.bounds(),mapIsVisible(),searchBounds);
+  searchBounds=resolveSearchBounds(mapController?.bounds(),mapIsVisible(),searchBounds,territoryFocusPending!==null);
   const params=new URLSearchParams();
   if(searchBounds)params.set('bounds',searchBounds.join(','));
   if(query.value)params.set('q',query.value);
@@ -258,6 +264,7 @@ function locationUrl() { return window.location.pathname; }
 function clear() {
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();
+  territoryFocusPending=null;
   query.value = ''; location.value = ''; category = '';
   originRevision++;origin = null; originInput.value = ''; radiusSelect.value = ''; radiusSelect.disabled = true;
   document.querySelector('#origin-status').textContent = 'Elige una localidad o selecciona tu zona en el mapa.';
@@ -267,8 +274,9 @@ function clear() {
 function setOrigin(point,label) {
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();originRevision++;
-  searchBounds=null;
-  origin=point;radiusSelect.value='';radiusSelect.disabled=false;
+  const next=originSearchTransition(point);
+  searchBounds=next.bounds;territoryFocusPending=next.pendingTerritory;
+  location.value=next.territory;origin=next.origin;radiusSelect.value='';radiusSelect.disabled=false;
   document.querySelector('#origin-status').textContent=`${label} · Ubicación aproximada; el mapa filtra la zona visible`;
   originPresentation={input:originInput.value,status:document.querySelector('#origin-status').textContent};
   mapController?.focus(point);
@@ -291,7 +299,7 @@ async function useMyLocation() {
       setOrigin(position.point,'Ubicación aproximada del dispositivo');
       mapController?.focus(position.point,position.zoom);
     } else {
-      document.querySelector('#origin-status').textContent=position.status==='denied'?'Ubicación no compartida. Elige una localidad o mueve el mapa.':'No pudimos localizarte. Elige una localidad o mueve el mapa.';
+      document.querySelector('#origin-status').textContent=position.status==='denied'?'Este navegador ha rechazado el permiso de ubicación. Actívalo para GeoEmpleo en los ajustes del sitio y vuelve a pulsar «Usar mi ubicación», o elige una localidad.':'No pudimos localizarte. Elige una localidad o mueve el mapa.';
     }
     return position;
   }finally{locating=false;document.querySelector('#use-location').disabled=false;}
@@ -366,7 +374,7 @@ async function startMap() {
     const config=await response.json();
     if(!config.googleMapsApiKey){mapMessage.textContent='Falta la configuración del mapa. Puedes buscar en la lista o elegir una localidad.';requestSearch({immediate:true,allowList:true});return;}
     mapMessage.textContent='Permite tu ubicación para empezar cerca de ti; también puedes elegir una localidad.';
-    const position=originRevision===revision?await useMyLocation():null;
+    const position=originRevision===revision&&!location.value?await useMyLocation():null;
     mapMessage.textContent='Cargando el mapa y las ofertas de tu zona…';
     const mapRevision=originRevision;
     mapController=await createGoogleMap(mapHost,config,{
@@ -392,7 +400,7 @@ function syncCategories() {
 }
 
 form.addEventListener('submit',event=>{event.preventDefault();requestSearch({immediate:true,force:true});});
-location.addEventListener('change',()=>requestSearch({immediate:true}));
+location.addEventListener('change',()=>{territoryFocusPending=location.value;radiusSelect.value='';requestSearch({immediate:true,force:true});});
 document.querySelector('#categories').addEventListener('click',event => {
   const button = event.target.closest('[data-category]');
   if (!button) return;
@@ -421,7 +429,7 @@ const initialParams=new URLSearchParams(window.location.search);
 query.value=initialParams.get('q')??'';
 category=initialParams.get('category')??'';
 const initialTerritory=initialParams.get('city');
-if(initialTerritory){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;}
+if(initialTerritory){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;territoryFocusPending=initialTerritory;}
 
 window.addEventListener('pagehide',()=>{search.cancel();placeSearch.cancel();detailRequest?.abort();});
 void startMap();

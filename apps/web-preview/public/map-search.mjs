@@ -4,6 +4,17 @@ export function visibleMapJobs(page,origin,radiusKm) {
   return (page?.mapJobs??page?.jobs??[]).filter(job=>matchesGeography(job,{origin,radiusKm}));
 }
 
+export function searchGeography(origin,radiusValue,hasTerritory=false) {
+  if(hasTerritory)return {origin:null,radiusKm:null};
+  const radiusKm=origin&&radiusValue?Number(radiusValue):null;
+  return {origin,radiusKm:Number.isFinite(radiusKm)?radiusKm:null};
+}
+
+export function originSearchTransition(point) {
+  if(!isPoint(point))throw new TypeError('El origen debe ser un punto válido.');
+  return {origin:[...point],territory:'',bounds:null,pendingTerritory:null};
+}
+
 export function updateMapWithoutLosingJobs(controller,jobs,origin,radiusKm,onFailure=()=>{}) {
   if(!controller)return true;
   try {controller.update(jobs,origin,radiusKm);return true;}
@@ -15,9 +26,11 @@ export function updateMapWithoutLosingJobs(controller,jobs,origin,radiusKm,onFai
  * @param {number[]|null|undefined} bounds
  * @param {boolean} visible
  * @param {number[]|null} [previous]
+ * @param {boolean} [territoryChanged]
  * @returns {number[]|null}
  */
-export function resolveSearchBounds(bounds,visible,previous=null) {
+export function resolveSearchBounds(bounds,visible,previous=null,territoryChanged=false) {
+  if(territoryChanged)return null;
   if(!visible||!bounds||bounds.length!==4||!bounds.every(Number.isFinite))return previous;
   const [west,south,east,north]=bounds;
   if(west===east||south>=north)return previous;

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {locateOnce,createViewportSearch,resolveSearchBounds,visibleMapJobs} from '../apps/web-preview/public/map-search.mjs';
+import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,visibleMapJobs} from '../apps/web-preview/public/map-search.mjs';
+import {searchCalls} from '../apps/web-preview/public/catalog.mjs';
 
 test('el mapa conserva puntos fuera de las primeras 300 tarjetas y respeta el radio',()=>{
  const page={jobs:[{id:'first',location:{point:[-3.7,40.4]}}],mapJobs:[{id:'first',location:{point:[-3.7,40.4]}},{id:'later',location:{point:[-3.71,40.4]}},{id:'far',location:{point:[-4.5,40.4]}}]};
@@ -21,6 +22,33 @@ test('mantiene el último ámbito visible al ocultar mapa y lo actualiza al volv
  assert.deepEqual(resolveSearchBounds([-5,38,-2,42],false,previous),previous);
  assert.deepEqual(resolveSearchBounds(null,true,previous),previous);
  assert.deepEqual(resolveSearchBounds([-5,38,-2,42],true,previous),[-5,38,-2,42]);
+});
+
+test('elegir un territorio fuera del mapa previo busca sus ofertas antes de encuadrarlo',()=>{
+ const mainland=[-5,38,-2,43];
+ const jobs=[
+  {id:'canarias',title:'Atención',employer:'Empresa',city:'Las Palmas',province:'Las Palmas',region:'Canarias',category:'services',categoryLabel:'Servicios',location:{point:[-15.43,28.12]}},
+  {id:'madrid',title:'Atención',employer:'Empresa',city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',category:'services',categoryLabel:'Servicios',location:{point:[-3.7,40.4]}},
+ ];
+ const territoryBounds=resolveSearchBounds(mainland,true,mainland,true);
+ assert.equal(territoryBounds,null);
+ assert.deepEqual(searchCalls(jobs,{city:'Canarias',bounds:territoryBounds}).map(job=>job.id),['canarias']);
+ assert.deepEqual(resolveSearchBounds([-16,27,-13,30],true,null),[-16,27,-13,30]);
+});
+
+test('un territorio nuevo no conserva el radio ni ordena respecto al origen anterior',()=>{
+ const home=[-3.7,40.4];
+ const canarias={id:'canarias',location:{point:[-15.43,28.12]}};
+ assert.deepEqual(searchGeography(home,'25',false),{origin:home,radiusKm:25});
+ const region=searchGeography(home,'25',true);
+ assert.deepEqual(region,{origin:null,radiusKm:null});
+ assert.deepEqual(visibleMapJobs({mapJobs:[canarias]},region.origin,region.radiusKm),[canarias]);
+});
+
+test('elegir GPS, localidad o punto del mapa sustituye el territorio anterior',()=>{
+ const next=originSearchTransition([-4.1,40.8]);
+ assert.deepEqual(next,{origin:[-4.1,40.8],territory:'',bounds:null,pendingTerritory:null});
+ assert.throws(()=>originSearchTransition([999,40.8]),/origen/i);
 });
 
 test('localización de una sola lectura con precisión moderada y fallo controlado',async()=>{
