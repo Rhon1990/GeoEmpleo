@@ -17,7 +17,7 @@ export interface ResolvedCity {
   readonly region:string;
   readonly location:PublicJob['location'];
 }
-export type CityResolver = (city:string)=>ResolvedCity|null;
+export type CityResolver = (city:string,provinceHint?:string)=>ResolvedCity|null;
 export interface BizneoListedOffer { readonly url:string; readonly title:string; readonly city:string; readonly remote:boolean }
 
 export const bizneoBoards:readonly BizneoBoard[]=[

@@ -5,6 +5,7 @@ import { talentClueListingUrl } from './connectors/talentclue.ts';
 import { kfcListingUrl } from './connectors/kfc.ts';
 import { disaEndpoint } from './connectors/disa.ts';
 import { successFactorsBoards } from './connectors/successfactors-boards.ts';
+import { diaListingUrl } from './connectors/teamtailor.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -93,6 +94,8 @@ const definitions: readonly SourceDefinition[] = [
     kind:'ats' as const,status:'active' as const,
     endpoint:new URL(board.listingPath,`https://${board.hostname}`).href,licenseUrl:null,
   })),
+  {id:'teamtailor-dia',name:'DIA · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:diaListingUrl,licenseUrl:null},
   {id:'talentclue-mcdonalds',name:"McDonald's · TalentClue",countryCode:'ES',kind:'ats',status:'active',
     endpoint:talentClueListingUrl,licenseUrl:null},
   {id:'amrest-kfc',name:'KFC · AmRest',countryCode:'ES',kind:'ats',status:'active',

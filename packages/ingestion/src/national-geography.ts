@@ -240,11 +240,13 @@ export function createNationalCityResolver(places:readonly NationalGazetteerPlac
       matches.set(place.id,place);
     }
   }
-  return city=>{
+  return (city,provinceHint)=>{
     const matches=new Map<string,NationalGazetteerPlace>();
     for(const variant of variants(city)) for(const [id,place] of indexed.get(variant)??[]) matches.set(id,place);
-    if(matches.size!==1) return null;
-    const place=[...matches.values()][0]!;
+    const hintedProvince=provinceHint?canonicalSpanishProvince(provinceHint):null;
+    const candidates=[...matches.values()].filter(place=>!hintedProvince||canonicalSpanishProvince(place.province)?.name===hintedProvince.name);
+    if(candidates.length!==1) return null;
+    const place=candidates[0]!;
     const province=canonicalSpanishProvince(place.province);
     if(!province) return null;
     return {city:place.name,province:province.name,region:province.region,

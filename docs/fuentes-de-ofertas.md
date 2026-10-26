@@ -8,10 +8,10 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-Los 16 identificadores siguientes están marcados como `active` en el registro,
+Los 17 identificadores siguientes están marcados como `active` en el registro,
 tienen adaptador en el runner y aparecen en el último informe de ingesta.
 «Actualizada» y «fallida» describen **solo la ejecución del
-26/10/2026 a las 12:05:00 UTC**, no el estado permanente del portal. Ante un
+26/10/2026 a las 12:49:43 UTC**, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar
 que sigan abiertas.
 
@@ -19,9 +19,9 @@ que sigan abiertas.
 |---|---|---|---|
 | `sef-murcia` | [SEF Murcia](https://sefapps.carm.es/sefApps/rest/ofertas/ofertas) | Datos públicos | Fallida; catálogo anterior conservado |
 | `ecyl-castilla-leon` | [ECYL Castilla y León](https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/ofertas-de-empleo/exports/json) | Datos públicos | Actualizada |
-| `lanbide-euskadi` | [Lanbide](https://apps.lanbide.euskadi.net/apps/OF_OFERTAS_ODE_JSON) | Datos públicos | Fallida; catálogo anterior conservado |
-| `andalucia-entidades` | [Junta de Andalucía, entidades instrumentales](https://datos.juntadeandalucia.es/api/v0/job-offering-public-sector/search?announcement_status=En%20curso&job_official_degree_requirements=-&announcement_type=-&provinces=-&job_agreement=-&order_by=id&mode=DESC&format=json&size=0) | Datos públicos | Fallida; catálogo anterior conservado |
-| `lever-jobandtalent` | [Job&Talent](https://api.lever.co/v0/postings/jobandtalent?mode=json) | Lever | Fallida; catálogo anterior conservado |
+| `lanbide-euskadi` | [Lanbide](https://apps.lanbide.euskadi.net/apps/OF_OFERTAS_ODE_JSON) | Datos públicos | Actualizada |
+| `andalucia-entidades` | [Junta de Andalucía, entidades instrumentales](https://datos.juntadeandalucia.es/api/v0/job-offering-public-sector/search?announcement_status=En%20curso&job_official_degree_requirements=-&announcement_type=-&provinces=-&job_agreement=-&order_by=id&mode=DESC&format=json&size=0) | Datos públicos | Actualizada |
+| `lever-jobandtalent` | [Job&Talent](https://api.lever.co/v0/postings/jobandtalent?mode=json) | Lever | Actualizada |
 | `lever-skydance` | [Skydance Animation Madrid](https://api.lever.co/v0/postings/skydance?mode=json) | Lever | Actualizada |
 | `bizneo-burger-king` | [Burger King España](https://empleo.bkspain.es/jobs) | Tablón Bizneo | Actualizada |
 | `bizneo-plenergy` | [Plenergy](https://empleo.plenergy.es/jobs) | Tablón Bizneo | Actualizada |
@@ -30,6 +30,7 @@ que sigan abiertas.
 | `successfactors-mapfre` | [MAPFRE](https://jobs.mapfre.com/go/PROFESIONALES/3296401/) | SuccessFactors | Actualizada |
 | `successfactors-capgemini` | [Capgemini](https://careers.capgemini.com/search/?q=&locationsearch=Spain) | SuccessFactors | Actualizada |
 | `successfactors-melia` | [Meliá Hotels International](https://careers.melia.com/go/Profesionales-de-hotel/8861001/) | SuccessFactors | Actualizada |
+| `teamtailor-dia` | [DIA](https://empleo.dia.es/jobs) | Teamtailor | Actualizada; 118 publicaciones, 95 con punto |
 | `talentclue-mcdonalds` | [McDonald's](https://careers.talentclue.com/es/company/6285677f44a78f103ce17087c20ecee7/jsoffers/modal?order=Fecha&sort=asc) | TalentClue | Actualizada |
 | `amrest-kfc` | [KFC / AmRest](https://careers.amrest.eu/KFC/go/Jobs-KFC-ES/9158355/) | Portal AmRest | Actualizada |
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
@@ -47,7 +48,6 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | InfoJobs | `credentials_required` | Acceso autorizado y condiciones de uso verificadas |
 | Adzuna España | `paused` por el objetivo de coste cero | No activar un plan de pago; revisar condiciones si cambia la oferta |
 | LinkedIn | `authorization_required` | Acuerdo o canal autorizado |
-| DIA | Tablón público identificado, sin adaptador | Implementar y validar su formato, URLs, vigencia y localidad |
 | Correos | Portal explorado, sin conector | Obtener localidad laboral verificable en cada publicación |
 | DomusVi | Tablón Bizneo explorado, sin conector; una lectura completa devolvió HTTP 429 | Resolver acceso estable y validar la captura completa |
 
@@ -83,9 +83,13 @@ Desde el directorio de trabajo de `web-preview`:
    local y Codex están disponibles; Firebase Hosting Spark no ejecuta la
    ingesta por sí solo.
 
-La captura del 26/10/2026 terminó `partial`: **12 fuentes actualizadas y 4
-fallidas**; el catálogo público comprobado tenía **2.685 publicaciones con ID
-único**, **2.263 con punto**. Son publicaciones de origen real, no vacantes
+La captura del 26/10/2026 a las 12:49:43 UTC terminó `partial`: **16 fuentes
+actualizadas y 1 fallida (SEF Murcia)**; el catálogo local comprobado tenía
+**2.806 publicaciones con ID único**, **2.361 con punto**. DIA aportó 118
+publicaciones y 95 puntos municipales aproximados; las 23 restantes siguen en
+la lista y no llevan marcador porque su ficha no permite validar una localidad
+única. El catálogo está desplegado y verificado por HTTPS con el mismo instante
+de captura. Son publicaciones de origen real, no vacantes
 deduplicadas entre portales ni una garantía de que las fichas conservadas sigan
 abiertas. Las ubicaciones son municipales aproximadas salvo que la fuente
 acredite otra precisión. Al investigar un fallo, reparar solo su conector y
