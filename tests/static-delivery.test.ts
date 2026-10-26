@@ -50,6 +50,22 @@ test('el catálogo estático devuelve solo ofertas del área y conserva el detal
   assert.equal(catalogLoads,1);
 });
 
+test('el filtro de empresa agrupa McDonald’s y presenta DIA sin coincidencias de Jandía', async () => {
+  const companyCatalog={checkedAt:catalog.checkedAt,calls:[
+    {...jobs[0],id:'dia-1',employer:'DIA',title:'Cajero en Ávila'},
+    {...jobs[0],id:'melia-1',employer:'Meliá Hotels International',title:'Recepcionista en Jandía'},
+    {...jobs[0],id:'mcd-1',employer:"McDonald's Parets",title:'Cajero'},
+    {...jobs[0],id:'mcd-2',employer:'McDonald´s Sabadell',title:'Encargado'},
+  ]};
+  const fetchData=createStaticDataFetch({fetchImpl:async()=>new Response(JSON.stringify(companyCatalog))});
+  const result=await (await fetchData('/api/jobs?employer=dia')).json();
+  assert.equal(result.total,1);
+  assert.equal(result.jobs[0].id,'dia-1');
+  assert.deepEqual(result.facets.employers.find((item:{id:string})=>item.id==='mcdonalds'),{id:'mcdonalds',label:'McDonald’s'});
+  const mcdonalds=await (await fetchData('/api/jobs?employer=mcdonalds')).json();
+  assert.deepEqual(mcdonalds.jobs.map((job:{id:string})=>job.id),['mcd-1','mcd-2']);
+});
+
 test('la entrega estática conserva todos los puntos del área aunque limite la lista', async () => {
   const many={checkedAt:catalog.checkedAt,calls:Array.from({length:350},(_,index)=>({...jobs[0],id:`segovia-${index}`}))};
   const fetchData=createStaticDataFetch({fetchImpl:async () => new Response(JSON.stringify(many))});

@@ -12,6 +12,23 @@ test('busca sin distinguir tildes o mayúsculas', () => {
   assert.deepEqual(result.map(call => call.id), ['BOE-A-2026-21006']);
 });
 
+test('el filtro de empresa distingue DIA de coincidencias accidentales en el texto', () => {
+  const companyCalls = [
+    { ...searchFixture[0], employer: 'DIA', title: 'Cajero/a en Ávila' },
+    { ...searchFixture[0], id: 'jandia', employer: 'Meliá Hotels International', title: 'Recepcionista en Jandía' },
+  ];
+  assert.deepEqual(searchCalls(companyCalls, { employer: 'dia' }).map(call => call.employer), ['DIA']);
+});
+
+test('agrupa las variantes de McDonald’s bajo un único filtro de empresa', () => {
+  const companyCalls = [
+    { ...searchFixture[0], employer: "McDonald's Parets" },
+    { ...searchFixture[0], id: 'mcdonalds-sabadell', employer: "McDonald´s Sabadell" },
+    { ...searchFixture[0], id: 'dia', employer: 'DIA' },
+  ];
+  assert.deepEqual(searchCalls(companyCalls, { employer: 'mcdonalds' }).map(call => call.id), [searchFixture[0].id, 'mcdonalds-sabadell']);
+});
+
 test('combina texto, territorio y categoría sin resultados ajenos', () => {
   const result = searchCalls(searchFixture, { city: 'Comunidad de Madrid', category: 'administracion' });
   assert.deepEqual(result.map(call => call.id), ['BOE-A-2026-21011']);

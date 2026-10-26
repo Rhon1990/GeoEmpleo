@@ -6,7 +6,7 @@ import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBoun
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
-import {siteFetch} from './static-data.mjs?v=20261024-viewport';
+import {siteFetch} from './static-data.mjs?v=20261026-employer-group';
 
 const form = document.querySelector('#search-form');
 const query = document.querySelector('#query');
@@ -16,6 +16,7 @@ const detail = document.querySelector('#job-detail');
 const about = document.querySelector('#about-dialog');
 let calls = [];
 let category = '';
+let employer = '';
 let origin = null;
 let originPresentation = null;
 let page = null;
@@ -192,7 +193,7 @@ function render() {
   const summary=resultSummary(results);
   document.querySelector('#result-summary').textContent=page?.truncated?`Mostrando 300 de ${page.total} tarjetas · El mapa incluye todos los puntos`:summary;
   document.querySelector('#empty-state').hidden=loadError||results.length>0||mapResults.length>0;
-  document.querySelector('#clear-filters').hidden=!query.value&&!location.value&&!category&&!origin;
+  document.querySelector('#clear-filters').hidden=!query.value&&!location.value&&!category&&!employer&&!origin;
   updateMapWithoutLosingJobs(mapController,mapResults,geography.origin,geography.radiusKm,()=>{
     mapController=null;
     mapHost.replaceChildren(mapState);
@@ -206,6 +207,7 @@ function render() {
   if(query.value)params.set('q',query.value);
   if(location.value)params.set('city',location.value);
   if(category)params.set('category',category);
+  if(employer)params.set('employer',employer);
   history.replaceState(null,'',`${locationUrl()}${params.size?`?${params}`:''}`);
 }
 
@@ -218,6 +220,11 @@ function updateFacets(facets) {
   location.firstChild.value='';
   for(const region of facets.regions){const option=element('option',region);option.value=region;location.append(option);}
   location.value=territory;
+  const employerFilter=document.querySelector('#employer-filter');
+  employerFilter.replaceChildren(element('option','Todas las empresas'));
+  employerFilter.firstChild.value='';
+  for(const item of facets.employers??[]){const option=element('option',item.label);option.value=item.id;employerFilter.append(option);}
+  employerFilter.value=employer;
   const categories=document.querySelector('#categories');categories.replaceChildren();
   for(const {id,label} of [{id:'',label:'Todas las áreas'},...facets.categories]) {
     const button=element('button',label,'filter-chip');button.type='button';button.dataset.category=id;categories.append(button);
@@ -256,6 +263,7 @@ function requestSearch({immediate=false,force=false,allowList=false}={}) {
   if(query.value)params.set('q',query.value);
   if(location.value)params.set('city',location.value);
   if(category)params.set('category',category);
+  if(employer)params.set('employer',employer);
   search.request(params,{immediate,force});
 }
 
@@ -265,7 +273,8 @@ function clear() {
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();
   territoryFocusPending=null;
-  query.value = ''; location.value = ''; category = '';
+  query.value = ''; location.value = ''; category = ''; employer = '';
+  document.querySelector('#employer-filter').value='';
   originRevision++;origin = null; originInput.value = ''; radiusSelect.value = ''; radiusSelect.disabled = true;
   document.querySelector('#origin-status').textContent = 'Elige una localidad o selecciona tu zona en el mapa.';
   syncCategories(); render(); requestSearch({immediate:true});
@@ -406,6 +415,10 @@ document.querySelector('#categories').addEventListener('click',event => {
   if (!button) return;
   category = button.dataset.category; syncCategories(); requestSearch({immediate:true});
 });
+document.querySelector('#employer-filter').addEventListener('change',event=>{
+  employer=event.currentTarget.value;
+  requestSearch({immediate:true,force:true});
+});
 document.querySelector('#clear-filters').addEventListener('click',clear);
 document.querySelector('#empty-clear').addEventListener('click',clear);
 document.querySelector('#close-detail').addEventListener('click',()=>detail.close());
@@ -427,6 +440,7 @@ document.querySelector('#close-about').addEventListener('click',() => about.clos
 
 const initialParams=new URLSearchParams(window.location.search);
 query.value=initialParams.get('q')??'';
+employer=initialParams.get('employer')??'';
 category=initialParams.get('category')??'';
 const initialTerritory=initialParams.get('city');
 if(initialTerritory){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;territoryFocusPending=initialTerritory;}

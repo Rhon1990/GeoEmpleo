@@ -44,6 +44,8 @@ Planificación: [Backlog y plan técnico nacional](planning/2026-10-14-backlog-t
 
 ### Código existente
 
+La web pública del MVP ya está implementada en `apps/web-preview`: una búsqueda estática sobre un catálogo versionado, con filtros por texto, empresa canónica, territorio, área y geografía. Las variantes de McDonald’s se agrupan en el filtro de empresa sin alterar el empleador descrito en cada oferta. La lista se limita a 300 tarjetas por consulta; el mapa conserva todos los puntos de esa consulta. El catálogo incluye conectores de ingesta diaria en `packages/ingestion`. En la captura de 2026-10-26 había 2.806 ofertas, incluidas 118 de DIA (95 con ubicación municipal aproximada); las cifras cambian con cada actualización. La fuente DIA es el portal de empleo de la empresa y no se debe confundir con resultados de ubicación cuyo nombre contenga “Día”.
+
 | Ruta | Responsabilidad comprobada |
 |---|---|
 | `packages/domain/src/model.ts` | Contratos internos iniciales de remuneración, país y publicación |

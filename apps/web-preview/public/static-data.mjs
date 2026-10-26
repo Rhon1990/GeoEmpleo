@@ -1,4 +1,4 @@
-import {searchCalls} from './catalog.mjs';
+import {employerFacet,searchCalls} from './catalog.mjs';
 import {summaryFields,projectFields,mapSummaries} from './job-projections.mjs';
 
 const normalize=value=>value.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('es').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
@@ -25,7 +25,7 @@ function json(body,status=200) {
 
 function filtersFrom(params) {
   const filters={};
-  for(const [name,max] of [['q',200],['city',120],['category',80]]) {
+  for(const [name,max] of [['q',200],['city',120],['category',80],['employer',120]]) {
     if(params.getAll(name).length>1||(params.get(name)?.length??0)>max)throw new TypeError('Parámetros inválidos');
     filters[name]=params.get(name)??'';
   }
@@ -69,7 +69,9 @@ export function createStaticDataFetch({fetchImpl=fetch}={}) {
       const calls=data.calls;
       const matches=searchCalls(calls,filtersFrom(params));
       const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
-      return json({checkedAt:data.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es'))},total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)});
+      const employers=new Map();
+      for(const call of calls)if(call.employer){const facet=employerFacet(call.employer);if(!employers.has(facet.id))employers.set(facet.id,facet.label);}
+      return json({checkedAt:data.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))},total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)});
     }
     if(parsed.pathname==='/api/job') {
       if(params.getAll('id').length!==1||!params.get('id')||params.get('id').length>120)throw new TypeError('ID inválido');
