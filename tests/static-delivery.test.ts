@@ -91,6 +91,7 @@ test('el despliegue estático publica búsqueda y localidades, sin ofrecer un fo
   const source=join(root,'public');
   await mkdir(join(source,'data'),{recursive:true});
   await writeFile(join(source,'index.html'),'<html lang="es"><script nonce="__CSP_NONCE__" src="/app.mjs"></script><a href="/publicar">Publicar oferta</a></html>');
+  await writeFile(join(source,'privacy.html'),'<html lang="es">Política de privacidad</html>');
   await writeFile(join(source,'publish.html'),'No se debe publicar');
   await writeFile(join(source,'app.mjs'),'export {};');
   await writeFile(join(source,'data','calls.json'),JSON.stringify(catalog));
@@ -103,8 +104,33 @@ test('el despliegue estático publica búsqueda y localidades, sin ofrecer un fo
   assert.doesNotMatch(html,/href="\/publicar"|__CSP_NONCE__/);
   assert.doesNotMatch(html,/Publicación próximamente|Publicación directa próximamente/);
   assert.rejects(readFile(join(output,'publish.html')));
+  assert.equal(await readFile(join(output,'privacy.html'),'utf8'),'<html lang="es">Política de privacidad</html>');
   assert.equal(JSON.parse(await readFile(join(output,'data','place-shards','sa.json'),'utf8'))[0].name,'Coto de San Isidro');
-  assert.equal(JSON.parse(await readFile(join(output,'config.json'),'utf8')).googleMapsApiKey,'key-restricted');
+  const publicConfig=JSON.parse(await readFile(join(output,'config.json'),'utf8'));
+  assert.equal(publicConfig.googleMapsApiKey,'key-restricted');
+  assert.deepEqual(publicConfig.adsense,{enabled:false});
+  await assert.rejects(readFile(join(output,'ads.txt')));
+});
+
+test('AdSense publica ads.txt solo con un editor real y mantiene el bloque apagado',async()=>{
+  const root=await mkdtemp(join(tmpdir(),'geoempleo-adsense-'));
+  const source=join(root,'public');
+  await mkdir(join(source,'data'),{recursive:true});
+  await writeFile(join(source,'index.html'),'<html lang="es"><a href="/publicar">Publicar oferta</a></html>');
+  await writeFile(join(source,'privacy.html'),'<html lang="es"></html>');
+  await writeFile(join(source,'data','calls.json'),JSON.stringify(catalog));
+  const placesPath=join(root,'places.json.gz');
+  await writeFile(placesPath,gzipSync(JSON.stringify({places})));
+  const output=join(root,'hosting');
+  await buildStaticSite({sourceDir:source,placesGzipPath:placesPath,outputDir:output,config:{googleMapsApiKey:'key-restricted',adsense:{enabled:false,publisherId:'ca-pub-1234567890123456'}}});
+  assert.equal(await readFile(join(output,'ads.txt'),'utf8'),'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\n');
+  assert.deepEqual(JSON.parse(await readFile(join(output,'config.json'),'utf8')).adsense,{enabled:false,publisherId:'ca-pub-1234567890123456'});
+});
+
+test('Firebase comparte solo el origen en solicitudes de terceros para la CMP europea',async()=>{
+  const firebase=JSON.parse(await readFile(new URL('../firebase.json',import.meta.url),'utf8'));
+  const hostingHeaders=firebase.hosting.headers.find((rule:{source:string})=>rule.source==='**').headers;
+  assert.equal(hostingHeaders.find((header:{key:string})=>header.key==='Referrer-Policy')?.value,'strict-origin-when-cross-origin');
 });
 
 test('un fallo del mapa no invalida los resultados reales ya cargados', () => {

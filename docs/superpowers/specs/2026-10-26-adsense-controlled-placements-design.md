@@ -1,7 +1,7 @@
 # Monetización web GeoEmpleo con Google AdSense
 
 Fecha: 26 de octubre de 2026  
-Estado: diseño aprobado para revisión; implementación pendiente.
+Estado: diseño aprobado; implementación local en curso.
 
 ## Objetivo
 
@@ -13,9 +13,9 @@ Preparar la web pública actual de GeoEmpleo para monetización con AdSense, pre
 - Usar **un bloque manual adaptable** en la lista de resultados, insertado después de las primeras ocho ofertas cuando haya suficientes resultados. Nunca se superpone al mapa, filtros, detalles ni controles de navegación.
 - Identificar el espacio explícitamente como **Publicidad** y mantenerlo visualmente separado de las tarjetas de empleo. No imitar una oferta ni contar como resultado.
 - No mostrar un espacio vacío, anuncio de prueba ni contenido inventado si la cuenta o el bloque no están listos.
-- No cargar el script de anuncios hasta que Google haya aprobado el sitio y estén configurados el ID de editor y el ID del bloque.
+- Usar `ads.txt` con el ID de editor real para verificar la propiedad del sitio durante la revisión. No cargar el SDK de anuncios/CMP antes de la aprobación. Solo cuando el sitio figure como aprobado/Ready, el titular haya desactivado Auto ads y estén configurados el ID de editor y el ID del bloque, cargar el SDK y el mensaje de consentimiento de AdSense.
 - Para tráfico del EEE, utilizar Google AdSense Privacy & Messaging, su mensaje europeo certificado y las opciones para rechazar, aceptar, gestionar y retirar el consentimiento. La CMP administra las señales publicitarias; la preferencia opt-in existente de Firebase Analytics seguirá siendo independiente hasta demostrar una integración correcta entre ambas.
-- Añadir una política de privacidad accesible que describa Analytics, AdSense, terceros, datos y opciones de consentimiento. Conservar un enlace persistente de Privacidad que permita reabrir los controles correspondientes.
+- Añadir una política de privacidad accesible que describa Analytics, AdSense, terceros, datos y opciones de consentimiento. Conservar un enlace persistente «Privacidad» para Analytics y, con AdSense habilitado, un control «Privacidad y cookies» que invoque `googlefc.callbackQueue.push(googlefc.showRevocationMessage)`.
 - Publicar `ads.txt` solo después de obtener el identificador de editor real desde AdSense. Nunca inventar IDs ni guardar credenciales privadas en el repositorio.
 - Incorporar en la CSP únicamente los orígenes estrictamente necesarios, según la documentación vigente de Google y los recursos que cargue el código final.
 
@@ -29,7 +29,7 @@ Preparar la web pública actual de GeoEmpleo para monetización con AdSense, pre
 
 - En escritorio, el bloque ocupa el flujo de la cuadrícula de resultados sin alterar la columna del mapa.
 - En móvil, aparece entre tarjetas, nunca fijo ni por encima de controles.
-- Solo se renderiza cuando el usuario llega a resultados suficientes y el slot está habilitado por configuración válida.
+- Solo se renderiza y solicita cuando el usuario llega a resultados suficientes y el slot está habilitado por configuración válida y el sitio está aprobado.
 - El mapa, el conteo de vacantes y la selección de ofertas ignoran el bloque publicitario.
 - Filtrar, mover el mapa, abrir/cerrar el detalle o cambiar de vista no debe duplicar slots ni reiniciar anuncios ya montados innecesariamente.
 - La ausencia de configuración, consentimiento aplicable, conectividad o aprobación se resuelve sin error visible y sin afectar la búsqueda.
@@ -38,7 +38,7 @@ Preparar la web pública actual de GeoEmpleo para monetización con AdSense, pre
 
 - AdSense Privacy & Messaging gestiona el consentimiento para publicidad en regiones donde corresponda; la opción de retirada debe seguir accesible.
 - El panel actual de GeoEmpleo gestiona solo Firebase Analytics y continuará separado en la primera versión. Aceptar anuncios no activa Analytics y aceptar Analytics no autoriza publicidad.
-- El control persistente «Privacidad» debe dar acceso a ambos grupos de preferencias sin sobrescribir ni inferir decisiones.
+- Los dos controles deben estar accesibles desde el área persistente de Privacidad y conservar ámbitos independientes: aceptar anuncios no activa Analytics y aceptar Analytics no autoriza publicidad.
 - Política de privacidad: explicar finalidades, Google como proveedor, tecnologías/almacenamiento pertinentes, controles de consentimiento y contacto del responsable. El texto deberá revisarse antes de publicación; esta especificación no sustituye asesoría jurídica.
 
 ## Requisitos externos y límites
@@ -61,10 +61,11 @@ Preparar la web pública actual de GeoEmpleo para monetización con AdSense, pre
 
 ## Riesgos y mitigaciones
 
-- **Revisión o aprobación pendiente:** mantener apagado el slot hasta estado Ready; pedir revisión del sitio antes de anunciar disponibilidad.
+- **Revisión o aprobación pendiente:** verificar propiedad con `ads.txt`, mantener el SDK y el slot ausentes; tras el estado Ready, confirmar que Auto ads está desactivado y activar el bloque manual/CMP.
 - **Doble aviso de consentimiento:** la CMP de AdSense y el opt-in existente de Analytics tienen ámbitos distintos. Presentarlos con claridad y vincular ambos desde Privacidad; no fusionar señales sin prueba funcional del flujo.
 - **Política de privacidad incompleta:** validar texto, proveedores efectivos y URL pública antes de solicitar revisión.
 - **CSP incompleta:** probar con las solicitudes reales del SDK y restringir cada origen; no usar comodines amplios.
+- **Política Referrer-Policy incompatible:** ahora la web usa `no-referrer`, que puede impedir que el mensaje europeo de Google sea elegible. Cambiarla a `strict-origin-when-cross-origin` para compartir solo el origen con terceros, y verificar que no se expongan rutas, consultas ni localidades buscadas.
 - **Regresión en resultados/mapa:** el slot será un nodo separado del modelo de ofertas y se probará sin red publicitaria.
 
 ## Fuera de alcance

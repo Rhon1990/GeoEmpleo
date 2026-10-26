@@ -8,12 +8,22 @@ import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFoc
 import {createWorkspaceView} from './workspace-view.mjs';
 import {siteFetch} from './static-data.mjs?v=20261026-employer-group';
 import {createAnalyticsController,loadFirebaseAnalytics} from './analytics.mjs';
+import {adInsertionIndex,loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 
 const analyticsController=createAnalyticsController({config:null,loadSdk:()=>loadFirebaseAnalytics()});
 const analyticsPanel=document.querySelector('#analytics-consent-panel');
+const adPrivacySettings=document.querySelector('#ad-privacy-settings');
+let adsenseConfig={enabled:false};
+let adsensePublisherReady=false;
+let adContainer=null;
+let adSlotRequested=false;
 document.querySelector('#analytics-consent').hidden=false;
 analyticsPanel.hidden=Boolean(analyticsController.getPreference());
 document.querySelector('#privacy-settings').addEventListener('click',()=>{analyticsPanel.hidden=!analyticsPanel.hidden;});
+adPrivacySettings.addEventListener('click',()=>{
+  const googlefc=window.googlefc;
+  if(typeof googlefc?.showRevocationMessage==='function'&&googlefc.callbackQueue?.push)googlefc.callbackQueue.push(googlefc.showRevocationMessage);
+});
 document.querySelector('#analytics-accept').addEventListener('click',async()=>{
   await analyticsController.accept();analyticsPanel.hidden=true;
   void analyticsController.track('page_view');
@@ -23,6 +33,14 @@ document.querySelector('#analytics-reject').addEventListener('click',async()=>{
 });
 void fetch('/config.json').then(response=>response.ok?response.json():null).then(config=>{
   if(config?.firebaseAnalytics)analyticsController.setConfig(config.firebaseAnalytics);
+  adsenseConfig=config?.adsense??{enabled:false};
+  if(adsenseConfig.enabled===true&&validAdSensePublisher(adsenseConfig.publisherId)){
+    void loadAdSensePublisher(adsenseConfig.publisherId).then(loaded=>{
+      adsensePublisherReady=loaded;
+      adPrivacySettings.hidden=!loaded;
+      render();
+    });
+  }
   if(analyticsController.getPreference()==='accepted')return analyticsController.initializeFromPreference().then(()=>analyticsController.track('page_view'));
   if(!analyticsController.getPreference())analyticsPanel.hidden=false;
   return undefined;
@@ -207,13 +225,36 @@ function card(call) {
   return article;
 }
 
+function adUnit() {
+  if(adContainer)return adContainer;
+  adContainer=element('aside',undefined,'ad-unit');
+  adContainer.hidden=true;
+  adContainer.setAttribute('aria-label','Publicidad');
+  adContainer.append(element('span','Publicidad','ad-unit-label'));
+  const slot=document.createElement('ins');
+  slot.className='adsbygoogle';
+  slot.style.display='block';
+  slot.setAttribute('aria-label','Anuncio');
+  adContainer.append(slot);
+  return adContainer;
+}
+
 function render() {
   document.querySelector('#return-origin').disabled=!origin||!mapController;
   const geography=activeGeography();
   const results=searchCalls(calls,geography);
   const mapResults=visibleMapJobs(page,geography.origin,geography.radiusKm);
   if(geography.origin)results.sort((a,b)=>distanceKm(geography.origin,a.location?.point)-distanceKm(geography.origin,b.location?.point));
-  list.replaceChildren(...results.map(card));
+  const cards=results.map(card);
+  const insertAt=adInsertionIndex(results.length,adsenseConfig);
+  if(insertAt!==null&&adsensePublisherReady)cards.splice(insertAt,0,adUnit());
+  list.replaceChildren(...cards);
+  if(insertAt!==null&&adsensePublisherReady&&!adSlotRequested){
+    const slot=adContainer?.querySelector('.adsbygoogle');
+    watchAdStatus(slot,adContainer);
+    adSlotRequested=true;
+    requestAdSlot(slot,adsenseConfig);
+  }
   const count=geography.radiusKm===null?page?.total??results.length:mapResults.length;
   document.querySelector('#result-count').textContent=`${count} ${count===1?'oferta real':'ofertas reales'}${searchBounds?' en esta zona':''}`;
   const summary=resultSummary(results);

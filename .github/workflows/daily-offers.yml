@@ -48,6 +48,9 @@ jobs:
         env:
           GEOEMPLEO_GOOGLE_MAPS_API_KEY: ${{ secrets.GEOEMPLEO_GOOGLE_MAPS_API_KEY }}
           GEOEMPLEO_GOOGLE_MAPS_MAP_ID: ${{ secrets.GEOEMPLEO_GOOGLE_MAPS_MAP_ID }}
+          GEOEMPLEO_ADSENSE_ENABLED: ${{ vars.GEOEMPLEO_ADSENSE_ENABLED }}
+          GEOEMPLEO_ADSENSE_PUBLISHER_ID: ${{ vars.GEOEMPLEO_ADSENSE_PUBLISHER_ID }}
+          GEOEMPLEO_ADSENSE_SLOT_ID: ${{ vars.GEOEMPLEO_ADSENSE_SLOT_ID }}
         run: |
           if [ -z "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" ]; then
             echo 'Falta el secreto GEOEMPLEO_GOOGLE_MAPS_API_KEY.' >&2
@@ -55,8 +58,9 @@ jobs:
           fi
           env_file="$RUNNER_TEMP/geoempleo.env"
           umask 077
-          printf 'GEOEMPLEO_GOOGLE_MAPS_API_KEY=%s\nGEOEMPLEO_GOOGLE_MAPS_MAP_ID=%s\n' \
-            "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" "${GEOEMPLEO_GOOGLE_MAPS_MAP_ID:-}" > "$env_file"
+          printf 'GEOEMPLEO_GOOGLE_MAPS_API_KEY=%s\nGEOEMPLEO_GOOGLE_MAPS_MAP_ID=%s\nGEOEMPLEO_ADSENSE_ENABLED=%s\nGEOEMPLEO_ADSENSE_PUBLISHER_ID=%s\nGEOEMPLEO_ADSENSE_SLOT_ID=%s\n' \
+            "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" "${GEOEMPLEO_GOOGLE_MAPS_MAP_ID:-}" \
+            "${GEOEMPLEO_ADSENSE_ENABLED:-}" "${GEOEMPLEO_ADSENSE_PUBLISHER_ID:-}" "${GEOEMPLEO_ADSENSE_SLOT_ID:-}" > "$env_file"
           GEOEMPLEO_ENV_FILE="$env_file" npm run build:web:static
           node tools/validate-daily-catalog.mjs \
             --catalog var/public-site/data/calls.json \
