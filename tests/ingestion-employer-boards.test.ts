@@ -6,11 +6,13 @@ import { createNationalCityResolver } from '../packages/ingestion/src/national-g
 import { parseKfcListing, adaptKfcDetail } from '../packages/ingestion/src/connectors/kfc.ts';
 import {
   adaptSuccessFactorsDetail,
+  fetchSuccessFactorsOffers,
   parseSuccessFactorsListing,
   type SuccessFactorsBoard,
 } from '../packages/ingestion/src/connectors/successfactors.ts';
 import { adaptDisaOffer, parseDisaListing } from '../packages/ingestion/src/connectors/disa.ts';
 import { reconcileSource } from '../packages/ingestion/src/catalog.ts';
+import { successFactorsBoards } from '../packages/ingestion/src/connectors/successfactors-boards.ts';
 import type { PublicCatalog } from '../packages/ingestion/src/model.ts';
 
 const checkedAt = '2026-10-24T13:00:00.000Z';
@@ -23,6 +25,18 @@ const successFactorsBoard:SuccessFactorsBoard={
   category:'servicios',categoryLabel:'Servicios y comercio',sourceLabel:'Empresa Ejemplo · portal de empleo',
   pageSize:25,maxPages:3,
 };
+
+test('tablones SuccessFactors oficiales tienen identidad, categoría y URL propias',()=>{
+  assert.deepEqual(successFactorsBoards.map(item=>item.sourceId),[
+    'successfactors-vithas','successfactors-mapfre','successfactors-capgemini',
+  ]);
+  for(const item of successFactorsBoards) {
+    assert.match(item.hostname,/^[a-z0-9.-]+$/);
+    assert.equal(new URL(item.listingPath,`https://${item.hostname}`).protocol,'https:');
+    assert.ok(item.categoryLabel);
+    assert.ok(item.employer);
+  }
+});
 
 test('Bizneo publica solo fichas del dominio verificado y geolocaliza un municipio único', () => {
   const listing = '<div id="job-board"><a class="job-card" href="https://empleo.plenergy.es/jobs/expendedor-vicar"><div class="title">Expendedor/a</div><div class="details"><span>Vícar</span><span>Presencial</span></div></a><a class="next" href="/jobs?page=2">Siguiente</a></div>';
@@ -99,6 +113,57 @@ test('SuccessFactors no sitúa ofertas remotas o territoriales ambiguas',()=>{
   const offer=parseSuccessFactorsListing(listing,successFactorsBoard).offers[0]!;
   const detail='<meta itemprop="datePosted" content="2026-10-24"><h1 id="job-title">Consultor/a</h1><span itemprop="description"><p>Trabajo remoto desde España.</p></span>';
   assert.equal(adaptSuccessFactorsDetail(offer,detail,checkedAt,resolveCity,successFactorsBoard).location,null);
+});
+
+test('SuccessFactors admite listado sin columna de fecha y título de ficha sin id',()=>{
+  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Sevilla-Camarero/1234567890/">Camarero/a - Meliá Sevilla</a></td><td class="colLocation">Sevilla, ES</td></tr></table>';
+  const offer=parseSuccessFactorsListing(listing,successFactorsBoard).offers[0]!;
+  const detail='<meta itemprop="datePosted" content="Mon Oct 26 02:00:00 UTC 2026"><h1>Camarero/a - Meliá Sevilla</h1><span itemprop="description"><p>Atención en sala.</p></span>';
+  const job=adaptSuccessFactorsDetail(offer,detail,'2026-10-26T12:00:00.000Z',resolveCity,successFactorsBoard);
+  assert.equal(job.publishedAt,'2026-10-26');
+  assert.equal(job.location,null);
+});
+
+test('SuccessFactors separa localidad del código territorial y descarta países ajenos',()=>{
+  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Sevilla-Agente/1234567890/">Agente</a></td><td class="colLocation">SEVILLA, SE, ES</td><td class="colDate">26 oct 2026</td></tr><tr class="data-row"><td><a class="jobTitle-link" href="/job/Guayaquil-Agente/2234567890/">Agente Ecuador</a></td><td class="colLocation">Guayaquil, EC</td><td class="colDate">26 oct 2026</td></tr></table>';
+  const offers=parseSuccessFactorsListing(listing,successFactorsBoard).offers;
+  assert.equal(offers.length,1);
+  assert.equal(offers[0]?.city,'SEVILLA');
+  assert.equal(offers[0]?.ambiguousLocation,false);
+});
+
+test('SuccessFactors no confunde una provincia con una localidad homónima de otra provincia',()=>{
+  const offer=parseSuccessFactorsListing('<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Araba-Vitoria/1234567890/">Enfermero/a VITORIA</a></td><td class="colLocation">Araba/Álava, ES</td></tr></table>',successFactorsBoard).offers[0]!;
+  const detail='<meta itemprop="datePosted" content="2026-10-24"><h1>Enfermero/a VITORIA</h1><span itemprop="description"><p>Atención a pacientes.</p></span>';
+  const wrongResolver=()=>({city:'Alava',province:'Asturias',region:'Principado de Asturias',location:{point:[-6.19946,43.36057] as [number,number],precision:'municipality' as const,sourceUrl:'https://www.geonames.org/3130718',sourceUpdatedAt:null,note:'Municipal'}});
+  const job=adaptSuccessFactorsDetail(offer,detail,checkedAt,wrongResolver,successFactorsBoard);
+  assert.equal(job.location,null);
+  assert.equal(job.province,'Álava');
+  assert.equal(job.region,'País Vasco');
+});
+
+test('SuccessFactors evita situar el hotel en la capital provincial indicada por un tablón',()=>{
+  const hotelBoard={...successFactorsBoard,requireCityMentionInTitle:true};
+  const offer=parseSuccessFactorsListing('<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Barcelona-Sitges/1234567890/">Recepcionista - Hotel Sitges</a></td><td class="colLocation">Barcelona, ES</td></tr></table>',hotelBoard).offers[0]!;
+  const detail='<meta itemprop="datePosted" content="2026-10-24"><h1>Recepcionista - Hotel Sitges</h1><span itemprop="description"><p>Recepción hotelera.</p></span>';
+  const resolveBarcelona=()=>({city:'Barcelona',province:'Barcelona',region:'Cataluña',location:{point:[2.15899,41.38879] as [number,number],precision:'municipality' as const,sourceUrl:'https://example.org',sourceUpdatedAt:null,note:'Municipal'}});
+  assert.equal(adaptSuccessFactorsDetail(offer,detail,checkedAt,resolveBarcelona,hotelBoard).location,null);
+});
+
+test('SuccessFactors conserva el filtro de España al paginar una búsqueda',async()=>{
+  const spanishBoard=successFactorsBoards.find(item=>item.sourceId==='successfactors-capgemini')!;
+  const list=(id:string,title:string)=>`<span class="paginationLabel">Resultados 1 – 25 de 26</span><table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-${id}/${id}/">${title}</a></td><td class="colLocation">Madrid, ES</td></tr></table>`;
+  const fetched:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    fetched.push(url.href);
+    if(url.pathname.startsWith('/job/')) return new Response(`<meta itemprop="datePosted" content="2026-10-24"><h1>${url.pathname.includes('111')?'Uno':'Dos'}</h1><span itemprop="description"><p>Oficio verificable.</p></span>`,{headers:{'content-type':'text/html'}});
+    assert.equal(url.searchParams.get('locationsearch'),'Spain');
+    return new Response(url.pathname.includes('/25/')?list('222','Dos'):list('111','Uno'),{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(spanishBoard,'2026-10-26T12:00:00Z',()=>null,fetchImpl);
+  assert.equal(jobs.length,2);
+  assert.equal(fetched.filter(url=>url.includes('/search/')).length,2);
 });
 
 test('DISA valida identidad y solo mapea el municipio indicado en su detalle',()=>{

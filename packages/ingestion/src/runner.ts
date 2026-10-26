@@ -9,6 +9,8 @@ import {bizneoBoards,fetchBizneoOffers} from './connectors/bizneo.ts';
 import {adaptTalentClueListing,fetchTalentClueListing} from './connectors/talentclue.ts';
 import {fetchKfcOffers} from './connectors/kfc.ts';
 import {fetchDisaOffers} from './connectors/disa.ts';
+import {fetchSuccessFactorsOffers} from './connectors/successfactors.ts';
+import {successFactorsBoards} from './connectors/successfactors-boards.ts';
 import {reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
 import {fetchJson,type JsonEncoding} from './http.ts';
@@ -17,7 +19,7 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo'] as const;
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo'] as const;
 type ImplementedSourceId=string;
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
@@ -91,9 +93,12 @@ export async function runDaily(options:RunOptions) {
         const resolverResult=sourceId==='sef-murcia'?murciaResolver:nationalResolver;
         if(resolverResult.status==='rejected'||resolverResult.value===null) throw new TypeError('Geografía no disponible');
         const board=bizneoBoards.find(item=>item.sourceId===sourceId);
+        const successFactorsBoard=successFactorsBoards.find(item=>item.sourceId===sourceId);
         const national=nationalResolver.status==='fulfilled'?nationalResolver.value:null;
         const jobs=board
           ? await fetchBizneoOffers(board,checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+          : successFactorsBoard
+            ? await fetchSuccessFactorsOffers(successFactorsBoard,checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
           : sourceId==='talentclue-mcdonalds'
             ? adaptTalentClueListing(await fetchTalentClueListing(options.fetchImpl),checkedAt,national?.resolve??(()=>null))
             : sourceId==='amrest-kfc'

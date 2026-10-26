@@ -16,6 +16,7 @@ export interface SuccessFactorsBoard {
   readonly categoryLabel:string;
   readonly sourceLabel:string;
   readonly idPrefix?:string;
+  readonly requireCityMentionInTitle?:boolean;
   readonly pageSize:number;
   readonly maxPages:number;
 }
@@ -44,10 +45,20 @@ function locationParts(raw:string):{city:string;provinceHint:string|null;ambiguo
   if(parenthesized) return {city:parenthesized[1]!.trim(),provinceHint:parenthesized[2]!.trim(),ambiguousLocation:false};
   const parts=withoutCountry.split(',').map(part=>part.trim()).filter(Boolean);
   if(parts.length===1) return {city:parts[0]??normalized,provinceHint:null,ambiguousLocation:false};
+  if(parts.length===2&&/^[A-Z]{1,2}$/.test(parts[1]!)) {
+    return {city:parts[0]!,provinceHint:null,ambiguousLocation:false};
+  }
   if(parts.length===2&&canonicalSpanishProvince(parts[1]!)) {
     return {city:parts[0]!,provinceHint:parts[1]!,ambiguousLocation:false};
   }
   return {city:withoutCountry||normalized,provinceHint:null,ambiguousLocation:true};
+}
+
+function cityMentionedInTitle(city:string,title:string):boolean {
+  const normalize=(value:string)=>value.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('es-ES');
+  const cityName=normalize(city);
+  const escaped=cityName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`,'i').test(normalize(title));
 }
 
 export function parseSuccessFactorsListing(html:string,board:SuccessFactorsBoard):{offers:SuccessFactorsListedOffer[];pageCount:number} {
@@ -55,18 +66,21 @@ export function parseSuccessFactorsListing(html:string,board:SuccessFactorsBoard
   const rows=descendants(document,element=>element.tagName==='tr'&&hasClass(element,'data-row'));
   if(!rows.length) throw new TypeError('Listado SuccessFactors vacío');
   const seen=new Set<string>();
-  const offers=rows.map(row=>{
+  const offers=rows.flatMap(row=>{
     const link=descendants(row,element=>element.tagName==='a'&&hasClass(element,'jobTitle-link'))[0];
     const locationCell=descendants(row,element=>element.tagName==='td'&&hasClass(element,'colLocation'))[0];
     const dateCell=descendants(row,element=>element.tagName==='td'&&hasClass(element,'colDate'))[0];
     const raw=link&&attribute(link,'href');
-    if(!raw||!locationCell||!dateCell) throw new TypeError('Fila SuccessFactors incompleta');
+    if(!raw||!locationCell) throw new TypeError('Fila SuccessFactors incompleta');
+    const rawLocation=textOf(locationCell);
+    if(/,\s*[A-Z]{2}(?:,\s*\d{1,5})?\s*$/.test(rawLocation)&&
+      !/,\s*ES(?:,\s*\d{1,5})?\s*$/.test(rawLocation)) return [];
     const url=validatedJobUrl(raw,board);
     if(seen.has(url)) throw new TypeError('Oferta SuccessFactors duplicada');
     seen.add(url);
     const title=textOf(link);
     if(!title) throw new TypeError('Título SuccessFactors ausente');
-    return {url,title,listedDate:textOf(dateCell),...locationParts(textOf(locationCell))};
+    return [{url,title,listedDate:dateCell?textOf(dateCell):'',...locationParts(rawLocation)}];
   });
   const label=descendants(document,element=>hasClass(element,'paginationLabel'))[0];
   const total=label?/\bde\s+(\d+)\b/i.exec(textOf(label))?.[1]:null;
@@ -83,7 +97,8 @@ export function adaptSuccessFactorsDetail(
   board:SuccessFactorsBoard,
 ):PublicJob {
   const document=documentOf(html);
-  const heading=descendants(document,element=>attribute(element,'id')==='job-title')[0];
+  const heading=descendants(document,element=>attribute(element,'id')==='job-title')[0]??
+    descendants(document,element=>element.tagName==='h1')[0];
   const date=descendants(document,element=>element.tagName==='meta'&&attribute(element,'itemprop')==='datePosted')[0];
   const description=descendants(document,element=>attribute(element,'itemprop')==='description')[0];
   if(!heading||textOf(heading)!==offer.title||!date||!description) throw new TypeError('Detalle SuccessFactors inválido');
@@ -94,17 +109,19 @@ export function adaptSuccessFactorsDetail(
   const id=/\/(\d+)\/$/.exec(new URL(offer.url).pathname)?.[1];
   if(!id) throw new TypeError('ID SuccessFactors no verificable');
   const remote=/\b(remot[oa]|teletrabajo|remote)\b/i.test(`${offer.city} ${paragraphs.join(' ')}`);
-  const resolved=!offer.ambiguousLocation&&!remote?resolveCity(offer.city):null;
-  const hintedProvince=offer.provinceHint?canonicalSpanishProvince(offer.provinceHint):null;
+  const eligibleCity=!board.requireCityMentionInTitle||cityMentionedInTitle(offer.city,offer.title);
+  const resolved=!offer.ambiguousLocation&&!remote&&eligibleCity?resolveCity(offer.city):null;
+  const hintedProvince=offer.provinceHint?canonicalSpanishProvince(offer.provinceHint):canonicalSpanishProvince(offer.city);
   const coherentProvince=!hintedProvince||hintedProvince.name===resolved?.province;
-  const location=resolved?.location&&coherentProvince?{
-    ...resolved.location,
+  const verified=coherentProvince?resolved:null;
+  const location=verified?.location?{
+    ...verified.location,
     note:approximateMunicipalNote,
   }:null;
   return {
     kind:'job',sourceId:board.sourceId,source:board.sourceLabel,
     id:`${board.idPrefix??`SUCCESSFACTORS-${board.sourceId.toUpperCase()}`}-${id}`,title:offer.title,employer:board.employer,
-    city:offer.city,province:resolved?.province??hintedProvince?.name??'Sin verificar',region:resolved?.region??hintedProvince?.region??'España',
+    city:offer.city,province:verified?.province??hintedProvince?.name??'Sin verificar',region:verified?.region??hintedProvince?.region??'España',
     category:board.category,categoryLabel:board.categoryLabel,regime:remote?'Remoto':'Oferta de empleo',places:null,
     paragraphs,sourceUrl:offer.url,publishedAt:new Date(posted).toISOString().slice(0,10),checkedAt,
     closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,location,
@@ -124,7 +141,8 @@ export async function fetchSuccessFactorsOffers(
   for(let page=2;page<=first.pageCount;page++) {
     const url=new URL(board.listingPath,`https://${board.hostname}`);
     url.pathname=`${url.pathname.replace(/\/$/,'')}/${(page-1)*board.pageSize}/`;
-    url.search='?q=&sortColumn=referencedate&sortDirection=desc';
+    url.searchParams.set('sortColumn','referencedate');
+    url.searchParams.set('sortDirection','desc');
     const parsed=parseSuccessFactorsListing(await fetchHtml(url.href,{fetchImpl}),board);
     for(const offer of parsed.offers) {
       if(found.has(offer.url)) throw new TypeError('Oferta SuccessFactors duplicada');

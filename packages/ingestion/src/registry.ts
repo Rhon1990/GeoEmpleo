@@ -4,6 +4,7 @@ import { bizneoBoards } from './connectors/bizneo.ts';
 import { talentClueListingUrl } from './connectors/talentclue.ts';
 import { kfcListingUrl } from './connectors/kfc.ts';
 import { disaEndpoint } from './connectors/disa.ts';
+import { successFactorsBoards } from './connectors/successfactors-boards.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -86,6 +87,11 @@ const definitions: readonly SourceDefinition[] = [
   ...bizneoBoards.map(board=>({
     id:board.sourceId,name:`${board.employer} · portal de empleo`,countryCode:'ES' as const,
     kind:'ats' as const,status:'active' as const,endpoint:`https://${board.hostname}/jobs`,licenseUrl:null,
+  })),
+  ...successFactorsBoards.map(board=>({
+    id:board.sourceId,name:board.sourceLabel,countryCode:'ES' as const,
+    kind:'ats' as const,status:'active' as const,
+    endpoint:new URL(board.listingPath,`https://${board.hostname}`).href,licenseUrl:null,
   })),
   {id:'talentclue-mcdonalds',name:"McDonald's · TalentClue",countryCode:'ES',kind:'ats',status:'active',
     endpoint:talentClueListingUrl,licenseUrl:null},

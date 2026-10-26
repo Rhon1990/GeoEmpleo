@@ -78,6 +78,33 @@ test('runner conserva catálogo ante fallo y publica una captura completa sin du
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
+test('runner publica una oferta empresarial oficial y conserva la fuente fallida',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-employers-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-10-25T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-10-26',license:'test',places:[]})));
+  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Medico/1234567890/">Médico/a</a></td><td class="colLocation">Madrid, ES</td><td class="colDate">26 oct 2026</td></tr></table>';
+  const detail='<meta itemprop="datePosted" content="2026-10-26"><h1>Médico/a</h1><span itemprop="description"><p>Atención a pacientes.</p></span>';
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const url=new URL(input instanceof Request?input.url:input);
+   if(url.hostname==='jobs.mapfre.com') throw new Error('secreto remoto');
+   assert.equal(url.hostname,'empleo.vithas.es');
+   return new Response(url.pathname.startsWith('/job/')?detail:listing,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
+   sourceIds:['successfactors-mapfre','successfactors-vithas'],checkedAt:'2026-10-26T12:00:00Z',fetchImpl});
+  assert.equal(report.status,'partial');
+  assert.deepEqual(report.sources.map(source=>source.status),['failed','success']);
+  const catalog=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(catalog.calls.length,1);
+  assert.equal(catalog.calls[0].employer,'Vithas');
+  assert.equal(catalog.calls[0].location,null);
+  assert.ok(!(await readFile(reportPath,'utf8')).includes('secreto remoto'));
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
 test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-multisource-'));try{
  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
