@@ -83,6 +83,36 @@ Desde el directorio de trabajo de `web-preview`:
    local y Codex están disponibles; Firebase Hosting Spark no ejecuta la
    ingesta por sí solo.
 
+## Actualización autónoma sin Codex
+
+`.github/workflows/daily-offers.yml` prepara una ejecución diaria de GitHub
+Actions a las 05:37 de `Europe/Madrid`, más una opción manual en la pestaña
+Actions. Captura únicamente los conectores ya activos; acepta `success` o
+`partial` si al menos una fuente se actualizó, y rechaza `failed`, un `checkedAt`
+antiguo, un catálogo inconsistente o IDs duplicados. Solo después compila,
+despliega Hosting y compara por HTTPS el catálogo publicado. Una fuente fallida
+conserva su catálogo anterior, como en la ingesta normal.
+
+El workflow no está operativo hasta subirlo a la rama por defecto y configurar
+estos secretos en la configuración del repositorio GitHub:
+
+| Secreto | Uso |
+|---|---|
+| `GEOEMPLEO_GOOGLE_MAPS_API_KEY` | Build estático; sigue siendo una clave pública restringida por referrer y API, nunca una credencial de despliegue |
+| `GEOEMPLEO_GOOGLE_MAPS_MAP_ID` | ID de mapa, opcional |
+| `FIREBASE_SERVICE_ACCOUNT_GEOEMPLEO_49978` | JSON de cuenta de servicio con permiso de despliegue de Firebase Hosting |
+
+No guardar esos valores en el código ni en archivos del repositorio. La clave
+de Maps termina en la configuración pública del navegador y debe mantener sus
+restricciones de HTTP referrer. La clave de la cuenta de servicio solo se usa
+durante la acción de despliegue. Firebase documenta la integración oficial
+con GitHub y la creación/custodia del secreto de servicio. Para repositorios
+públicos, los runners estándar de GitHub Actions son gratuitos; en repositorios
+privados se aplican los minutos incluidos en el plan y el exceso puede cobrarse.
+No activar facturación de Google ni Blaze para esta arquitectura. La
+automatización Codex existente se conserva como respaldo hasta que se confirme
+una ejecución autónoma correcta.
+
 La captura del 26/10/2026 a las 12:49:43 UTC terminó `partial`: **16 fuentes
 actualizadas y 1 fallida (SEF Murcia)**; el catálogo local comprobado tenía
 **2.806 publicaciones con ID único**, **2.361 con punto**. DIA aportó 118
