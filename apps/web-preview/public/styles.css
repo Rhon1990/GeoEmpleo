@@ -17,3 +17,25 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 .job-card{transition:border-color .15s,box-shadow .15s,transform .15s}.job-card.previewed{border-color:#8db5bc;box-shadow:0 6px 16px #064b580d}.job-card.selected{border-color:var(--petrol);box-shadow:0 0 0 2px #0860712e,0 8px 22px #064b581a;transform:translateY(-1px)}
 .job-pin{transition:transform .15s,background .15s,color .15s}.job-pin.previewed{background:var(--petrol-dark);transform:scale(1.08)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+/* La marca solo acompaña al origen empresarial verificado; el resto usa una ficha neutra. */
+.job-visual{display:grid;place-items:center;background:#f6f8f8}
+.job-visual::before,.job-visual::after{display:none}
+.job-visual.logo-generic{background:#e8ebec}
+.job-visual img{width:58px;height:58px;object-fit:contain}
+.job-visual.logo-generic img{width:44px;height:44px}
+.job-visual:has(img[src$="mcdonalds.svg"]){background:#bd0b2f}
+.job-visual:has(img[src$="burger-king.svg"]){background:#fff4e8}
+.job-visual:has(img[src$="kfc.svg"]){background:#fff5f3}
+.employer-name{font-size:12px;color:var(--ink);font-weight:650}
+.job-card .job-meta .meta-tag:nth-child(n+3){display:none}
+#search-status{font-size:11px;color:var(--muted);margin:0 0 8px}
+.data-note{margin-bottom:12px}
+.site-footer{padding:12px 24px;align-items:center;gap:16px}
+.site-footer details{max-width:760px}
+.site-footer summary{cursor:pointer;color:var(--petrol);font-weight:650}
+.site-footer details p{padding-top:10px}
+.categories{flex-wrap:nowrap;overflow-x:auto;min-width:0;scrollbar-width:thin}
+.filter-chip{flex:none}
+.map-panel:has(.map-state) .map-footer{display:none}
+@media(max-width:780px){.site-footer{padding:16px 18px}.site-footer details{margin-top:6px}}

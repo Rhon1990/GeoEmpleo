@@ -40,7 +40,7 @@ export function locateOnce(provider=globalThis.navigator?.geolocation) {
         const point=[position.coords.longitude,position.coords.latitude];
         const accuracy=position.coords.accuracy;
         if(!isPoint(point)||!Number.isFinite(accuracy)||accuracy<0){finish({status:'unavailable'});return;}
-        finish({status:'located',point,zoom:accuracy>20000?8:accuracy>5000?10:12});
+        finish({status:'located',point,zoom:accuracy>20000?8:accuracy>5000?9:10});
       },error=>finish({status:error.code===1?'denied':error.code===3?'timeout':'unavailable'}),{enableHighAccuracy:false,maximumAge:300000,timeout:8000});
     }catch{finish({status:'unavailable'});}
   });

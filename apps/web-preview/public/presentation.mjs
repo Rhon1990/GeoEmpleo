@@ -1,4 +1,10 @@
 export const placesLabel = call => call.places == null ? 'Plazas no publicadas' : `${call.places} ${call.places === 1 ? 'plaza' : 'plazas'}`;
+const employerBrands={
+  'talentclue-mcdonalds':{src:'/brands/mcdonalds.svg',alt:'McDonald’s'},
+  'bizneo-burger-king':{src:'/brands/burger-king.svg',alt:'Burger King'},
+  'amrest-kfc':{src:'/brands/kfc.svg',alt:'KFC'},
+};
+export const employerBrand=job=>employerBrands[job.sourceId]??{src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo'};
 export function cardVisualTheme(job) {
   if(job.kind==='public_call'||job.category==='administracion')return 'public';
   if(['tecnico','industria','construccion'].includes(job.category))return 'technical';

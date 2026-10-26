@@ -21,7 +21,7 @@ export async function buildStaticSite({sourceDir,placesGzipPath,outputDir,config
   const indexPath=join(outputDir,'index.html');
   const index=await readFile(indexPath,'utf8');
   if(!index.includes('<html lang="es">')||!index.includes('href="/publicar"'))throw new TypeError('Estructura de la página no reconocida');
-  await writeFile(indexPath,index.replace('<html lang="es">','<html lang="es" data-delivery="static">').replace(/ nonce="__CSP_NONCE__"/g,'').replace('<a href="/publicar">Publicar oferta</a>','<span aria-label="Publicación directa próximamente">Publicación próximamente</span>').replaceAll('El área visible se consulta al servidor','El área visible filtra el catálogo'));
+  await writeFile(indexPath,index.replace('<html lang="es">','<html lang="es" data-delivery="static">').replace(/ nonce="__CSP_NONCE__"/g,'').replace('<a href="/publicar">Publicar oferta</a>','').replaceAll('El área visible se consulta al servidor','El área visible filtra el catálogo'));
   await writeFile(join(outputDir,'config.json'),JSON.stringify(config));
   const shardDir=join(outputDir,'data','place-shards');
   await mkdir(shardDir,{recursive:true});

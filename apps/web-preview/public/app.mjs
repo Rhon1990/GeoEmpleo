@@ -1,7 +1,7 @@
 import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
-import {cardVisualTheme,detailBadge,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
+import {cardVisualTheme,detailBadge,employerBrand,placesLabel,jobPresentation,resultSummary} from './presentation.mjs';
 import {locateOnce,createViewportSearch,resolveSearchBounds,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261024-viewport';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
@@ -151,11 +151,14 @@ function card(call) {
   article.addEventListener('focusin',()=>interaction.preview(call.id));
   article.addEventListener('focusout',event=>{if(!article.contains(event.relatedTarget))interaction.clearPreview(call.id);});
   const visualFrame = element('div', undefined, 'job-visual-frame');
-  const visual = element('div', undefined, `job-visual theme-${cardVisualTheme(call)}`);
+  const brand=employerBrand(call);
+  const visual = element('div', undefined, `job-visual theme-${cardVisualTheme(call)} ${brand.alt==='GeoEmpleo'?'logo-generic':'logo-brand'}`);
   visual.setAttribute('aria-hidden','true');
+  const logo=element('img');logo.src=brand.src;logo.alt='';logo.loading='lazy';
+  visual.append(logo);
   visualFrame.append(visual, element('span',call.source,'source-pill'));
   const top = element('div', undefined, 'card-top');
-  top.append(element('span', call.city.slice(0,2).toLocaleUpperCase('es'), 'employer-avatar'), element('span', call.employer, 'employer-name'), element('span','↗','card-arrow'));
+  top.append(element('span', call.employer, 'employer-name'), element('span','↗','card-arrow'));
   const locationLine = element('p', `${call.city}, ${call.province}`, 'location-line');
   const tags = element('div', undefined, 'job-meta');
   tags.append(element('span',placesLabel(call), 'meta-tag'), element('span',call.categoryLabel,'meta-tag'), element('span',call.kind==='public_call'?'Turno libre':call.source,'meta-tag'));
@@ -182,7 +185,7 @@ function render() {
   const count=radiusKm()===null?page?.total??results.length:mapResults.length;
   document.querySelector('#result-count').textContent=`${count} ${count===1?'oferta real':'ofertas reales'}${searchBounds?' en esta zona':''}`;
   const summary=resultSummary(results);
-  document.querySelector('#result-summary').textContent=page?.truncated?`${summary} · Mostrando hasta 300 tarjetas de ${page.total}; el mapa conserva todos los puntos de esta zona.`:summary;
+  document.querySelector('#result-summary').textContent=page?.truncated?`Mostrando 300 de ${page.total} tarjetas · El mapa incluye todos los puntos`:summary;
   document.querySelector('#empty-state').hidden=loadError||results.length>0||mapResults.length>0;
   document.querySelector('#clear-filters').hidden=!query.value&&!location.value&&!category&&!origin;
   updateMapWithoutLosingJobs(mapController,mapResults,origin,radiusKm(),()=>{
@@ -224,9 +227,10 @@ const search=createViewportSearch({
     if(!Array.isArray(result.jobs)||!Array.isArray(result.mapJobs)||!result.facets)throw new Error('Respuesta de catálogo inválida');
     calls=result.jobs;page=result;loadError=false;
     updateFacets(result.facets);
-    document.querySelector('#snapshot-label').textContent=`Fuentes: ${result.sources.join(' · ')} · Catálogo actualizado el ${date(result.checkedAt)}`;
+    document.querySelector('#snapshot-label').textContent=`Catálogo actualizado el ${date(result.checkedAt)} · ${result.sources.length} fuentes`;
     list.setAttribute('aria-busy','false');render();
-    document.querySelector('#search-status').textContent=searchBounds?'Se conserva la última zona consultada; mueve o amplía el mapa para actualizarla.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
+    document.querySelector('#results').scrollTop=0;
+    document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
   },
   onError(){
     calls=[];loadError=true;list.setAttribute('aria-busy','false');render();
@@ -342,6 +346,7 @@ document.querySelector('#show-all-map').addEventListener('click',()=>mapControll
 document.querySelector('#use-location').addEventListener('click',()=>{if(mapController)void useMyLocation();else void startMap();});
 document.querySelector('#return-origin').addEventListener('click',()=>{
   if(!origin||!mapController)return;
+  mapController.cancelOriginSelection();
   cancelPlaceSearch();originRevision++;
   originInput.value=originPresentation.input;
   document.querySelector('#origin-status').textContent=originPresentation.status;
@@ -365,7 +370,7 @@ async function startMap() {
       onSelect(id){const call=calls.find(item=>item.id===id)??page?.mapJobs.find(item=>item.id===id);if(call)void showDetail(call,{panMap:false,revealCard:true});},
       onOrigin(point){originInput.value='';setOrigin(point,'Zona elegida en el mapa');},
       onViewport(){if(mapController&&mapIsVisible())requestSearch();},
-    },{point:origin,zoom:origin?(position?.zoom??12):6});
+    },{point:origin,zoom:origin?(position?.zoom??10):6});
     if(originRevision!==mapRevision){if(origin)mapController.focus(origin);else mapController.overview();}
     for(const id of ['choose-origin','search-area','show-all-map'])document.getElementById(id).disabled=false;
     render();requestSearch();

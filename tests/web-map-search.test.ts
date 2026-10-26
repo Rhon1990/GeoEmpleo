@@ -27,7 +27,7 @@ test('localización de una sola lectura con precisión moderada y fallo controla
  let options:unknown;
  const provider={getCurrentPosition(success:(position:GeolocationPosition)=>void,_error:unknown,opts:unknown){options=opts;success({coords:{longitude:-3.7,latitude:40.4,accuracy:80}} as GeolocationPosition);}};
  const position=await locateOnce(provider);
- assert.equal(position.status,'located');assert.deepEqual(position.point,[-3.7,40.4]);assert.equal(position.zoom,12);
+ assert.equal(position.status,'located');assert.deepEqual(position.point,[-3.7,40.4]);assert.equal(position.zoom,10);
  assert.deepEqual(options,{enableHighAccuracy:false,maximumAge:300000,timeout:8000});
  for(const [code,status] of [[1,'denied'],[2,'unavailable'],[3,'timeout']] as const) {
   assert.equal((await locateOnce({getCurrentPosition(_ok:unknown,error:(err:GeolocationPositionError)=>void){error({code} as GeolocationPositionError);}})).status,status);

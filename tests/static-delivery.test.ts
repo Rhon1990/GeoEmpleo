@@ -83,6 +83,7 @@ test('el despliegue estático publica búsqueda y localidades, sin ofrecer un fo
   const html=await readFile(join(output,'index.html'),'utf8');
   assert.match(html,/data-delivery="static"/);
   assert.doesNotMatch(html,/href="\/publicar"|__CSP_NONCE__/);
+  assert.doesNotMatch(html,/Publicación próximamente|Publicación directa próximamente/);
   assert.rejects(readFile(join(output,'publish.html')));
   assert.equal(JSON.parse(await readFile(join(output,'data','place-shards','sa.json'),'utf8'))[0].name,'Coto de San Isidro');
   assert.equal(JSON.parse(await readFile(join(output,'config.json'),'utf8')).googleMapsApiKey,'key-restricted');
