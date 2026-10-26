@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Encuentra oportunidades de empleo en España. Busca y consulta convocatorias reales sin registro.">
+  <title>GeoEmpleo · Tu próximo trabajo, más cerca</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 56' fill='none'%3E%3Cpath d='M42.5 18.2A18 18 0 1 0 42 39.1' stroke='%23086071' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M28 28h15v11' stroke='%23f5b944' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='43' cy='43' r='6' fill='%23f5b944' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css?v=20261026-telepizza-contrast" nonce="__CSP_NONCE__"><style nonce="__CSP_NONCE__"></style>
+  <script type="module" src="/app.mjs?v=20261026-employer-brand" nonce="__CSP_NONCE__"></script>
+</head>
+<body>
+  <a class="skip-link" href="#results">Saltar a los resultados</a>
+  <h1 class="visually-hidden">GeoEmpleo</h1>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="GeoEmpleo, inicio">
+      <svg class="brand-mark" viewBox="0 0 56 56" aria-hidden="true">
+        <path class="route" d="M42.5 18.2A18 18 0 1 0 42 39.1"/>
+        <path class="destination" d="M28 28h15v11"/>
+        <circle class="destination-dot" cx="43" cy="43" r="6"/>
+      </svg>
+      <span class="brand-name"><span class="brand-geo">geo</span><span class="brand-empleo">empleo</span></span>
+    </a>
+    <form id="search-form" class="search-bar" role="search">
+      <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><span><span class="field-label">¿QUÉ ESTÁS BUSCANDO?</span><input id="query" name="q" type="search" placeholder="Puesto, organismo o palabra clave" autocomplete="off"></span></label>
+      <label class="location-field"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg><span><span class="field-label">¿DÓNDE?</span><select id="location" name="city" aria-label="Territorio"><option value="">Toda España</option></select></span></label>
+      <button class="primary-button search-button" type="submit">Buscar oportunidades <span aria-hidden="true">↗</span></button>
+    </form>
+    <nav aria-label="Navegación principal"><a href="/publicar">Publicar oferta</a><a href="#results" class="nav-active">Explorar empleo</a><button type="button" id="about-button">Acerca de</button></nav>
+    <span class="open-access">Sin registro</span>
+  </header>
+  <main>
+    <section class="search-section" aria-label="Filtros de oportunidades">
+      <div class="filter-bar"><div class="filter-controls"><label class="employer-filter-label" for="employer-filter">Empresa<select id="employer-filter"><option value="">Todas las empresas</option></select></label><div id="categories" class="categories" aria-label="Filtrar por área"><button type="button" class="filter-chip active" data-category="" aria-pressed="true">Todas las áreas</button><button type="button" class="filter-chip" data-category="tecnologia" aria-pressed="false">Tecnología</button><button type="button" class="filter-chip" data-category="administracion" aria-pressed="false">Administración</button><button type="button" class="filter-chip" data-category="cultura" aria-pressed="false">Cultura</button><button type="button" class="filter-chip" data-category="tecnico" aria-pressed="false">Oficios técnicos</button></div></div><button type="button" class="text-button" id="clear-filters" hidden>Limpiar filtros</button></div>
+      <div class="proximity-bar"><label>Tu localidad de referencia<input id="origin-city" list="places" maxlength="120" placeholder="Localidad o código postal; elige una sugerencia" autocomplete="off"><datalist id="places"></datalist></label><label>Distancia máxima<select id="radius" disabled><option value="">Sin límite</option><option value="5">5 km</option><option value="10">10 km</option><option value="25">25 km</option><option value="50">50 km</option><option value="100">100 km</option></select></label><span id="origin-status">Elige una localidad o selecciona tu zona en el mapa.</span></div>
+    </section>
+    <div class="mobile-view-switch" role="group" aria-label="Vista principal">
+      <button type="button" data-workspace-view="jobs" aria-pressed="true" aria-controls="results">Ofertas</button>
+      <button type="button" data-workspace-view="map" aria-pressed="false" aria-controls="map-panel">Mapa</button>
+    </div>
+    <section class="workspace" data-view="jobs" aria-label="Oportunidades y mapa">
+      <div class="results-panel" id="results" tabindex="-1">
+        <div class="results-heading"><div><h2 id="result-count" aria-live="polite">Cargando oportunidades…</h2><p id="result-summary">Consultando el catálogo local</p></div><span class="public-badge">Ofertas reales</span></div>
+        <p id="search-status" role="status" aria-live="polite">Buscando tu zona…</p><div class="data-note"><span class="status-dot"></span><span id="snapshot-label">Datos reales, con enlace al origen</span></div>
+        <div id="job-list" class="job-list" aria-label="Ofertas de empleo"></div>
+        <div id="empty-state" class="empty-state" hidden><span aria-hidden="true">↗</span><h3>No encontramos coincidencias</h3><p>Amplía o mueve el mapa, elige otra localidad o cambia la búsqueda. La cobertura de fuentes todavía es parcial.</p><button id="empty-clear" class="primary-button" type="button">Limpiar filtros</button></div>
+        <p class="catalog-note">Ofertas reales de servicios públicos, tablones de empresas y una selección de convocatorias BOE. Incluye pueblos y ciudades; la cobertura todavía es parcial. Comprueba la vigencia en el origen.</p>
+      </div>
+      <aside class="map-panel" id="map-panel" tabindex="-1" aria-labelledby="map-title"><div class="map-heading"><div><p class="eyebrow">UNA MIRADA AL TERRITORIO</p><h2 id="map-title">Encuentra empleo cerca</h2></div><span class="map-provider">Google Maps</span></div>
+        <div class="map-overlay"><div class="map-actions"><button id="return-origin" type="button" disabled>Volver a mi ubicación</button><button id="use-location" type="button">Usar mi ubicación</button><button id="choose-origin" type="button" disabled>Elegir mi zona</button><button id="search-area" type="button" disabled>Rehacer en esta zona</button><button id="show-all-map" type="button" disabled>Ver España</button></div></div>
+        <div id="google-map" class="dynamic-map"><div id="map-state" class="map-state"><span class="map-state-icon" aria-hidden="true">⌖</span><h3>Un punto para cada oportunidad</h3><p id="map-message">Para ver y seleccionar las ofertas necesitamos conectar tu clave de Google Maps.</p><button type="button" class="primary-button" id="load-map">Reintentar mapa</button><p class="map-state-hint">Tu ubicación se usa una sola vez para centrar el mapa; no se guarda. El área visible se consulta al servidor y se muestra con Google Maps.</p></div></div>
+        <div class="map-footer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg><div><strong>Ubicaciones municipales aproximadas</strong><p id="map-footnote">Los puntos agrupan ofertas de la misma localidad. Las distancias son aproximadas, en línea recta, y no indican la dirección del puesto.</p></div></div>
+      </aside>
+    </section>
+  </main>
+  <footer class="site-footer"><span>GeoEmpleo · Consulta pública, sin cuentas.</span><details><summary>Fuentes y atribuciones</summary><p>Fuentes: <a href="https://sefcarm.es" target="_blank" rel="noopener noreferrer">SEF Murcia</a>, <a href="https://analisis.datosabiertos.jcyl.es/explore/dataset/ofertas-de-empleo/" target="_blank" rel="noopener noreferrer">ECYL</a>, <a href="https://opendata.euskadi.eus/catalogo/-/ofertas-de-empleo-de-lanbide/" target="_blank" rel="noopener noreferrer">Lanbide</a>, <a href="https://www.juntadeandalucia.es/datosabiertos/portal/dataset/ofertas-de-empleo-de-entidades-instrumentales" target="_blank" rel="noopener noreferrer">Junta de Andalucía</a>, <a href="https://jobs.lever.co/jobandtalent" target="_blank" rel="noopener noreferrer">Job&amp;Talent</a>, <a href="https://jobs.lever.co/skydance" target="_blank" rel="noopener noreferrer">Skydance</a>, <a href="https://empleo.bkspain.es/jobs" target="_blank" rel="noopener noreferrer">Burger King</a>, <a href="https://empleo.plenergy.es/jobs" target="_blank" rel="noopener noreferrer">Plenergy</a>, <a href="https://ofertas.fooddeliverybrands.com/jobs" target="_blank" rel="noopener noreferrer">Telepizza</a>, <a href="https://careers.talentclue.com/es/company/6285677f44a78f103ce17087c20ecee7/jsoffers/modal" target="_blank" rel="noopener noreferrer">McDonald's</a>, <a href="https://careers.amrest.eu/KFC/go/Jobs-KFC-ES/9158355/" target="_blank" rel="noopener noreferrer">KFC</a>, <a href="https://empleo.disagrupo.es/" target="_blank" rel="noopener noreferrer">Grupo DISA</a>, <a href="https://empleo.dia.es/jobs" target="_blank" rel="noopener noreferrer">DIA</a>, <a href="https://empleo.vithas.es/search/" target="_blank" rel="noopener noreferrer">Vithas</a>, <a href="https://jobs.mapfre.com/go/PROFESIONALES/3296401/" target="_blank" rel="noopener noreferrer">MAPFRE</a>, <a href="https://careers.capgemini.com/search/" target="_blank" rel="noopener noreferrer">Capgemini</a>, <a href="https://careers.melia.com/go/Profesionales-de-hotel/8861001/" target="_blank" rel="noopener noreferrer">Meliá</a> y una selección del <a href="https://www.boe.es" target="_blank" rel="noopener noreferrer">BOE</a>. Comprueba cada oferta en su origen; GeoEmpleo no es un servicio oficial de estas entidades. Puntos municipales aproximados. Geografía de <a href="https://www.geonames.org/about.html" target="_blank" rel="noopener noreferrer">GeoNames (CC BY 4.0)</a> y <a href="https://www.wikidata.org/wiki/Q24012744" target="_blank" rel="noopener noreferrer">Wikidata (CC0)</a>. Coto de San Isidro: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors (ODbL)</a>.</p></details></footer>
+  <dialog id="job-detail" aria-labelledby="detail-title"><div class="dialog-toolbar"><span class="public-badge">Oferta real · fuente indicada</span><button type="button" id="close-detail" class="close-button" aria-label="Cerrar detalle">×</button></div><div id="detail-content"></div></dialog>
+  <dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-toolbar"><span class="eyebrow">GEOEMPLEO</span><button type="button" id="close-about" class="close-button" aria-label="Cerrar información">×</button></div><div class="about-content">
+    <h2 id="about-title">Acerca de GeoEmpleo</h2>
+    <p>GeoEmpleo es un proyecto independiente para descubrir ofertas de trabajo reales cerca de pueblos y ciudades de España. Puedes buscar, filtrar y leer las fichas sin crear una cuenta.</p>
+    <h3>De dónde salen las ofertas</h3>
+    <p>Reunimos anuncios de servicios públicos de empleo y portales de empresas que ya están conectados a GeoEmpleo. También hay una pequeña selección estática del BOE. Intentamos actualizar diariamente las fuentes conectadas; si alguna falla, sus anuncios anteriores pueden seguir visibles. Cada ficha indica su origen, la última comprobación y un enlace al anuncio original. La lista completa de fuentes y atribuciones está al pie de la página.</p>
+    <h3>Cómo funciona</h3>
+    <p><strong>1. Encuentra tu zona.</strong> Permite la ubicación una vez o escribe una localidad. El mapa filtra el catálogo del área visible al moverlo; no rastrea portales externos en cada movimiento. Puedes usar un radio desde tu localidad de referencia.</p>
+    <p><strong>2. Explora las ofertas.</strong> Filtra por palabra, territorio o área. La cobertura de España todavía es parcial. Los puntos suelen representar el centro del municipio, no la dirección exacta del puesto; las ofertas sin localidad única no aparecen en el mapa.</p>
+    <p><strong>3. Comprueba el origen.</strong> Abre el anuncio original para confirmar vigencia, requisitos y solicitud. GeoEmpleo no pide registro para buscar, aunque el portal de origen puede requerirlo para inscribirte. Tu ubicación no se guarda y no inventamos datos que las fuentes no publican.</p>
+    <h3>Creador y contacto</h3>
+    <p>Creado por <strong>Rhonal Alonso Delgado Padilla</strong>. Para consultas, correcciones o avisos sobre enlaces caducados, escribe a <a href="mailto:rhonal.delgado@gmail.com">rhonal.delgado@gmail.com</a>. Las candidaturas se presentan en el portal de origen de cada oferta.</p>
+  </div></dialog>
+  <noscript><p class="noscript-notice">Activa JavaScript para filtrar y ver los detalles. Puedes consultar las convocatorias en <a href="https://www.boe.es/boe/dias/2026/10/09/">el BOE del 9 de octubre de 2026</a>.</p></noscript>
+</body>
+</html>

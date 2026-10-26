@@ -1,0 +1,13 @@
+node_modules/
+.worktrees/
+.venv/
+__pycache__/
+*.pyc
+.env.local
+var/ingestion/
+
+var/submissions/
+var/public-site/
+.firebase/
+firebase-debug.log
+.superpowers/

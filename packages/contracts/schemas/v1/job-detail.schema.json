@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geoempleo.example/contracts/v1/job-detail.schema.json",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/JobCore"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "descriptionText": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200000,
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+        },
+        "applicationRoutes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "url": {
+                "$ref": "common.schema.json#/$defs/HttpUrl"
+              },
+              "registration": {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "not_required",
+                  "unknown"
+                ]
+              }
+            },
+            "required": [
+              "label",
+              "url",
+              "registration"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 20
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "url": {
+                "$ref": "common.schema.json#/$defs/HttpUrl"
+              },
+              "lastCheckedAt": {
+                "anyOf": [
+                  {
+                    "$ref": "common.schema.json#/$defs/Timestamp"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "url",
+              "lastCheckedAt"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 100,
+          "minItems": 1
+        }
+      },
+      "required": [
+        "contractVersion",
+        "descriptionText",
+        "applicationRoutes",
+        "sources"
+      ]
+    }
+  ],
+  "unevaluatedProperties": false
+}

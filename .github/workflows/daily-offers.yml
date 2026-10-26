@@ -1,0 +1,82 @@
+name: Actualizar ofertas de GeoEmpleo
+
+on:
+  schedule:
+    # 05:37 en Europe/Madrid; fuera del cambio horario automático del runner.
+    - cron: '37 5 * * *'
+      timezone: Europe/Madrid
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-offers-production
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias fijadas
+        run: npm ci
+
+      - name: Capturar fuentes públicas y validar el catálogo
+        id: ingest
+        shell: bash
+        run: |
+          started_at="$(node -e 'process.stdout.write(new Date().toISOString())')"
+          echo "started_at=$started_at" >> "$GITHUB_OUTPUT"
+          set +e
+          npm run ingest:daily
+          ingest_exit=$?
+          set -e
+          echo "ingest_exit=$ingest_exit" >> "$GITHUB_OUTPUT"
+          node tools/validate-daily-catalog.mjs \
+            --catalog apps/web-preview/public/data/calls.json \
+            --report var/ingestion/latest.json \
+            --started-at "$started_at"
+
+      - name: Preparar sitio estático
+        env:
+          GEOEMPLEO_GOOGLE_MAPS_API_KEY: ${{ secrets.GEOEMPLEO_GOOGLE_MAPS_API_KEY }}
+          GEOEMPLEO_GOOGLE_MAPS_MAP_ID: ${{ secrets.GEOEMPLEO_GOOGLE_MAPS_MAP_ID }}
+        run: |
+          if [ -z "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" ]; then
+            echo 'Falta el secreto GEOEMPLEO_GOOGLE_MAPS_API_KEY.' >&2
+            exit 1
+          fi
+          env_file="$RUNNER_TEMP/geoempleo.env"
+          umask 077
+          printf 'GEOEMPLEO_GOOGLE_MAPS_API_KEY=%s\nGEOEMPLEO_GOOGLE_MAPS_MAP_ID=%s\n' \
+            "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" "${GEOEMPLEO_GOOGLE_MAPS_MAP_ID:-}" > "$env_file"
+          GEOEMPLEO_ENV_FILE="$env_file" npm run build:web:static
+          node tools/validate-daily-catalog.mjs \
+            --catalog var/public-site/data/calls.json \
+            --expected-checked-at "$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('var/ingestion/latest.json','utf8')).checkedAt)")"
+          test -f var/public-site/index.html
+          test ! -e var/public-site/publish.html
+          test ! -e var/public-site/manage.html
+
+      - name: Publicar en Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GEOEMPLEO_49978 }}
+          projectId: geoempleo-49978
+          channelId: live
+          entryPoint: .
+
+      - name: Comprobar catálogo publicado por HTTPS
+        run: |
+          checked_at="$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('var/ingestion/latest.json','utf8')).checkedAt)")"
+          node tools/validate-daily-catalog.mjs \
+            --url "https://geoempleo-49978.web.app/data/calls.json?checkedAt=$checked_at" \
+            --expected-checked-at "$checked_at"

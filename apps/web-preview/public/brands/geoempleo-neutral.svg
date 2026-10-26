@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none" role="img" aria-label="GeoEmpleo">
+  <path d="M42.5 18.2A18 18 0 1 0 42 39.1" stroke="#737f82" stroke-width="8" stroke-linecap="round"/>
+  <path d="M28 28h15v11" stroke="#98a2a4" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="43" cy="43" r="6" fill="#98a2a4" stroke="#eef0f0" stroke-width="3"/>
+</svg>

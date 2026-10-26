@@ -1,0 +1,895 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geoempleo.example/contracts/v1/common.schema.json",
+  "$defs": {
+    "CountryCode": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}(?![\\s\\S])"
+    },
+    "Uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+    },
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?!0000)[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{3})?Z(?![\\s\\S])"
+    },
+    "HttpUrl": {
+      "type": "string",
+      "maxLength": 4096,
+      "pattern": "^https?://[^/?#@%\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff\\ud800-\\udfff]+(?:[/?#][^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff\\ud800-\\udfff]*)?(?![\\s\\S])",
+      "format": "http-url"
+    },
+    "Point": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "Bounds": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        }
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "Compensation": {
+      "type": "object",
+      "properties": {
+        "minMinor": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxMinor": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}(?![\\s\\S])"
+        },
+        "period": {
+          "type": "string",
+          "enum": [
+            "hour",
+            "month",
+            "year"
+          ]
+        },
+        "basis": {
+          "type": "string",
+          "enum": [
+            "gross",
+            "net",
+            "unknown"
+          ]
+        },
+        "paymentsPerYear": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hoursPerWeek": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paidWeeksPerYear": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "minMinor",
+        "maxMinor",
+        "currency",
+        "period",
+        "basis",
+        "paymentsPerYear",
+        "hoursPerWeek",
+        "paidWeeksPerYear"
+      ],
+      "additionalProperties": false
+    },
+    "Location": {
+      "type": "object",
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}(?![\\s\\S])"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+        },
+        "regionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+          },
+          "maxItems": 10,
+          "uniqueItems": true
+        },
+        "point": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Point"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "precision": {
+          "type": "string",
+          "enum": [
+            "address",
+            "municipality",
+            "region",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "countryCode",
+        "label",
+        "regionIds",
+        "point",
+        "precision"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "point": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "point"
+            ]
+          },
+          "then": {
+            "properties": {
+              "precision": {
+                "const": "unknown"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "precision": {
+                "type": "string",
+                "enum": [
+                  "address",
+                  "municipality",
+                  "region"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Classification": {
+      "type": "object",
+      "properties": {
+        "occupationCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+          },
+          "maxItems": 30,
+          "uniqueItems": true
+        },
+        "sectorCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+          },
+          "maxItems": 30,
+          "uniqueItems": true
+        },
+        "experienceCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "educationCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "responsibilityCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "occupationCodes",
+        "sectorCodes",
+        "experienceCode",
+        "educationCode",
+        "responsibilityCode"
+      ],
+      "additionalProperties": false
+    },
+    "Employment": {
+      "type": "object",
+      "properties": {
+        "contractCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scheduleCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workMode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "onsite",
+                "hybrid",
+                "remote"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractCode",
+        "scheduleCode",
+        "workMode"
+      ],
+      "additionalProperties": false
+    },
+    "JobCore": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/Uuid"
+        },
+        "countryCode": {
+          "$ref": "common.schema.json#/$defs/CountryCode"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+        },
+        "employer": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512,
+                  "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Location"
+          },
+          "maxItems": 100
+        },
+        "classification": {
+          "$ref": "common.schema.json#/$defs/Classification"
+        },
+        "employment": {
+          "$ref": "common.schema.json#/$defs/Employment"
+        },
+        "compensation": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Compensation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "publishedAt": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "updatedAt": {
+          "$ref": "common.schema.json#/$defs/Timestamp"
+        }
+      },
+      "required": [
+        "id",
+        "countryCode",
+        "title",
+        "employer",
+        "locations",
+        "classification",
+        "employment",
+        "compensation",
+        "publishedAt",
+        "updatedAt"
+      ]
+    },
+    "JobSummary": {
+      "$ref": "#/$defs/JobCore",
+      "unevaluatedProperties": false,
+      "type": "object"
+    },
+    "ExtractedPosting": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "descriptionText": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200000,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "descriptionCompleteness": {
+          "type": "string",
+          "enum": [
+            "full",
+            "partial",
+            "unknown"
+          ]
+        },
+        "employer": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512,
+                  "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Location"
+          },
+          "maxItems": 100
+        },
+        "classification": {
+          "$ref": "common.schema.json#/$defs/Classification"
+        },
+        "employment": {
+          "$ref": "common.schema.json#/$defs/Employment"
+        },
+        "compensation": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Compensation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "closed",
+            "unknown"
+          ]
+        },
+        "publishedAt": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "descriptionText",
+        "descriptionCompleteness",
+        "employer",
+        "locations",
+        "classification",
+        "employment",
+        "compensation",
+        "status",
+        "publishedAt",
+        "expiresAt"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "descriptionCompleteness": {
+                "const": "full"
+              }
+            },
+            "required": [
+              "descriptionCompleteness"
+            ]
+          },
+          "then": {
+            "properties": {
+              "descriptionText": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200000,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "SearchQuery": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "occupationCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "maxItems": 30,
+              "uniqueItems": true
+            },
+            "sectorCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "maxItems": 30,
+              "uniqueItems": true
+            },
+            "contractCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "maxItems": 30,
+              "uniqueItems": true
+            },
+            "experienceCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "maxItems": 30,
+              "uniqueItems": true
+            },
+            "educationCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "maxItems": 30,
+              "uniqueItems": true
+            },
+            "responsibilityCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+              },
+              "maxItems": 30,
+              "uniqueItems": true
+            },
+            "workModes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "onsite",
+                  "hybrid",
+                  "remote"
+                ]
+              },
+              "maxItems": 3,
+              "uniqueItems": true
+            },
+            "minAnnualGrossMinor": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "includeSalaryUnknown": {
+              "type": "boolean"
+            },
+            "publicOnly": {
+              "type": "boolean"
+            },
+            "publishedSince": {
+              "anyOf": [
+                {
+                  "$ref": "common.schema.json#/$defs/Timestamp"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "externalRegistration": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "not_required",
+                  "unknown"
+                ]
+              },
+              "maxItems": 3,
+              "uniqueItems": true
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "location": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "region"
+                },
+                "regionId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+                }
+              },
+              "required": [
+                "kind",
+                "regionId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "radius"
+                },
+                "center": {
+                  "$ref": "common.schema.json#/$defs/Point"
+                },
+                "radiusKm": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 500
+                }
+              },
+              "required": [
+                "kind",
+                "center",
+                "radiusKm"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "bbox"
+                },
+                "bounds": {
+                  "$ref": "common.schema.json#/$defs/Bounds"
+                }
+              },
+              "required": [
+                "kind",
+                "bounds"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "newest",
+            "salary_asc",
+            "salary_desc",
+            "distance"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "q",
+        "filters",
+        "location",
+        "sort",
+        "limit",
+        "cursor"
+      ],
+      "additionalProperties": false
+    },
+    "Facet": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "[^\\u0000-\\u0020\\u007f-\\u009f\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "count"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

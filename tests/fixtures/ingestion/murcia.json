@@ -1,0 +1,42 @@
+[
+  {
+    "numeroOferta": "142026005875",
+    "fechaDeInicio": "15/10/2026",
+    "fechaDeFin": "26/10/2026",
+    "municipio": {
+      "codigo": "30019",
+      "municipio": "CIEZA",
+      "provincia": {
+        "codigo": "30",
+        "provincia": "MURCIA"
+      }
+    },
+    "descripcion": "ELECTROMECÁNICO/A Y MANTENIMIENTO HORNO",
+    "adicionales": "Empresa del sector industrial necesita incorporar 1 puesto para realizar funciones de ELECTROMECÁNICO/A Y MANTENIMIENTO HORNO, para la localidad de Cieza.    <BR/><b>FUNCIONES PRINCIPALES DEL PUESTO DE TRABAJO:</b>  <BR/>- Reparación y mantenimiento de hornos y maquinaria de panadería.     <BR/><b>REQUISITOS PARA EL DESEMPEÑO DEL PUESTO DE TRABAJO:</b>  <BR/>- Conocimiento en electromecánica y mantenimiento de hornos y maquinaria de panadería.  <BR/>- Estar inscrito/a en una oficina de empleo en el día en que finalice el periodo de publicación de la oferta.    <BR/><b>CONDICIONES DEL PUESTO DE TRABAJO:</b>  <BR/>- Contrato: laboral indefinido  <BR/>- Jornada: completa   <BR/>- Horario: de lunes a viernes de 08:00 a 13:00 horas y de 15:00   a 18:00 horas, 40 horas semanales.  <BR/>- Salario: 21000 euros brutos anuales.    <BR/><b>INSCRIPCION:</b>  <BR/>Si está inscrito/a en una oficina de la Región de Murcia, puede presentar su candidatura pulsando el botón Inscribirse a través de E-Curriculum.  Si está inscrito/a en una oficina que no pertenezca a la Región de Murcia puede enviar su C.V. con sus datos de contacto a la siguiente dirección: sef-cieza-seleccion@carm.es indicando en el asunto el número de oferta y su DNI.  El plazo de presentación de candidaturas finalizará el día 26/10/2026 a las 23:59 horas. Los requisitos deben mantenerse tanto a la fecha de finalización del plazo de publicación de la oferta como a la fecha de la contratación.",
+    "urlDetalles": "https://sefoficinavirtual.carm.es/sefoficinavirtual/public/oferta/detalle-oferta.xhtml?id=58073",
+    "sectorProfesional": {
+      "id": "MR",
+      "denominacion": "MANTENIMIENTO Y REPARACIÓN"
+    }
+  },
+  {
+    "numeroOferta": "142026005858",
+    "fechaDeInicio": "14/10/2026",
+    "fechaDeFin": "31/10/2026",
+    "municipio": {
+      "codigo": "30902",
+      "municipio": "ALCAZARES, LOS",
+      "provincia": {
+        "codigo": "30",
+        "provincia": "MURCIA"
+      }
+    },
+    "descripcion": "ADMINISTRATIVO/A",
+    "adicionales": "EMPRESA DE LOS ALCÁZARES NECESITA <B>ADMINISTRATIVO/A</B>  <BR/><B>FUNCIONES PRINCIPALES DEL PUESTO DE TRABAJO:</B>  <BR/>-Atención a clientes. Coordinación de agendas y seguimiento de servicios. Introducción y actualización de datos en sistemas internos. Uso de herramientas de gestión.  <BR/><B>REQUISITOS PARA EL DESEMPEÑO DEL PUESTO DE TRABAJO:</B>  <BR/>-Estar inscrito/a en una oficina de empleo.  <BR/>-FP de grado superior. Manejo avanzado de paquete Office. C1 de inglés y valorable otra lengua europea. Experiencia mínima de un año en puesto similar.   <BR/><B>CONDICIONES DEL PUESTO DE TRABAJO:</B>  <BR/>-Contrato laboral temporal por sustitución a media jornada.  <BR/><B>INSCRIPCIÓN:</B>  <BR/>Si está inscrito/a en una oficina de la Región de Murcia, puede presentar su candidatura pulsando el botón Inscribirse a través de E-Curriculum.  Si está inscrito/a en una oficina que no pertenezca a la Región de Murcia puede enviar su C.V. con sus datos de contacto a la siguiente dirección: sef-sanjavier-seleccion@carm.es indicando en el asunto el número de oferta y su Dni.  El plazo de presentación de candidaturas finalizará el día 31/10/2026 a las 23:59 horas. Los  requisitos deben mantenerse tanto a la fecha de finalización del plazo de publicación de la oferta como a la fecha de la contratación.",
+    "urlDetalles": "https://sefoficinavirtual.carm.es/sefoficinavirtual/public/oferta/detalle-oferta.xhtml?id=58059",
+    "sectorProfesional": {
+      "id": "AO",
+      "denominacion": "ADMINISTRACIÓN Y OFICINAS"
+    }
+  }
+]

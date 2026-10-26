@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geoempleo.example/contracts/v1/job-list.schema.json",
+  "type": "object",
+  "properties": {
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "countryCode": {
+      "$ref": "common.schema.json#/$defs/CountryCode"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/JobSummary"
+      },
+      "maxItems": 50
+    },
+    "nextCursor": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "total": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "relation": {
+          "type": "string",
+          "enum": [
+            "eq",
+            "gte"
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "relation"
+      ],
+      "additionalProperties": false
+    },
+    "facets": {
+      "type": "object",
+      "properties": {
+        "sectors": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Facet"
+          },
+          "maxItems": 100
+        },
+        "occupations": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Facet"
+          },
+          "maxItems": 100
+        },
+        "workModes": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Facet"
+          },
+          "maxItems": 100
+        },
+        "contracts": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Facet"
+          },
+          "maxItems": 100
+        },
+        "experience": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Facet"
+          },
+          "maxItems": 100
+        },
+        "education": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Facet"
+          },
+          "maxItems": 100
+        },
+        "responsibility": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/Facet"
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contractVersion",
+    "countryCode",
+    "items",
+    "nextCursor",
+    "total",
+    "facets"
+  ],
+  "additionalProperties": false
+}
