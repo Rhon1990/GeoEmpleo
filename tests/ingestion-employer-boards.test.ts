@@ -4,6 +4,11 @@ import { parseBizneoListing, adaptBizneoDetail } from '../packages/ingestion/src
 import { adaptTalentClueListing } from '../packages/ingestion/src/connectors/talentclue.ts';
 import { createNationalCityResolver } from '../packages/ingestion/src/national-geography.ts';
 import { parseKfcListing, adaptKfcDetail } from '../packages/ingestion/src/connectors/kfc.ts';
+import {
+  adaptSuccessFactorsDetail,
+  parseSuccessFactorsListing,
+  type SuccessFactorsBoard,
+} from '../packages/ingestion/src/connectors/successfactors.ts';
 import { adaptDisaOffer, parseDisaListing } from '../packages/ingestion/src/connectors/disa.ts';
 import { reconcileSource } from '../packages/ingestion/src/catalog.ts';
 import type { PublicCatalog } from '../packages/ingestion/src/model.ts';
@@ -12,6 +17,12 @@ const checkedAt = '2026-10-24T13:00:00.000Z';
 const place = { id:'vicar', name:'Vícar', province:'Almería', municipality:'Vícar', latitude:36.83, longitude:-2.64, sourceUrl:'https://example.org/vicar', precision:'locality' as const };
 const resolveCity = createNationalCityResolver([place]);
 const board = { sourceId:'bizneo-plenergy', hostname:'empleo.plenergy.es', employer:'Plenergy', category:'servicios', categoryLabel:'Servicios y comercio' };
+const successFactorsBoard:SuccessFactorsBoard={
+  sourceId:'successfactors-example',hostname:'jobs.example.es',employer:'Empresa Ejemplo',
+  listingPath:'/go/Empleo/1234/',jobPathPattern:/^\/job\/[^/]+\/\d+\/$/,
+  category:'servicios',categoryLabel:'Servicios y comercio',sourceLabel:'Empresa Ejemplo · portal de empleo',
+  pageSize:25,maxPages:3,
+};
 
 test('Bizneo publica solo fichas del dominio verificado y geolocaliza un municipio único', () => {
   const listing = '<div id="job-board"><a class="job-card" href="https://empleo.plenergy.es/jobs/expendedor-vicar"><div class="title">Expendedor/a</div><div class="details"><span>Vícar</span><span>Presencial</span></div></a><a class="next" href="/jobs?page=2">Siguiente</a></div>';
@@ -68,6 +79,26 @@ test('KFC obtiene fecha, municipio y descripción de una ficha pública',()=>{
   assert.equal(job.publishedAt,'2026-10-24');
   assert.equal(job.province,'Almería');
   assert.deepEqual(job.location?.point,[-2.64,36.83]);
+});
+
+test('SuccessFactors valida el dominio oficial y geolocaliza una localidad española única',()=>{
+  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Dependiente-Vicar/1234567890/">Dependiente/a</a></td><td class="colLocation"><span class="jobLocation">VÍCAR (ALMERÍA), ES</span></td><td class="colDate"><span class="jobDate">24 oct 2026</span></td></tr></table>';
+  const parsed=parseSuccessFactorsListing(listing,successFactorsBoard);
+  assert.equal(parsed.pageCount,1);
+  assert.equal(parsed.offers[0]?.city,'VÍCAR');
+  const detail='<meta itemprop="datePosted" content="2026-10-24"><h1 id="job-title">Dependiente/a</h1><span itemprop="description"><p>Atención al cliente en tienda.</p></span>';
+  const job=adaptSuccessFactorsDetail(parsed.offers[0]!,detail,checkedAt,resolveCity,successFactorsBoard);
+  assert.equal(job.id,'SUCCESSFACTORS-SUCCESSFACTORS-EXAMPLE-1234567890');
+  assert.equal(job.sourceUrl,'https://jobs.example.es/job/Dependiente-Vicar/1234567890/');
+  assert.deepEqual(job.location?.point,[-2.64,36.83]);
+  assert.throws(()=>parseSuccessFactorsListing(listing.replace('/job/Dependiente-Vicar/1234567890/','https://evil.test/job/Falso/123/'),successFactorsBoard),/URL/);
+});
+
+test('SuccessFactors no sitúa ofertas remotas o territoriales ambiguas',()=>{
+  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Consultor-remoto/9876543210/">Consultor/a</a></td><td class="colLocation">Madrid, Barcelona, ES</td><td class="colDate">24 oct 2026</td></tr></table>';
+  const offer=parseSuccessFactorsListing(listing,successFactorsBoard).offers[0]!;
+  const detail='<meta itemprop="datePosted" content="2026-10-24"><h1 id="job-title">Consultor/a</h1><span itemprop="description"><p>Trabajo remoto desde España.</p></span>';
+  assert.equal(adaptSuccessFactorsDetail(offer,detail,checkedAt,resolveCity,successFactorsBoard).location,null);
 });
 
 test('DISA valida identidad y solo mapea el municipio indicado en su detalle',()=>{
