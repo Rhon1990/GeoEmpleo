@@ -1,6 +1,6 @@
 # Fuentes de ofertas de GeoEmpleo
 
-Inventario operativo revisado el **26/10/2026**. El registro ejecutable es
+Inventario operativo revisado el **27/10/2026**. El registro ejecutable es
 [`packages/ingestion/src/registry.ts`](../packages/ingestion/src/registry.ts) y la
 lista que recorre la ingesta diaria está en
 [`packages/ingestion/src/runner.ts`](../packages/ingestion/src/runner.ts).
@@ -8,8 +8,10 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-Los 17 identificadores siguientes están marcados como `active` en el registro,
-tienen adaptador en el runner y aparecen en el último informe de ingesta.
+El registro tiene ahora 19 identificadores marcados como `active`, con adaptador
+en el runner. El último informe completo disponible antes de añadir Carrefour y
+Lidl contiene 17 fuentes; las dos nuevas se verificaron mediante capturas
+directas en esta rama, pero todavía no están en la web pública.
 «Actualizada» y «fallida» describen **solo la ejecución del
 26/10/2026 a las 12:49:43 UTC**, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar
@@ -31,6 +33,8 @@ que sigan abiertas.
 | `successfactors-capgemini` | [Capgemini](https://careers.capgemini.com/search/?q=&locationsearch=Spain) | SuccessFactors | Actualizada |
 | `successfactors-melia` | [Meliá Hotels International](https://careers.melia.com/go/Profesionales-de-hotel/8861001/) | SuccessFactors | Actualizada |
 | `teamtailor-dia` | [DIA](https://empleo.dia.es/jobs) | Teamtailor | Actualizada; 118 publicaciones, 95 con punto |
+| `carrefour-talentforjobs` | [Carrefour](https://www.carrefour.es/trabaja-en-carrefour/envia-tu-curriculum/mas-info/) | TalentForJobs | Captura directa 27/10/2026: 887 publicaciones, 716 con punto municipal |
+| `lidl-search-api` | [Lidl España](https://empleo.lidl.es/buscar-empleo) | Buscador oficial JSON | Captura directa 27/10/2026: 259 publicaciones, 224 con punto municipal |
 | `talentclue-mcdonalds` | [McDonald's](https://careers.talentclue.com/es/company/6285677f44a78f103ce17087c20ecee7/jsoffers/modal?order=Fecha&sort=asc) | TalentClue | Actualizada |
 | `amrest-kfc` | [KFC / AmRest](https://careers.amrest.eu/KFC/go/Jobs-KFC-ES/9158355/) | Portal AmRest | Actualizada |
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
@@ -55,8 +59,8 @@ Otros portales y empresas solicitados se documentan en la
 [auditoría nacional](planning/2026-10-19-ampliacion-nacional-fuentes.md) y el
 [diseño de portales empresariales](superpowers/specs/2026-10-26-portales-empresariales-oficiales-design.md).
 Que una empresa tenga sedes o un portal público no crea una oferta en GeoEmpleo.
-No presentar como conectados Mercadona, Lidl, Carrefour, Repsol, Moeve, BP,
-Galp, InfoJobs o LinkedIn hasta verificar un adaptador y una captura real.
+Mercadona, Repsol, Moeve, BP, Galp, InfoJobs y LinkedIn siguen sin conector
+activo verificado.
 
 ## Cómo actualizar y comprobar
 
@@ -128,5 +132,20 @@ repetir la ingesta antes de declarar la fuente actualizada.
 
 Al incorporar una fuente nueva, actualizar `registry.ts`, añadir su adaptador al
 runner, probar identidad/URL/fecha/ubicación y fallos de red, verificar una
-captura real, **y actualizar este inventario y la automatización diaria**. No
-inferir empleos a partir de establecimientos ni colocar puntos arbitrarios.
+captura real, **y actualizar este inventario y la automatización diaria**. El
+workflow llama al runner que recorre el registro; al integrar Carrefour y Lidl
+en la rama por defecto quedarán dentro de las capturas programadas, sin una
+lista adicional de fuentes en el workflow. No inferir empleos a partir de
+establecimientos ni colocar puntos arbitrarios.
+
+### Verificación de Carrefour y Lidl — 27/10/2026
+
+Las capturas de solo lectura desde sus portales oficiales devolvieron 887 ofertas
+de Carrefour y 259 de Lidl, con IDs únicos por fuente. El gazetteer nacional
+reconoció 716 y 224 localidades, respectivamente, para el mapa. GeoEmpleo
+conserva el texto de zona que publica cada tarjeta; si el dato es regional,
+ambiguo o no coincide con una localidad única, la oferta permanece sin marcador
+municipal. En Carrefour, los filtros del formulario son multiselección: el
+postback del paginador ya no envía sus primeras opciones como filtros
+seleccionados. Estas cifras son una captura de prueba, no un resultado de la
+ingesta pública diaria ni una garantía de vigencia futura.

@@ -69,6 +69,7 @@ dialog{max-width:calc(100vw - 32px)}
 @media(max-width:780px){
   .filter-bar{align-items:stretch;flex-wrap:wrap}
   .filter-controls{width:100%}
+  .categories{flex:0 0 auto;min-height:48px;align-items:center}
   .map-overlay{position:absolute;top:10px;left:50%;width:calc(100% - 20px);padding:0;transform:translateX(-50%)}
   .map-actions{max-width:100%;gap:6px}
 }
