@@ -7,6 +7,7 @@ const previewAssets = new Map([
   ['/', ['index.html','text/html; charset=utf-8']],
   ['/index.html', ['index.html','text/html; charset=utf-8']],
   ['/styles.css', ['styles.css','text/css; charset=utf-8']],
+  ['/select-controls.css', ['select-controls.css','text/css; charset=utf-8']],
   ['/app.mjs', ['app.mjs','text/javascript; charset=utf-8']],
   ['/job-interaction.mjs', ['job-interaction.mjs','text/javascript; charset=utf-8']],
   ['/workspace-view.mjs', ['workspace-view.mjs','text/javascript; charset=utf-8']],

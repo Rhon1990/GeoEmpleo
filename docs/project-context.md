@@ -323,3 +323,7 @@ Al pulsar «Usar mi ubicación», si el permiso está pendiente o su estado no s
 ## Pie de página y atribuciones
 
 El pie identifica a Rhonal Alonso Delgado Padilla como desarrollador en 2026 y enlaza las fuentes de ofertas conectadas, incluidas Carrefour y Lidl, además de la selección estática del BOE. Las atribuciones geográficas están en «Acerca de GeoEmpleo». El crédito admite saltos de línea en pantallas estrechas; el pie no destaca localidades concretas.
+
+## Indicadores de desplegables
+
+`select-controls.css` proporciona un indicador común con separación del borde y espacio para el texto en los filtros de la web pública y los desplegables del formulario local. Los elementos siguen siendo controles nativos y se recupera el indicador del sistema en modo de colores forzados. El formulario de publicación permanece excluido de la web estática pública.
