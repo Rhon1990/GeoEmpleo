@@ -19,5 +19,11 @@ Estos archivos se sirven desde GeoEmpleo para evitar peticiones de imagen a terc
 | `carrefour.svg` | Carrefour | [Simple Icons](https://simpleicons.org/?q=carrefour) |
 | `lidl.svg` | Lidl | [Simple Icons](https://simpleicons.org/?q=lidl) |
 | `disa.png` | Grupo DISA | [Web corporativa](https://www.disagrupo.es/) |
+| `randstad.svg` | Randstad | [Logo vectorial en el portal oficial](https://www.randstad.es/candidatos/) |
+| `quironsalud.jpg` | Quirónsalud | [Tablón oficial de TalentClue](https://empleo.quironsalud.es/) |
+| `eulen.webp` | Grupo Eulen | [Web corporativa](https://www.eulen.com/es/unete-a-nosotros/) |
+| `clece.png` | Clece | [Portal oficial de empleo](https://canaldeempleo.es/CLECE) |
+| `domusvi.png` | DomusVi | [Portal oficial de empleo](https://empleo.domusvi.es/jobs) |
+| `indra.png` | Indra | [Portal oficial de empleo](https://careers.indragroup.com/) |
 
 La atribución de imagen se cubre mediante pruebas en `tests/web-employer-brand.test.ts`. Las ofertas públicas, directas y de fuentes sin empleador empresarial identificable usan `geoempleo-neutral.svg`.

@@ -8,8 +8,8 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene ahora 19 identificadores marcados como `active`, con adaptador
-en el runner. Carrefour y Lidl se incorporaron a la web pública el 27/10/2026.
+El registro tiene ahora 25 identificadores marcados como `active`, con adaptador
+en el runner. Seis fuentes nuevas de esta rama todavía no están en la web pública.
 La columna de ejecución de las demás fuentes recoge una captura histórica.
 «Actualizada» y «fallida» describen **solo la ejecución del
 26/10/2026 a las 12:49:43 UTC**, no el estado permanente del portal. Ante un
@@ -37,6 +37,12 @@ que sigan abiertas.
 | `talentclue-mcdonalds` | [McDonald's](https://careers.talentclue.com/es/company/6285677f44a78f103ce17087c20ecee7/jsoffers/modal?order=Fecha&sort=asc) | TalentClue | Actualizada |
 | `amrest-kfc` | [KFC / AmRest](https://careers.amrest.eu/KFC/go/Jobs-KFC-ES/9158355/) | Portal AmRest | Actualizada |
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
+| `talentclue-quironsalud` | [Quirónsalud](https://empleo.quironsalud.es/) | TalentClue | Captura directa: 263 publicaciones, 260 con punto |
+| `selectminds-eulen` | [Grupo Eulen](https://eulen.referrals.selectminds.com/grupoeulenespana/latest-jobs) | SelectMinds | Captura directa: 9 publicaciones, 8 con punto |
+| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | Portal oficial | Captura directa: 297 publicaciones, 280 con punto; primeras 300 del listado |
+| `successfactors-clece` | [Clece](https://canaldeempleo.es/CLECE) | SuccessFactors | Captura directa: 355 publicaciones, 335 con punto |
+| `bizneo-domusvi` | [DomusVi](https://empleo.domusvi.es/jobs) | Tablón Bizneo | Captura directa: 340 publicaciones, 280 con punto |
+| `successfactors-indra` | [Indra](https://careers.indragroup.com/) | SuccessFactors | Captura directa: 566 publicaciones, 440 con punto |
 
 El catálogo incluye además **cuatro anuncios BOE** (`sourceId: boe`)
 incorporados como selección estática. `npm run ingest:daily` **no** los consulta
@@ -52,7 +58,17 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | Adzuna España | `paused` por el objetivo de coste cero | No activar un plan de pago; revisar condiciones si cambia la oferta |
 | LinkedIn | `authorization_required` | Acuerdo o canal autorizado |
 | Correos | Portal explorado, sin conector | Obtener localidad laboral verificable en cada publicación |
-| DomusVi | Tablón Bizneo explorado, sin conector; una lectura completa devolvió HTTP 429 | Resolver acceso estable y validar la captura completa |
+| Unide | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
+| Covirán | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
+| Farmacia | Es un sector, no una empresa canónica | Integrar fuentes verificables del sector sin atribuir una marca ficticia |
+| Lupa Supermercados | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
+| Mercadona | Portal Avature oficial comprobado; mezcla España y Portugal y expone 384 resultados en páginas de seis | Aplicar un filtro de país verificable y validar cada ficha antes de activar |
+| Inditex | El portal oficial bloqueó la captura automatizada con HTTP 403 | Conseguir un canal público autorizado y estable |
+| SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
+| NTT DATA | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
+| Accenture | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
+| ISS | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
+| Elecnor | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
 
 Otros portales y empresas solicitados se documentan en la
 [auditoría nacional](planning/2026-10-19-ampliacion-nacional-fuentes.md) y el

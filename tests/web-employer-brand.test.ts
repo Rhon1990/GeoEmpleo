@@ -20,6 +20,12 @@ const publicBrands={
   'carrefour-talentforjobs':['/brands/carrefour.svg','Carrefour'],
   'lidl-search-api':['/brands/lidl.svg','Lidl'],
   'disa-empleo':['/brands/disa.png','Grupo DISA'],
+  'talentclue-quironsalud':['/brands/quironsalud.jpg','Quirónsalud'],
+  'selectminds-eulen':['/brands/eulen.webp','Grupo Eulen'],
+  'randstad-oficial':['/brands/randstad.svg','Randstad'],
+  'successfactors-clece':['/brands/clece.png','Clece'],
+  'bizneo-domusvi':['/brands/domusvi.png','DomusVi'],
+  'successfactors-indra':['/brands/indra.png','Indra'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {
@@ -30,6 +36,7 @@ test('cada portal empresarial verificado muestra un asset local de su marca', ()
     const content=readFileSync(asset);
     if(src.endsWith('.svg'))assert.match(content.toString('utf8'),/<svg[\s>]/u);
     else if(src.endsWith('.png'))assert.deepEqual([...content.subarray(0,8)],[137,80,78,71,13,10,26,10],`${sourceId} debe ser PNG válido`);
+    else if(src.endsWith('.webp'))assert.equal(content.toString('ascii',8,12),'WEBP',`${sourceId} debe ser WebP válido`);
     else assert.deepEqual([...content.subarray(0,3)],[255,216,255],`${sourceId} debe ser JPEG válido`);
   }
 });

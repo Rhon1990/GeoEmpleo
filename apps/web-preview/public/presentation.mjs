@@ -23,6 +23,12 @@ const employerBrands={
   'carrefour-talentforjobs':{src:'/brands/carrefour.svg',alt:'Carrefour'},
   'lidl-search-api':{src:'/brands/lidl.svg',alt:'Lidl'},
   'disa-empleo':{src:'/brands/disa.png',alt:'Grupo DISA'},
+  'talentclue-quironsalud':{src:'/brands/quironsalud.jpg',alt:'Quirónsalud'},
+  'selectminds-eulen':{src:'/brands/eulen.webp',alt:'Grupo Eulen'},
+  'randstad-oficial':{src:'/brands/randstad.svg',alt:'Randstad'},
+  'successfactors-clece':{src:'/brands/clece.png',alt:'Clece'},
+  'bizneo-domusvi':{src:'/brands/domusvi.png',alt:'DomusVi'},
+  'successfactors-indra':{src:'/brands/indra.png',alt:'Indra'},
 };
 export const neutralBrand={src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo'};
 export const employerBrand=job=>employerBrands[job.sourceId]??neutralBrand;
