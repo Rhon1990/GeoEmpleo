@@ -6,6 +6,8 @@ import { kfcListingUrl } from './connectors/kfc.ts';
 import { disaEndpoint } from './connectors/disa.ts';
 import { successFactorsBoards } from './connectors/successfactors-boards.ts';
 import { diaListingUrl } from './connectors/teamtailor.ts';
+import { carrefourListingUrl } from './connectors/carrefour.ts';
+import { lidlSearchEndpoint } from './connectors/lidl.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -102,6 +104,10 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:kfcListingUrl,licenseUrl:null},
   {id:'disa-empleo',name:'Grupo DISA · estaciones de servicio',countryCode:'ES',kind:'ats',status:'active',
     endpoint:disaEndpoint,licenseUrl:null},
+  {id:'carrefour-talentforjobs',name:'Carrefour · TalentForJobs',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:carrefourListingUrl,licenseUrl:null},
+  {id:'lidl-search-api',name:'Lidl España · buscador oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:lidlSearchEndpoint,licenseUrl:null},
 ];
 
 export interface SourceRegistry {

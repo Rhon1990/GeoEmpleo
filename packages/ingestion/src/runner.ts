@@ -11,6 +11,8 @@ import {fetchKfcOffers} from './connectors/kfc.ts';
 import {fetchDisaOffers} from './connectors/disa.ts';
 import {fetchSuccessFactorsOffers} from './connectors/successfactors.ts';
 import {fetchDiaOffers} from './connectors/teamtailor.ts';
+import {fetchCarrefourOffers} from './connectors/carrefour.ts';
+import {fetchLidlOffers} from './connectors/lidl.ts';
 import {successFactorsBoards} from './connectors/successfactors-boards.ts';
 import {reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
@@ -20,7 +22,7 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia'] as const;
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','carrefour-talentforjobs','lidl-search-api'] as const;
 type ImplementedSourceId=string;
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
@@ -108,6 +110,10 @@ export async function runDaily(options:RunOptions) {
               ? await fetchDisaOffers(checkedAt,national?.resolve??(()=>null),options.fetchImpl)
             : sourceId==='teamtailor-dia'
               ? await fetchDiaOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+            : sourceId==='carrefour-talentforjobs'
+              ? await fetchCarrefourOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+            : sourceId==='lidl-search-api'
+              ? await fetchLidlOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : adaptSource(sourceId,await fetchJson(source.endpoint,{fetchImpl:options.fetchImpl,encoding:encodingFor(sourceId)}),checkedAt,
               sourceId==='sef-murcia'?murciaResolver.status==='fulfilled'&&murciaResolver.value!==null?murciaResolver.value:()=>null
                 :national?.resolve??(()=>null));

@@ -13,6 +13,9 @@ import {
 import { adaptDisaOffer, parseDisaListing } from '../packages/ingestion/src/connectors/disa.ts';
 import { reconcileSource } from '../packages/ingestion/src/catalog.ts';
 import { successFactorsBoards } from '../packages/ingestion/src/connectors/successfactors-boards.ts';
+import { sourceRegistry } from '../packages/ingestion/src/registry.ts';
+import { fetchCarrefourOffers, parseCarrefourListing } from '../packages/ingestion/src/connectors/carrefour.ts';
+import { adaptLidlSearchPage, fetchLidlOffers } from '../packages/ingestion/src/connectors/lidl.ts';
 import type { PublicCatalog } from '../packages/ingestion/src/model.ts';
 
 const checkedAt = '2026-10-24T13:00:00.000Z';
@@ -25,6 +28,116 @@ const successFactorsBoard:SuccessFactorsBoard={
   category:'servicios',categoryLabel:'Servicios y comercio',sourceLabel:'Empresa Ejemplo · portal de empleo',
   pageSize:25,maxPages:3,
 };
+
+test('portales oficiales de Carrefour y Lidl están registrados como fuentes activas',()=>{
+  assert.equal(sourceRegistry.get('carrefour-talentforjobs')?.status,'active');
+  assert.equal(sourceRegistry.get('lidl-search-api')?.status,'active');
+  assert.equal(sourceRegistry.get('carrefour-talentforjobs')?.endpoint,
+    'https://carrefour.talentforjobs.com/particular/carrefour/web/ofertas-empleo.aspx');
+  assert.equal(sourceRegistry.get('lidl-search-api')?.endpoint,
+    'https://empleo.lidl.es/api/v1/search');
+});
+
+const carrefourPage=(page:number,total:number,token:string,city:string,nextValue:number|null)=>`<form id="form1" action="./ofertas-empleo.aspx"><input type="hidden" name="__VIEWSTATE" value="state-${page}"><input type="hidden" id="ph_hdnPg" name="ctl00$ph$hdnPg" value="${page-1}"><input type="submit" id="ph_btnBO" name="ctl00$ph$btnBO" value=""><select multiple name="ctl00$ph$lstProvincia"><option value="1">Álava</option></select><select multiple name="ctl00$ph$lstJornada"><option value="10">Indiferente</option></select></form><div id="ph_divPag"><p>${page} / ${total}</p>${nextValue===null?'':`<a onclick="$('#ph_hdnPg').val('${nextValue}');$('#ph_btnBO').click();">Siguiente →</a>`}</div><div class="list-group-item corpt4j"><h4><strong>Auxiliar de tienda</strong></h4><div class="ubicacion">${city}</div><a class="solicitar" href="https://carrefour.talentforjobs.com/ofertas/trabajo.aspx?j=${token}">Solicitar</a><p class="pe-contenido">Reposición y atención al cliente.</p></div>`;
+
+test('Carrefour pagina las vacantes oficiales y solo geolocaliza municipios identificados',async()=>{
+  const first=carrefourPage(1,2,'token-uno','Vícar',1);
+  const second=carrefourPage(2,2,'token-dos','Zona no identificada',null);
+  const placeResolver=(city:string)=>city==='Vícar'?{city:'Vícar',province:'Almería',region:'Andalucía',location:{point:[-2.64,36.83] as [number,number],precision:'municipality' as const,sourceUrl:'https://example.org/vicar',sourceUpdatedAt:null,note:'approx'}}:null;
+  const requests:Request[]=[];
+  const fetchImpl=(async(input:string|URL|Request,init?:RequestInit)=>{
+    const request=input instanceof Request?input:new Request(input,init);
+    requests.push(request);
+    if(request.method==='GET')return new Response(first,{headers:{'content-type':'text/html; charset=utf-8'}});
+    const body=new URLSearchParams(await request.text());
+    assert.equal(body.get('ctl00$ph$hdnPg'),'1');
+    assert.equal(body.get('__VIEWSTATE'),'state-1');
+    assert.equal(body.has('ctl00$ph$lstProvincia'),false);
+    assert.equal(body.has('ctl00$ph$lstJornada'),false);
+    return new Response(second,{headers:{'content-type':'text/html; charset=utf-8'}});
+  }) as typeof fetch;
+  const jobs=await fetchCarrefourOffers(checkedAt,placeResolver,fetchImpl);
+  assert.equal(requests.length,2);
+  assert.deepEqual(jobs.map(job=>job.id),['CARREFOUR-dG9rZW4tdW5v','CARREFOUR-dG9rZW4tZG9z']);
+  assert.deepEqual(jobs[0]?.location?.point,[-2.64,36.83]);
+  assert.equal(jobs[1]?.location,null);
+  assert.match(jobs[0]?.sourceUrl??'',/^https:\/\/carrefour\.talentforjobs\.com\/ofertas\/trabajo\.aspx\?j=/);
+});
+
+test('Carrefour rechaza destinos externos y paginación inconsistente',()=>{
+  const html=carrefourPage(1,2,'token','Vícar',1);
+  assert.throws(()=>parseCarrefourListing(html.replace('carrefour.talentforjobs.com','evil.test')),/URL Carrefour/);
+  assert.throws(()=>parseCarrefourListing(html.replace("val('1')","val('2')")),/Paginación/);
+});
+
+test('Carrefour conserva una oferta sin localidad sin inventar un punto',async()=>{
+  const html=carrefourPage(1,1,'token-sin-zona','',null);
+  const jobs=await fetchCarrefourOffers(checkedAt,()=>null,(async()=>new Response(html,{headers:{'content-type':'text/html'}})) as typeof fetch);
+  assert.equal(jobs.length,1);
+  assert.equal(jobs[0]?.city,'Ubicación no indicada');
+  assert.equal(jobs[0]?.location,null);
+});
+
+const lidlOffer=(postingId:string,city='Vícar')=>({
+  postingId,requisitionId:postingId,title:'Cajero/a - Reponedor/a',
+  location:{country:'ES',city,state:'',name:`${city} C/ Mayor 1`,type:'Point'},
+  jobDetailUrl:`https://empleo.lidl.es/jobs/cajero-a-reponedor-a-${postingId}`,
+  onlineFrom:'2026-10-23T10:00:00+00:00',onlineUntil:null,
+  descResponsibilities:'<div><p>Atención al cliente y reposición.</p></div>',
+  salaryValue:'Desde 18.800€ hasta 21.000€',salaryNote:'Importe anual bruto',workingModel:'Presencial',
+});
+
+test('Lidl adapta ofertas reales del JSON público y usa únicamente su localidad verificada',()=>{
+  const payload={jobs:[lidlOffer('123456'),lidlOffer('123457','Localidad desconocida')],meta:{page:1,count:2,totalCount:2,resultsPerPage:100}};
+  const result=adaptLidlSearchPage(payload,checkedAt,city=>city==='Vícar'?{city:'Vícar',province:'Almería',region:'Andalucía',location:{point:[-2.64,36.83],precision:'municipality',sourceUrl:'https://example.org/vicar',sourceUpdatedAt:null,note:'approx'}}:null);
+  assert.equal(result.jobs.length,2);
+  assert.equal(result.jobs[0]?.publishedAt,'2026-10-23');
+  assert.equal(result.jobs[0]?.employer,'Lidl España');
+  assert.equal(result.jobs[0]?.salary,null);
+  assert.match(result.jobs[0]?.paragraphs.join(' ')??'',/Salario publicado por Lidl/);
+  assert.deepEqual(result.jobs[0]?.location?.point,[-2.64,36.83]);
+  assert.equal(result.jobs[1]?.location,null);
+});
+
+test('Lidl recupera todas las páginas verificando que el feed conserva el total',async()=>{
+  const received:number[]=[];
+  const page=(number:number,jobs:ReturnType<typeof lidlOffer>[])=>({jobs,meta:{page:number,count:jobs.length,totalCount:2,resultsPerPage:100}});
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:String(input));
+    const query=JSON.parse(url.searchParams.get('general')??'{}') as {page?:number;resultsPerPage?:number};
+    assert.equal(query.resultsPerPage,100);
+    received.push(query.page??0);
+    return new Response(JSON.stringify(page(query.page??1,[lidlOffer(`12345${query.page}`)])),{headers:{'content-type':'application/json'}});
+  }) as typeof fetch;
+  const jobs=await fetchLidlOffers(checkedAt,()=>null,fetchImpl);
+  assert.deepEqual(received,[1,2]);
+  assert.equal(jobs.length,2);
+});
+
+test('Lidl repite una captura si una oferta nueva desplaza resultados entre páginas',async()=>{
+  const baseJobs=Array.from({length:100},(_,index)=>lidlOffer(String(100000+index)));
+  const newJobs=[lidlOffer('100100'),lidlOffer('100101')];
+  let attempt=0;
+  const received:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:String(input));
+    const query=JSON.parse(url.searchParams.get('general')??'{}') as {page?:number};
+    const page=query.page??0;
+    received.push(`${attempt}:${page}`);
+    let jobs:ReturnType<typeof lidlOffer>[];
+    let totalCount:number;
+    if(attempt===0&&page===1){jobs=baseJobs;totalCount=101;}
+    else if(attempt===0){jobs=[baseJobs.at(-1)!,newJobs[0]!];totalCount=102;}
+    else if(page===1){jobs=baseJobs;totalCount=102;}
+    else {jobs=newJobs;totalCount=102;}
+    if(page===2)attempt+=1;
+    return new Response(JSON.stringify({jobs,meta:{page,count:jobs.length,totalCount,resultsPerPage:100}}),{headers:{'content-type':'application/json'}});
+  }) as typeof fetch;
+  const jobs=await fetchLidlOffers(checkedAt,()=>null,fetchImpl);
+  assert.equal(jobs.length,102);
+  assert.equal(new Set(jobs.map(job=>job.id)).size,102);
+  assert.deepEqual(received,['0:1','0:2','1:1','1:2']);
+});
 
 test('Bizneo reconcilia páginas solapadas sin duplicar una oferta real',async()=>{
   const domusvi={sourceId:'bizneo-domusvi',hostname:'empleo.domusvi.es',employer:'DomusVi',category:'cuidados',categoryLabel:'Cuidados y servicios'};

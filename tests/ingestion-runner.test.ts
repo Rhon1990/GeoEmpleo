@@ -146,6 +146,37 @@ test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
+test('runner despacha Carrefour y Lidl como fuentes diarias y publica sus vacantes con localidad verificada',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-carrefour-lidl-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-10-26T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-10-26',license:'test',places:[{
+   id:'vicar',name:'Vícar',province:'Almería',municipality:'Vícar',latitude:36.83,longitude:-2.64,
+   sourceUrl:'https://example.org/vicar',precision:'locality',
+  }]})));
+  const carrefour='<form id="form1" action="./ofertas-empleo.aspx"><input type="hidden" name="__VIEWSTATE" value="state"><input type="hidden" name="ctl00$ph$hdnPg" value="0"></form><div id="ph_divPag"><p>1 / 1</p></div><div class="list-group-item corpt4j"><h4><strong>Auxiliar de tienda</strong></h4><div class="ubicacion">Vícar</div><a class="solicitar" href="https://carrefour.talentforjobs.com/ofertas/trabajo.aspx?j=token-vicar">Solicitar</a><p class="pe-contenido">Atención al cliente y reposición.</p></div>';
+  const lidl={postingId:'123456',requisitionId:'123456',title:'Cajero/a - Reponedor/a',location:{country:'ES',city:'Vícar',state:'Almería',name:'Vícar',type:'Point'},jobDetailUrl:'https://empleo.lidl.es/jobs/cajero-a-reponedor-a-vicar-123456',onlineFrom:'2026-10-26T10:00:00Z',onlineUntil:null,descResponsibilities:'<p>Atención al cliente y reposición.</p>'};
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const url=new URL(input instanceof Request?input.url:String(input));
+   if(url.hostname==='carrefour.talentforjobs.com')return new Response(carrefour,{headers:{'content-type':'text/html'}});
+   assert.equal(url.hostname,'empleo.lidl.es');
+   return new Response(JSON.stringify({jobs:[lidl],meta:{page:1,count:1,totalCount:1,resultsPerPage:100}}),{headers:{'content-type':'application/json'}});
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
+   sourceIds:['carrefour-talentforjobs','lidl-search-api'],checkedAt:'2026-10-27T10:00:00Z',fetchImpl});
+  const catalog=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(report.status,'success');
+  assert.deepEqual(report.sources.map(source=>[source.sourceId,source.received,source.mapped]),[
+   ['carrefour-talentforjobs',1,1],['lidl-search-api',1,1],
+  ]);
+  assert.deepEqual(catalog.calls.map((job:{sourceId:string;location?:unknown})=>[job.sourceId,job.location!==null]),[
+   ['carrefour-talentforjobs',true],['lidl-search-api',true],
+  ]);
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
 test('runner publica success con tres fuentes seleccionadas',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-all-success-'));try{
  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');

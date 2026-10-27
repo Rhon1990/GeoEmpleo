@@ -160,7 +160,7 @@ test('stylesheet cache key includes the latest responsive patch version', () => 
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261027-map-filter-overflow(?:&|$)/,
+    /(?:[?&]v=)20261027-mobile-filter-height(?:&|$)/,
   );
 });
 
@@ -538,7 +538,9 @@ test('mobile map overlay stays compact and centered above the map', () => {
 test('filter controls constrain horizontal scrolling to the category rail', () => {
   assert.match(lastRuleForSelector(css, '.filter-bar'), /min-width:0/);
   assert.match(rulesForSelector(css, '.filter-controls').join(';'), /min-width:0/);
-  const categories = lastRuleForSelector(css, '.categories');
+  const categories = rulesForSelector(css, '.categories')
+    .find(rule => rule.includes('overscroll-behavior-inline:contain'));
+  assert.ok(categories, 'Expected the category rail scrolling rule');
   assert.match(categories, /width:100%/);
   assert.match(categories, /max-width:100%/);
   assert.match(categories, /overflow-x:auto/);
@@ -552,6 +554,10 @@ test('mobile category rail keeps its height when filter controls stack verticall
   assert.match(mobileRules, /\.categories\{[^}]*flex:0 0 auto/);
   assert.match(mobileRules, /\.categories\{[^}]*min-height:48px/);
   assert.match(mobileRules, /\.categories\{[^}]*align-items:center/);
+  assert.ok(
+    css.lastIndexOf('.categories{flex:0 0 auto') > css.lastIndexOf('.categories{width:100%'),
+    'The mobile flex override must follow the general flex rule in the stylesheet',
+  );
 });
 
 test('narrow mobile stacks flexible fields without shrinking touch controls', () => {
