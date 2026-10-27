@@ -13,4 +13,5 @@ test('los filtros de URL no se interpretan como rutas de ficheros', () => {
 test('sirve todos los módulos importados por la aplicación web',() => {
   assert.deepEqual(previewAsset('/job-interaction.mjs'),['job-interaction.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/workspace-view.mjs'),['workspace-view.mjs','text/javascript; charset=utf-8']);
+  assert.deepEqual(previewAsset('/location-permission.mjs'),['location-permission.mjs','text/javascript; charset=utf-8']);
 });

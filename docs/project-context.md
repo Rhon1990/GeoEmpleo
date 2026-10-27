@@ -315,3 +315,7 @@ La ejecución pública de GitHub Actions `40508436808` incorporó Carrefour y Li
 ## Logotipos Carrefour y Lidl — 27/10/2026
 
 Las ofertas de Carrefour y Lidl usan iconos SVG locales de Simple Icons, identificados por su fuente y compartidos entre tarjetas y detalle. Las demás ofertas conservan su marca o el recurso neutral existente.
+
+## Aviso de permiso de ubicación
+
+Al pulsar «Usar mi ubicación», si el permiso está pendiente o su estado no se puede consultar, un diálogo explica el uso y permite solicitarlo o cancelar. Si el navegador lo bloquea o lo rechaza, otro diálogo pregunta si se desean ver las instrucciones para activarlo desde los ajustes del sitio y, en móvil, los del dispositivo. La página no puede cambiar por sí misma ese permiso; la búsqueda por localidad sigue disponible. Cuando ya está concedido, se solicita una sola posición como antes.
