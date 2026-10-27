@@ -1,7 +1,7 @@
 const consentKey='geoempleo-analytics-consent';
 const eventNames=new Set(['page_view','search_submitted','filter_used','offer_detail_opened','map_action']);
 const filterTypes=new Set(['category','employer','territory','distance']);
-const mapActions=new Set(['show_map','search_visible_area','use_my_location','return_origin','show_spain','choose_zone']);
+const mapActions=new Set(['show_map','search_visible_area','use_my_location','show_spain','choose_zone']);
 const routes=new Set(['/','/publicar']);
 
 function validConfig(config) {

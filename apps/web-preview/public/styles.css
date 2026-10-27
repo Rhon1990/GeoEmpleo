@@ -54,7 +54,7 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 .filter-controls{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
 .employer-filter-label{display:flex;align-items:center;gap:7px;white-space:nowrap;color:var(--muted);font-size:11px}
 .employer-filter-label select{max-width:min(220px,35vw);min-height:36px;padding:6px 28px 6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-size:12px}
-@media(max-width:760px){.filter-controls{align-items:flex-start;flex-direction:column;gap:4px}.employer-filter-label{width:100%;padding:0 5px}.employer-filter-label select{max-width:none;flex:1;min-width:0}}
+@media(max-width:760px){.filter-controls{align-items:flex-start;flex-direction:column;gap:4px}.employer-filter-label{width:100%;padding:0 5px}.employer-filter-label select{max-width:none;flex:1;min-width:0}.categories{flex:0 0 auto;min-height:48px;align-items:center}}
 .filter-chip{flex:none}
 .map-panel:has(.map-state) .map-footer{display:none}
 @media(max-width:780px){.site-footer{padding:16px 18px}.site-footer details{margin-top:6px}}

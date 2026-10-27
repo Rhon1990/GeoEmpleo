@@ -295,3 +295,9 @@ Corrección visual posterior: el SVG oficial de Telepizza es blanco y perdía co
 El código CSS limita los filtros y el carril de categorías al ancho disponible; las categorías mantienen desplazamiento horizontal interno. A 480 px o menos, localidad y radio se apilan y sus campos ocupan el ancho disponible. Los controles del mapa conservan objetivos de 44 × 44 px; a 780 px o menos, el overlay permanece absoluto, centrado y compacto sobre el mapa. Las agrupaciones del mapa se limitan a `min(340px, calc(100vw - 48px))`. Tarjetas, encabezados, diálogos y contenido de detalle/información tienen restricciones de ancho y ajuste de texto.
 
 Verificación automatizada: `node --test tests/web-brand-layout.test.ts tests/web-map-search.test.ts tests/web-map-state.test.ts tests/web-analytics.test.ts` pasó 47/47; `npm run typecheck` terminó correctamente. La QA visual en navegador a 320, 360, 390, 768 px y escritorio sigue pendiente: el inventario de navegador no está disponible en esta sesión Work. No se han comprobado capturas ni `scrollWidth` en esos tamaños.
+
+## Ajuste posterior del mapa y filtros (27/10/2026)
+
+Se retiró «Volver a mi ubicación»: `use-location` sigue siendo la única acción de geolocalización; «Elegir mi zona» conserva la selección manual en el mapa. En móvil, `.filter-controls` cambia a columna a 760 px, mientras que `.categories` ya no conserva una base flexible de cero: ahora usa `flex: 0 0 auto`, altura mínima de 48 px y centrado vertical para que la fila de chips no se aplaste ni aparezca cortada. Se añadieron regresiones automatizadas para ambas condiciones. QA visual en dispositivo real sigue pendiente.
+
+Verificación: `npm test` pasó 353/353, `npm run typecheck` y `git diff --check` correctos. El navegador controlado no está habilitado en esta sesión Work, así que no hay inspección visual ni medición real de `scrollHeight`/`scrollWidth`.

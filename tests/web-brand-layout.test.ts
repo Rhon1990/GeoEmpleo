@@ -150,7 +150,7 @@ test('index.html parses without HTML errors', () => {
   assert.deepEqual(parseErrors, []);
 });
 
-test('stylesheet cache key includes the responsive map controls version', () => {
+test('stylesheet cache key includes the latest responsive patch version', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -160,7 +160,7 @@ test('stylesheet cache key includes the responsive map controls version', () => 
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261027-responsive-map-controls(?:&|$)/,
+    /(?:[?&]v=)20261027-map-filter-overflow(?:&|$)/,
   );
 });
 
@@ -363,7 +363,6 @@ test('map controls overlay the single map and keep approved labels and legend', 
   const mapActions = elements(mapOverlay).find(element => hasClass(element, 'map-actions'));
   assert.ok(mapActions);
   const approvedLabels = new Map([
-    ['return-origin', 'Volver a mi ubicación'],
     ['use-location', 'Usar mi ubicación'],
     ['choose-origin', 'Elegir mi zona'],
     ['search-area', 'Actualizar esta zona'],
@@ -384,9 +383,15 @@ test('map controls overlay the single map and keep approved labels and legend', 
   assert.ok(legendLead);
 });
 
+test('map toolbar has one location action and keeps the geolocation control', () => {
+  assert.equal(allElements.some(element => attribute(element, 'id') === 'return-origin'), false);
+  assert.ok(allElements.some(element => attribute(element, 'id') === 'use-location'));
+  assert.match(app, /querySelector\('#use-location'\)\.addEventListener/);
+  assert.doesNotMatch(app, /return-origin|return_origin/);
+});
+
 test('map controls expose matching accessible names and hidden labels', () => {
   const approvedLabels = new Map([
-    ['return-origin', 'Volver a mi ubicación'],
     ['use-location', 'Usar mi ubicación'],
     ['choose-origin', 'Elegir mi zona'],
     ['search-area', 'Actualizar esta zona'],
@@ -407,7 +412,6 @@ test('map controls expose matching accessible names and hidden labels', () => {
 
 test('map controls use one decorative inline icon per action', () => {
   for (const id of [
-    'return-origin',
     'use-location',
     'choose-origin',
     'search-area',
@@ -539,6 +543,15 @@ test('filter controls constrain horizontal scrolling to the category rail', () =
   assert.match(categories, /max-width:100%/);
   assert.match(categories, /overflow-x:auto/);
   assert.match(categories, /overscroll-behavior-inline:contain/);
+});
+
+test('mobile category rail keeps its height when filter controls stack vertically', () => {
+  const mobileRules = mediaBlockForViewport(css, 760);
+  assert.ok(mobileRules, 'Expected a responsive rule that applies at 760px');
+  assert.match(mobileRules, /\.filter-controls\{[^}]*flex-direction:column/);
+  assert.match(mobileRules, /\.categories\{[^}]*flex:0 0 auto/);
+  assert.match(mobileRules, /\.categories\{[^}]*min-height:48px/);
+  assert.match(mobileRules, /\.categories\{[^}]*align-items:center/);
 });
 
 test('narrow mobile stacks flexible fields without shrinking touch controls', () => {

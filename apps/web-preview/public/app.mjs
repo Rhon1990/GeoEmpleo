@@ -57,7 +57,6 @@ let calls = [];
 let category = '';
 let employer = '';
 let origin = null;
-let originPresentation = null;
 let page = null;
 let loadError = false;
 let detailRequest = null;
@@ -241,7 +240,6 @@ function adUnit() {
 }
 
 function render() {
-  document.querySelector('#return-origin').disabled=!origin||!mapController;
   const geography=activeGeography();
   const results=searchCalls(calls,geography);
   const mapResults=visibleMapJobs(page,geography.origin,geography.radiusKm);
@@ -355,7 +353,6 @@ function setOrigin(point,label) {
   searchBounds=next.bounds;territoryFocusPending=next.pendingTerritory;
   location.value=next.territory;origin=next.origin;radiusSelect.value='';radiusSelect.disabled=false;
   document.querySelector('#origin-status').textContent=`${label} · Ubicación aproximada; el mapa filtra la zona visible`;
-  originPresentation={input:originInput.value,status:document.querySelector('#origin-status').textContent};
   mapController?.focus(point);
   render();
   if(!mapController&&!mapStarting)requestSearch({immediate:true});
@@ -433,15 +430,6 @@ document.querySelector('#choose-origin').addEventListener('click',() => {
 document.querySelector('#search-area').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'search_visible_area'});requestSearch({immediate:true,force:true});});
 document.querySelector('#show-all-map').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'show_spain'});mapController?.overview();});
 document.querySelector('#use-location').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'use_my_location'});if(mapController)void useMyLocation();else void startMap();});
-document.querySelector('#return-origin').addEventListener('click',()=>{
-  if(!origin||!mapController)return;
-  void analyticsController.track('map_action',{action:'return_origin'});
-  mapController.cancelOriginSelection();
-  cancelPlaceSearch();originRevision++;
-  originInput.value=originPresentation.input;
-  document.querySelector('#origin-status').textContent=originPresentation.status;
-  mapController.focus(origin);
-});
 
 async function startMap() {
   if(mapStarting||mapController)return;
