@@ -39,10 +39,10 @@ que sigan abiertas.
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
 | `talentclue-quironsalud` | [Quirónsalud](https://empleo.quironsalud.es/) | TalentClue | Captura directa: 263 publicaciones, 260 con punto |
 | `selectminds-eulen` | [Grupo Eulen](https://eulen.referrals.selectminds.com/grupoeulenespana/latest-jobs) | SelectMinds | Captura directa: 9 publicaciones, 8 con punto |
-| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | Portal oficial | Captura directa: 297 publicaciones, 280 con punto; primeras 300 del listado |
+| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | Portal oficial | Publicación 27/10/2026: 297 publicaciones, 279 con punto; primeras 300 del listado |
 | `successfactors-clece` | [Clece](https://canaldeempleo.es/CLECE) | SuccessFactors | Captura directa: 355 publicaciones, 335 con punto |
 | `bizneo-domusvi` | [DomusVi](https://empleo.domusvi.es/jobs) | Tablón Bizneo | Captura directa: 340 publicaciones, 280 con punto |
-| `successfactors-indra` | [Indra](https://careers.indragroup.com/) | SuccessFactors | Captura directa: 566 publicaciones, 440 con punto |
+| `successfactors-indra` | [Indra](https://careers.indragroup.com/) | SuccessFactors | Publicación 27/10/2026: 562 publicaciones, 437 con punto |
 
 El catálogo incluye además **cuatro anuncios BOE** (`sourceId: boe`)
 incorporados como selección estática. `npm run ingest:daily` **no** los consulta
@@ -76,6 +76,38 @@ Otros portales y empresas solicitados se documentan en la
 Que una empresa tenga sedes o un portal público no crea una oferta en GeoEmpleo.
 Mercadona, Repsol, Moeve, BP, Galp, InfoJobs y LinkedIn siguen sin conector
 activo verificado.
+
+La ejecución de GitHub Actions `40570453221`, terminada el 27/10/2026, actualizó
+las 25 fuentes activas con estado `success` y publicó 5.811 ofertas con 5.811
+IDs únicos. De la lista de empresas aportada por el usuario están activas
+Randstad, Quirónsalud, Vithas, DomusVi, Indra, Capgemini, Grupo Eulen y Clece.
+Las demás permanecen en esta tabla hasta disponer de un canal oficial,
+autorizado y estable; los enlaces de búsqueda de InfoJobs se conservan como
+referencia de descubrimiento, pero no se extraen ni se republican.
+
+### Matriz de empresas solicitadas y referencias de descubrimiento
+
+| Empresa o búsqueda solicitada | Referencia aportada | Estado en GeoEmpleo |
+|---|---|---|
+| Randstad | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=RANDSTAD&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| Unide | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=unide&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de canal oficial verificable |
+| Covirán | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=coviran&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de canal oficial verificable |
+| Farmacia | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=farmacia&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente; es una categoría, no una empresa |
+| Lupa Supermercados | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=lupa&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de canal oficial verificable |
+| Mercadona | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=mercadona&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de filtro España fiable en el portal oficial |
+| Inditex | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=inditex&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente; el portal oficial bloquea la captura automatizada |
+| SEUR | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=SEUR&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de canal oficial verificable |
+| Quirónsalud | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Quir%C3%B3nsalud&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| Vithas | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Vithas&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| DomusVi | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=DomusVi&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| Indra | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Indra&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| NTT DATA | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=NTT%20DATA&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
+| Accenture | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Accenture&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
+| Capgemini | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Capgemini&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| Grupo Eulen | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Grupo%20Eulen&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| ISS | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=ISS&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
+| Clece | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Clece&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
+| Elecnor | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Elecnor&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
 
 ## Cómo actualizar y comprobar
 
