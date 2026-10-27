@@ -150,6 +150,20 @@ test('index.html parses without HTML errors', () => {
   assert.deepEqual(parseErrors, []);
 });
 
+test('stylesheet cache key includes the responsive map controls version', () => {
+  const stylesheet = allElements.find(element =>
+    element.tagName === 'link'
+    && attribute(element, 'rel') === 'stylesheet'
+    && attribute(element, 'href')?.startsWith('/styles.css'),
+  );
+
+  assert.ok(stylesheet, 'Expected the page stylesheet link');
+  assert.match(
+    attribute(stylesheet, 'href')!,
+    /(?:[?&]v=)20261027-responsive-map-controls(?:&|$)/,
+  );
+});
+
 test('header uses the Ruta G mark and split wordmark', () => {
   const brandMarks = allElements.filter(element => hasClass(element, 'brand-mark'));
   assert.equal(brandMarks.length, 1);
