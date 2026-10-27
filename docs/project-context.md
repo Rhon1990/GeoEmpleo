@@ -289,3 +289,9 @@ Las tarjetas y el detalle usan un mismo resolver basado exclusivamente en los ID
 QA: `npm run check` pasó con 311 pruebas Node, tipos, OpenAPI y 76 fixtures Python. La compilación estática conservó el catálogo `2026-10-26T12:49:43.434Z` con 2.806 IDs y excluyó `/publicar` y `/gestionar`. Firebase Hosting se actualizó y se verificó por HTTPS: la portada apunta al bundle nuevo, los 13 logos empresariales responden correctamente y el catálogo público conserva 2.806 IDs únicos.
 
 Corrección visual posterior: el SVG oficial de Telepizza es blanco y perdía contraste sobre el fondo claro. Sus tarjetas y el detalle usan ahora un fondo rojo de alto contraste, con versión CSS actualizada para evitar caché obsoleta.
+
+## Controles responsive y mapa (27/10/2026)
+
+El código CSS limita los filtros y el carril de categorías al ancho disponible; las categorías mantienen desplazamiento horizontal interno. A 480 px o menos, localidad y radio se apilan y sus campos ocupan el ancho disponible. Los controles del mapa conservan objetivos de 44 × 44 px; a 780 px o menos, el overlay permanece absoluto, centrado y compacto sobre el mapa. Las agrupaciones del mapa se limitan a `min(340px, calc(100vw - 48px))`. Tarjetas, encabezados, diálogos y contenido de detalle/información tienen restricciones de ancho y ajuste de texto.
+
+Verificación automatizada: `node --test tests/web-brand-layout.test.ts tests/web-map-search.test.ts tests/web-map-state.test.ts tests/web-analytics.test.ts` pasó 47/47; `npm run typecheck` terminó correctamente. La QA visual en navegador a 320, 360, 390, 768 px y escritorio sigue pendiente: el inventario de navegador no está disponible en esta sesión Work. No se han comprobado capturas ni `scrollWidth` en esos tamaños.

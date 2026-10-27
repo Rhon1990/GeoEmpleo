@@ -50,6 +50,19 @@ function ruleForSelector(cssText: string, selector: string): string {
   return match[1];
 }
 
+function lastRuleForSelector(cssText: string, selector: string): string {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const matches = [...cssText.matchAll(new RegExp(`(?:^|})\\s*${escapedSelector}\\{([^}]*)\\}`, 'g'))];
+  assert.ok(matches.length > 0, `Expected a CSS rule for ${selector}`);
+  return matches.at(-1)![1];
+}
+
+function rulesForSelector(cssText: string, selector: string): string[] {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return [...cssText.matchAll(new RegExp(`(?:^|})\\s*${escapedSelector}\\{([^}]*)\\}`, 'g'))]
+    .map(match => match[1]);
+}
+
 function mediaBlockForViewport(cssText: string, viewportWidth: number): string | undefined {
   const mediaPattern = /@media\(max-width:(\d+)px\)\{/g;
   const matches = [...cssText.matchAll(mediaPattern)]
@@ -66,6 +79,22 @@ function mediaBlockForViewport(cssText: string, viewportWidth: number): string |
     }
   }
   return undefined;
+}
+
+function mediaBlocksForMaxWidth(cssText: string, maxWidth: number): string[] {
+  const mediaPattern = /@media\(max-width:(\d+)px\)\{/g;
+  return [...cssText.matchAll(mediaPattern)]
+    .filter(match => Number(match[1]) === maxWidth && match.index !== undefined)
+    .map(match => {
+      const bodyStart = match.index! + match[0].length;
+      let depth = 1;
+      for (let index = bodyStart; index < cssText.length; index += 1) {
+        if (cssText[index] === '{') depth += 1;
+        if (cssText[index] === '}') depth -= 1;
+        if (depth === 0) return cssText.slice(bodyStart, index);
+      }
+      return '';
+    });
 }
 
 function relativeLuminance(hex: string): number {
@@ -119,6 +148,20 @@ function openAccessMessageInHeader(root: Node): Element | undefined {
 
 test('index.html parses without HTML errors', () => {
   assert.deepEqual(parseErrors, []);
+});
+
+test('stylesheet cache key includes the responsive map controls version', () => {
+  const stylesheet = allElements.find(element =>
+    element.tagName === 'link'
+    && attribute(element, 'rel') === 'stylesheet'
+    && attribute(element, 'href')?.startsWith('/styles.css'),
+  );
+
+  assert.ok(stylesheet, 'Expected the page stylesheet link');
+  assert.match(
+    attribute(stylesheet, 'href')!,
+    /(?:[?&]v=)20261027-responsive-map-controls(?:&|$)/,
+  );
 });
 
 test('header uses the Ruta G mark and split wordmark', () => {
@@ -321,8 +364,9 @@ test('map controls overlay the single map and keep approved labels and legend', 
   assert.ok(mapActions);
   const approvedLabels = new Map([
     ['return-origin', 'Volver a mi ubicación'],
+    ['use-location', 'Usar mi ubicación'],
     ['choose-origin', 'Elegir mi zona'],
-    ['search-area', 'Rehacer en esta zona'],
+    ['search-area', 'Actualizar esta zona'],
     ['show-all-map', 'Ver España'],
   ]);
   for (const [id, label] of approvedLabels) {
@@ -338,6 +382,61 @@ test('map controls overlay the single map and keep approved labels and legend', 
       && textContent(element).trim() === 'Ubicaciones municipales aproximadas',
   );
   assert.ok(legendLead);
+});
+
+test('map controls expose matching accessible names and hidden labels', () => {
+  const approvedLabels = new Map([
+    ['return-origin', 'Volver a mi ubicación'],
+    ['use-location', 'Usar mi ubicación'],
+    ['choose-origin', 'Elegir mi zona'],
+    ['search-area', 'Actualizar esta zona'],
+    ['show-all-map', 'Ver España'],
+  ]);
+
+  for (const [id, label] of approvedLabels) {
+    const action = allElements.find(element => attribute(element, 'id') === id);
+    assert.ok(action, `Expected #${id}`);
+    assert.equal(action.tagName, 'button');
+    assert.equal(attribute(action, 'aria-label'), label, `Expected #${id} aria-label`);
+    assert.equal(attribute(action, 'data-tooltip'), label, `Expected #${id} tooltip`);
+    const hiddenLabels = elements(action).filter(element => hasClass(element, 'visually-hidden'));
+    assert.equal(hiddenLabels.length, 1, `Expected one hidden label in #${id}`);
+    assert.equal(textContent(hiddenLabels[0]).trim(), label);
+  }
+});
+
+test('map controls use one decorative inline icon per action', () => {
+  for (const id of [
+    'return-origin',
+    'use-location',
+    'choose-origin',
+    'search-area',
+    'show-all-map',
+  ]) {
+    const action = allElements.find(element => attribute(element, 'id') === id);
+    assert.ok(action, `Expected #${id}`);
+    const icons = elements(action).filter(element => element.tagName === 'svg');
+    assert.equal(icons.length, 1, `Expected one inline SVG in #${id}`);
+    assert.equal(attribute(icons[0], 'aria-hidden'), 'true');
+    assert.equal(attribute(icons[0], 'focusable'), 'false');
+  }
+});
+
+test('map action toolbar keeps compact targets and CSS-only tooltips', () => {
+  assert.match(ruleForSelector(css, '.map-actions button'), /position:relative/);
+  assert.match(ruleForSelector(css, '.map-actions button'), /width:44px/);
+  assert.match(ruleForSelector(css, '.map-actions button'), /height:44px/);
+  assert.match(ruleForSelector(css, '.map-actions button svg'), /width:22px[^}]*height:22px/);
+  assert.match(
+    ruleForSelector(css, '.map-actions button::after'),
+    /content:attr\(data-tooltip\)/,
+  );
+  assert.match(
+    ruleForSelector(css, '.map-actions button:hover::after,.map-actions button:focus-visible::after'),
+    /opacity:1/,
+  );
+  assert.match(ruleForSelector(css, '.map-actions button:first-child::after'), /left:0/);
+  assert.match(ruleForSelector(css, '.map-actions button:last-child::after'), /right:0/);
 });
 
 test('desktop shell gives the workspace the actual remaining viewport height', () => {
@@ -387,7 +486,7 @@ test('desktop shell gives the workspace the actual remaining viewport height', (
     css,
     /\.map-overlay\{[^}]*width:calc\(100% - 24px\)[^}]*justify-content:center[^}]*overflow:visible/,
   );
-  assert.match(css, /\.map-actions\{[^}]*flex-wrap:wrap[^}]*justify-content:center/);
+  assert.match(css, /\.map-actions\{[^}]*flex-wrap:nowrap[^}]*justify-content:center/);
   assert.match(css, /\.map-footer\{[^}]*bottom:36px/);
 });
 
@@ -417,4 +516,41 @@ test('mobile preserves document flow with a single visible workspace panel', () 
   const buttons=elements(switcher).filter(node=>node.tagName==='button');
   assert.deepEqual(buttons.map(node=>attribute(node,'data-workspace-view')),['jobs','map']);
   assert.deepEqual(buttons.map(node=>attribute(node,'aria-pressed')),['true','false']);
+});
+
+test('mobile map overlay stays compact and centered above the map', () => {
+  const mobileRules = mediaBlocksForMaxWidth(css, 780);
+  assert.ok(mobileRules.length > 0, 'Expected a responsive rule at 780px');
+  const overlayRules = mobileRules.flatMap(block =>
+    [...block.matchAll(/\.map-overlay\{([^}]*)\}/g)].map(match => match[1]),
+  );
+  assert.ok(overlayRules.length > 0, 'Expected a map overlay rule at 780px');
+  assert.match(
+    overlayRules.at(-1)!,
+    /position:absolute[^}]*left:50%[^}]*width:calc\(100% - 20px\)[^}]*transform:translateX\(-50%\)/,
+  );
+});
+
+test('filter controls constrain horizontal scrolling to the category rail', () => {
+  assert.match(lastRuleForSelector(css, '.filter-bar'), /min-width:0/);
+  assert.match(rulesForSelector(css, '.filter-controls').join(';'), /min-width:0/);
+  const categories = lastRuleForSelector(css, '.categories');
+  assert.match(categories, /width:100%/);
+  assert.match(categories, /max-width:100%/);
+  assert.match(categories, /overflow-x:auto/);
+  assert.match(categories, /overscroll-behavior-inline:contain/);
+});
+
+test('narrow mobile stacks flexible fields without shrinking touch controls', () => {
+  const narrowRules = mediaBlockForViewport(css, 480);
+  assert.ok(narrowRules, 'Expected a responsive rule that applies at 480px');
+  assert.match(narrowRules, /\.proximity-bar label:first-child,\.proximity-bar label:nth-child\(2\)\{[^}]*min-width:0[^}]*width:100%/);
+  assert.match(narrowRules, /\.proximity-bar input,\.proximity-bar select\{[^}]*width:100%/);
+  assert.match(narrowRules, /\.map-actions\{[^}]*max-width:100%/);
+  assert.doesNotMatch(narrowRules, /\.map-overlay\{[^}]*position:static/);
+  assert.match(lastRuleForSelector(css, '.map-actions button'), /width:44px[^}]*height:44px/);
+});
+
+test('map offer groups stay within the visible viewport', () => {
+  assert.match(lastRuleForSelector(css, '.map-job-group'), /max-width:min\(340px,calc\(100vw - 48px\)\)/);
 });
