@@ -78,6 +78,14 @@ test('Carrefour conserva una oferta sin localidad sin inventar un punto',async()
   assert.equal(jobs[0]?.location,null);
 });
 
+test('Carrefour no confunde una región con un municipio incluido en su nombre',async()=>{
+  const html=carrefourPage(1,1,'token-region','Comunidad de Madrid',null);
+  const resolver=(city:string)=>city==='Madrid'?{city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',location:{point:[-3.7,40.4] as [number,number],precision:'municipality' as const,sourceUrl:'https://example.org/madrid',sourceUpdatedAt:null,note:'approx'}}:null;
+  const jobs=await fetchCarrefourOffers(checkedAt,resolver,(async()=>new Response(html,{headers:{'content-type':'text/html'}})) as typeof fetch);
+  assert.equal(jobs[0]?.city,'Comunidad de Madrid');
+  assert.equal(jobs[0]?.location,null);
+});
+
 const lidlOffer=(postingId:string,city='Vícar')=>({
   postingId,requisitionId:postingId,title:'Cajero/a - Reponedor/a',
   location:{country:'ES',city,state:'',name:`${city} C/ Mayor 1`,type:'Point'},

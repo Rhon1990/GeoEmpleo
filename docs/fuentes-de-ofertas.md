@@ -33,8 +33,8 @@ que sigan abiertas.
 | `successfactors-capgemini` | [Capgemini](https://careers.capgemini.com/search/?q=&locationsearch=Spain) | SuccessFactors | Actualizada |
 | `successfactors-melia` | [Meliá Hotels International](https://careers.melia.com/go/Profesionales-de-hotel/8861001/) | SuccessFactors | Actualizada |
 | `teamtailor-dia` | [DIA](https://empleo.dia.es/jobs) | Teamtailor | Actualizada; 118 publicaciones, 95 con punto |
-| `carrefour-talentforjobs` | [Carrefour](https://www.carrefour.es/trabaja-en-carrefour/envia-tu-curriculum/mas-info/) | TalentForJobs | Captura directa 27/10/2026: 878 publicaciones, 668 con punto municipal |
-| `lidl-search-api` | [Lidl España](https://empleo.lidl.es/buscar-empleo) | Buscador oficial JSON | Captura directa 27/10/2026: 264 publicaciones, 228 con punto municipal |
+| `carrefour-talentforjobs` | [Carrefour](https://www.carrefour.es/trabaja-en-carrefour/envia-tu-curriculum/mas-info/) | TalentForJobs | Captura directa 27/10/2026: 887 publicaciones, 716 con punto municipal |
+| `lidl-search-api` | [Lidl España](https://empleo.lidl.es/buscar-empleo) | Buscador oficial JSON | Captura directa 27/10/2026: 259 publicaciones, 224 con punto municipal |
 | `talentclue-mcdonalds` | [McDonald's](https://careers.talentclue.com/es/company/6285677f44a78f103ce17087c20ecee7/jsoffers/modal?order=Fecha&sort=asc) | TalentClue | Actualizada |
 | `amrest-kfc` | [KFC / AmRest](https://careers.amrest.eu/KFC/go/Jobs-KFC-ES/9158355/) | Portal AmRest | Actualizada |
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
@@ -140,9 +140,9 @@ establecimientos ni colocar puntos arbitrarios.
 
 ### Verificación de Carrefour y Lidl — 27/10/2026
 
-Las capturas de solo lectura desde sus portales oficiales devolvieron 878 ofertas
-de Carrefour y 264 de Lidl, con IDs únicos por fuente. El gazetteer nacional
-reconoció 668 y 228 localidades, respectivamente, para el mapa. GeoEmpleo
+Las capturas de solo lectura desde sus portales oficiales devolvieron 887 ofertas
+de Carrefour y 259 de Lidl, con IDs únicos por fuente. El gazetteer nacional
+reconoció 716 y 224 localidades, respectivamente, para el mapa. GeoEmpleo
 conserva el texto de zona que publica cada tarjeta; si el dato es regional,
 ambiguo o no coincide con una localidad única, la oferta permanece sin marcador
 municipal. En Carrefour, los filtros del formulario son multiselección: el

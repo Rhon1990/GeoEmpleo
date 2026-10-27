@@ -112,15 +112,7 @@ function postbackFields(html:string,pageValue:number):URLSearchParams {
 
 function resolveMunicipality(city:string,resolveCity:CityResolver) {
   const clean=city.replace(/^carrefour\s+/i,'').trim();
-  const tokens=clean.split(/\s+/).filter(Boolean);
-  const candidates=new Map<string,ReturnType<CityResolver>>();
-  const add=(name:string)=>{
-    const place=resolveCity(name);
-    if(place) candidates.set(`${place.province}|${place.city}|${place.location?.point.join(',')??''}`,place);
-  };
-  add(clean);
-  for(let start=0;start<tokens.length;start++) for(let end=start+1;end<=tokens.length;end++) add(tokens.slice(start,end).join(' '));
-  return candidates.size===1?[...candidates.values()][0]??null:null;
+  return resolveCity(clean);
 }
 
 function adaptCarrefourOffer(offer:CarrefourListedOffer,checkedAt:string,resolveCity:CityResolver):PublicJob {
