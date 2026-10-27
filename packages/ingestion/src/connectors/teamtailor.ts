@@ -202,7 +202,8 @@ export function adaptDiaDetail(offer: TeamtailorOffer, html: string, checkedAt: 
   const id = /\/jobs\/(\d+)-/.exec(new URL(offer.url).pathname)?.[1];
   const identifier = posting.identifier as { value?: unknown } | undefined;
   const postedAt = typeof posting.datePosted === 'string' ? Date.parse(posting.datePosted) : Number.NaN;
-  if (!id || identifier?.value !== id || !heading || textOf(heading) !== offer.title || posting.title !== offer.title ||
+  const structuredTitle = typeof posting.title === 'string' ? textOf(documentOf(posting.title)) : '';
+  if (!id || identifier?.value !== id || !heading || textOf(heading) !== offer.title || structuredTitle !== offer.title ||
     !Number.isFinite(postedAt) || postedAt > Date.parse(checkedAt) + 86_400_000 || typeof posting.description !== 'string') {
     throw new TypeError('Ficha DIA no corresponde al anuncio del listado');
   }

@@ -20,6 +20,8 @@ const employerBrands={
   'successfactors-capgemini':{src:'/brands/capgemini.png',alt:'Capgemini'},
   'successfactors-melia':{src:'/brands/melia.svg',alt:'Meliá Hotels International'},
   'teamtailor-dia':{src:'/brands/dia.png',alt:'DIA'},
+  'carrefour-talentforjobs':{src:'/brands/carrefour.svg',alt:'Carrefour'},
+  'lidl-search-api':{src:'/brands/lidl.svg',alt:'Lidl'},
   'disa-empleo':{src:'/brands/disa.png',alt:'Grupo DISA'},
 };
 export const neutralBrand={src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo'};

@@ -16,6 +16,8 @@ Estos archivos se sirven desde GeoEmpleo para evitar peticiones de imagen a terc
 | `capgemini.png` | Capgemini | [Portal de empleo](https://careers.capgemini.com/search/) |
 | `melia.svg` | Meliá Hotels International | [Portal de empleo](https://careers.melia.com/go/Profesionales-de-hotel/8861001/) |
 | `dia.png` | DIA | [Portal de empleo](https://empleo.dia.es/jobs) |
+| `carrefour.svg` | Carrefour | [Simple Icons](https://simpleicons.org/?q=carrefour) |
+| `lidl.svg` | Lidl | [Simple Icons](https://simpleicons.org/?q=lidl) |
 | `disa.png` | Grupo DISA | [Web corporativa](https://www.disagrupo.es/) |
 
 La atribución de imagen se cubre mediante pruebas en `tests/web-employer-brand.test.ts`. Las ofertas públicas, directas y de fuentes sin empleador empresarial identificable usan `geoempleo-neutral.svg`.

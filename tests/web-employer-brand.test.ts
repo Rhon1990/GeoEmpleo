@@ -17,6 +17,8 @@ const publicBrands={
   'successfactors-capgemini':['/brands/capgemini.png','Capgemini'],
   'successfactors-melia':['/brands/melia.svg','Meliá Hotels International'],
   'teamtailor-dia':['/brands/dia.png','DIA'],
+  'carrefour-talentforjobs':['/brands/carrefour.svg','Carrefour'],
+  'lidl-search-api':['/brands/lidl.svg','Lidl'],
   'disa-empleo':['/brands/disa.png','Grupo DISA'],
 };
 
