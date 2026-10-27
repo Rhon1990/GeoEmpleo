@@ -58,3 +58,26 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 .filter-chip{flex:none}
 .map-panel:has(.map-state) .map-footer{display:none}
 @media(max-width:780px){.site-footer{padding:16px 18px}.site-footer details{margin-top:6px}}
+
+.filter-bar{min-width:0;max-width:100%}
+.filter-controls{min-width:0;max-width:100%}
+.categories{width:100%;max-width:100%;min-width:0;flex:1 1 0;overflow-x:auto;overscroll-behavior-inline:contain}
+.map-job-group{max-width:min(340px,calc(100vw - 48px))}
+.job-card,.results-heading,.detail-body,.about-content{min-width:0;max-width:100%}
+.job-card h3,.detail-body,.about-content{overflow-wrap:anywhere}
+dialog{max-width:calc(100vw - 32px)}
+@media(max-width:780px){
+  .filter-bar{align-items:stretch;flex-wrap:wrap}
+  .filter-controls{width:100%}
+  .map-overlay{position:absolute;top:10px;left:50%;width:calc(100% - 20px);padding:0;transform:translateX(-50%)}
+  .map-actions{max-width:100%;gap:6px}
+}
+@media(max-width:480px){
+  .site-header,.search-section{padding-inline:14px}
+  .location-field,.search-button{width:100%}
+  .search-button{flex-basis:100%}
+  .proximity-bar label:first-child,.proximity-bar label:nth-child(2){min-width:0;width:100%}
+  .proximity-bar input,.proximity-bar select{width:100%}
+  .mobile-view-switch{padding-inline:14px}
+  .map-actions{max-width:100%;gap:4px;padding:5px}
+}

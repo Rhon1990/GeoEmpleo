@@ -50,6 +50,19 @@ function ruleForSelector(cssText: string, selector: string): string {
   return match[1];
 }
 
+function lastRuleForSelector(cssText: string, selector: string): string {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const matches = [...cssText.matchAll(new RegExp(`(?:^|})\\s*${escapedSelector}\\{([^}]*)\\}`, 'g'))];
+  assert.ok(matches.length > 0, `Expected a CSS rule for ${selector}`);
+  return matches.at(-1)![1];
+}
+
+function rulesForSelector(cssText: string, selector: string): string[] {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return [...cssText.matchAll(new RegExp(`(?:^|})\\s*${escapedSelector}\\{([^}]*)\\}`, 'g'))]
+    .map(match => match[1]);
+}
+
 function mediaBlockForViewport(cssText: string, viewportWidth: number): string | undefined {
   const mediaPattern = /@media\(max-width:(\d+)px\)\{/g;
   const matches = [...cssText.matchAll(mediaPattern)]
@@ -473,4 +486,28 @@ test('mobile preserves document flow with a single visible workspace panel', () 
   const buttons=elements(switcher).filter(node=>node.tagName==='button');
   assert.deepEqual(buttons.map(node=>attribute(node,'data-workspace-view')),['jobs','map']);
   assert.deepEqual(buttons.map(node=>attribute(node,'aria-pressed')),['true','false']);
+});
+
+test('filter controls constrain horizontal scrolling to the category rail', () => {
+  assert.match(lastRuleForSelector(css, '.filter-bar'), /min-width:0/);
+  assert.match(rulesForSelector(css, '.filter-controls').join(';'), /min-width:0/);
+  const categories = lastRuleForSelector(css, '.categories');
+  assert.match(categories, /width:100%/);
+  assert.match(categories, /max-width:100%/);
+  assert.match(categories, /overflow-x:auto/);
+  assert.match(categories, /overscroll-behavior-inline:contain/);
+});
+
+test('narrow mobile stacks flexible fields without shrinking touch controls', () => {
+  const narrowRules = mediaBlockForViewport(css, 480);
+  assert.ok(narrowRules, 'Expected a responsive rule that applies at 480px');
+  assert.match(narrowRules, /\.proximity-bar label:first-child,\.proximity-bar label:nth-child\(2\)\{[^}]*min-width:0[^}]*width:100%/);
+  assert.match(narrowRules, /\.proximity-bar input,\.proximity-bar select\{[^}]*width:100%/);
+  assert.match(narrowRules, /\.map-actions\{[^}]*max-width:100%/);
+  assert.doesNotMatch(narrowRules, /\.map-overlay\{[^}]*position:static/);
+  assert.match(lastRuleForSelector(css, '.map-actions button'), /width:44px[^}]*height:44px/);
+});
+
+test('map offer groups stay within the visible viewport', () => {
+  assert.match(lastRuleForSelector(css, '.map-job-group'), /max-width:min\(340px,calc\(100vw - 48px\)\)/);
 });
