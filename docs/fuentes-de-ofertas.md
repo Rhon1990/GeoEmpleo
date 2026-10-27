@@ -9,9 +9,8 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 ## Conectores diarios activos
 
 El registro tiene ahora 19 identificadores marcados como `active`, con adaptador
-en el runner. El último informe completo disponible antes de añadir Carrefour y
-Lidl contiene 17 fuentes; las dos nuevas se verificaron mediante capturas
-directas en esta rama, pero todavía no están en la web pública.
+en el runner. Carrefour y Lidl se incorporaron a la web pública el 27/10/2026.
+La columna de ejecución de las demás fuentes recoge una captura histórica.
 «Actualizada» y «fallida» describen **solo la ejecución del
 26/10/2026 a las 12:49:43 UTC**, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar

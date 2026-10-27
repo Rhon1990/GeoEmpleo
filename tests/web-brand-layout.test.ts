@@ -150,7 +150,7 @@ test('index.html parses without HTML errors', () => {
   assert.deepEqual(parseErrors, []);
 });
 
-test('stylesheet cache key includes the latest responsive patch version', () => {
+test('stylesheet cache key includes the latest footer patch version', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -160,7 +160,7 @@ test('stylesheet cache key includes the latest responsive patch version', () => 
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261027-mobile-filter-height(?:&|$)/,
+    /(?:[?&]v=)20261027-footer-credit(?:&|$)/,
   );
 });
 
