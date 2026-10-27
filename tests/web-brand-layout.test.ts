@@ -321,8 +321,9 @@ test('map controls overlay the single map and keep approved labels and legend', 
   assert.ok(mapActions);
   const approvedLabels = new Map([
     ['return-origin', 'Volver a mi ubicación'],
+    ['use-location', 'Usar mi ubicación'],
     ['choose-origin', 'Elegir mi zona'],
-    ['search-area', 'Rehacer en esta zona'],
+    ['search-area', 'Actualizar esta zona'],
     ['show-all-map', 'Ver España'],
   ]);
   for (const [id, label] of approvedLabels) {
@@ -338,6 +339,61 @@ test('map controls overlay the single map and keep approved labels and legend', 
       && textContent(element).trim() === 'Ubicaciones municipales aproximadas',
   );
   assert.ok(legendLead);
+});
+
+test('map controls expose matching accessible names and hidden labels', () => {
+  const approvedLabels = new Map([
+    ['return-origin', 'Volver a mi ubicación'],
+    ['use-location', 'Usar mi ubicación'],
+    ['choose-origin', 'Elegir mi zona'],
+    ['search-area', 'Actualizar esta zona'],
+    ['show-all-map', 'Ver España'],
+  ]);
+
+  for (const [id, label] of approvedLabels) {
+    const action = allElements.find(element => attribute(element, 'id') === id);
+    assert.ok(action, `Expected #${id}`);
+    assert.equal(action.tagName, 'button');
+    assert.equal(attribute(action, 'aria-label'), label, `Expected #${id} aria-label`);
+    assert.equal(attribute(action, 'data-tooltip'), label, `Expected #${id} tooltip`);
+    const hiddenLabels = elements(action).filter(element => hasClass(element, 'visually-hidden'));
+    assert.equal(hiddenLabels.length, 1, `Expected one hidden label in #${id}`);
+    assert.equal(textContent(hiddenLabels[0]).trim(), label);
+  }
+});
+
+test('map controls use one decorative inline icon per action', () => {
+  for (const id of [
+    'return-origin',
+    'use-location',
+    'choose-origin',
+    'search-area',
+    'show-all-map',
+  ]) {
+    const action = allElements.find(element => attribute(element, 'id') === id);
+    assert.ok(action, `Expected #${id}`);
+    const icons = elements(action).filter(element => element.tagName === 'svg');
+    assert.equal(icons.length, 1, `Expected one inline SVG in #${id}`);
+    assert.equal(attribute(icons[0], 'aria-hidden'), 'true');
+    assert.equal(attribute(icons[0], 'focusable'), 'false');
+  }
+});
+
+test('map action toolbar keeps compact targets and CSS-only tooltips', () => {
+  assert.match(ruleForSelector(css, '.map-actions button'), /position:relative/);
+  assert.match(ruleForSelector(css, '.map-actions button'), /width:44px/);
+  assert.match(ruleForSelector(css, '.map-actions button'), /height:44px/);
+  assert.match(ruleForSelector(css, '.map-actions button svg'), /width:22px[^}]*height:22px/);
+  assert.match(
+    ruleForSelector(css, '.map-actions button::after'),
+    /content:attr\(data-tooltip\)/,
+  );
+  assert.match(
+    ruleForSelector(css, '.map-actions button:hover::after,.map-actions button:focus-visible::after'),
+    /opacity:1/,
+  );
+  assert.match(ruleForSelector(css, '.map-actions button:first-child::after'), /left:0/);
+  assert.match(ruleForSelector(css, '.map-actions button:last-child::after'), /right:0/);
 });
 
 test('desktop shell gives the workspace the actual remaining viewport height', () => {
@@ -387,7 +443,7 @@ test('desktop shell gives the workspace the actual remaining viewport height', (
     css,
     /\.map-overlay\{[^}]*width:calc\(100% - 24px\)[^}]*justify-content:center[^}]*overflow:visible/,
   );
-  assert.match(css, /\.map-actions\{[^}]*flex-wrap:wrap[^}]*justify-content:center/);
+  assert.match(css, /\.map-actions\{[^}]*flex-wrap:nowrap[^}]*justify-content:center/);
   assert.match(css, /\.map-footer\{[^}]*bottom:36px/);
 });
 
