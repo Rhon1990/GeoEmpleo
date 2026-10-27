@@ -1,6 +1,6 @@
 # GeoEmpleo — Contexto del proyecto
 
-Última revisión: 26 de octubre de 2026, Europe/Madrid.
+Última revisión: 27 de octubre de 2026, Europe/Madrid.
 
 ## Propósito y alcance confirmado
 
@@ -24,7 +24,11 @@ Versiones verificadas: Node.js 24.19.0, TypeScript 7.0.2 y tipos de Node 24.19.2
 
 ## Índice funcional
 
+La actualización operativa se ejecuta en GitHub Actions desde `main`, sin depender de Codex ni del ordenador. El workflow se prepara con tres horarios (05:37, 07:37 y 09:37 Europe/Madrid); el primero que publique un catálogo del día hace que los respaldos omitan la captura. El botón Run workflow permite recuperación manual en GitHub. Antes de ingerir se recupera y valida el catálogo público actual como base de retención. Un fallo de recuperación impide publicar; un fallo total de ingesta conserva la web y un resultado parcial conserva las fuentes fallidas. El informe queda como artifact durante siete días. GitHub puede retrasar u omitir eventos schedule; los respaldos reducen el riesgo, no garantizan ejecución. El 27/10 no se observó ningún evento schedule en el historial; las dos ejecuciones anteriores fueron manuales. Las secciones antiguas sobre la automatización local describen etapas históricas y no el mecanismo operativo actual.
+
 La analítica web se habilitó en Firebase para el proyecto Spark `geoempleo-49978`. Su comportamiento opt-in, ubicación geográfica aproximada por conexión (país/región/ciudad) y límites de privacidad están descritos en [diseño Firebase Analytics](superpowers/specs/2026-10-26-firebase-analytics-consent-design.md) y [plan de integración](superpowers/plans/2026-10-26-firebase-analytics.md). La geografía procede de la inferencia de Google Analytics; no se solicita GPS ni se envían las localidades consultadas. El SDK solo se carga tras aceptar y la preferencia puede cambiarse desde Privacidad.
+
+La monetización usa **AdSense** (web), no AdMob (aplicaciones). El diseño y el plan están en [especificación AdSense](superpowers/specs/2026-10-26-adsense-controlled-placements-design.md) y [plan de implementación](superpowers/plans/2026-10-26-adsense-controlled-placements.md). La propiedad de `geoempleo-49978.web.app` se verificó mediante `ads.txt` y la revisión de AdSense está solicitada, todavía pendiente. Se creó la unidad manual «GeoEmpleo - Resultados de búsqueda» (slot `9736342997`) y se publicó en Privacy & Messaging el aviso europeo en español, con «No consentir» para España y logo neutro del sitio. La web pública aún no carga el SDK de anuncios ni la CMP: se habilitarán cuando AdSense apruebe el sitio, el titular mantenga Auto ads desactivado y estén listos el ID de editor y el slot. La unidad manual aparece tras ocho ofertas, solo si hay un anuncio completado, y no forma parte del conteo ni del mapa. El workflow diario de esta rama admite las variables públicas opcionales de AdSense; si faltan, la web sigue sin anuncios. La privacidad publicitaria de Google y el opt-in de Firebase Analytics mantienen decisiones independientes. No se habilitó facturación ni Blaze.
 
 La especificación principal está en [Análisis de Bandana y arquitectura de GeoEmpleo](architecture/2026-10-14-geoempleo-arquitectura.md).
 
@@ -46,9 +50,7 @@ Planificación: [Backlog y plan técnico nacional](planning/2026-10-14-backlog-t
 
 ### Código existente
 
-El selector «¿Dónde?» omite el valor «España» procedente de las fichas y mantiene «Toda España» para la búsqueda nacional. Los enlaces antiguos con `city=España` se abren sin ese filtro.
-
-La web pública del MVP ya está implementada en `apps/web-preview`: una búsqueda estática sobre un catálogo versionado, con filtros por texto, empresa canónica, territorio, área y geografía. Las variantes de McDonald’s se agrupan en el filtro de empresa sin alterar el empleador descrito en cada oferta. La lista se limita a 300 tarjetas por consulta; el mapa conserva todos los puntos de esa consulta. El catálogo incluye conectores de ingesta diaria en `packages/ingestion`. En la captura de 2026-10-26 había 2.806 ofertas, incluidas 118 de DIA (95 con ubicación municipal aproximada); las cifras cambian con cada actualización. La fuente DIA es el portal de empleo de la empresa y no se debe confundir con resultados de ubicación cuyo nombre contenga “Día”.
+La web pública del MVP ya está implementada en `apps/web-preview`: una búsqueda estática sobre un catálogo versionado, con filtros por texto, empresa canónica, territorio, área y geografía. «¿Dónde?» ofrece «Toda España» como vista nacional y comunidades autónomas con ofertas; «España» como valor geográfico de algunas fichas no es un territorio seleccionable. Las variantes de McDonald’s se agrupan en el filtro de empresa sin alterar el empleador descrito en cada oferta. La lista se limita a 300 tarjetas por consulta; el mapa conserva todos los puntos de esa consulta. El catálogo incluye conectores de ingesta diaria en `packages/ingestion`. En la captura de 2026-10-26 había 2.806 ofertas, incluidas 118 de DIA (95 con ubicación municipal aproximada); las cifras cambian con cada actualización. La fuente DIA es el portal de empleo de la empresa y no se debe confundir con resultados de ubicación cuyo nombre contenga “Día”.
 
 | Ruta | Responsabilidad comprobada |
 |---|---|
