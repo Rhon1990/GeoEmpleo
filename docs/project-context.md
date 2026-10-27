@@ -322,4 +322,4 @@ Al pulsar «Usar mi ubicación», si el permiso está pendiente o su estado no s
 
 ## Pie de página y atribuciones
 
-El pie identifica a Rhonal Alonso Delgado Padilla como desarrollador en 2026 y enlaza las fuentes de ofertas conectadas, incluidas Carrefour y Lidl, además de las atribuciones geográficas generales y la selección estática del BOE. El crédito admite saltos de línea en pantallas estrechas; el pie no destaca localidades concretas.
+El pie identifica a Rhonal Alonso Delgado Padilla como desarrollador en 2026 y enlaza las fuentes de ofertas conectadas, incluidas Carrefour y Lidl, además de la selección estática del BOE. Las atribuciones geográficas están en «Acerca de GeoEmpleo». El crédito admite saltos de línea en pantallas estrechas; el pie no destaca localidades concretas.
