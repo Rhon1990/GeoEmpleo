@@ -8,6 +8,12 @@ import { successFactorsBoards } from './connectors/successfactors-boards.ts';
 import { diaListingUrl } from './connectors/teamtailor.ts';
 import { carrefourListingUrl } from './connectors/carrefour.ts';
 import { lidlSearchEndpoint } from './connectors/lidl.ts';
+import {quironsaludListingUrl} from './connectors/quironsalud.ts';
+import {eulenListingUrl} from './connectors/eulen.ts';
+import {randstadListingUrl} from './connectors/randstad.ts';
+import {cleceListingUrl} from './connectors/clece.ts';
+import {domusViListingUrl} from './connectors/domusvi.ts';
+import {indraListingUrl} from './connectors/indra.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -108,6 +114,18 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:carrefourListingUrl,licenseUrl:null},
   {id:'lidl-search-api',name:'Lidl España · buscador oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:lidlSearchEndpoint,licenseUrl:null},
+  {id:'talentclue-quironsalud',name:'Quirónsalud · empleo oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:quironsaludListingUrl,licenseUrl:null},
+  {id:'selectminds-eulen',name:'Grupo Eulen · empleo oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:eulenListingUrl,licenseUrl:null},
+  {id:'randstad-oficial',name:'Randstad · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:randstadListingUrl,licenseUrl:null},
+  {id:'successfactors-clece',name:'Clece · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:cleceListingUrl,licenseUrl:null},
+  {id:'bizneo-domusvi',name:'DomusVi · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:domusViListingUrl,licenseUrl:null},
+  {id:'successfactors-indra',name:'Indra · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:indraListingUrl,licenseUrl:null},
 ];
 
 export interface SourceRegistry {
