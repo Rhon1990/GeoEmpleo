@@ -81,6 +81,22 @@ function mediaBlockForViewport(cssText: string, viewportWidth: number): string |
   return undefined;
 }
 
+function mediaBlocksForMaxWidth(cssText: string, maxWidth: number): string[] {
+  const mediaPattern = /@media\(max-width:(\d+)px\)\{/g;
+  return [...cssText.matchAll(mediaPattern)]
+    .filter(match => Number(match[1]) === maxWidth && match.index !== undefined)
+    .map(match => {
+      const bodyStart = match.index! + match[0].length;
+      let depth = 1;
+      for (let index = bodyStart; index < cssText.length; index += 1) {
+        if (cssText[index] === '{') depth += 1;
+        if (cssText[index] === '}') depth -= 1;
+        if (depth === 0) return cssText.slice(bodyStart, index);
+      }
+      return '';
+    });
+}
+
 function relativeLuminance(hex: string): number {
   const shorthand = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(hex);
   const normalized = shorthand
@@ -486,6 +502,19 @@ test('mobile preserves document flow with a single visible workspace panel', () 
   const buttons=elements(switcher).filter(node=>node.tagName==='button');
   assert.deepEqual(buttons.map(node=>attribute(node,'data-workspace-view')),['jobs','map']);
   assert.deepEqual(buttons.map(node=>attribute(node,'aria-pressed')),['true','false']);
+});
+
+test('mobile map overlay stays compact and centered above the map', () => {
+  const mobileRules = mediaBlocksForMaxWidth(css, 780);
+  assert.ok(mobileRules.length > 0, 'Expected a responsive rule at 780px');
+  const overlayRules = mobileRules.flatMap(block =>
+    [...block.matchAll(/\.map-overlay\{([^}]*)\}/g)].map(match => match[1]),
+  );
+  assert.ok(overlayRules.length > 0, 'Expected a map overlay rule at 780px');
+  assert.match(
+    overlayRules.at(-1)!,
+    /position:absolute[^}]*left:50%[^}]*width:calc\(100% - 20px\)[^}]*transform:translateX\(-50%\)/,
+  );
 });
 
 test('filter controls constrain horizontal scrolling to the category rail', () => {
