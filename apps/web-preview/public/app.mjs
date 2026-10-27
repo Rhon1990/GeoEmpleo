@@ -1,3 +1,4 @@
+import {selectableTerritories} from './territories.mjs';
 import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
@@ -244,7 +245,7 @@ function updateFacets(facets) {
   const territory=location.value;
   location.replaceChildren(element('option','Toda España'));
   location.firstChild.value='';
-  for(const region of facets.regions){const option=element('option',region);option.value=region;location.append(option);}
+  for(const region of selectableTerritories(facets.regions)){const option=element('option',region);option.value=region;location.append(option);}
   location.value=territory;
   const employerFilter=document.querySelector('#employer-filter');
   employerFilter.replaceChildren(element('option','Todas las empresas'));
@@ -473,7 +474,7 @@ query.value=initialParams.get('q')??'';
 employer=initialParams.get('employer')??'';
 category=initialParams.get('category')??'';
 const initialTerritory=initialParams.get('city');
-if(initialTerritory){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;territoryFocusPending=initialTerritory;}
+if(initialTerritory&&selectableTerritories([initialTerritory]).length){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;territoryFocusPending=initialTerritory;}
 
 window.addEventListener('pagehide',()=>{search.cancel();placeSearch.cancel();detailRequest?.abort();});
 void startMap();
