@@ -3,6 +3,7 @@ import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,offerDates,placesLabel,jobPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261026-origin';
+import {requestLocationWithPermission} from './location-permission.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
@@ -358,7 +359,34 @@ function setOrigin(point,label) {
   if(!mapController&&!mapStarting)requestSearch({immediate:true});
 }
 
-async function useMyLocation() {
+const locationPermissionDialog=document.querySelector('#location-permission-dialog');
+function showLocationPermission(mode) {
+  const title=document.querySelector('#location-permission-title');
+  const message=document.querySelector('#location-permission-message');
+  const help=document.querySelector('#location-permission-help');
+  const action=document.querySelector('#location-permission-action');
+  const cancel=document.querySelector('#location-permission-cancel');
+  title.textContent=mode==='denied'?'Ubicación bloqueada':'Usar tu ubicación';
+  message.textContent=mode==='denied'?'El permiso de ubicación está rechazado o bloqueado. ¿Quieres saber cómo activarlo?':'GeoEmpleo usará tu ubicación una vez para centrar el mapa y encontrar ofertas cercanas. El navegador te pedirá permiso.';
+  action.textContent=mode==='denied'?'Ver cómo activarlo':'Solicitar ubicación';
+  cancel.textContent='Ahora no';help.hidden=true;
+  if(!locationPermissionDialog.open)locationPermissionDialog.showModal();
+  return new Promise(resolve=>{
+    let accepted=false;
+    const finish=()=>{action.removeEventListener('click',onAction);cancel.removeEventListener('click',onCancel);locationPermissionDialog.removeEventListener('close',finish);resolve(accepted);};
+    const onCancel=()=>locationPermissionDialog.close();
+    const onAction=()=>{
+      if(mode==='denied'&&help.hidden){help.hidden=false;action.textContent='Entendido';cancel.hidden=true;return;}
+      accepted=mode!=='denied';locationPermissionDialog.close();
+    };
+    cancel.hidden=false;
+    action.addEventListener('click',onAction);cancel.addEventListener('click',onCancel);
+    locationPermissionDialog.addEventListener('close',finish,{once:true});
+  });
+}
+document.querySelector('#location-permission-close').addEventListener('click',()=>locationPermissionDialog.close());
+
+async function useMyLocation({interactive=false}={}) {
   if(locating)return;
   cancelPlaceSearch();originRevision++;
   locating=true;
@@ -366,8 +394,12 @@ async function useMyLocation() {
   document.querySelector('#use-location').disabled=true;
   document.querySelector('#origin-status').textContent='Esperando permiso de ubicación del navegador…';
   try {
-    const position=await locateOnce();
+    const position=interactive?await requestLocationWithPermission({
+      permission:async()=>navigator.permissions?(await navigator.permissions.query({name:'geolocation'})).state:'prompt',
+      confirm:()=>showLocationPermission('prompt'),locate:()=>locateOnce(),denied:()=>{void showLocationPermission('denied');},
+    }):await locateOnce();
     if(originRevision!==revision)return;
+    if(position.status==='cancelled'){document.querySelector('#origin-status').textContent='Puedes elegir una localidad o usar el mapa.';return position;}
     if(position.status==='located') {
       originInput.value='';
       setOrigin(position.point,'Ubicación aproximada del dispositivo');
@@ -429,9 +461,9 @@ document.querySelector('#choose-origin').addEventListener('click',() => {
 });
 document.querySelector('#search-area').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'search_visible_area'});requestSearch({immediate:true,force:true});});
 document.querySelector('#show-all-map').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'show_spain'});mapController?.overview();});
-document.querySelector('#use-location').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'use_my_location'});if(mapController)void useMyLocation();else void startMap();});
+document.querySelector('#use-location').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'use_my_location'});if(mapController)void useMyLocation({interactive:true});else void startMap({interactive:true});});
 
-async function startMap() {
+async function startMap({interactive=false}={}) {
   if(mapStarting||mapController)return;
   const revision=originRevision;
   mapStarting=true;loadMapButton.disabled=true;
@@ -441,7 +473,7 @@ async function startMap() {
     const config=await response.json();
     if(!config.googleMapsApiKey){mapMessage.textContent='Falta la configuración del mapa. Puedes buscar en la lista o elegir una localidad.';requestSearch({immediate:true,allowList:true});return;}
     mapMessage.textContent='Permite tu ubicación para empezar cerca de ti; también puedes elegir una localidad.';
-    const position=originRevision===revision&&!location.value?await useMyLocation():null;
+    const position=originRevision===revision&&(interactive||!location.value)?await useMyLocation({interactive}):null;
     mapMessage.textContent='Cargando el mapa y las ofertas de tu zona…';
     const mapRevision=originRevision;
     mapController=await createGoogleMap(mapHost,config,{

@@ -15,6 +15,7 @@ const previewAssets = new Map([
   ['/geography.mjs', ['geography.mjs','text/javascript; charset=utf-8']],
   ['/google-map.mjs', ['google-map.mjs','text/javascript; charset=utf-8']],
   ['/map-search.mjs', ['map-search.mjs','text/javascript; charset=utf-8']],
+  ['/location-permission.mjs', ['location-permission.mjs','text/javascript; charset=utf-8']],
   ['/reference-places.mjs', ['reference-places.mjs','text/javascript; charset=utf-8']],
   ['/map-state.mjs', ['map-state.mjs','text/javascript; charset=utf-8']],
   ['/data/calls.json', ['data/calls.json','application/json; charset=utf-8']],
