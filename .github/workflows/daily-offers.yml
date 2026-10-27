@@ -2,8 +2,8 @@ name: Actualizar ofertas de GeoEmpleo
 
 on:
   schedule:
-    # 05:37 en Europe/Madrid; fuera del cambio horario automático del runner.
-    - cron: '37 5 * * *'
+    # Captura diaria y respaldos; se omiten si el catálogo ya es de hoy.
+    - cron: '37 5,7,9 * * *'
       timezone: Europe/Madrid
   workflow_dispatch:
 
@@ -25,10 +25,16 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Comprobar actualización y recuperar catálogo publicado
+        id: refresh
+        run: node tools/prepare-daily-refresh.mjs
+
       - name: Instalar dependencias fijadas
+        if: steps.refresh.outputs.required == 'true'
         run: npm ci
 
       - name: Capturar fuentes públicas y validar el catálogo
+        if: steps.refresh.outputs.required == 'true'
         id: ingest
         shell: bash
         run: |
@@ -45,9 +51,13 @@ jobs:
             --started-at "$started_at"
 
       - name: Preparar sitio estático
+        if: steps.refresh.outputs.required == 'true'
         env:
           GEOEMPLEO_GOOGLE_MAPS_API_KEY: ${{ secrets.GEOEMPLEO_GOOGLE_MAPS_API_KEY }}
           GEOEMPLEO_GOOGLE_MAPS_MAP_ID: ${{ secrets.GEOEMPLEO_GOOGLE_MAPS_MAP_ID }}
+          GEOEMPLEO_ADSENSE_ENABLED: ${{ vars.GEOEMPLEO_ADSENSE_ENABLED }}
+          GEOEMPLEO_ADSENSE_PUBLISHER_ID: ${{ vars.GEOEMPLEO_ADSENSE_PUBLISHER_ID }}
+          GEOEMPLEO_ADSENSE_SLOT_ID: ${{ vars.GEOEMPLEO_ADSENSE_SLOT_ID }}
         run: |
           if [ -z "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" ]; then
             echo 'Falta el secreto GEOEMPLEO_GOOGLE_MAPS_API_KEY.' >&2
@@ -55,8 +65,9 @@ jobs:
           fi
           env_file="$RUNNER_TEMP/geoempleo.env"
           umask 077
-          printf 'GEOEMPLEO_GOOGLE_MAPS_API_KEY=%s\nGEOEMPLEO_GOOGLE_MAPS_MAP_ID=%s\n' \
-            "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" "${GEOEMPLEO_GOOGLE_MAPS_MAP_ID:-}" > "$env_file"
+          printf 'GEOEMPLEO_GOOGLE_MAPS_API_KEY=%s\nGEOEMPLEO_GOOGLE_MAPS_MAP_ID=%s\nGEOEMPLEO_ADSENSE_ENABLED=%s\nGEOEMPLEO_ADSENSE_PUBLISHER_ID=%s\nGEOEMPLEO_ADSENSE_SLOT_ID=%s\n' \
+            "$GEOEMPLEO_GOOGLE_MAPS_API_KEY" "${GEOEMPLEO_GOOGLE_MAPS_MAP_ID:-}" \
+            "${GEOEMPLEO_ADSENSE_ENABLED:-}" "${GEOEMPLEO_ADSENSE_PUBLISHER_ID:-}" "${GEOEMPLEO_ADSENSE_SLOT_ID:-}" > "$env_file"
           GEOEMPLEO_ENV_FILE="$env_file" npm run build:web:static
           node tools/validate-daily-catalog.mjs \
             --catalog var/public-site/data/calls.json \
@@ -66,6 +77,7 @@ jobs:
           test ! -e var/public-site/manage.html
 
       - name: Publicar en Firebase Hosting
+        if: steps.refresh.outputs.required == 'true'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
@@ -75,8 +87,31 @@ jobs:
           entryPoint: .
 
       - name: Comprobar catálogo publicado por HTTPS
+        if: steps.refresh.outputs.required == 'true'
         run: |
           checked_at="$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('var/ingestion/latest.json','utf8')).checkedAt)")"
           node tools/validate-daily-catalog.mjs \
             --url "https://geoempleo-49978.web.app/data/calls.json?checkedAt=$checked_at" \
             --expected-checked-at "$checked_at"
+
+      - name: Conservar informe de las fuentes
+        if: always() && steps.refresh.outputs.required == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingestion-report-${{ github.run_id }}
+          path: var/ingestion/latest.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Informar fuentes sin actualizar
+        if: success() && steps.refresh.outputs.required == 'true'
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,appendFileSync} from 'node:fs';
+          const report=JSON.parse(readFileSync('var/ingestion/latest.json','utf8'));
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY,`\nCaptura ${report.status}: ${report.published} ofertas; ${report.checkedAt}.\n`);
+          for(const source of report.sources.filter(source=>source.status==='failed')) {
+            console.log(`::warning::Fuente sin actualizar: ${source.sourceId}. Se conserva su catálogo anterior.`);
+            appendFileSync(process.env.GITHUB_STEP_SUMMARY,`- Fuente sin actualizar: ${source.sourceId}.\n`);
+          }
+          NODE

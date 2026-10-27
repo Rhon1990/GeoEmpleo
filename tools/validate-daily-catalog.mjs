@@ -6,7 +6,7 @@ function option(name) {
   return index<0?undefined:process.argv[index+1];
 }
 
-function validateCatalog(catalog,expectedCheckedAt) {
+export function validateCatalog(catalog,expectedCheckedAt) {
   if(!catalog||!Array.isArray(catalog.calls)||typeof catalog.checkedAt!=='string')throw new TypeError('El catálogo no tiene estructura válida');
   const ids=catalog.calls.map(call=>call?.id);
   if(ids.some(id=>typeof id!=='string'||id.length===0)||new Set(ids).size!==ids.length)throw new TypeError('El catálogo contiene IDs vacíos o duplicados');

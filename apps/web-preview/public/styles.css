@@ -46,6 +46,10 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 .site-footer details{max-width:760px}
 .site-footer summary{cursor:pointer;color:var(--petrol);font-weight:650}
 .site-footer details p{padding-top:10px}
+.site-footer>a{color:var(--petrol);font-weight:650;white-space:nowrap}
+.ad-unit{grid-column:1/-1;align-self:stretch;border:1px solid var(--line);border-radius:12px;background:#f8faf9;padding:12px}
+.ad-unit[hidden]{display:none}
+.ad-unit-label{display:block;margin-bottom:7px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .categories{flex-wrap:nowrap;overflow-x:auto;min-width:0;scrollbar-width:thin}
 .filter-controls{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
 .employer-filter-label{display:flex;align-items:center;gap:7px;white-space:nowrap;color:var(--muted);font-size:11px}
