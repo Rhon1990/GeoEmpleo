@@ -16,7 +16,9 @@ const normalize = text => text.normalize('NFD').replace(/\p{M}/gu, '').toLocaleL
 
 export function employerFacet(value) {
   const normalized=normalize(value);
-  if(/^mcdonald(?:['´’]?s?)(?:\s|$)/u.test(normalized))return {id:'mcdonalds',label:'McDonald’s'};
+  const words=normalized.replace(/[\p{P}\p{S}]+/gu,' ').replace(/\s+/gu,' ').trim();
+  if(/^(?:mcdonald\s*s?|mchire)(?:\s|$)/u.test(words))return {id:'mcdonalds',label:'McDonald’s'};
+  if(/^randstad(?:\s|$)/u.test(words))return {id:'randstad',label:'Randstad'};
   return {id:normalized.replace(/[^\p{L}\p{N}]+/gu,'-'),label:value};
 }
 

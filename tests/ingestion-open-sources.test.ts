@@ -99,6 +99,20 @@ test('ECYL acepta el nuevo dominio oficial de datos abiertos y conserva el enlac
   assert.equal(jobs[0]?.location?.sourceUrl,cylOfficialUrl);
 });
 
+test('ECYL prefiere el enlace explícito de inscripción cuando la ficha incluye uno', () => {
+  const applicationUrl='https://www.infojobs.net/segovia/oficial-electromecanico-edar-segovia-indefinido/of-ib0ee1024764931bb66c397fb5449d1';
+  const jobs=adaptCylOffers([{...cylRaw,descripcion:`<p>Oferta.</p><a href="${applicationUrl}">Más información e inscripción a la oferta en la oficina virtual</a>`}],checkedAt,()=>location);
+
+  assert.equal(jobs[0]?.sourceUrl,applicationUrl);
+  assert.equal(jobs[0]?.location?.sourceUrl,cylOfficialUrl);
+});
+
+test('ECYL ignora enlaces de inscripción con dominio no verificado', () => {
+  const jobs=adaptCylOffers([{...cylRaw,descripcion:'<a href="https://untrusted.example/oferta">Más información e inscripción</a>'}],checkedAt,()=>location);
+
+  assert.equal(jobs[0]?.sourceUrl,cylOfficialUrl);
+});
+
 test('ECYL resuelve nacionalmente solo cuando no publica geográfico', () => {
   const withoutPoint = { ...cylRaw, geografico: null };
   const jobs = adaptCylOffers([withoutPoint], checkedAt, (city, province) => {

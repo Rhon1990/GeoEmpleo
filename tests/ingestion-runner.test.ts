@@ -205,7 +205,8 @@ test('runner publica success con tres fuentes seleccionadas',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-all-success-'));try{
  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
- await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-10-14T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+ const missing=(sourceId:string,id:string)=>({kind:'job',sourceId,source:sourceId,id,title:'Oferta anterior',employer:'ECYL',city:'Segovia',province:'Segovia',region:'Castilla y León',category:'otros',categoryLabel:'Otros',regime:'Oferta de empleo',places:null,paragraphs:[],sourceUrl:'https://empleo.jcyl.es/',publishedAt:'2026-10-14',checkedAt:'2026-10-14T00:00:00Z',closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,location:null});
+ await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-10-14T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[missing('ecyl-castilla-leon','ECYL-OLD'),missing('lanbide-euskadi','LANBIDE-OLD')]}));
  await writeFile(placesPath,JSON.stringify({places:[]}));
  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-10-15',license:'test',places:[]})));
  const murcia=await readFile(new URL('./fixtures/ingestion/murcia.json',import.meta.url),'utf8');
@@ -229,7 +230,10 @@ test('runner publica success con tres fuentes seleccionadas',async()=>{
   {sourceId:'ecyl-castilla-leon',status:'success',received:1,mapped:0,reason:null},
   {sourceId:'lanbide-euskadi',status:'success',received:1,mapped:0,reason:null},
  ]);
- assert.equal(report.published,4);
+ assert.equal(report.published,5);
+ const updated=JSON.parse(await readFile(catalogPath,'utf8'));
+ assert.ok(!updated.calls.some((job:{id:string})=>job.id==='ECYL-OLD'));
+ assert.ok(updated.calls.some((job:{id:string})=>job.id==='LANBIDE-OLD'));
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 

@@ -1,6 +1,7 @@
 import type { PlaceResolver } from '../geography.ts';
 import type { PublicJob } from '../model.ts';
 import { canonicalSpanishProvince } from '../national-geography.ts';
+import { attribute, descendants, documentOf, textOf } from './html-dom.ts';
 import {
   canonicalUrlKey,
   type CoordinateBounds,
@@ -29,6 +30,13 @@ const provinceCentreBounds: Readonly<Record<string, CoordinateBounds>> = Object.
 
 // Evita atribuir un punto oficial a otro municipio cercano dentro de la misma provincia.
 const maximumMunicipalityDistanceKm = 25;
+const verifiedApplicationHosts = new Set([
+  'www.infojobs.net', 'infojobs.net', 'www.infoempleo.com', 'www.adecco.com',
+  'www.randstad.es', 'es.indeed.com', 'www.tecnoempleo.com', 'www.hacesfalta.org',
+  'tutrabajo.org', 'www.icscyl.com', 'tierrasdemedina.com', 'www.rommealpin.se',
+  'portalempleo.foes.es', 'servicios3.jcyl.es', 'empleo.jcyl.es',
+  'empleocastillayleon.jcyl.es',
+]);
 
 function distanceKm(
   [leftLongitude, leftLatitude]: readonly [number, number],
@@ -86,6 +94,25 @@ function sourceUrl(value: unknown): string {
     url.hostname = 'empleo.jcyl.es';
   }
   return officialHttpsUrl(url.href, 'empleo.jcyl.es', 'ECYL');
+}
+
+function applicationUrl(description: unknown): string | null {
+  if (typeof description !== 'string') return null;
+  const links = descendants(documentOf(description), element => element.tagName === 'a');
+  for (const link of links) {
+    const label = normalize(textOf(link));
+    if (!/(?:inscripci|solicitud|oficina virtual)/u.test(label)) continue;
+    const href = attribute(link, 'href');
+    if (!href) continue;
+    try {
+      const url = new URL(href);
+      if (url.protocol === 'https:' && !url.port && !url.username && !url.password
+        && verifiedApplicationHosts.has(url.hostname)) return url.href;
+    } catch {
+      // Ignore malformed or unsupported links and retain the ECYL detail URL.
+    }
+  }
+  return null;
 }
 
 function isOfficialOfferPath(sourceUrl: string, externalId: string): boolean {
@@ -161,7 +188,7 @@ export function adaptCylOffers(
       regime: 'Oferta de empleo',
       places: null,
       paragraphs,
-      sourceUrl: canonicalSourceUrl,
+      sourceUrl: applicationUrl(offer.descripcion) ?? canonicalSourceUrl,
       publishedAt,
       checkedAt,
       closingDate: null,
