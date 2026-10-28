@@ -72,3 +72,23 @@ test('Accenture pagina cuando Workday informa total cero después de la primera 
   assert.equal(jobs.length,21);
   assert.equal(new Set(jobs.map(job=>job.id)).size,21);
 });
+
+test('Accenture repite una captura cuando Workday entrega una instantánea transitoria inválida',async()=>{
+  let filteredAttempts=0;
+  const mock=async(url:string|URL|Request,init?:RequestInit)=>{
+    const path=String(url);
+    if(path.endsWith('/jobs')){
+      const body=JSON.parse(String(init?.body));
+      if(!body.appliedFacets.locationCountry){
+        return new Response(JSON.stringify({facets:[{facetParameter:'locationMainGroup',values:[{facetParameter:'locationCountry',values:[{descriptor:'Spain',id:'es'}]}]}]}),{headers:{'content-type':'application/json'}});
+      }
+      filteredAttempts+=1;
+      const externalPath=filteredAttempts===1?'/job/Madrid/Instantanea-sin-id':'/job/Madrid/Consultora_R00346700';
+      return new Response(JSON.stringify({total:1,jobPostings:[{title:'Consultor/a',externalPath}]}),{headers:{'content-type':'application/json'}});
+    }
+    return new Response(JSON.stringify({jobPostingInfo:{title:'Consultor/a',jobDescription:'<p>Trabajo de consultoría.</p>',location:'Madrid',startDate:'2026-10-28',jobReqId:'R00346700',country:{descriptor:'Spain'},jobRequisitionLocation:{country:{alpha2Code:'ES'}},externalUrl:'https://accenture.wd103.myworkdayjobs.com/AccentureCareers/job/Madrid/Consultora_R00346700',posted:true}}),{headers:{'content-type':'application/json'}});
+  };
+  const jobs=await fetchAccentureOffers(checkedAt,resolveCity,mock as typeof fetch);
+  assert.equal(filteredAttempts,2);
+  assert.deepEqual(jobs.map(job=>job.id),['ACCENTURE-R00346700']);
+});
