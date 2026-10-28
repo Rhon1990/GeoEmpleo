@@ -107,6 +107,14 @@ test('ECYL prefiere el enlace explícito de inscripción cuando la ficha incluye
   assert.equal(jobs[0]?.location?.sourceUrl,cylOfficialUrl);
 });
 
+test('ECYL actualiza a HTTPS el enlace HTTP de Oficina Virtual antes de usar una ficha caducada', () => {
+  const applicationUrl='http://empleocastillayleon.jcyl.es/oficinavirtual/buscoEmpleoPub.do?srvc=ver&scope=reg&cod=396251';
+  const jobs=adaptCylOffers([{...cylRaw,descripcion:`<p>Para más información acuda a <a href="${applicationUrl}">Oficina Virtual</a></p>`}],checkedAt,()=>location);
+
+  assert.equal(jobs[0]?.sourceUrl,applicationUrl.replace('http:','https:'));
+  assert.equal(jobs[0]?.location?.sourceUrl,cylOfficialUrl);
+});
+
 test('ECYL ignora enlaces de inscripción con dominio no verificado', () => {
   const jobs=adaptCylOffers([{...cylRaw,descripcion:'<a href="https://untrusted.example/oferta">Más información e inscripción</a>'}],checkedAt,()=>location);
 
