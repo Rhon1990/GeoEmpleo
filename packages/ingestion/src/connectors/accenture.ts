@@ -87,7 +87,7 @@ function spainFacet(input:unknown):string {
   return value.id;
 }
 
-export async function fetchAccentureOffers(checkedAt:string,resolveCity:CityResolver,fetchImpl:typeof fetch=fetch):Promise<PublicJob[]> {
+async function fetchAccentureSnapshot(checkedAt:string,resolveCity:CityResolver,fetchImpl:typeof fetch):Promise<PublicJob[]> {
   const first=await postListing({appliedFacets:{},limit:20,offset:0,searchText:''},fetchImpl);
   const countryId=spainFacet(first);
   const found=new Map<string,AccentureListedOffer>();
@@ -113,4 +113,12 @@ export async function fetchAccentureOffers(checkedAt:string,resolveCity:CityReso
   }
   if(!jobs.length) throw new TypeError('No hay ofertas españolas de Accenture');
   return jobs;
+}
+
+export async function fetchAccentureOffers(checkedAt:string,resolveCity:CityResolver,fetchImpl:typeof fetch=fetch):Promise<PublicJob[]> {
+  try {return await fetchAccentureSnapshot(checkedAt,resolveCity,fetchImpl);}
+  catch(error){
+    if(!(error instanceof TypeError)) throw error;
+    return fetchAccentureSnapshot(checkedAt,resolveCity,fetchImpl);
+  }
 }
