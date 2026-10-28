@@ -34,6 +34,19 @@ test('agrupa las variantes de McDonald’s bajo un único filtro de empresa', ()
   assert.equal(companyCalls.find(call => call.id === 'mchire')?.employer, 'McHire');
 });
 
+test('usa la fuente verificada para agrupar bajo McDonald’s las ofertas cuyo anunciante es una persona', () => {
+  const companyCalls = [
+    { ...searchFixture[0], id: 'mcdonalds-publisher-1', sourceId: 'talentclue-mcdonalds', employer: 'AGUSTÍN SOLER DRÓPEZ' },
+    { ...searchFixture[0], id: 'mcdonalds-publisher-2', sourceId: 'talentclue-mcdonalds', employer: 'MONICA SANCHEZ' },
+    { ...searchFixture[0], id: 'unrelated-person', sourceId: 'boe', employer: 'MONICA SANCHEZ' },
+  ];
+
+  assert.deepEqual(employerFacet(companyCalls[0].employer, companyCalls[0].sourceId), { id: 'mcdonalds', label: 'McDonald’s' });
+  assert.deepEqual(searchCalls(companyCalls, { employer: 'mcdonalds' }).map(call => call.id), ['mcdonalds-publisher-1', 'mcdonalds-publisher-2']);
+  assert.deepEqual(employerFacet(companyCalls[2].employer, companyCalls[2].sourceId), { id: 'monica-sanchez', label: 'MONICA SANCHEZ' });
+  assert.equal(companyCalls[0].employer, 'AGUSTÍN SOLER DRÓPEZ');
+});
+
 test('agrupa divisiones de Randstad en un solo filtro sin alterar el empleador original', () => {
   const names = [
     'Randstad', 'Randstad Digital', 'Randstad Inhouse Services', 'Randstad Outsourcing',
