@@ -106,8 +106,14 @@ function applicationUrl(description: unknown): string | null {
     if (!href) continue;
     try {
       const url = new URL(href);
-      if (url.protocol === 'https:' && !url.port && !url.username && !url.password
-        && verifiedApplicationHosts.has(url.hostname)) return url.href;
+      if ((url.protocol === 'https:' || url.protocol === 'http:')
+        && !url.port && !url.username && !url.password
+        && verifiedApplicationHosts.has(url.hostname)) {
+        // The official ECYL dataset still publishes Oficina Virtual links as HTTP;
+        // that endpoint redirects to HTTPS while detail pages can already be 404.
+        url.protocol = 'https:';
+        return url.href;
+      }
     } catch {
       // Ignore malformed or unsupported links and retain the ECYL detail URL.
     }
