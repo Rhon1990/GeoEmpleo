@@ -70,7 +70,7 @@ export function createStaticDataFetch({fetchImpl=fetch}={}) {
       const matches=searchCalls(calls,filtersFrom(params));
       const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
       const employers=new Map();
-      for(const call of calls)if(call.employer){const facet=employerFacet(call.employer);if(!employers.has(facet.id))employers.set(facet.id,facet.label);}
+      for(const call of calls)if(call.employer){const facet=employerFacet(call.employer,call.sourceId);if(!employers.has(facet.id))employers.set(facet.id,facet.label);}
       return json({checkedAt:data.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))},total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)});
     }
     if(parsed.pathname==='/api/job') {
