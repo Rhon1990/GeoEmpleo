@@ -58,6 +58,9 @@ test('el filtro de empresa agrupa McDonald’s y presenta DIA sin coincidencias 
     {...jobs[0],id:'mcd-2',employer:'McDonald´s Sabadell',title:'Encargado'},
     {...jobs[0],id:'mcd-3',employer:"McDonald`s Moncada",title:'Personal de equipo'},
     {...jobs[0],id:'mchire',employer:'McHire',title:'Personal de equipo'},
+    {...jobs[0],id:'mcd-publisher-1',sourceId:'talentclue-mcdonalds',employer:'AGUSTÍN SOLER DRÓPEZ',title:"McDonald's Lleida Nord"},
+    {...jobs[0],id:'mcd-publisher-2',sourceId:'talentclue-mcdonalds',employer:'MONICA SANCHEZ',title:"McDonald's Zubiarte"},
+    {...jobs[0],id:'person-other-source',sourceId:'boe',employer:'MONICA SANCHEZ',title:'Publicación ajena'},
     {...jobs[0],id:'randstad-1',employer:'Randstad Digital',title:'Consultor'},
     {...jobs[0],id:'randstad-2',employer:'Randstad Trabajo Temporal',title:'Operario'},
   ]};
@@ -69,8 +72,10 @@ test('el filtro de empresa agrupa McDonald’s y presenta DIA sin coincidencias 
   assert.deepEqual(result.facets.employers.find((item:{id:string})=>item.id==='randstad'),{id:'randstad',label:'Randstad'});
   assert.equal(result.facets.employers.filter((item:{id:string;label:string})=>item.label.startsWith('Randstad')).length,1);
   assert.equal(result.facets.employers.some((item:{id:string})=>item.id==='mchire'),false);
+  assert.equal(result.facets.employers.some((item:{id:string})=>item.id==='agustin-soler-dropez'),false);
+  assert.equal(result.facets.employers.find((item:{id:string})=>item.id==='monica-sanchez')?.label,'MONICA SANCHEZ');
   const mcdonalds=await (await fetchData('/api/jobs?employer=mcdonalds')).json();
-  assert.deepEqual(mcdonalds.jobs.map((job:{id:string})=>job.id),['mcd-1','mcd-2','mcd-3','mchire']);
+  assert.deepEqual(mcdonalds.jobs.map((job:{id:string})=>job.id),['mcd-1','mcd-2','mcd-3','mchire','mcd-publisher-1','mcd-publisher-2']);
   assert.equal(mcdonalds.jobs.find((job:{id:string})=>job.id==='mchire')?.employer,'McHire');
   const randstad=await (await fetchData('/api/jobs?employer=randstad')).json();
   assert.deepEqual(randstad.jobs.map((job:{id:string})=>job.id),['randstad-1','randstad-2']);

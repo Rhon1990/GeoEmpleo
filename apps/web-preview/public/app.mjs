@@ -7,7 +7,7 @@ import {requestLocationWithPermission} from './location-permission.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
 import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
 import {createWorkspaceView} from './workspace-view.mjs';
-import {siteFetch} from './static-data.mjs?v=20261026-employer-group';
+import {siteFetch} from './static-data.mjs?v=20261028-employer-filter';
 import {createAnalyticsController,loadFirebaseAnalytics} from './analytics.mjs';
 import {adInsertionIndex,loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 import {selectableTerritories} from './territories.mjs';

@@ -14,7 +14,8 @@ import {matchesGeography} from './geography.mjs';
  */
 const normalize = text => text.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('es').trim();
 
-export function employerFacet(value) {
+export function employerFacet(value, sourceId = '') {
+  if(sourceId==='talentclue-mcdonalds')return {id:'mcdonalds',label:'McDonald’s'};
   const normalized=normalize(value);
   const words=normalized.replace(/[\p{P}\p{S}]+/gu,' ').replace(/\s+/gu,' ').trim();
   if(/^(?:mcdonald\s*s?|mchire)(?:\s|$)/u.test(words))return {id:'mcdonalds',label:'McDonald’s'};
@@ -31,7 +32,7 @@ export function searchCalls(calls, filters = {}) {
     const text = normalize([call.title, call.employer, call.city, call.province, call.region].join(' '));
     return terms.every(term => text.includes(term))
       && (!territory || [call.city, call.province, call.region].some(value => normalize(value) === territory))
-      && (!employer || employerFacet(call.employer).id === employerFacet(employer).id)
+      && (!employer || employerFacet(call.employer,call.sourceId).id === employerFacet(employer).id)
       && (!filters.category || call.category === filters.category)
       && matchesGeography(call,filters);
   });
