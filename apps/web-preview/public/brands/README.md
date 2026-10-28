@@ -25,5 +25,8 @@ Estos archivos se sirven desde GeoEmpleo para evitar peticiones de imagen a terc
 | `clece.png` | Clece | [Portal oficial de empleo](https://canaldeempleo.es/CLECE) |
 | `domusvi.png` | DomusVi | [Portal oficial de empleo](https://empleo.domusvi.es/jobs) |
 | `indra.png` | Indra | [Portal oficial de empleo](https://careers.indragroup.com/) |
+| `coviran.png` | Covirán | [Logotipo de la empresa en Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Coviran-Logo.png) |
+| `iss.png` | ISS Facility Services | [Portal oficial de empleo](https://jobs.iss.es/jobs) |
+| `accenture.svg` | Accenture | [Portal oficial de empleo](https://www.accenture.com/es-es/careers/jobsearch) |
 
 La atribución de imagen se cubre mediante pruebas en `tests/web-employer-brand.test.ts`. Las ofertas públicas, directas y de fuentes sin empleador empresarial identificable usan `geoempleo-neutral.svg`.

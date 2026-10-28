@@ -29,6 +29,9 @@ const employerBrands={
   'successfactors-clece':{src:'/brands/clece.png',alt:'Clece'},
   'bizneo-domusvi':{src:'/brands/domusvi.png',alt:'DomusVi'},
   'successfactors-indra':{src:'/brands/indra.png',alt:'Indra'},
+  'bizneo-coviran':{src:'/brands/coviran.png',alt:'Covirán'},
+  'bizneo-iss':{src:'/brands/iss.png',alt:'ISS Facility Services'},
+  'workday-accenture':{src:'/brands/accenture.svg',alt:'Accenture'},
 };
 export const neutralBrand={src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo'};
 export const employerBrand=job=>employerBrands[job.sourceId]??neutralBrand;
