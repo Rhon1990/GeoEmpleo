@@ -138,7 +138,9 @@ export async function runDaily(options:RunOptions) {
             : adaptSource(sourceId,await fetchJson(source.endpoint,{fetchImpl:options.fetchImpl,encoding:encodingFor(sourceId)}),checkedAt,
               sourceId==='sef-murcia'?murciaResolver.status==='fulfilled'&&murciaResolver.value!==null?murciaResolver.value:()=>null
                 :national?.resolve??(()=>null));
-        next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{missingRetentionDays:source.kind==='ats'?0:7});
+        next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{
+          missingRetentionDays:source.kind==='ats'||sourceId==='ecyl-castilla-leon'?0:7,
+        });
         sources.push({sourceId,status:'success',received:jobs.length,mapped:jobs.filter(job=>job.location!==null).length,reason:null});
         successes+=1;
       } catch(error) {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cardVisualTheme,detailBadge,offerDates,placesLabel,jobPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
+import {cardVisualTheme,detailBadge,formatDateTime,offerDates,placesLabel,jobPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
 import {markerGroups,expandedZoom} from '../apps/web-preview/public/google-map.mjs';
 test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>{
  assert.equal(placesLabel({places:null}),'Plazas no publicadas');
@@ -34,6 +34,10 @@ test('distingue la primera detección de la última comprobación individual en 
  const published=offerDates({publishedAt:'2026-10-20',checkedAt:'2026-10-21T12:00:00Z'});
  assert.deepEqual(published.publication,{label:'Publicación',short:'Publicada',value:'20 oct 2026'});
  assert.equal(published.checked.value,'21 oct 2026');
+});
+test('muestra la hora real de actualización del catálogo en Europe/Madrid',()=>{
+ assert.equal(formatDateTime('2026-10-28T08:36:59.596Z'),'28 oct 2026 · 09:36 h');
+ assert.equal(formatDateTime('2026-06-01T08:36:00Z'),'1 jun 2026 · 10:36 h');
 });
 test('presenta ofertas directas sin inventar un enlace externo ni degradar salario y ubicación',()=>{
  const direct={kind:'job',sourceId:'direct-employer',source:'Anunciante en GeoEmpleo',salary:{minMinor:150000,maxMinor:170000,currency:'EUR',period:'month',basis:'gross',paymentsPerYear:14},location:{precision:'employer_declared'}};

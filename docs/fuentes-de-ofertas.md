@@ -9,14 +9,13 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 ## Conectores diarios activos
 
 El registro tiene ahora 28 identificadores marcados como `active`, con adaptador
-en el runner. Covirán, ISS y Accenture están preparados en esta rama y requieren publicación en la web pública.
-La columna de ejecución de las demás fuentes recoge una captura histórica.
-«Actualizada» y «fallida» describen **solo la ejecución del
-26/10/2026 a las 12:49:43 UTC**, no el estado permanente del portal. Ante un
+en el runner. Covirán, ISS y Accenture están publicados en la web pública. La
+columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
+y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar
 que sigan abiertas.
 
-| ID de fuente | Portal de origen | Canal | Última ejecución |
+| ID de fuente | Portal de origen | Canal | Evidencia de ejecución |
 |---|---|---|---|
 | `sef-murcia` | [SEF Murcia](https://sefapps.carm.es/sefApps/rest/ofertas/ofertas) | Datos públicos | Fallida; catálogo anterior conservado |
 | `ecyl-castilla-leon` | [ECYL Castilla y León](https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/ofertas-de-empleo/exports/json) | Datos públicos | Actualizada |
@@ -39,13 +38,13 @@ que sigan abiertas.
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
 | `talentclue-quironsalud` | [Quirónsalud](https://empleo.quironsalud.es/) | TalentClue | Captura directa: 263 publicaciones, 260 con punto |
 | `selectminds-eulen` | [Grupo Eulen](https://eulen.referrals.selectminds.com/grupoeulenespana/latest-jobs) | SelectMinds | Captura directa: 9 publicaciones, 8 con punto |
-| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | Portal oficial | Publicación 27/10/2026: 297 publicaciones, 279 con punto; primeras 300 del listado |
+| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | API pública del portal oficial | La captura recorre y valida todas las páginas anunciadas; publica fichas con provincia española y ubicación municipal solo si se resuelve |
 | `successfactors-clece` | [Clece](https://canaldeempleo.es/CLECE) | SuccessFactors | Captura directa: 355 publicaciones, 335 con punto |
 | `bizneo-domusvi` | [DomusVi](https://empleo.domusvi.es/jobs) | Tablón Bizneo | Captura directa: 340 publicaciones, 280 con punto |
 | `successfactors-indra` | [Indra](https://careers.indragroup.com/) | SuccessFactors | Publicación 27/10/2026: 562 publicaciones, 437 con punto |
 | `bizneo-coviran` | [Covirán](https://jobs.coviran.com/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 6 vacantes concretas, 6 con punto; autocandidaturas excluidas |
 | `bizneo-iss` | [ISS Facility Services](https://jobs.iss.es/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 13 vacantes, 9 con punto |
-| `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Captura directa 28/10/2026: 275 fichas españolas, 131 con punto; país validado por ficha |
+| `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Publicación 28/10/2026: 274 fichas españolas, 131 con punto; país validado por ficha |
 
 El catálogo incluye además **cuatro anuncios BOE** (`sourceId: boe`)
 incorporados como selección estática. `npm run ingest:daily` **no** los consulta
@@ -77,10 +76,11 @@ Que una empresa tenga sedes o un portal público no crea una oferta en GeoEmpleo
 Mercadona, Repsol, Moeve, BP, Galp, InfoJobs y LinkedIn siguen sin conector
 activo verificado.
 
-La ejecución histórica de GitHub Actions `40570453221`, terminada el 27/10/2026, actualizó
-las 25 fuentes entonces activas con estado `success` y publicó 5.811 ofertas con 5.811
-IDs únicos. Los tres nuevos conectores de esta rama se comprobaron por separado el 28/10/2026;
-la cifra pública se verificará tras su despliegue. De la lista de empresas aportada por el usuario están activas
+La ejecución de GitHub Actions [`40658043000`](https://github.com/Rhon1990/GeoEmpleo/actions/runs/40658043000),
+terminada el 28/10/2026, actualizó las 28 fuentes con estado `success` y publicó
+6.145 ofertas con 6.145 IDs únicos. Covirán aportó 6 ofertas (6 puntos), ISS 13
+(9 puntos) y Accenture 274 (131 puntos). El catálogo público se contrastó por HTTPS
+con el mismo `checkedAt=2026-10-28T08:36:59.596Z`. De la lista de empresas aportada por el usuario están activas
 Randstad, Quirónsalud, Vithas, DomusVi, Indra, Capgemini, Grupo Eulen, Clece, Covirán, Accenture e ISS.
 Las demás permanecen en esta tabla hasta disponer de un canal oficial,
 autorizado y estable; los enlaces de búsqueda de InfoJobs se conservan como
@@ -130,24 +130,25 @@ Desde el directorio de trabajo de `web-preview`:
 4. Publicar con `firebase deploy --only hosting --project geoempleo-49978` y
    verificar por HTTPS que
    [`/data/calls.json`](https://geoempleo-49978.web.app/data/calls.json)
-   conserva `checkedAt`, cantidad e IDs únicos. La automatización diaria
-   `actualizar-ofertas-reales-de-geoempleo` sigue este flujo mientras el equipo
-   local y Codex están disponibles; Firebase Hosting Spark no ejecuta la
-   ingesta por sí solo.
+   conserva `checkedAt`, cantidad e IDs únicos. GitHub Actions ejecuta este
+   flujo sin depender del equipo local ni de Codex; Firebase Hosting Spark no
+   ejecuta la ingesta por sí solo.
 
 ## Actualización autónoma sin Codex
 
-`.github/workflows/daily-offers.yml` prepara una ejecución diaria de GitHub
-Actions a las 05:37 de `Europe/Madrid`, más una opción manual en la pestaña
-Actions. Captura únicamente los conectores ya activos; acepta `success` o
+`.github/workflows/daily-offers.yml` ejecuta GitHub Actions a las 05:37, 07:37
+y 09:37 de `Europe/Madrid`, más una opción manual en la pestaña Actions. La
+primera ejecución programada que publique el catálogo del día hace que los
+respaldos omitan una captura redundante. Captura únicamente los conectores ya activos; acepta `success` o
 `partial` si al menos una fuente se actualizó, y rechaza `failed`, un `checkedAt`
 antiguo, un catálogo inconsistente o IDs duplicados. Solo después compila,
 despliega Hosting y compara por HTTPS el catálogo publicado. Una fuente fallida
 conserva su catálogo anterior, como en la ingesta normal.
 
-El workflow no está operativo hasta subirlo a la rama por defecto y configurar
-los dos secretos obligatorios en la configuración del repositorio GitHub. El
-ID del mapa es opcional; `GITHUB_TOKEN` lo proporciona automáticamente GitHub:
+El workflow está operativo en `main`. Los dos secretos obligatorios están
+configurados en el repositorio y la ejecución `40658043000` confirmó captura,
+build, despliegue y validación HTTPS. El ID del mapa es opcional;
+`GITHUB_TOKEN` lo proporciona automáticamente GitHub:
 
 | Secreto | Uso |
 |---|---|
@@ -162,17 +163,12 @@ durante la acción de despliegue. Firebase documenta la integración oficial
 con GitHub y la creación/custodia del secreto de servicio. Para repositorios
 públicos, los runners estándar de GitHub Actions son gratuitos; en repositorios
 privados se aplican los minutos incluidos en el plan y el exceso puede cobrarse.
-No activar facturación de Google ni Blaze para esta arquitectura. La
-automatización Codex existente se conserva como respaldo hasta que se confirme
-una ejecución autónoma correcta.
+No activar facturación de Google ni Blaze para esta arquitectura. La operación
+diaria principal es GitHub Actions y no necesita Codex.
 
-La captura del 26/10/2026 a las 12:49:43 UTC terminó `partial`: **16 fuentes
-actualizadas y 1 fallida (SEF Murcia)**; el catálogo local comprobado tenía
-**2.806 publicaciones con ID único**, **2.361 con punto**. DIA aportó 118
-publicaciones y 95 puntos municipales aproximados; las 23 restantes siguen en
-la lista y no llevan marcador porque su ficha no permite validar una localidad
-única. El catálogo está desplegado y verificado por HTTPS con el mismo instante
-de captura. Son publicaciones de origen real, no vacantes
+La captura del 28/10/2026 a las 08:36:59 UTC terminó `success`: **28 fuentes
+actualizadas**, **6.145 publicaciones con ID único**. El catálogo está desplegado
+y verificado por HTTPS con el mismo instante de captura. Son publicaciones de origen real, no vacantes
 deduplicadas entre portales ni una garantía de que las fichas conservadas sigan
 abiertas. Las ubicaciones son municipales aproximadas salvo que la fuente
 acredite otra precisión. Al investigar un fallo, reparar solo su conector y
@@ -181,9 +177,8 @@ repetir la ingesta antes de declarar la fuente actualizada.
 Al incorporar una fuente nueva, actualizar `registry.ts`, añadir su adaptador al
 runner, probar identidad/URL/fecha/ubicación y fallos de red, verificar una
 captura real, **y actualizar este inventario y la automatización diaria**. El
-workflow llama al runner que recorre el registro; al integrar Carrefour y Lidl
-en la rama por defecto quedarán dentro de las capturas programadas, sin una
-lista adicional de fuentes en el workflow. No inferir empleos a partir de
+workflow llama al runner que recorre el registro; una fuente integrada en el
+runner entra en las capturas programadas sin una lista adicional en el workflow. No inferir empleos a partir de
 establecimientos ni colocar puntos arbitrarios.
 
 ### Verificación de Carrefour y Lidl — 27/10/2026

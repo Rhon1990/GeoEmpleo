@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { searchCalls } from '../apps/web-preview/public/catalog.mjs';
+import { employerFacet, searchCalls } from '../apps/web-preview/public/catalog.mjs';
 
 const catalog = JSON.parse(readFileSync(new URL('../apps/web-preview/public/data/calls.json', import.meta.url), 'utf8'));
 // Use the fixed BOE selection for deterministic search assertions; other sources refresh daily.
@@ -24,9 +24,29 @@ test('agrupa las variantes de McDonald’s bajo un único filtro de empresa', ()
   const companyCalls = [
     { ...searchFixture[0], employer: "McDonald's Parets" },
     { ...searchFixture[0], id: 'mcdonalds-sabadell', employer: "McDonald´s Sabadell" },
+    { ...searchFixture[0], id: 'mcdonalds-moncada', employer: "McDonald's Moncada" },
+    { ...searchFixture[0], id: 'mchire', employer: 'McHire' },
     { ...searchFixture[0], id: 'dia', employer: 'DIA' },
   ];
-  assert.deepEqual(searchCalls(companyCalls, { employer: 'mcdonalds' }).map(call => call.id), [searchFixture[0].id, 'mcdonalds-sabadell']);
+  assert.deepEqual(searchCalls(companyCalls, { employer: 'mcdonalds' }).map(call => call.id), [searchFixture[0].id, 'mcdonalds-sabadell', 'mcdonalds-moncada', 'mchire']);
+  assert.deepEqual(employerFacet('McHire'), { id: 'mcdonalds', label: 'McDonald’s' });
+  assert.deepEqual(employerFacet('mcdonalds-moncada'), { id: 'mcdonalds', label: 'McDonald’s' });
+  assert.equal(companyCalls.find(call => call.id === 'mchire')?.employer, 'McHire');
+});
+
+test('agrupa divisiones de Randstad en un solo filtro sin alterar el empleador original', () => {
+  const names = [
+    'Randstad', 'Randstad Digital', 'Randstad Inhouse Services', 'Randstad Outsourcing',
+    'Randstad Professionals', 'Randstad Talento y Cultura', 'Randstad Trabajo Temporal',
+  ];
+  const companyCalls = names.map((employer, index) => ({
+    ...searchFixture[0], id: `randstad-${index}`, employer,
+  }));
+
+  assert.deepEqual(employerFacet('Randstad Digital'), { id: 'randstad', label: 'Randstad' });
+  assert.deepEqual(employerFacet('randstad-digital'), { id: 'randstad', label: 'Randstad' });
+  assert.deepEqual(searchCalls(companyCalls, { employer: 'randstad' }).map(call => call.employer), names);
+  assert.equal(companyCalls[1].employer, 'Randstad Digital');
 });
 
 test('combina texto, territorio y categoría sin resultados ajenos', () => {

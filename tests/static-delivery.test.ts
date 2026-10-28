@@ -56,14 +56,25 @@ test('el filtro de empresa agrupa McDonald’s y presenta DIA sin coincidencias 
     {...jobs[0],id:'melia-1',employer:'Meliá Hotels International',title:'Recepcionista en Jandía'},
     {...jobs[0],id:'mcd-1',employer:"McDonald's Parets",title:'Cajero'},
     {...jobs[0],id:'mcd-2',employer:'McDonald´s Sabadell',title:'Encargado'},
+    {...jobs[0],id:'mcd-3',employer:"McDonald`s Moncada",title:'Personal de equipo'},
+    {...jobs[0],id:'mchire',employer:'McHire',title:'Personal de equipo'},
+    {...jobs[0],id:'randstad-1',employer:'Randstad Digital',title:'Consultor'},
+    {...jobs[0],id:'randstad-2',employer:'Randstad Trabajo Temporal',title:'Operario'},
   ]};
   const fetchData=createStaticDataFetch({fetchImpl:async()=>new Response(JSON.stringify(companyCatalog))});
   const result=await (await fetchData('/api/jobs?employer=dia')).json();
   assert.equal(result.total,1);
   assert.equal(result.jobs[0].id,'dia-1');
   assert.deepEqual(result.facets.employers.find((item:{id:string})=>item.id==='mcdonalds'),{id:'mcdonalds',label:'McDonald’s'});
+  assert.deepEqual(result.facets.employers.find((item:{id:string})=>item.id==='randstad'),{id:'randstad',label:'Randstad'});
+  assert.equal(result.facets.employers.filter((item:{id:string;label:string})=>item.label.startsWith('Randstad')).length,1);
+  assert.equal(result.facets.employers.some((item:{id:string})=>item.id==='mchire'),false);
   const mcdonalds=await (await fetchData('/api/jobs?employer=mcdonalds')).json();
-  assert.deepEqual(mcdonalds.jobs.map((job:{id:string})=>job.id),['mcd-1','mcd-2']);
+  assert.deepEqual(mcdonalds.jobs.map((job:{id:string})=>job.id),['mcd-1','mcd-2','mcd-3','mchire']);
+  assert.equal(mcdonalds.jobs.find((job:{id:string})=>job.id==='mchire')?.employer,'McHire');
+  const randstad=await (await fetchData('/api/jobs?employer=randstad')).json();
+  assert.deepEqual(randstad.jobs.map((job:{id:string})=>job.id),['randstad-1','randstad-2']);
+  assert.equal(randstad.jobs.find((job:{id:string})=>job.id==='randstad-1')?.employer,'Randstad Digital');
 });
 
 test('la entrega estática conserva todos los puntos del área aunque limite la lista', async () => {
