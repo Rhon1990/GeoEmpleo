@@ -1,5 +1,6 @@
 export const placesLabel = call => call.places == null ? 'Plazas no publicadas' : `${call.places} ${call.places === 1 ? 'plaza' : 'plazas'}`;
 export const formatDate = value => new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',year:'numeric',timeZone:'Europe/Madrid'}).format(new Date(value));
+export const formatDateTime = value => `${formatDate(value)} · ${new Intl.DateTimeFormat('es-ES',{hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZone:'Europe/Madrid'}).format(new Date(value))} h`;
 export function offerDates(call) {
  const observed=call.dateKind==='observed';
  return {

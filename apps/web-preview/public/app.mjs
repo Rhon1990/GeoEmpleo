@@ -1,7 +1,7 @@
 import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
-import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,offerDates,placesLabel,jobPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
+import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerDates,placesLabel,jobPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261026-origin';
 import {requestLocationWithPermission} from './location-permission.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
@@ -306,7 +306,7 @@ const search=createViewportSearch({
     if(!Array.isArray(result.jobs)||!Array.isArray(result.mapJobs)||!result.facets)throw new Error('Respuesta de catálogo inválida');
     calls=result.jobs;page=result;loadError=false;
     updateFacets(result.facets);
-    document.querySelector('#snapshot-label').textContent=`Catálogo actualizado el ${date(result.checkedAt)} · ${result.sources.length} fuentes`;
+    document.querySelector('#snapshot-label').textContent=`Catálogo actualizado el ${formatDateTime(result.checkedAt)} · ${result.sources.length} fuentes`;
     list.setAttribute('aria-busy','false');render();
     document.querySelector('#results').scrollTop=0;
     document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';

@@ -38,7 +38,7 @@ que sigan abiertas.
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
 | `talentclue-quironsalud` | [Quirónsalud](https://empleo.quironsalud.es/) | TalentClue | Captura directa: 263 publicaciones, 260 con punto |
 | `selectminds-eulen` | [Grupo Eulen](https://eulen.referrals.selectminds.com/grupoeulenespana/latest-jobs) | SelectMinds | Captura directa: 9 publicaciones, 8 con punto |
-| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | Portal oficial | Publicación 27/10/2026: 297 publicaciones, 279 con punto; primeras 300 del listado |
+| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | API pública del portal oficial | La captura recorre y valida todas las páginas anunciadas; publica fichas con provincia española y ubicación municipal solo si se resuelve |
 | `successfactors-clece` | [Clece](https://canaldeempleo.es/CLECE) | SuccessFactors | Captura directa: 355 publicaciones, 335 con punto |
 | `bizneo-domusvi` | [DomusVi](https://empleo.domusvi.es/jobs) | Tablón Bizneo | Captura directa: 340 publicaciones, 280 con punto |
 | `successfactors-indra` | [Indra](https://careers.indragroup.com/) | SuccessFactors | Publicación 27/10/2026: 562 publicaciones, 437 con punto |

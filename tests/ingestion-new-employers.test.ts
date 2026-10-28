@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {adaptQuironsaludListing} from '../packages/ingestion/src/connectors/quironsalud.ts';
 import {adaptEulenListing} from '../packages/ingestion/src/connectors/eulen.ts';
-import {adaptRandstadListing} from '../packages/ingestion/src/connectors/randstad.ts';
+import {adaptRandstadListing,fetchRandstadOffers} from '../packages/ingestion/src/connectors/randstad.ts';
 import {adaptCleceOffer} from '../packages/ingestion/src/connectors/clece.ts';
 import {adaptDomusViOffer} from '../packages/ingestion/src/connectors/domusvi.ts';
 import {adaptIndraOffer} from '../packages/ingestion/src/connectors/indra.ts';
@@ -49,6 +49,31 @@ test('Randstad distingue vacantes españolas con ubicación municipal de búsque
   assert.deepEqual(jobs.map(job=>job.id),['RANDSTAD-123','RANDSTAD-125']);
   assert.deepEqual(jobs[0]?.location?.point,[-3.70,40.42]);
   assert.equal(jobs[0]?.employer,'Randstad Trabajo Temporal');
+});
+
+test('Randstad recorre todas las páginas y conserva ofertas activas antiguas del portal',async()=>{
+ const make=(id:number)=>({offerId:id,title:`Puesto ${id}`,company:'Randstad Digital',date:id===301?'2026-06-01T02:00:00':'2026-10-27T02:00:00',
+  description:`Descripción del puesto ${id}`,requirements:null,conditions:null,
+  url:`https://www.randstad.es/candidatos/ofertas-empleo/oferta/puesto-${id}`,
+  province:{id:'28',name:'Madrid'},city:{id:'28079',name:'Madrid'},publicationCompanyBusiness:'Randstad Digital',workModality:'presencial'});
+ const first=Array.from({length:300},(_,index)=>make(index+1));
+ const page=(number:number,result:ReturnType<typeof make>[])=>({
+  pagination:{page:number,elements:300,totalCount:301,pageCount:number+1,totalPages:2,hasNext:number===0,hasPrev:number>0},result,
+ });
+ const requested:number[]=[];
+ const fetchImpl=(async(input:string|URL|Request)=>{
+  const url=new URL(input instanceof Request?input.url:String(input));
+  requested.push(Number(url.searchParams.get('page')));
+  assert.equal(url.searchParams.get('elements'),'300');
+  const number=Number(url.searchParams.get('page'));
+  const unstableFirstPass=requested.length<=2;
+  return new Response(JSON.stringify(page(number,number===0?first:[unstableFirstPass?make(300):make(301)])),{headers:{'content-type':'application/json'}});
+ }) as typeof fetch;
+ const jobs=await fetchRandstadOffers(checkedAt,resolveCity,fetchImpl);
+ assert.deepEqual(requested,[0,1,0,1]);
+ assert.equal(jobs.length,301);
+ assert.equal(jobs.at(-1)?.id,'RANDSTAD-301');
+ assert.equal(jobs.at(-1)?.city,'Madrid');
 });
 
 test('Quirónsalud acepta solo fichas españolas recientes y ubica el municipio verificado',()=>{
