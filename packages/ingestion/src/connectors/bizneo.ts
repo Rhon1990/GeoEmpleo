@@ -9,6 +9,7 @@ export interface BizneoBoard {
   readonly employer:string;
   readonly category:string;
   readonly categoryLabel:string;
+  readonly excludedTitlePattern?:RegExp;
 }
 
 export interface ResolvedCity {
@@ -24,6 +25,8 @@ export const bizneoBoards:readonly BizneoBoard[]=[
   {sourceId:'bizneo-burger-king',hostname:'empleo.bkspain.es',employer:'Burger King España',category:'hosteleria',categoryLabel:'Turismo y hostelería'},
   {sourceId:'bizneo-plenergy',hostname:'empleo.plenergy.es',employer:'Plenergy',category:'servicios',categoryLabel:'Servicios y comercio'},
   {sourceId:'bizneo-telepizza',hostname:'ofertas.fooddeliverybrands.com',employer:'Telepizza',category:'hosteleria',categoryLabel:'Turismo y hostelería'},
+  {sourceId:'bizneo-coviran',hostname:'jobs.coviran.com',employer:'Covirán',category:'servicios',categoryLabel:'Servicios y comercio',excludedTitlePattern:/^autocandidatura\b/i},
+  {sourceId:'bizneo-iss',hostname:'jobs.iss.es',employer:'ISS Facility Services',category:'oficios',categoryLabel:'Oficios técnicos'},
 ];
 
 function validatedJobUrl(raw:string,board:BizneoBoard):string {
@@ -48,8 +51,9 @@ export function parseBizneoListing(html:string,board:BizneoBoard):{offers:Bizneo
     const citySpan=spans.find(span=>!hasClass(span,'aggregation'));
     const city=citySpan?textOf(citySpan):'';
     if(!title||!city) throw new TypeError('Oferta Bizneo sin título o localidad');
+    if(board.excludedTitlePattern?.test(title)) return null;
     return {url:validatedJobUrl(raw,board),title,city,remote:spans.some(span=>/\bremot[oa]\b/i.test(textOf(span)))};
-  });
+  }).filter((offer):offer is BizneoListedOffer=>offer!==null);
   const next=descendants(document,element=>element.tagName==='a'&&hasClass(element,'next'))[0];
   const nextUrl=next?attribute(next,'href'):null;
   const page=nextUrl?new URL(nextUrl,`https://${board.hostname}`).searchParams.get('page'):null;

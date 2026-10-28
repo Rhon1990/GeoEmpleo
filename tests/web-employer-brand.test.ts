@@ -26,6 +26,9 @@ const publicBrands={
   'successfactors-clece':['/brands/clece.png','Clece'],
   'bizneo-domusvi':['/brands/domusvi.png','DomusVi'],
   'successfactors-indra':['/brands/indra.png','Indra'],
+  'bizneo-coviran':['/brands/coviran.png','Covirán'],
+  'bizneo-iss':['/brands/iss.png','ISS Facility Services'],
+  'workday-accenture':['/brands/accenture.svg','Accenture'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {

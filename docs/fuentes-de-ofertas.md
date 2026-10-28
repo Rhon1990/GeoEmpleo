@@ -1,6 +1,6 @@
 # Fuentes de ofertas de GeoEmpleo
 
-Inventario operativo revisado el **27/10/2026**. El registro ejecutable es
+Inventario operativo revisado el **28/10/2026**. El registro ejecutable es
 [`packages/ingestion/src/registry.ts`](../packages/ingestion/src/registry.ts) y la
 lista que recorre la ingesta diaria está en
 [`packages/ingestion/src/runner.ts`](../packages/ingestion/src/runner.ts).
@@ -8,8 +8,8 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene ahora 25 identificadores marcados como `active`, con adaptador
-en el runner. Seis fuentes nuevas de esta rama todavía no están en la web pública.
+El registro tiene ahora 28 identificadores marcados como `active`, con adaptador
+en el runner. Covirán, ISS y Accenture están preparados en esta rama y requieren publicación en la web pública.
 La columna de ejecución de las demás fuentes recoge una captura histórica.
 «Actualizada» y «fallida» describen **solo la ejecución del
 26/10/2026 a las 12:49:43 UTC**, no el estado permanente del portal. Ante un
@@ -43,6 +43,9 @@ que sigan abiertas.
 | `successfactors-clece` | [Clece](https://canaldeempleo.es/CLECE) | SuccessFactors | Captura directa: 355 publicaciones, 335 con punto |
 | `bizneo-domusvi` | [DomusVi](https://empleo.domusvi.es/jobs) | Tablón Bizneo | Captura directa: 340 publicaciones, 280 con punto |
 | `successfactors-indra` | [Indra](https://careers.indragroup.com/) | SuccessFactors | Publicación 27/10/2026: 562 publicaciones, 437 con punto |
+| `bizneo-coviran` | [Covirán](https://jobs.coviran.com/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 6 vacantes concretas, 6 con punto; autocandidaturas excluidas |
+| `bizneo-iss` | [ISS Facility Services](https://jobs.iss.es/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 13 vacantes, 9 con punto |
+| `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Captura directa 28/10/2026: 275 fichas españolas, 131 con punto; país validado por ficha |
 
 El catálogo incluye además **cuatro anuncios BOE** (`sourceId: boe`)
 incorporados como selección estática. `npm run ingest:daily` **no** los consulta
@@ -59,15 +62,12 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | LinkedIn | `authorization_required` | Acuerdo o canal autorizado |
 | Correos | Portal explorado, sin conector | Obtener localidad laboral verificable en cada publicación |
 | Unide | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
-| Covirán | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
 | Farmacia | Es un sector, no una empresa canónica | Integrar fuentes verificables del sector sin atribuir una marca ficticia |
-| Lupa Supermercados | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
+| Lupa Supermercados | [Portal oficial](https://lupa.epreselec.com/Ofertas/Ofertas.aspx) devuelve HTTP 405 y una verificación interactiva a la captura programada | Obtener un canal permitido y estable, sin eludir la verificación |
 | Mercadona | Portal Avature oficial comprobado; mezcla España y Portugal y expone 384 resultados en páginas de seis | Aplicar un filtro de país verificable y validar cada ficha antes de activar |
-| Inditex | El portal oficial bloqueó la captura automatizada con HTTP 403 | Conseguir un canal público autorizado y estable |
+| Inditex | El [portal oficial](https://www.inditexpeople.com/es/es/joinus/offers) bloquea la captura automatizada con HTTP 403 | Conseguir un canal público autorizado y estable |
 | SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
-| NTT DATA | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
-| Accenture | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
-| ISS | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
+| NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |
 | Elecnor | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
 
 Otros portales y empresas solicitados se documentan en la
@@ -77,10 +77,11 @@ Que una empresa tenga sedes o un portal público no crea una oferta en GeoEmpleo
 Mercadona, Repsol, Moeve, BP, Galp, InfoJobs y LinkedIn siguen sin conector
 activo verificado.
 
-La ejecución de GitHub Actions `40570453221`, terminada el 27/10/2026, actualizó
-las 25 fuentes activas con estado `success` y publicó 5.811 ofertas con 5.811
-IDs únicos. De la lista de empresas aportada por el usuario están activas
-Randstad, Quirónsalud, Vithas, DomusVi, Indra, Capgemini, Grupo Eulen y Clece.
+La ejecución histórica de GitHub Actions `40570453221`, terminada el 27/10/2026, actualizó
+las 25 fuentes entonces activas con estado `success` y publicó 5.811 ofertas con 5.811
+IDs únicos. Los tres nuevos conectores de esta rama se comprobaron por separado el 28/10/2026;
+la cifra pública se verificará tras su despliegue. De la lista de empresas aportada por el usuario están activas
+Randstad, Quirónsalud, Vithas, DomusVi, Indra, Capgemini, Grupo Eulen, Clece, Covirán, Accenture e ISS.
 Las demás permanecen en esta tabla hasta disponer de un canal oficial,
 autorizado y estable; los enlaces de búsqueda de InfoJobs se conservan como
 referencia de descubrimiento, pero no se extraen ni se republican.
@@ -91,7 +92,7 @@ referencia de descubrimiento, pero no se extraen ni se republican.
 |---|---|---|
 | Randstad | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=RANDSTAD&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
 | Unide | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=unide&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de canal oficial verificable |
-| Covirán | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=coviran&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de canal oficial verificable |
+| Covirán | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=coviran&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial Bizneo |
 | Farmacia | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=farmacia&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente; es una categoría, no una empresa |
 | Lupa Supermercados | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=lupa&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de canal oficial verificable |
 | Mercadona | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=mercadona&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de filtro España fiable en el portal oficial |
@@ -102,10 +103,10 @@ referencia de descubrimiento, pero no se extraen ni se republican.
 | DomusVi | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=DomusVi&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
 | Indra | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Indra&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
 | NTT DATA | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=NTT%20DATA&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
-| Accenture | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Accenture&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
+| Accenture | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Accenture&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante Workday oficial |
 | Capgemini | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Capgemini&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
 | Grupo Eulen | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Grupo%20Eulen&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
-| ISS | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=ISS&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
+| ISS | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=ISS&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial Bizneo |
 | Clece | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Clece&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
 | Elecnor | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Elecnor&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
 

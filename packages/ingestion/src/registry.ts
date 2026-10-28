@@ -14,6 +14,7 @@ import {randstadListingUrl} from './connectors/randstad.ts';
 import {cleceListingUrl} from './connectors/clece.ts';
 import {domusViListingUrl} from './connectors/domusvi.ts';
 import {indraListingUrl} from './connectors/indra.ts';
+import {accentureListingUrl} from './connectors/accenture.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -126,6 +127,8 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:domusViListingUrl,licenseUrl:null},
   {id:'successfactors-indra',name:'Indra · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:indraListingUrl,licenseUrl:null},
+  {id:'workday-accenture',name:'Accenture · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:accentureListingUrl,licenseUrl:null},
 ];
 
 export interface SourceRegistry {
