@@ -105,6 +105,30 @@ test('runner publica una oferta empresarial oficial y conserva la fuente fallida
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
+test('runner informa un código seguro cuando Accenture responde con error HTTP',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-accenture-diagnostic-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-10-27T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-10-28',license:'test',places:[]})));
+  const id='1285689059828';
+  const path=`/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${id}/Empleo`;
+  const ecyl=[{titulo:'Técnico/a',provincia:'SEGOVIA',fecha_publicacion:'2026-10-01',descripcion:'<p>Oferta real.</p>',localidad_asset0:'RIAZA',identificador:id,actualizacionmetadatos:'2026-10-28',enlace_al_contenido:`https://empleo.jcyl.es${path}`}];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const host=new URL(input instanceof Request?input.url:String(input)).hostname;
+   if(host==='accenture.wd103.myworkdayjobs.com') return new Response('',{status:429});
+   if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(ecyl),{headers:{'content-type':'application/json'}});
+   throw new Error('host inesperado');
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
+   sourceIds:['workday-accenture','ecyl-castilla-leon'],checkedAt:'2026-10-28T10:00:00Z',fetchImpl});
+  assert.equal(report.status,'partial');
+  assert.equal(report.sources[0]?.reason,'accenture_http_429');
+  assert.ok(!(await readFile(reportPath,'utf8')).includes('host inesperado'));
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
 test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-multisource-'));try{
  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');

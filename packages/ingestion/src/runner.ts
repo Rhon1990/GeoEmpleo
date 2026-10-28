@@ -19,7 +19,7 @@ import {fetchRandstadOffers} from './connectors/randstad.ts';
 import {fetchCleceOffers} from './connectors/clece.ts';
 import {fetchDomusViOffers} from './connectors/domusvi.ts';
 import {fetchIndraOffers} from './connectors/indra.ts';
-import {fetchAccentureOffers} from './connectors/accenture.ts';
+import {accentureFailureReason,fetchAccentureOffers} from './connectors/accenture.ts';
 import {successFactorsBoards} from './connectors/successfactors-boards.ts';
 import {reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
@@ -141,8 +141,9 @@ export async function runDaily(options:RunOptions) {
         next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{missingRetentionDays:source.kind==='ats'?0:7});
         sources.push({sourceId,status:'success',received:jobs.length,mapped:jobs.filter(job=>job.location!==null).length,reason:null});
         successes+=1;
-      } catch {
-        sources.push({sourceId,status:'failed',received:0,mapped:0,reason:'source_fetch_or_validation_failed'});
+      } catch(error) {
+        const reason=sourceId==='workday-accenture'?accentureFailureReason(error):'source_fetch_or_validation_failed';
+        sources.push({sourceId,status:'failed',received:0,mapped:0,reason});
       }
     }
     if(successes===0) {

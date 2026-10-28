@@ -9,6 +9,39 @@ const endpoint=`${base}/wday/cxs/accenture/AccentureCareers/jobs`;
 export const accentureListingUrl='https://www.accenture.com/es-es/careers/jobsearch';
 export interface AccentureListedOffer {readonly id:string;readonly title:string;readonly path:string}
 
+export function accentureFailureReason(error:unknown):string {
+  if(!(error instanceof Error)) return 'source_fetch_or_validation_failed';
+  const http=/^HTTP (\d{3})$/.exec(error.message);
+  if(http) return `accenture_http_${http[1]}`;
+  if(error.name==='AbortError'||error.name==='TimeoutError') return 'accenture_timeout';
+  if(error instanceof SyntaxError) return 'accenture_json_invalid';
+  const known=new Map<string,string>([
+    ['Ruta Workday inválida','accenture_listing_path_invalid'],
+    ['Formato Workday inválido','accenture_payload_invalid'],
+    ['Listado Accenture inválido','accenture_listing_invalid'],
+    ['Título Accenture ausente','accenture_listing_title_missing'],
+    ['IDs Accenture repetidos','accenture_listing_duplicate_ids'],
+    ['Workday no devolvió JSON','accenture_content_type_invalid'],
+    ['Respuesta Workday demasiado grande','accenture_response_too_large'],
+    ['Facetas Accenture ausentes','accenture_facets_missing'],
+    ['Filtro España Accenture ausente','accenture_spain_filter_missing'],
+    ['Volumen Accenture inesperado','accenture_volume_unexpected'],
+    ['Listado Accenture cambió durante la captura','accenture_listing_changed'],
+    ['Página Accenture vacía','accenture_page_empty'],
+    ['ID Accenture repetido entre páginas','accenture_pagination_duplicate_id'],
+    ['Paginación Accenture incompleta','accenture_pagination_incomplete'],
+    ['Detalle Accenture no corresponde al listado','accenture_detail_mismatch'],
+    ['URL Accenture no autorizada','accenture_detail_url_invalid'],
+    ['Detalle Accenture vacío','accenture_detail_empty'],
+    ['No hay ofertas españolas de Accenture','accenture_no_spanish_offers'],
+    ['La fuente no devolvió JSON','accenture_content_type_invalid'],
+    ['La respuesta supera el tamaño permitido','accenture_response_too_large'],
+    ['Respuesta sin cuerpo JSON','accenture_response_body_missing'],
+    ['fetch failed','accenture_network_error'],
+  ]);
+  return known.get(error.message)??'source_fetch_or_validation_failed';
+}
+
 function record(value:unknown):Record<string,unknown> {
   if(!value||typeof value!=='object'||Array.isArray(value)) throw new TypeError('Formato Workday inválido');
   return value as Record<string,unknown>;
