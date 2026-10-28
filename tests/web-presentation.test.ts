@@ -29,8 +29,8 @@ test('la etiqueta del detalle siempre procede de la oferta que se está abriendo
 });
 test('distingue la primera detección de la última comprobación individual en hora de España',()=>{
  const dates=offerDates({dateKind:'observed',publishedAt:'2026-10-19',checkedAt:'2026-10-25T23:30:00Z'});
- assert.deepEqual(dates.publication,{label:'Detectada en GeoEmpleo',short:'Detectada',value:'19 oct 2026'});
- assert.deepEqual(dates.checked,{label:'Última comprobación en GeoEmpleo',short:'Comprobada',value:'26 oct 2026'});
+ assert.deepEqual(dates.publication,{label:'Detectada en GeoEmpleo360',short:'Detectada',value:'19 oct 2026'});
+ assert.deepEqual(dates.checked,{label:'Última comprobación en GeoEmpleo360',short:'Comprobada',value:'26 oct 2026'});
  const published=offerDates({publishedAt:'2026-10-20',checkedAt:'2026-10-21T12:00:00Z'});
  assert.deepEqual(published.publication,{label:'Publicación',short:'Publicada',value:'20 oct 2026'});
  assert.equal(published.checked.value,'21 oct 2026');
@@ -40,11 +40,11 @@ test('muestra la hora real de actualización del catálogo en Europe/Madrid',()=
  assert.equal(formatDateTime('2026-06-01T08:36:00Z'),'1 jun 2026 · 10:36 h');
 });
 test('presenta ofertas directas sin inventar un enlace externo ni degradar salario y ubicación',()=>{
- const direct={kind:'job',sourceId:'direct-employer',source:'Anunciante en GeoEmpleo',salary:{minMinor:150000,maxMinor:170000,currency:'EUR',period:'month',basis:'gross',paymentsPerYear:14},location:{precision:'employer_declared'}};
+ const direct={kind:'job',sourceId:'direct-employer',source:'Anunciante en GeoEmpleo360',salary:{minMinor:150000,maxMinor:170000,currency:'EUR',period:'month',basis:'gross',paymentsPerYear:14},location:{precision:'employer_declared'}};
  const view=jobPresentation(direct);
  assert.equal(view.sourceLink,null);
  assert.equal(view.salaryLabel,'1.500–1.700 € brutos al mes · 14 pagas');
- assert.equal(view.locationLabel,'Punto declarado por el anunciante; no verificado por GeoEmpleo');
+ assert.equal(view.locationLabel,'Punto declarado por el anunciante; no verificado por GeoEmpleo360');
  assert.match(view.note,/contacto publicado/);
 });
 test('deriva un tema decorativo estable sin inventar una imagen',()=>{

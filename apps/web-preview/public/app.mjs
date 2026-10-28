@@ -200,7 +200,7 @@ function card(call) {
   article.addEventListener('focusout',event=>{if(!article.contains(event.relatedTarget))interaction.clearPreview(call.id);});
   const visualFrame = element('div', undefined, 'job-visual-frame');
   const brand=employerBrand(call);
-  const visual = element('div', undefined, `job-visual theme-${cardVisualTheme(call)} ${brand.alt==='GeoEmpleo'?'logo-generic':'logo-brand'}`);
+  const visual = element('div', undefined, `job-visual theme-${cardVisualTheme(call)} ${brand.alt==='GeoEmpleo360'?'logo-generic':'logo-brand'}`);
   visual.setAttribute('aria-hidden','true');
   const logo=setBrandImageFallback(element('img'));logo.src=brand.src;logo.alt='';logo.loading='lazy';logo.decoding='async';logo.draggable=false;
   visual.append(logo);
@@ -367,7 +367,7 @@ function showLocationPermission(mode) {
   const action=document.querySelector('#location-permission-action');
   const cancel=document.querySelector('#location-permission-cancel');
   title.textContent=mode==='denied'?'Ubicación bloqueada':'Usar tu ubicación';
-  message.textContent=mode==='denied'?'El permiso de ubicación está rechazado o bloqueado. ¿Quieres saber cómo activarlo?':'GeoEmpleo usará tu ubicación una vez para centrar el mapa y encontrar ofertas cercanas. El navegador te pedirá permiso.';
+  message.textContent=mode==='denied'?'El permiso de ubicación está rechazado o bloqueado. ¿Quieres saber cómo activarlo?':'GeoEmpleo360 usará tu ubicación una vez para centrar el mapa y encontrar ofertas cercanas. El navegador te pedirá permiso.';
   action.textContent=mode==='denied'?'Ver cómo activarlo':'Solicitar ubicación';
   cancel.textContent='Ahora no';help.hidden=true;
   if(!locationPermissionDialog.open)locationPermissionDialog.showModal();
@@ -405,7 +405,7 @@ async function useMyLocation({interactive=false}={}) {
       setOrigin(position.point,'Ubicación aproximada del dispositivo');
       mapController?.focus(position.point,position.zoom);
     } else {
-      document.querySelector('#origin-status').textContent=position.status==='denied'?'Este navegador ha rechazado el permiso de ubicación. Actívalo para GeoEmpleo en los ajustes del sitio y vuelve a pulsar «Usar mi ubicación», o elige una localidad.':'No pudimos localizarte. Elige una localidad o mueve el mapa.';
+      document.querySelector('#origin-status').textContent=position.status==='denied'?'Este navegador ha rechazado el permiso de ubicación. Actívalo para GeoEmpleo360 en los ajustes del sitio y vuelve a pulsar «Usar mi ubicación», o elige una localidad.':'No pudimos localizarte. Elige una localidad o mueve el mapa.';
     }
     return position;
   }finally{locating=false;document.querySelector('#use-location').disabled=false;}
