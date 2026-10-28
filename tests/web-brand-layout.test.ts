@@ -8,6 +8,10 @@ type Element = DefaultTreeAdapterTypes.Element;
 
 const html = await readFile(new URL('../apps/web-preview/public/index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../apps/web-preview/public/styles.css', import.meta.url), 'utf8');
+const submissionCss = await readFile(new URL('../apps/web-preview/public/submission.css', import.meta.url), 'utf8');
+const publishHtml = await readFile(new URL('../apps/web-preview/public/publish.html', import.meta.url), 'utf8');
+const manageHtml = await readFile(new URL('../apps/web-preview/public/manage.html', import.meta.url), 'utf8');
+const privacyHtml = await readFile(new URL('../apps/web-preview/public/privacy.html', import.meta.url), 'utf8');
 const app = await readFile(new URL('../apps/web-preview/public/app.mjs', import.meta.url), 'utf8');
 const googleMap = await readFile(new URL('../apps/web-preview/public/google-map.mjs', import.meta.url), 'utf8');
 const parseErrors: ParserError[] = [];
@@ -150,7 +154,33 @@ test('index.html parses without HTML errors', () => {
   assert.deepEqual(parseErrors, []);
 });
 
-test('stylesheet cache key includes the latest footer patch version', () => {
+test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordmark', () => {
+  assert.match(html, /<title>GeoEmpleo360 · Tu próximo trabajo, más cerca<\/title>/);
+  assert.match(html, /aria-label="GeoEmpleo360, inicio"/);
+  assert.match(publishHtml, /<title>Publicar una oferta · GeoEmpleo360<\/title>/);
+  assert.match(manageHtml, /<title>Gestionar mi oferta · GeoEmpleo360<\/title>/);
+  assert.match(privacyHtml, /<title>Privacidad y cookies · GeoEmpleo360<\/title>/);
+  assert.match(privacyHtml, /GeoEmpleo360 permite buscar ofertas/);
+
+  for (const page of [html, publishHtml, manageHtml]) {
+    const parsed = parse(page);
+    const nodes = elements(parsed);
+    const brand = nodes.find(element => hasClass(element, 'brand-name'));
+    assert.ok(brand, 'each page should render the shared wordmark');
+    const pieces = elements(brand).filter(element =>
+      ['brand-geo', 'brand-empleo', 'brand-360'].some(className => hasClass(element, className)));
+    assert.deepEqual(pieces.map(textContent), ['geo', 'empleo', '360']);
+  }
+
+  assert.match(css, /\.brand-geo\s*\{color:var\(--petrol\)\}/);
+  assert.match(css, /\.brand-empleo\s*\{color:var\(--saffron\)\}/);
+  assert.match(css, /\.brand-360\s*\{color:var\(--petrol\)\}/);
+  assert.match(submissionCss, /\.brand \.brand-geo[^}]*var\(--petroleum\)/);
+  assert.match(submissionCss, /\.brand \.brand-empleo[^}]*var\(--saffron\)/);
+  assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
+});
+
+test('stylesheet cache key includes the GeoEmpleo360 wordmark patch version', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -160,7 +190,7 @@ test('stylesheet cache key includes the latest footer patch version', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261027-footer-credit(?:&|$)/,
+    /(?:[?&]v=)20261028-geoempleo360-brand(?:&|$)/,
   );
 });
 
@@ -213,10 +243,10 @@ test('favicon encodes the Ruta G route, destination and destination dot', () => 
   assert.ok(destinationDot);
 });
 
-test('page has one visually hidden GeoEmpleo heading', () => {
+test('page has one visually hidden GeoEmpleo360 heading', () => {
   const headings = allElements.filter(element => element.tagName === 'h1');
   assert.equal(headings.length, 1);
-  assert.equal(textContent(headings[0]).trim(), 'GeoEmpleo');
+  assert.equal(textContent(headings[0]).trim(), 'GeoEmpleo360');
   assert.ok(hasClass(headings[0], 'visually-hidden'));
   assert.match(css, /\.visually-hidden\{[^}]*position:absolute[^}]*clip(?:-path)?:/);
 });

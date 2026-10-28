@@ -44,7 +44,7 @@ test('cada portal empresarial verificado muestra un asset local de su marca', ()
   }
 });
 
-test('fuentes públicas y anuncios directos muestran la identidad neutra de GeoEmpleo', () => {
+test('fuentes públicas y anuncios directos muestran la identidad neutra de GeoEmpleo360', () => {
   assert.deepEqual(employerBrand({sourceId:'ecyl-castilla-leon',employer:'McDonald’s'}),neutralBrand);
   assert.deepEqual(employerBrand({sourceId:'direct-employer',employer:'KFC'}),neutralBrand);
 });

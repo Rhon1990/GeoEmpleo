@@ -1,6 +1,6 @@
 # Recursos de marca
 
-Estos archivos se sirven desde GeoEmpleo para evitar peticiones de imagen a terceros al abrir una oferta. La atribución depende siempre del ID de fuente empresarial del anuncio; no se infiere una marca a partir del título. Los nombres y marcas pertenecen a sus titulares.
+Estos archivos se sirven desde GeoEmpleo360 para evitar peticiones de imagen a terceros al abrir una oferta. La atribución depende siempre del ID de fuente empresarial del anuncio; no se infiere una marca a partir del título. Los nombres y marcas pertenecen a sus titulares.
 
 | Archivo | Empresa | Origen público del recurso |
 |---|---|---|
