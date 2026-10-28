@@ -2,7 +2,7 @@ import type {CityResolver} from './bizneo.ts';
 import type {PublicJob} from '../model.ts';
 import {canonicalSpanishProvince} from '../national-geography.ts';
 import {attribute,descendants,documentOf,hasClass,textOf} from './html-dom.ts';
-import {dateFromSpanish,isRecentPublication} from './shared.ts';
+import {dateFromSpanish} from './shared.ts';
 
 export const randstadListingUrl='https://www.randstad.es/candidatos/ofertas-empleo/pg-10/';
 const randstadApiUrl='https://apis.randstad.es/talent/offers/';
@@ -34,7 +34,6 @@ export function adaptRandstadListing(html:string,checkedAt:string,resolveCity:Ci
     if(!title||!province||!match||!publishedText)continue;
     if(canonicalSpanishProvince(match[2])?.name!==province.name)continue;
     const publishedAt=dateFromSpanish(publishedText,'Randstad');
-    if(!isRecentPublication(publishedAt,checkedAt,30))continue;
     const city=match[1]!.trim();
     const resolved=resolveCity(city,province.name);
     const employer=attribute(card,'data-publication-company-business')?.trim()||'Randstad';

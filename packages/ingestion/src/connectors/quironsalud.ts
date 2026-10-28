@@ -2,7 +2,7 @@ import type {CityResolver} from './bizneo.ts';
 import type {PublicJob} from '../model.ts';
 import {canonicalSpanishProvince} from '../national-geography.ts';
 import {attribute,descendants,documentOf,textOf} from './html-dom.ts';
-import {dateFromSpanish,isRecentPublication} from './shared.ts';
+import {dateFromSpanish} from './shared.ts';
 
 export const quironsaludListingUrl='https://careers.talentclue.com/es/company/102ba0383b7d45e10c9679e94613c9a9/jsoffers/modal?op=1';
 const sourceId='talentclue-quironsalud';
@@ -28,7 +28,7 @@ export function adaptQuironsaludListing(html:string,checkedAt:string,resolveCity
     const city=textOf(cells[3]!);
     const provinceRaw=textOf(cells[4]!);
     const publishedAt=dateFromSpanish(textOf(cells[5]!),'Quirónsalud');
-    if(!title||!city||!isRecentPublication(publishedAt,checkedAt,90))continue;
+    if(!title||!city)continue;
     const province=canonicalSpanishProvince(provinceRaw);
     if(!province&&provinceRaw!=='-')continue;
     const resolved=resolveCity(city,province?.name);
@@ -41,7 +41,7 @@ export function adaptQuironsaludListing(html:string,checkedAt:string,resolveCity
       sourceUrl:raw!,publishedAt,checkedAt,closingDate:null,salary:null,
       applicationRegistration:'external_required',selection:null,location:resolved?.location??null});
   }
-  if(!jobs.length)throw new TypeError('Quirónsalud sin ofertas españolas recientes verificables');
+  if(!jobs.length)throw new TypeError('Quirónsalud sin ofertas españolas verificables');
   return jobs;
 }
 

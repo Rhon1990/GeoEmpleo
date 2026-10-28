@@ -198,13 +198,14 @@ test('Bizneo reconoce una categoría previa a la localidad en Telepizza',()=>{
   assert.equal(parseBizneoListing(html,telepizza).offers[0]?.city,'Villacastín');
 });
 
-test('TalentClue conserva fecha real y no añade una localidad ambigua', () => {
-  const html = '<table><tr><td><a href="https://careers.talentclue.com/es/node/129742113/4590/modal">Personal de equipo</a></td><td>McDonald’s Rosaleda</td><td>Málaga</td><td>Málaga</td><td>Ventas</td><td>23/10/2026</td></tr></table>';
+test('TalentClue conserva vacantes antiguas mientras sigan en el listado público', () => {
+  const html = '<table><tr><td><a href="https://careers.talentclue.com/es/node/129742113/4590/modal">Personal de equipo</a></td><td>McDonald’s Rosaleda</td><td>Málaga</td><td>Málaga</td><td>Ventas</td><td>23/10/2026</td></tr><tr><td><a href="https://careers.talentclue.com/es/node/129742114/4590/modal">Gerencia de restaurante</a></td><td>McDonald’s Centro</td><td>Madrid</td><td>Madrid</td><td>Operaciones</td><td>23/10/2025</td></tr></table>';
   const jobs = adaptTalentClueListing(html,checkedAt,() => null);
-  assert.equal(jobs.length,1);
+  assert.equal(jobs.length,2);
   assert.equal(jobs[0]?.publishedAt,'2026-10-23');
   assert.equal(jobs[0]?.location,null);
   assert.equal(jobs[0]?.sourceUrl,'https://careers.talentclue.com/es/node/129742113/4590/modal');
+  assert.equal(jobs[1]?.publishedAt,'2025-10-23');
 });
 
 test('la primera observación de Bizneo se mantiene en refrescos diarios', () => {

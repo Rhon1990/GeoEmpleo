@@ -43,8 +43,8 @@ test('Indra publica únicamente fichas españolas del portal oficial',()=>{
 });
 
 test('Randstad distingue vacantes españolas con ubicación municipal de búsquedas genéricas',()=>{
-  const card=(id:string,location:string,province:string)=>`<a href="https://www.randstad.es/candidatos/ofertas-empleo/oferta/auxiliar-${id}/" data-offerid="${id}" data-title="Auxiliar de tienda" data-province="${province}" data-publication-company-business="Randstad Trabajo Temporal"><div class="rel_text-ellipsis-2">${location}</div><div>publicada el 27/10/2026</div></a>`;
-  const foundation=card('125','Madrid - Madrid','Madrid').replace('/candidatos/ofertas-empleo/','/fundacion-randstad/empleo-discapacidad/');
+  const card=(id:string,location:string,province:string,date='27/10/2026')=>`<a href="https://www.randstad.es/candidatos/ofertas-empleo/oferta/auxiliar-${id}/" data-offerid="${id}" data-title="Auxiliar de tienda" data-province="${province}" data-publication-company-business="Randstad Trabajo Temporal"><div class="rel_text-ellipsis-2">${location}</div><div>publicada el ${date}</div></a>`;
+  const foundation=card('125','Madrid - Madrid','Madrid','01/01/2025').replace('/candidatos/ofertas-empleo/','/fundacion-randstad/empleo-discapacidad/');
   const jobs=adaptRandstadListing(`${card('123','Madrid - Madrid','Madrid')}${card('124','Lisboa - Lisboa','Lisboa')}${foundation}`,checkedAt,resolveCity);
   assert.deepEqual(jobs.map(job=>job.id),['RANDSTAD-123','RANDSTAD-125']);
   assert.deepEqual(jobs[0]?.location?.point,[-3.70,40.42]);
@@ -76,13 +76,14 @@ test('Randstad recorre todas las páginas y conserva ofertas activas antiguas de
  assert.equal(jobs.at(-1)?.city,'Madrid');
 });
 
-test('Quirónsalud acepta solo fichas españolas recientes y ubica el municipio verificado',()=>{
+test('Quirónsalud conserva vacantes antiguas del listado y ubica el municipio verificado',()=>{
   const row=(id:string,city:string,province:string,date:string)=>`<tr><td><img alt="Quirónsalud"></td><td><a href="https://careers.talentclue.com/es/node/${id}/4590/modal">Enfermería</a></td><td>Quirónsalud</td><td>${city}</td><td>${province}</td><td>${date}</td></tr>`;
   const html=`<table>${row('123','Alcobendas','Madrid','27/10/2026')}${row('124','Lisboa','Portugal','27/10/2026')}${row('125','Madrid','Madrid','01/01/2026')}</table>`;
   const jobs=adaptQuironsaludListing(html,checkedAt,resolveCity);
-  assert.deepEqual(jobs.map(job=>job.id),['QUIRONSALUD-123']);
+  assert.deepEqual(jobs.map(job=>job.id),['QUIRONSALUD-123','QUIRONSALUD-125']);
   assert.deepEqual(jobs[0]?.location?.point,[-3.64,40.54]);
   assert.equal(jobs[0]?.sourceUrl,'https://careers.talentclue.com/es/node/123/4590/modal');
+  assert.equal(jobs[1]?.publishedAt,'2026-01-01');
 });
 
 test('Quirónsalud no inventa punto para localidad ambigua y rechaza enlaces externos',()=>{

@@ -1,12 +1,12 @@
 import type { PlaceResolver } from '../geography.ts';
 import type { PublicJob } from '../model.ts';
 import { canonicalSpanishProvince } from '../national-geography.ts';
-import { dateFromSpanish, isRecentPublication } from './shared.ts';
+import { dateFromSpanish } from './shared.ts';
 import { attribute, descendants, documentOf, textOf } from './html-dom.ts';
 
 const listingUrl='https://careers.talentclue.com/es/company/6285677f44a78f103ce17087c20ecee7/jsoffers/modal?order=Fecha&sort=asc';
 
-/** Only rows currently listed by McDonald's and dated within 90 days are published. */
+/** Only rows currently listed by McDonald's with verified Spanish locations are published. */
 export function adaptTalentClueListing(html:string,checkedAt:string,resolve:PlaceResolver):PublicJob[] {
   const document=documentOf(html);
   const rows=descendants(document,element=>element.tagName==='tr');
@@ -28,7 +28,7 @@ export function adaptTalentClueListing(html:string,checkedAt:string,resolve:Plac
     const city=textOf(cells[2]!);
     const province=canonicalSpanishProvince(textOf(cells[3]!));
     const publishedAt=dateFromSpanish(textOf(cells[5]!),'TalentClue');
-    if(!isRecentPublication(publishedAt,checkedAt,90)||!title||!city||!province) continue;
+    if(!title||!city||!province) continue;
     const location=/\b(remoto|varias|nacional)\b/i.test(city)?null:resolve(city,province.name);
     jobs.push({kind:'job',sourceId:'talentclue-mcdonalds',source:"McDonald's · TalentClue",
       id:`TALENTCLUE-MCDONALDS-${id}`,title,employer:employer||"McDonald's",
@@ -39,7 +39,7 @@ export function adaptTalentClueListing(html:string,checkedAt:string,resolve:Plac
       sourceUrl:raw!,publishedAt,checkedAt,closingDate:null,salary:null,
       applicationRegistration:'external_required',selection:null,location});
   }
-  if(!jobs.length) throw new TypeError('TalentClue sin ofertas recientes');
+  if(!jobs.length) throw new TypeError('TalentClue sin ofertas españolas verificables');
   return jobs;
 }
 
