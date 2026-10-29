@@ -93,9 +93,11 @@ jobs:
         if: steps.refresh.outputs.required == 'true'
         run: |
           checked_at="$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('var/ingestion/latest.json','utf8')).checkedAt)")"
-          node tools/validate-daily-catalog.mjs \
-            --url "https://geoempleo-49978.web.app/data/calls.json?checkedAt=$checked_at" \
-            --expected-checked-at "$checked_at"
+          for origin in https://geoempleo-49978.web.app https://geoempleo360.com; do
+            node tools/validate-daily-catalog.mjs \
+              --url "$origin/data/calls.json?checkedAt=$checked_at" \
+              --expected-checked-at "$checked_at"
+          done
 
       - name: Conservar informe de las fuentes
         if: always() && steps.refresh.outputs.required == 'true'
