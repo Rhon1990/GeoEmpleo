@@ -5,6 +5,9 @@ on:
     # Captura diaria y respaldos; se omiten si el catálogo ya es de hoy.
     - cron: '37 5,7,9 * * *'
       timezone: Europe/Madrid
+    # Prueba temporal solicitada para verificar el disparo automático.
+    - cron: '15 9 * * *'
+      timezone: Europe/Madrid
   workflow_dispatch:
 
 permissions:
