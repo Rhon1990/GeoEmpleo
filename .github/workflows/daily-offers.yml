@@ -2,15 +2,11 @@ name: Actualizar ofertas de GeoEmpleo
 
 on:
   schedule:
-    # Captura diaria y respaldos; se omiten si el catálogo ya es de hoy.
+    # GitHub evalúa cron en UTC. Captura diaria y respaldos; se omiten si el
+    # catálogo ya es de hoy en Europe/Madrid.
     - cron: '37 5,7,9 * * *'
-      timezone: Europe/Madrid
-    # Prueba temporal solicitada para verificar el disparo automático.
-    - cron: '15 9 * * *'
-      timezone: Europe/Madrid
-    # Reintentos controlados con margen suficiente para registrar el cron.
-    - cron: '25,35 9 * * *'
-      timezone: Europe/Madrid
+    # Pruebas temporales del 29/10/2026: 09:35, 09:40 y 09:45 Europe/Madrid.
+    - cron: '35,40,45 8 * * *'
   workflow_dispatch:
 
 permissions:
