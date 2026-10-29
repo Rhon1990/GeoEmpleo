@@ -6,7 +6,7 @@ on:
     # catálogo ya es de hoy en Europe/Madrid.
     - cron: '37 5,7,9 * * *'
     # Ventana temporal del 29/10/2026 para comprobar el registro del scheduler.
-    - cron: '*/5 8 * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
