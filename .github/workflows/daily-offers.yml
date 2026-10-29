@@ -8,6 +8,9 @@ on:
     # Prueba temporal solicitada para verificar el disparo automático.
     - cron: '15 9 * * *'
       timezone: Europe/Madrid
+    # Reintentos controlados con margen suficiente para registrar el cron.
+    - cron: '25,35 9 * * *'
+      timezone: Europe/Madrid
   workflow_dispatch:
 
 permissions:
