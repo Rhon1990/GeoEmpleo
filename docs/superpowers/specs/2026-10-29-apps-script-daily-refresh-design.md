@@ -82,10 +82,11 @@ esperado es 0 EUR dentro de las cuotas gratuitas actuales.
 1. Pruebas unitarias locales del script con respuestas simuladas: catálogo de
    hoy, catálogo atrasado, JSON inválido, 204 de GitHub, error de GitHub y
    enfriamiento de 60 minutos.
-2. Prueba manual controlada desde Apps Script: debe crear un run de GitHub con
-   evento `workflow_dispatch`, nunca modificar el catálogo directamente.
-3. Prueba automática cercana: un disparador de una sola ejecución debe crear el
-   run sin Codex ni acción humana.
+2. Prueba automática cercana: se instala un disparador de una sola ejecución
+   dentro de la ventana matinal y se cierra la consola.
+3. Ese disparador debe crear un run de GitHub con evento `workflow_dispatch`,
+   sin usar el botón de GitHub, Codex ni el terminal y sin modificar el catálogo
+   directamente.
 4. El run debe terminar `success` o `partial` válido y desplegar.
 5. Ambos dominios deben publicar el nuevo `checkedAt`, JSON válido y la misma
    cantidad de IDs únicos.
