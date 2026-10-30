@@ -136,10 +136,15 @@ Desde el directorio de trabajo de `web-preview`:
 
 ## Actualización autónoma sin Codex
 
-`.github/workflows/daily-offers.yml` ejecuta GitHub Actions a las 05:37, 07:37
-y 09:37 de `Europe/Madrid`, más una opción manual en la pestaña Actions. La
-primera ejecución programada que publique el catálogo del día hace que los
-respaldos omitan una captura redundante. Captura únicamente los conectores ya activos; acepta `success` o
+Google Apps Script actúa como vigilante externo principal: cada 15 minutos,
+entre las 05:00 y las 12:00 de `Europe/Madrid`, comprueba el `checkedAt` público
+y, si el catálogo aún no es del día, ejecuta `daily-offers.yml` en `main`. Un
+enfriamiento de 60 minutos evita disparos duplicados. El workflow conserva como
+respaldo sus horarios de las 05:37, 07:37 y 09:37, más la opción manual de la
+pestaña Actions. La configuración y revocación están documentadas en
+[`infra/apps-script-daily-refresh`](../infra/apps-script-daily-refresh/README.md).
+
+El workflow captura únicamente los conectores ya activos; acepta `success` o
 `partial` si al menos una fuente se actualizó, y rechaza `failed`, un `checkedAt`
 antiguo, un catálogo inconsistente o IDs duplicados. Solo después compila,
 despliega Hosting y compara por HTTPS el catálogo publicado. Una fuente fallida
@@ -163,8 +168,18 @@ durante la acción de despliegue. Firebase documenta la integración oficial
 con GitHub y la creación/custodia del secreto de servicio. Para repositorios
 públicos, los runners estándar de GitHub Actions son gratuitos; en repositorios
 privados se aplican los minutos incluidos en el plan y el exceso puede cobrarse.
-No activar facturación de Google ni Blaze para esta arquitectura. La operación
-diaria principal es GitHub Actions y no necesita Codex.
+No activar facturación de Google ni Blaze para esta arquitectura. Apps Script
+usa sus cuotas gratuitas y GitHub Actions ejecuta la captura y el despliegue;
+ninguno depende de Codex ni de un ordenador encendido.
+
+La prueba automática [`41026123338`](https://github.com/Rhon1990/GeoEmpleo/actions/runs/41026123338)
+fue iniciada por Apps Script el 30/10/2026 a las 09:23 Europe/Madrid. Capturó,
+compiló y desplegó **12.553 publicaciones con 12.553 IDs únicos** y
+`checkedAt=2026-10-30T08:23:46.918Z`; ambos dominios públicos sirvieron después
+ese mismo catálogo. La acción quedó marcada como fallida porque la primera
+lectura HTTPS recibió temporalmente el catálogo anterior desde caché. La
+validación final ahora reintenta seis veces, con diez segundos entre intentos,
+antes de declarar un fallo de publicación.
 
 La captura del 28/10/2026 a las 08:36:59 UTC terminó `success`: **28 fuentes
 actualizadas**, **6.145 publicaciones con ID único**. El catálogo está desplegado
