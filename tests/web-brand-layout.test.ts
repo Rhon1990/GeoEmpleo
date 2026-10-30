@@ -590,6 +590,15 @@ test('mobile category rail keeps its height when filter controls stack verticall
   );
 });
 
+test('mobile clear filters stays compact on its own row', () => {
+  const mobileRules = mediaBlocksForMaxWidth(css, 780).join('\n');
+  assert.match(mobileRules, /\.filter-controls\{[^}]*flex:1 0 100%/);
+  assert.match(
+    mobileRules,
+    /#clear-filters\{[^}]*align-self:flex-end[^}]*flex:none[^}]*min-height:38px[^}]*margin-left:auto/,
+  );
+});
+
 test('narrow mobile stacks flexible fields without shrinking touch controls', () => {
   const narrowRules = mediaBlockForViewport(css, 480);
   assert.ok(narrowRules, 'Expected a responsive rule that applies at 480px');
