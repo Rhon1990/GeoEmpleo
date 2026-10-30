@@ -54,17 +54,26 @@ function jobPath(value:unknown):{path:string;id:string} {
   return {path:value,id:id.toUpperCase()};
 }
 
-export function parseAccentureListing(input:unknown):{total:number;offers:AccentureListedOffer[]} {
+export function parseAccentureListing(input:unknown):{total:number;offers:AccentureListedOffer[];unlinkedIds:string[]} {
   const data=record(input);
   if(!Number.isSafeInteger(data.total)||Number(data.total)<0||!Array.isArray(data.jobPostings)) throw new TypeError('Listado Accenture inválido');
-  const offers=data.jobPostings.map(value=>{
+  const offers:AccentureListedOffer[]=[],unlinkedIds:string[]=[];
+  for(const value of data.jobPostings){
     const item=record(value);
+    if(item.externalPath===undefined&&item.title===undefined){
+      const id=Array.isArray(item.bulletFields)?item.bulletFields[0]:null;
+      if(typeof id!=='string'||!/^R?\d{5,}$/i.test(id)) throw new TypeError('Fila Workday sin enlace inválida');
+      unlinkedIds.push(id.toUpperCase());
+      continue;
+    }
     const {path,id}=jobPath(item.externalPath);
     if(typeof item.title!=='string'||!item.title.trim()) throw new TypeError('Título Accenture ausente');
-    return {id,title:item.title.trim(),path};
-  });
-  if(new Set(offers.map(offer=>offer.id)).size!==offers.length) throw new TypeError('IDs Accenture repetidos');
-  return {total:Number(data.total),offers};
+    offers.push({id,title:item.title.trim(),path});
+  }
+  const ids=[...offers.map(offer=>offer.id),...unlinkedIds];
+  if(new Set(ids).size!==ids.length) throw new TypeError('IDs Accenture repetidos');
+  if(unlinkedIds.length>1) throw new TypeError('Demasiadas filas Workday sin enlace');
+  return {total:Number(data.total),offers,unlinkedIds};
 }
 
 function officialUrl(value:unknown,id:string):string {
@@ -124,6 +133,7 @@ async function fetchAccentureSnapshot(checkedAt:string,resolveCity:CityResolver,
   const first=await postListing({appliedFacets:{},limit:20,offset:0,searchText:''},fetchImpl);
   const countryId=spainFacet(first);
   const found=new Map<string,AccentureListedOffer>();
+  const unlinked=new Set<string>();
   let expected:number|null=null;
   for(let offset=0;offset<(expected??20);offset+=20){
     const page=parseAccentureListing(await postListing({appliedFacets:{locationCountry:[countryId]},limit:20,offset,searchText:''},fetchImpl));
@@ -131,10 +141,12 @@ async function fetchAccentureSnapshot(checkedAt:string,resolveCity:CityResolver,
       if(page.total<1||page.total>1000) throw new TypeError('Volumen Accenture inesperado');
       expected=page.total;
     } else if(page.total!==0&&page.total!==expected) throw new TypeError('Listado Accenture cambió durante la captura');
-    if(!page.offers.length) throw new TypeError('Página Accenture vacía');
-    for(const offer of page.offers){if(found.has(offer.id)) throw new TypeError('ID Accenture repetido entre páginas');found.set(offer.id,offer);}
+    if(!page.offers.length&&!page.unlinkedIds.length) throw new TypeError('Página Accenture vacía');
+    for(const offer of page.offers){if(found.has(offer.id)||unlinked.has(offer.id)) throw new TypeError('ID Accenture repetido entre páginas');found.set(offer.id,offer);}
+    for(const id of page.unlinkedIds){if(found.has(id)||unlinked.has(id)) throw new TypeError('ID Accenture repetido entre páginas');unlinked.add(id);}
+    if(unlinked.size>1) throw new TypeError('Demasiadas filas Workday sin enlace');
   }
-  if(found.size!==expected) throw new TypeError('Paginación Accenture incompleta');
+  if(found.size+unlinked.size!==expected) throw new TypeError('Paginación Accenture incompleta');
   const jobs:PublicJob[]=[];
   const offers=[...found.values()];
   for(let i=0;i<offers.length;i+=4){

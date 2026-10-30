@@ -85,7 +85,7 @@ test('runner publica una oferta empresarial oficial y conserva la fuente fallida
   await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-10-25T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
   await writeFile(placesPath,JSON.stringify({places:[]}));
   await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-10-26',license:'test',places:[]})));
-  const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Medico/1234567890/">Médico/a</a></td><td class="colLocation">Madrid, ES</td><td class="colDate">26 oct 2026</td></tr></table>';
+  const listing='<span class="paginationLabel">Resultados 1 – 1 de 1</span><table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Medico/1234567890/">Médico/a</a></td><td class="colLocation">Madrid, ES</td><td class="colDate">26 oct 2026</td></tr></table>';
   const detail='<meta itemprop="datePosted" content="2026-10-26"><h1>Médico/a</h1><span itemprop="description"><p>Atención a pacientes.</p></span>';
   const fetchImpl=(async(input:string|URL|Request)=>{
    const url=new URL(input instanceof Request?input.url:input);

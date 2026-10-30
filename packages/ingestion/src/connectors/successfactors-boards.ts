@@ -8,6 +8,7 @@ export const successFactorsBoards: readonly SuccessFactorsBoard[] = [
     listingPath:'/search/?createNewAlert=false&q=&locationsearch=',jobPathPattern,
     category:'sanidad',categoryLabel:'Sanidad y salud',sourceLabel:'Vithas · empleo oficial',
     pageSize:25,maxPages:40,
+    paginationOffsetParam:'startrow',
   },
   {
     sourceId:'successfactors-mapfre',hostname:'jobs.mapfre.com',employer:'MAPFRE',
