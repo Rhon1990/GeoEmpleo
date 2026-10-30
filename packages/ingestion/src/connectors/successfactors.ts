@@ -18,6 +18,7 @@ export interface SuccessFactorsBoard {
   readonly idPrefix?:string;
   readonly requireCityMentionInTitle?:boolean;
   readonly skipVerifiedClosed?:boolean;
+  readonly paginationOffsetParam?:'startrow';
   readonly pageSize:number;
   readonly maxPages:number;
 }
@@ -62,7 +63,7 @@ function cityMentionedInTitle(city:string,title:string):boolean {
   return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`,'i').test(normalize(title));
 }
 
-export function parseSuccessFactorsListing(html:string,board:SuccessFactorsBoard):{offers:SuccessFactorsListedOffer[];pageCount:number} {
+export function parseSuccessFactorsListing(html:string,board:SuccessFactorsBoard):{offers:SuccessFactorsListedOffer[];pageCount:number;totalCount:number|null} {
   const document=documentOf(html);
   const rows=descendants(document,element=>element.tagName==='tr'&&hasClass(element,'data-row'));
   if(!rows.length) throw new TypeError('Listado SuccessFactors vacío');
@@ -85,9 +86,10 @@ export function parseSuccessFactorsListing(html:string,board:SuccessFactorsBoard
   });
   const label=descendants(document,element=>hasClass(element,'paginationLabel'))[0];
   const total=label?/\bde\s+(\d+)\b/i.exec(textOf(label))?.[1]:null;
-  const pageCount=total?Math.ceil(Number(total)/board.pageSize):1;
+  const totalCount=total?Number(total):null;
+  const pageCount=totalCount?Math.ceil(totalCount/board.pageSize):1;
   if(!Number.isSafeInteger(pageCount)||pageCount<1||pageCount>board.maxPages) throw new TypeError('Paginación SuccessFactors inválida');
-  return {offers,pageCount};
+  return {offers,pageCount,totalCount};
 }
 
 export function adaptSuccessFactorsDetail(
@@ -145,13 +147,16 @@ export async function fetchSuccessFactorsOffers(
   const found=new Map<string,SuccessFactorsListedOffer>();
   const listingUrl=new URL(board.listingPath,`https://${board.hostname}`);
   const first=parseSuccessFactorsListing(await fetchHtml(listingUrl.href,{fetchImpl}),board);
+  if(board.paginationOffsetParam&&first.totalCount===null) throw new TypeError('Paginación SuccessFactors sin total');
   for(const offer of first.offers) found.set(offer.url,offer);
   for(let page=2;page<=first.pageCount;page++) {
     const url=new URL(board.listingPath,`https://${board.hostname}`);
-    url.pathname=`${url.pathname.replace(/\/$/,'')}/${(page-1)*board.pageSize}/`;
+    if(board.paginationOffsetParam) url.searchParams.set(board.paginationOffsetParam,String((page-1)*board.pageSize));
+    else url.pathname=`${url.pathname.replace(/\/$/,'')}/${(page-1)*board.pageSize}/`;
     url.searchParams.set('sortColumn','referencedate');
     url.searchParams.set('sortDirection','desc');
     const parsed=parseSuccessFactorsListing(await fetchHtml(url.href,{fetchImpl}),board);
+    if(board.paginationOffsetParam&&parsed.totalCount!==first.totalCount) throw new TypeError('Listado SuccessFactors cambió durante la paginación');
     let added=0;
     for(const offer of parsed.offers) {
       if(found.has(offer.url)) continue;
@@ -160,6 +165,7 @@ export async function fetchSuccessFactorsOffers(
     }
     if(!added) throw new TypeError('Paginación SuccessFactors repetida');
   }
+  if(board.paginationOffsetParam&&found.size!==first.totalCount) throw new TypeError('Paginación SuccessFactors incompleta');
   if(found.size===0||found.size>board.pageSize*board.maxPages) throw new TypeError('Volumen SuccessFactors inesperado');
   const offers=[...found.values()];
   const jobs:PublicJob[]=[];

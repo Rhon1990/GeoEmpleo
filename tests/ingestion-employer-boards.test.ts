@@ -300,6 +300,49 @@ test('SuccessFactors conserva el filtro de España al paginar una búsqueda',asy
   assert.equal(fetched.filter(url=>url.includes('/search/')).length,2);
 });
 
+test('Vithas pagina con startrow sin repetir la primera página',async()=>{
+  const board=successFactorsBoards.find(item=>item.sourceId==='successfactors-vithas')!;
+  const row=(id:string)=>`<tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-${id}/${id}/">Puesto ${id}</a></td><td class="colLocation">Madrid, ES</td></tr>`;
+  const firstPage=Array.from({length:25},(_,index)=>row(String(100+index))).join('');
+  const fetched:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    fetched.push(url.href);
+    if(url.pathname.startsWith('/job/')) return new Response(`<meta itemprop="datePosted" content="2026-10-24"><h1>Puesto ${url.pathname.match(/\/(\d+)\/$/)?.[1]}</h1><span itemprop="description"><p>Oferta vigente.</p></span>`,{headers:{'content-type':'text/html'}});
+    return new Response(`<span class="paginationLabel">Resultados 1 – 25 de 26</span><table>${url.searchParams.get('startrow')==='25'?row('222'):firstPage}</table>`,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(board,'2026-10-26T12:00:00Z',()=>null,fetchImpl);
+  assert.equal(jobs.length,26);
+  assert.equal(jobs.at(-1)?.title,'Puesto 222');
+  assert.equal(fetched.filter(url=>url.includes('/search/')).length,2);
+  assert.equal(new URL(fetched.find(url=>url.includes('startrow=25'))!).searchParams.get('sortDirection'),'desc');
+});
+
+test('Vithas rechaza un listado paginado que no contiene el total anunciado',async()=>{
+  const board=successFactorsBoards.find(item=>item.sourceId==='successfactors-vithas')!;
+  const row=(id:string)=>`<tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-${id}/${id}/">Puesto ${id}</a></td><td class="colLocation">Madrid, ES</td></tr>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    if(url.pathname.startsWith('/job/')) return new Response(`<meta itemprop="datePosted" content="2026-10-24"><h1>Puesto ${url.pathname.match(/\/(\d+)\/$/)?.[1]}</h1><span itemprop="description"><p>Oferta vigente.</p></span>`,{headers:{'content-type':'text/html'}});
+    const rows=url.searchParams.get('startrow')==='25'?row('222'):Array.from({length:25},(_,index)=>row(String(100+index))).join('');
+    return new Response(`<span class="paginationLabel">Resultados 1 – 25 de 27</span><table>${rows}</table>`,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  await assert.rejects(fetchSuccessFactorsOffers(board,'2026-10-26T12:00:00Z',()=>null,fetchImpl),/incompleta/);
+});
+
+test('Vithas rechaza un cambio del total durante la paginación',async()=>{
+  const board=successFactorsBoards.find(item=>item.sourceId==='successfactors-vithas')!;
+  const row=(id:string)=>`<tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-${id}/${id}/">Puesto ${id}</a></td><td class="colLocation">Madrid, ES</td></tr>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    if(url.pathname.startsWith('/job/')) return new Response(`<meta itemprop="datePosted" content="2026-10-24"><h1>Puesto ${url.pathname.match(/\/(\d+)\/$/)?.[1]}</h1><span itemprop="description"><p>Oferta vigente.</p></span>`,{headers:{'content-type':'text/html'}});
+    const second=url.searchParams.get('startrow')==='25';
+    const rows=second?row('222'):Array.from({length:25},(_,index)=>row(String(100+index))).join('');
+    return new Response(`<span class="paginationLabel">Resultados 1 – 25 de ${second?27:26}</span><table>${rows}</table>`,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  await assert.rejects(fetchSuccessFactorsOffers(board,'2026-10-26T12:00:00Z',()=>null,fetchImpl),/cambió/);
+});
+
 test('Meliá omite una ficha confirmada como cubierta y conserva las vigentes',async()=>{
   const meliaBoard={...successFactorsBoard,hostname:'careers.melia.com',skipVerifiedClosed:true};
   const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Cubierta/111/">Puesto cubierto</a></td><td class="colLocation">Madrid, ES</td></tr><tr class="data-row"><td><a class="jobTitle-link" href="/job/Sevilla-Vigente/222/">Camarero/a Sevilla</a></td><td class="colLocation">Sevilla, ES</td></tr></table>';

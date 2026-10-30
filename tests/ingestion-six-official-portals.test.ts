@@ -56,6 +56,54 @@ test('Accenture admite identificadores numéricos publicados por su Workday',()=
   assert.equal(adaptAccentureDetail(result.offers[0]!,detail,checkedAt,resolveCity)?.id,'ACCENTURE-14835658');
 });
 
+test('Accenture distingue una fila Workday sin título ni enlace de una oferta verificable',()=>{
+  const listing=parseAccentureListing({total:2,jobPostings:[
+    {title:'Consultor/a',externalPath:'/job/Madrid/Consultora_R00346700'},
+    {bulletFields:['R00348384','Madrid, Castellana 85']},
+  ]});
+  assert.deepEqual(listing.offers.map(offer=>offer.id),['R00346700']);
+  assert.deepEqual(listing.unlinkedIds,['R00348384']);
+  assert.throws(()=>parseAccentureListing({total:1,jobPostings:[{title:'Consultor/a',bulletFields:['R00348384']}]}));
+  assert.throws(()=>parseAccentureListing({total:2,jobPostings:[
+    {bulletFields:['R00348384']},{bulletFields:['R00348385']},
+  ]}),/sin enlace/);
+});
+
+test('Accenture admite una última página formada por la única fila sin enlace',async()=>{
+  const mock=async(url:string|URL|Request,init?:RequestInit)=>{
+    const path=String(url);
+    if(path.endsWith('/jobs')){
+      const body=JSON.parse(String(init?.body));
+      const data=!body.appliedFacets.locationCountry
+        ? {facets:[{facetParameter:'locationMainGroup',values:[{facetParameter:'locationCountry',values:[{descriptor:'Spain',id:'es'}]}]}]}
+        : body.offset===0
+          ? {total:21,jobPostings:Array.from({length:20},(_,index)=>({title:`Puesto ${index}`,externalPath:`/job/Madrid/Puesto-${index}_${14800000+index}`}))}
+          : {total:0,jobPostings:[{bulletFields:['R00348384','Madrid, Castellana 85']}]};
+      return new Response(JSON.stringify(data),{headers:{'content-type':'application/json'}});
+    }
+    const id=path.match(/_(\d+)$/)?.[1];
+    return new Response(JSON.stringify({jobPostingInfo:{title:`Puesto ${Number(id)-14800000}`,jobDescription:'<p>Oferta concreta.</p>',location:'Madrid',startDate:'2026-10-28',jobReqId:id,country:{descriptor:'Spain'},jobRequisitionLocation:{country:{alpha2Code:'ES'}},externalUrl:path.replace('/wday/cxs/accenture',''),posted:true}}),{headers:{'content-type':'application/json'}});
+  };
+  const jobs=await fetchAccentureOffers(checkedAt,resolveCity,mock as typeof fetch);
+  assert.equal(jobs.length,20);
+});
+
+test('Accenture publica las ofertas enlazables aunque Workday incluya una fila sin enlace',async()=>{
+  const mock=async(url:string|URL|Request,init?:RequestInit)=>{
+    const path=String(url);
+    if(path.endsWith('/jobs')){
+      const body=JSON.parse(String(init?.body));
+      const data=body.appliedFacets.locationCountry
+        ? {total:2,jobPostings:[{title:'Consultor/a',externalPath:'/job/Madrid/Consultora_R00346700'}, {bulletFields:['R00348384','Madrid, Castellana 85']}]}
+        : {facets:[{facetParameter:'locationMainGroup',values:[{facetParameter:'locationCountry',values:[{descriptor:'Spain',id:'es'}]}]}]};
+      return new Response(JSON.stringify(data),{headers:{'content-type':'application/json'}});
+    }
+    return new Response(JSON.stringify({jobPostingInfo:{title:'Consultor/a',jobDescription:'<p>Oferta concreta.</p>',location:'Madrid',startDate:'2026-10-28',jobReqId:'R00346700',country:{descriptor:'Spain'},jobRequisitionLocation:{country:{alpha2Code:'ES'}},externalUrl:'https://accenture.wd103.myworkdayjobs.com/AccentureCareers/job/Madrid/Consultora_R00346700',posted:true}}),{headers:{'content-type':'application/json'}});
+  };
+  const jobs=await fetchAccentureOffers(checkedAt,resolveCity,mock as typeof fetch);
+  assert.deepEqual(jobs.map(job=>job.id),['ACCENTURE-R00346700']);
+});
+
 test('Accenture pagina cuando Workday informa total cero después de la primera página',async()=>{
   const listing=(offset:number)=>({total:offset===0?21:0,jobPostings:Array.from({length:offset===0?20:1},(_,i)=>({title:`Puesto ${offset+i}`,externalPath:`/job/Madrid/Puesto-${offset+i}_${14800000+offset+i}`}))});
   const mock=async(url:string|URL|Request,init?:RequestInit)=>{
