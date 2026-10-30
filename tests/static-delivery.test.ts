@@ -149,6 +149,14 @@ test('Firebase comparte solo el origen en solicitudes de terceros para la CMP eu
   assert.equal(hostingHeaders.find((header:{key:string})=>header.key==='Referrer-Policy')?.value,'strict-origin-when-cross-origin');
 });
 
+test('Hosting permite cargar la etiqueta oficial de Analytics',async()=>{
+  const firebase=JSON.parse(await readFile(new URL('../firebase.json',import.meta.url),'utf8'));
+  const headers=firebase.hosting.headers.find((rule:{source:string})=>rule.source==='**').headers;
+  const csp=headers.find((header:{key:string})=>header.key==='Content-Security-Policy')?.value??'';
+  const scriptSources=csp.match(/(?:^|;)\s*script-src\s+([^;]+)/)?.[1]?.split(/\s+/)??[];
+  assert.ok(scriptSources.includes('https://www.googletagmanager.com'));
+});
+
 test('un fallo del mapa no invalida los resultados reales ya cargados', () => {
   let failed=false;
   assert.equal(updateMapWithoutLosingJobs({update(){throw new Error('Maps quota');}},jobs,null,null,()=>{failed=true;}),false);
