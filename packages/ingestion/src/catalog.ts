@@ -1,6 +1,6 @@
 import type {PublicCatalog,PublicJob} from './model.ts';
 import {dateInSpain} from './normalize.ts';
-export interface ReconcilePolicy {missingRetentionDays?:number}
+export interface ReconcilePolicy {missingRetentionDays?:number;supersededSourceIds?:readonly string[]}
 
 function retainMissing(job:PublicJob,today:string,checkedAt:string,policy:ReconcilePolicy):boolean {
   if(job.closingDate!==null) return job.closingDate>=today;
@@ -19,7 +19,10 @@ export function reconcileSource(catalog:PublicCatalog,sourceId:string,incoming:P
     if(job.sourceId!==sourceId || !job.id || identities.has(job.id)) throw new TypeError('Identidad o fuente de oferta inválida');
     identities.add(job.id);
   }
-  const retained=catalog.calls.filter(job=>job.sourceId!==sourceId || (!identities.has(job.id) && retainMissing(job,today,checkedAt,policy)));
+  const superseded=new Set(policy.supersededSourceIds??[]);
+  if(superseded.has(sourceId)||[...superseded].some(id=>!id))throw new TypeError('Fuente sustituida inválida');
+  const retained=catalog.calls.filter(job=>!superseded.has(job.sourceId)&&
+    (job.sourceId!==sourceId || (!identities.has(job.id) && retainMissing(job,today,checkedAt,policy))));
   const previousById=new Map(catalog.calls.filter(job=>job.sourceId===sourceId).map(job=>[job.id,job]));
   const current=incoming.map(job=>{
     const previous=previousById.get(job.id);

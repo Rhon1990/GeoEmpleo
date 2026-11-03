@@ -37,8 +37,8 @@ que sigan abiertas.
 | `amrest-kfc` | [KFC / AmRest](https://careers.amrest.eu/KFC/go/Jobs-KFC-ES/9158355/) | Portal AmRest | Actualizada |
 | `disa-empleo` | [Grupo DISA](https://empleo.disagrupo.es/offer/getofferlistdata) | Portal empresarial | Actualizada |
 | `talentclue-quironsalud` | [Quirónsalud](https://empleo.quironsalud.es/) | TalentClue | Captura directa: 263 publicaciones, 260 con punto |
-| `selectminds-eulen` | [Grupo Eulen](https://eulen.referrals.selectminds.com/grupoeulenespana/latest-jobs) | SelectMinds | Captura directa: 9 publicaciones, 8 con punto |
-| `taleo-eulen` | [Grupo Eulen](https://eulen.taleo.net/careersection/eul_career_site/jobsearch.ftl?lang=es) | Taleo oficial | Captura aislada 03/11/2026: 493 publicaciones únicas, 455 con punto municipal; el contador de Taleo (1.394) no coincide con las fichas que devuelve su paginación pública |
+| `selectminds-eulen` | [Grupo Eulen](https://eulen.referrals.selectminds.com/grupoeulenespana/latest-jobs) | SelectMinds | Retirada: espejo parcial sustituido por Taleo; sus filas se eliminan solo después de una captura válida de la fuente sucesora |
+| `taleo-eulen` | [Grupo Eulen](https://eulen.taleo.net/careersection/eul_career_site/jobsearch.ftl?lang=es) | Taleo oficial | Captura aislada 03/11/2026: 493 vacantes únicas y 455 con punto municipal; el contador de 1.395 corresponde a resultados expandidos por ubicación, no a 1.395 requisiciones distintas |
 | `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | API pública del portal oficial | La captura recorre y valida todas las páginas anunciadas; publica fichas con provincia española y ubicación municipal solo si se resuelve |
 | `successfactors-clece` | [Clece](https://canaldeempleo.es/CLECE) | SuccessFactors | Captura directa: 355 publicaciones, 335 con punto |
 | `bizneo-domusvi` | [DomusVi](https://empleo.domusvi.es/jobs) | Tablón Bizneo | Captura directa: 340 publicaciones, 280 con punto |

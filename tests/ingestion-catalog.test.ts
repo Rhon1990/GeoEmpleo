@@ -37,6 +37,14 @@ test('retiene una oferta ausente sin cierre durante siete días exactos',()=>{
  assert.ok(atLimit.calls.some(item=>item.id==='ECYL-MISSING'));
  assert.ok(!afterLimit.calls.some(item=>item.id==='ECYL-MISSING'));
 });
+test('una fuente sucesora retira el espejo anterior solo tras una captura válida',()=>{
+ const base={...catalog,calls:[job('EULEN-OLD','selectminds-eulen',null),job('OTHER','boe',null)]} as PublicCatalog;
+ const incoming=[job('EULEN-NEW','taleo-eulen',null)];
+ const next=reconcileSource(base,'taleo-eulen',incoming,at,{missingRetentionDays:0,supersededSourceIds:['selectminds-eulen']});
+ assert.deepEqual(next.calls.map(item=>item.id).sort(),['EULEN-NEW','OTHER']);
+ assert.throws(()=>reconcileSource(base,'taleo-eulen',[],at,{supersededSourceIds:['selectminds-eulen']}));
+ assert.deepEqual(base.calls.map(item=>item.id),['EULEN-OLD','OTHER']);
+});
 test('escribe JSON atómicamente y limpia temporales ante error',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-'));try{
  const target=join(dir,'catalog.json');await writeJsonAtomic(target,{ok:true});

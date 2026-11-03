@@ -118,7 +118,7 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:lidlSearchEndpoint,licenseUrl:null},
   {id:'talentclue-quironsalud',name:'Quirónsalud · empleo oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:quironsaludListingUrl,licenseUrl:null},
-  {id:'selectminds-eulen',name:'Grupo Eulen · empleo oficial',countryCode:'ES',kind:'ats',status:'active',
+  {id:'selectminds-eulen',name:'Grupo Eulen · empleo oficial',countryCode:'ES',kind:'ats',status:'retired',
     endpoint:eulenListingUrl,licenseUrl:null},
   {id:'taleo-eulen',name:'Grupo Eulen · Taleo oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:eulenTaleoListingUrl,licenseUrl:null},
