@@ -10,6 +10,7 @@ import { carrefourListingUrl } from './connectors/carrefour.ts';
 import { lidlSearchEndpoint } from './connectors/lidl.ts';
 import {quironsaludListingUrl} from './connectors/quironsalud.ts';
 import {eulenListingUrl} from './connectors/eulen.ts';
+import {eulenTaleoListingUrl} from './connectors/eulen-taleo.ts';
 import {randstadListingUrl} from './connectors/randstad.ts';
 import {cleceListingUrl} from './connectors/clece.ts';
 import {domusViListingUrl} from './connectors/domusvi.ts';
@@ -119,6 +120,8 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:quironsaludListingUrl,licenseUrl:null},
   {id:'selectminds-eulen',name:'Grupo Eulen · empleo oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:eulenListingUrl,licenseUrl:null},
+  {id:'taleo-eulen',name:'Grupo Eulen · Taleo oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:eulenTaleoListingUrl,licenseUrl:null},
   {id:'randstad-oficial',name:'Randstad · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:randstadListingUrl,licenseUrl:null},
   {id:'successfactors-clece',name:'Clece · portal oficial',countryCode:'ES',kind:'ats',status:'active',

@@ -20,25 +20,25 @@
 
 ### Task 1: Parse and validate one Taleo detail
 
-- [ ] Write failing tests with HTML fixtures containing `reqSiteCity.row1`, `reqSiteZipCode.row1`, `reqPostingDate.row1`, `reqTitleLinkAction.row1`, description and requirements. Assert `EULEN-TALEO-260007QU`, source URL, municipality point for Alhama de Murcia, and `location:null` for an ambiguous/multiple site.
-- [ ] Run `node --test tests/ingestion-eulen-taleo.test.ts` and confirm the new adapter is missing.
-- [ ] Implement `adaptEulenTaleoDetail(offer, html, checkedAt, resolveCity)` using `documentOf`, `descendants`, `attribute`, `textOf`, `canonicalSpanishProvince` and `dateFromSpanish`. Only `https://eulen.taleo.net/careersection/eul_career_site/jobdetail.ftl?job=<validatedContestNo>&lang=es` is accepted.
-- [ ] Run the focused test; commit parser and tests.
+- [x] Write failing tests with HTML fixtures containing `reqSiteCity.row1`, `reqSiteZipCode.row1`, `reqPostingDate.row1`, `reqTitleLinkAction.row1`, description and requirements. Assert `EULEN-TALEO-260007QU`, source URL, municipality point for Alhama de Murcia, and `location:null` for an ambiguous/multiple site.
+- [x] Run `node --test tests/ingestion-eulen-taleo.test.ts` and confirm the new adapter is missing.
+- [x] Implement `adaptEulenTaleoDetail(offer, html, checkedAt, resolveCity)` using `documentOf`, `descendants`, `attribute`, `textOf`, `canonicalSpanishProvince` and `dateFromSpanish`. Only `https://eulen.taleo.net/careersection/eul_career_site/jobdetail.ftl?job=<validatedContestNo>&lang=es` is accepted.
+- [x] Run the focused test; commit parser and tests.
 
 ### Task 2: Capture a complete anonymous Taleo snapshot
 
-- [ ] Write failing fetch tests: GET listing sets an anonymous cookie; POST uses it and submits `{fieldData:{fields:{KEYWORD:'',ORGANIZATION:'',CATEGORY:''},valid:true},filterSelectionParam:{searchFilterSelections:[]},sortingSelection:{sortBySelectionParam:'1',ascendingSortingOrder:'false'},pageNo}`. Assert all `pagingData.totalCount` entries are read once, duplicate IDs or truncated pages reject the capture, and a request failure does not produce a partial source result.
-- [ ] Run the focused test and verify failure.
-- [ ] Implement `fetchEulenTaleoOffers(checkedAt, resolveCity, fetchImpl=fetch)`: extract only safe `Set-Cookie` name/value pairs from the anonymous GET, page through the official JSON endpoint, verify `currentPageNo`, `pageSize`, stable `totalCount`, and distinct `contestNo`, then fetch detail pages with bounded concurrency and retry only transient failures. Reject unexpected content type, redirected URL, oversized responses and malformed identity.
-- [ ] Run focused tests and commit capture code.
+- [x] Write failing fetch tests for the anonymous session, protocol fields, full page range, irregular page sizes, duplicate IDs and incomplete capture.
+- [x] Run the focused test and verify failure.
+- [x] Implement `fetchEulenTaleoOffers(checkedAt, resolveCity, fetchImpl=fetch)`: extract only safe `Set-Cookie` name/value pairs, traverse the full advertised page range, tolerate only small counter drift, require distinct `contestNo`, and read details with bounded concurrency and retries.
+- [x] Run focused tests and commit capture code.
 
 ### Task 3: Integrate and verify daily publication
 
-- [ ] Write a failing registry/runner test asserting `taleo-eulen` is active and its jobs are reconciled independently of `selectminds-eulen`.
-- [ ] Run the focused test and verify failure.
-- [ ] Add `taleo-eulen` to the registry and `implementedSourceIds`/dispatch in the runner; keep existing SelectMinds source. The existing ATS `missingRetentionDays:0` removes stale Taleo IDs only after a complete successful capture.
+- [x] Write a failing registry test asserting `taleo-eulen` is active and independent of `selectminds-eulen`.
+- [x] Run the focused test and verify failure.
+- [x] Add `taleo-eulen` to the registry and `implementedSourceIds`/dispatch in the runner; keep existing SelectMinds source. The existing ATS `missingRetentionDays:0` removes stale Taleo IDs only after a complete successful capture.
 - [ ] Run `npm run typecheck`, `node --test tests/ingestion-eulen-taleo.test.ts` and `npm test`. Update source inventory and project context with the measured count. Commit.
-- [ ] Run a real source-only capture into temporary files, verify IDs unique, links official and mapped points within the published municipality. Compare captured IDs to Taleo's announced total; investigate any gap before publishing.
+- [x] Run a real source-only capture into temporary files: 493 unique offers, 455 map points and 38 retained without an ambiguous point. Taleo's displayed count of 1,394 does not match the records returned by its complete public page range.
 - [ ] Push branch, create/review PR, integrate to `main`, run the existing daily GitHub Action, and verify both `https://geoempleo360.com/data/calls.json` and the map show the newly captured Eulen offers. Report exact observed totals and any exclusions.
 
 ## Risks and release gate

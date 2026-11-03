@@ -22,6 +22,7 @@ const publicBrands={
   'disa-empleo':['/brands/disa.png','Grupo DISA'],
   'talentclue-quironsalud':['/brands/quironsalud.jpg','Quirónsalud'],
   'selectminds-eulen':['/brands/eulen.webp','Grupo Eulen'],
+  'taleo-eulen':['/brands/eulen.webp','Grupo Eulen'],
   'randstad-oficial':['/brands/randstad.svg','Randstad'],
   'successfactors-clece':['/brands/clece.png','Clece'],
   'bizneo-domusvi':['/brands/domusvi.png','DomusVi'],
