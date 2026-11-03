@@ -19,6 +19,12 @@ test('los tablones empresariales verificados figuran activos en el registro',()=
   }
 });
 
+test('Taleo Eulen es una fuente diaria separada del tablón SelectMinds',()=>{
+  assert.equal(sourceRegistry.get('selectminds-eulen')?.status,'active');
+  assert.equal(sourceRegistry.get('taleo-eulen')?.status,'active');
+  assert.equal(sourceRegistry.get('taleo-eulen')?.endpoint,'https://eulen.taleo.net/careersection/eul_career_site/jobsearch.ftl?lang=es');
+});
+
 test('el registro no expone mutadores en runtime', () => {
   assert.equal('set' in sourceRegistry, false);
   assert.equal('delete' in sourceRegistry, false);

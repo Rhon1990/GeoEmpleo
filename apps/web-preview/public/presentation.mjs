@@ -26,6 +26,7 @@ const employerBrands={
   'disa-empleo':{src:'/brands/disa.png',alt:'Grupo DISA'},
   'talentclue-quironsalud':{src:'/brands/quironsalud.jpg',alt:'Quirónsalud'},
   'selectminds-eulen':{src:'/brands/eulen.webp',alt:'Grupo Eulen'},
+  'taleo-eulen':{src:'/brands/eulen.webp',alt:'Grupo Eulen'},
   'randstad-oficial':{src:'/brands/randstad.svg',alt:'Randstad'},
   'successfactors-clece':{src:'/brands/clece.png',alt:'Clece'},
   'bizneo-domusvi':{src:'/brands/domusvi.png',alt:'DomusVi'},
