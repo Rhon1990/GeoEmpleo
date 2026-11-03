@@ -17,7 +17,8 @@ const resolveCity=createNationalCityResolver([
 
 test('las nuevas fuentes oficiales forman parte del registro diario',()=>{
   assert.equal(sourceRegistry.get('talentclue-quironsalud')?.status,'active');
-  assert.equal(sourceRegistry.get('selectminds-eulen')?.status,'active');
+  assert.equal(sourceRegistry.get('selectminds-eulen')?.status,'retired');
+  assert.equal(sourceRegistry.get('taleo-eulen')?.status,'active');
   assert.equal(sourceRegistry.get('randstad-oficial')?.status,'active');
   assert.equal(sourceRegistry.get('successfactors-clece')?.status,'active');
   assert.equal(sourceRegistry.get('bizneo-domusvi')?.status,'active');

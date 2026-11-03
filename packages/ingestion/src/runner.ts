@@ -14,7 +14,6 @@ import {fetchDiaOffers} from './connectors/teamtailor.ts';
 import {fetchCarrefourOffers} from './connectors/carrefour.ts';
 import {fetchLidlOffers} from './connectors/lidl.ts';
 import {fetchQuironsaludOffers} from './connectors/quironsalud.ts';
-import {fetchEulenOffers} from './connectors/eulen.ts';
 import {fetchEulenTaleoOffers} from './connectors/eulen-taleo.ts';
 import {fetchRandstadOffers} from './connectors/randstad.ts';
 import {fetchCleceOffers} from './connectors/clece.ts';
@@ -30,7 +29,7 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','selectminds-eulen','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture'] as const;
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture'] as const;
 type ImplementedSourceId=string;
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
@@ -124,8 +123,6 @@ export async function runDaily(options:RunOptions) {
               ? await fetchLidlOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='talentclue-quironsalud'
               ? await fetchQuironsaludOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
-            : sourceId==='selectminds-eulen'
-              ? await fetchEulenOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='taleo-eulen'
               ? await fetchEulenTaleoOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='randstad-oficial'
@@ -143,6 +140,7 @@ export async function runDaily(options:RunOptions) {
                 :national?.resolve??(()=>null));
         next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{
           missingRetentionDays:source.kind==='ats'||sourceId==='ecyl-castilla-leon'?0:7,
+          ...(sourceId==='taleo-eulen'?{supersededSourceIds:['selectminds-eulen']}:{}),
         });
         sources.push({sourceId,status:'success',received:jobs.length,mapped:jobs.filter(job=>job.location!==null).length,reason:null});
         successes+=1;

@@ -19,8 +19,8 @@ test('los tablones empresariales verificados figuran activos en el registro',()=
   }
 });
 
-test('Taleo Eulen es una fuente diaria separada del tablón SelectMinds',()=>{
-  assert.equal(sourceRegistry.get('selectminds-eulen')?.status,'active');
+test('Taleo Eulen sustituye el espejo SelectMinds para evitar ofertas duplicadas',()=>{
+  assert.equal(sourceRegistry.get('selectminds-eulen')?.status,'retired');
   assert.equal(sourceRegistry.get('taleo-eulen')?.status,'active');
   assert.equal(sourceRegistry.get('taleo-eulen')?.endpoint,'https://eulen.taleo.net/careersection/eul_career_site/jobsearch.ftl?lang=es');
 });
