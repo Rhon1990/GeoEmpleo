@@ -16,11 +16,17 @@ import { successFactorsBoards } from '../packages/ingestion/src/connectors/succe
 import { sourceRegistry } from '../packages/ingestion/src/registry.ts';
 import { fetchCarrefourOffers, parseCarrefourListing } from '../packages/ingestion/src/connectors/carrefour.ts';
 import { adaptLidlSearchPage, fetchLidlOffers } from '../packages/ingestion/src/connectors/lidl.ts';
+import {
+  adaptElCorteInglesDetail,
+  fetchElCorteInglesOffers,
+  parseElCorteInglesListing,
+} from '../packages/ingestion/src/connectors/el-corte-ingles.ts';
 import type { PublicCatalog } from '../packages/ingestion/src/model.ts';
 
 const checkedAt = '2026-10-24T13:00:00.000Z';
 const place = { id:'vicar', name:'Vícar', province:'Almería', municipality:'Vícar', latitude:36.83, longitude:-2.64, sourceUrl:'https://example.org/vicar', precision:'locality' as const };
 const resolveCity = createNationalCityResolver([place]);
+const madridResolved={city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',location:{point:[-3.7038,40.4168] as [number,number],precision:'municipality' as const,sourceUrl:'https://example.org/madrid',sourceUpdatedAt:null,note:'approx'}};
 const board = { sourceId:'bizneo-plenergy', hostname:'empleo.plenergy.es', employer:'Plenergy', category:'servicios', categoryLabel:'Servicios y comercio' };
 const successFactorsBoard:SuccessFactorsBoard={
   sourceId:'successfactors-example',hostname:'jobs.example.es',employer:'Empresa Ejemplo',
@@ -145,6 +151,75 @@ test('Lidl repite una captura si una oferta nueva desplaza resultados entre pág
   assert.equal(jobs.length,102);
   assert.equal(new Set(jobs.map(job=>job.id)).size,102);
   assert.deepEqual(received,['0:1','0:2','1:1','1:2']);
+});
+
+const eciListed=(id:string,location='Madrid')=>({
+  job_requisition_id:id,
+  job_posting_title:`Oferta ${id}`,
+  job_location_name:location,
+  job_areas:['Centros comerciales'],
+  job_employee_type:'Empleo',
+  job_time_type:'Completa',
+  external_url:`https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Oferta_${id}`,
+  job_apply_url:`https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Oferta_${id}/apply`,
+});
+
+const eciDetail=(id:string,country='ES',location='Madrid')=>({jobPostingInfo:{
+  posted:true,jobReqId:id,title:`Oferta ${id}`,jobDescription:'<p>Atención al cliente.</p>',
+  externalUrl:`https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Oferta_${id}`,
+  jobRequisitionLocation:{country:{alpha2Code:country}},country:{descriptor:country==='ES'?'Spain':'Portugal'},
+  location,additionalLocations:[],startDate:'2026-10-23',
+}});
+
+test('El Corte Inglés valida listado, ficha española y municipio',()=>{
+  const listing=parseElCorteInglesListing({job_requisitions:[eciListed('JR155839')],total_results:1},0);
+  const job=adaptElCorteInglesDetail(listing.offers[0]!,eciDetail('JR155839'),checkedAt,
+    city=>city==='Madrid'?madridResolved:null);
+  assert.equal(job?.sourceId,'elcorteingles-oficial');
+  assert.equal(job?.employer,'El Corte Inglés');
+  assert.equal(job?.publishedAt,'2026-10-23');
+  assert.deepEqual(job?.location?.point,[-3.7038,40.4168]);
+});
+
+test('El Corte Inglés excluye Portugal y no inventa puntos para códigos internos',()=>{
+  const portugal=parseElCorteInglesListing({job_requisitions:[eciListed('JR149187','Braga')],total_results:1},0).offers[0]!;
+  assert.equal(adaptElCorteInglesDetail(portugal,eciDetail('JR149187','PT','Braga'),checkedAt,()=>null),null);
+  const internal=parseElCorteInglesListing({job_requisitions:[eciListed('JR151341','0030908')],total_results:1},0).offers[0]!;
+  const job=adaptElCorteInglesDetail(internal,eciDetail('JR151341','ES','0030908'),checkedAt,()=>madridResolved);
+  assert.equal(job?.location,null);
+  assert.equal(job?.city,'0030908');
+});
+
+test('El Corte Inglés pagina todo el listado y conserva solo fichas españolas',async()=>{
+  const requests:{url:string;method:string;body:string}[]=[];
+  const fetchImpl=(async(input:string|URL|Request,init?:RequestInit)=>{
+    const request=input instanceof Request?input:new Request(input,init);
+    const url=new URL(request.url);
+    requests.push({url:url.href,method:request.method,body:request.method==='POST'?await request.clone().text():''});
+    if(url.hostname==='empleo.elcorteingles.es'){
+      const page=Number(url.searchParams.get('page'));
+      const rows=page===0?[eciListed('JR155839')]:[eciListed('JR149187','Braga')];
+      return new Response(JSON.stringify({job_requisitions:rows,total_results:2}),{headers:{'content-type':'application/json'}});
+    }
+    const id=url.pathname.match(/(JR\d+)$/)?.[1]??'';
+    return new Response(JSON.stringify(eciDetail(id,id==='JR149187'?'PT':'ES',id==='JR149187'?'Braga':'Madrid')),{headers:{'content-type':'application/json'}});
+  }) as typeof fetch;
+  const jobs=await fetchElCorteInglesOffers(checkedAt,city=>city==='Madrid'?madridResolved:null,fetchImpl,1);
+  assert.deepEqual(jobs.map(job=>job.id),['ELCORTEINGLES-JR155839']);
+  const listingRequests=requests.filter(item=>item.url.includes('empleo.elcorteingles.es'));
+  assert.deepEqual(listingRequests.map(item=>[new URL(item.url).searchParams.get('page'),new URL(item.url).searchParams.get('size'),item.method,item.body]),[
+    ['0','1','POST','{}'],['1','1','POST','{}'],
+  ]);
+});
+
+test('El Corte Inglés rechaza destinos externos, duplicados y capturas incompletas',async()=>{
+  assert.throws(()=>parseElCorteInglesListing({job_requisitions:[{...eciListed('JR155839'),external_url:'https://evil.test/job/JR155839'}],total_results:1},0),/URL El Corte Inglés/);
+  const duplicate={job_requisitions:[eciListed('JR155839'),eciListed('JR155839')],total_results:2};
+  await assert.rejects(()=>fetchElCorteInglesOffers(checkedAt,()=>null,(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:String(input));
+    if(url.hostname==='empleo.elcorteingles.es')return new Response(JSON.stringify(duplicate),{headers:{'content-type':'application/json'}});
+    return new Response(JSON.stringify(eciDetail('JR155839')),{headers:{'content-type':'application/json'}});
+  }) as typeof fetch,100),/repetido/i);
 });
 
 test('Bizneo reconcilia páginas solapadas sin duplicar una oferta real',async()=>{
