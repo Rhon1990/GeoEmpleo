@@ -17,7 +17,7 @@ import { sourceRegistry } from '../packages/ingestion/src/registry.ts';
 import { fetchCarrefourOffers, parseCarrefourListing } from '../packages/ingestion/src/connectors/carrefour.ts';
 import { adaptLidlSearchPage, fetchLidlOffers } from '../packages/ingestion/src/connectors/lidl.ts';
 import {
-  adaptElCorteInglesDetail,
+  adaptElCorteInglesListing,
   fetchElCorteInglesOffers,
   parseElCorteInglesListing,
 } from '../packages/ingestion/src/connectors/el-corte-ingles.ts';
@@ -164,57 +164,54 @@ const eciListed=(id:string,location='Madrid')=>({
   job_apply_url:`https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Oferta_${id}/apply`,
 });
 
-const eciDetail=(id:string,country='ES',location='Madrid')=>`<!doctype html><html><head>
-  <script type="application/ld+json">${JSON.stringify({
-    '@context':'http://schema.org','@type':'JobPosting',title:`Oferta ${id}`,
-    identifier:{'@type':'PropertyValue',value:id},description:'Atención al cliente.',datePosted:'2026-10-23',
-    validThrough:'2026-11-30',applicantLocationRequirements:{'@type':'Country',name:country==='ES'?'Spain':'Portugal'},
-    jobLocation:{'@type':'Place',address:{'@type':'PostalAddress',addressCountry:country==='ES'?'Spain':'Portugal',addressLocality:location}},
-  })}</script></head><body></body></html>`;
+test('El Corte Inglés usa el listado oficial cuando la ficha Workday solo muestra una SPA',async()=>{
+  const requests:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:String(input));
+    requests.push(url.hostname);
+    if(url.hostname==='empleo.elcorteingles.es')return new Response(JSON.stringify({
+      job_requisitions:[eciListed('JR155839')],total_results:1,
+    }),{headers:{'content-type':'application/json'}});
+    return new Response('<html><head><title></title></head><body></body></html>',{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchElCorteInglesOffers(checkedAt,city=>city==='Madrid'?madridResolved:null,fetchImpl);
+  assert.equal(jobs.length,1);
+  assert.equal(jobs[0]?.id,'ELCORTEINGLES-JR155839');
+  assert.equal(jobs[0]?.dateKind,'observed');
+  assert.deepEqual(jobs[0]?.location?.point,[-3.7038,40.4168]);
+  assert.deepEqual(requests,['empleo.elcorteingles.es']);
+});
 
-test('El Corte Inglés valida listado, ficha española y municipio',()=>{
+test('El Corte Inglés adapta solo los datos publicados en el listado oficial',()=>{
   const listing=parseElCorteInglesListing({job_requisitions:[eciListed('JR155839')],total_results:1},0);
-  const job=adaptElCorteInglesDetail(listing.offers[0]!,eciDetail('JR155839'),checkedAt,
-    city=>city==='Madrid'?madridResolved:null);
+  const job=adaptElCorteInglesListing(listing.offers[0]!,checkedAt,city=>city==='Madrid'?madridResolved:null);
   assert.equal(job?.sourceId,'elcorteingles-oficial');
   assert.equal(job?.employer,'El Corte Inglés');
-  assert.equal(job?.publishedAt,'2026-10-23');
+  assert.equal(job?.publishedAt,'2026-10-24');
+  assert.equal(job?.dateKind,'observed');
+  assert.deepEqual(job?.paragraphs,['Tipo de empleo: Empleo.','Jornada: Completa.']);
   assert.deepEqual(job?.location?.point,[-3.7038,40.4168]);
-  const contradictory=eciDetail('JR155839').replace('"addressLocality":"Madrid"','"addressLocality":"Barcelona"');
-  assert.equal(adaptElCorteInglesDetail(listing.offers[0]!,contradictory,checkedAt,
-    city=>city==='Madrid'?madridResolved:null)?.location,null);
   const versioned={...eciListed('JR147725')};
   versioned.external_url+='-1';
   versioned.job_apply_url=versioned.external_url+'/apply';
   assert.equal(parseElCorteInglesListing({job_requisitions:[versioned],total_results:1},0).offers[0]?.id,'JR147725');
   const spacing={...eciListed('JR147518'),job_posting_title:'Campaña de Navidad  Bilbao'};
   const normalized=parseElCorteInglesListing({job_requisitions:[spacing],total_results:1},0).offers[0]!;
-  const normalizedDetail=eciDetail('JR147518').replace('Oferta JR147518','Campaña de Navidad Bilbao');
-  assert.equal(adaptElCorteInglesDetail(normalized,normalizedDetail,checkedAt,()=>null)?.title,'Campaña de Navidad Bilbao');
-  const updated=parseElCorteInglesListing({job_requisitions:[eciListed('JR155840')],total_results:1},0).offers[0]!;
-  const updatedDetail=eciDetail('JR155840').replace('Oferta JR155840','Título actualizado en la ficha');
-  assert.equal(adaptElCorteInglesDetail(updated,updatedDetail,checkedAt,()=>null)?.title,'Título actualizado en la ficha');
+  assert.equal(adaptElCorteInglesListing(normalized,checkedAt,()=>null).title,'Campaña de Navidad Bilbao');
   const remoteListing=parseElCorteInglesListing({job_requisitions:[eciListed('JR155841','Remoto')],total_results:1},0).offers[0]!;
-  const remotePosting={
-    '@context':'http://schema.org','@type':'JobPosting',title:'Oferta JR155841',identifier:{value:'JR155841'},
-    description:'Trabajo remoto.',datePosted:'2026-10-23',applicantLocationRequirements:{name:'Spain'},jobLocationType:'TELECOMMUTE',
-  };
-  const remoteHtml=`<script type="application/ld+json">${JSON.stringify(remotePosting)}</script>`;
-  const remote=adaptElCorteInglesDetail(remoteListing,remoteHtml,checkedAt,()=>madridResolved);
+  const remote=adaptElCorteInglesListing(remoteListing,checkedAt,()=>madridResolved);
   assert.equal(remote?.regime,'Remoto');
   assert.equal(remote?.location,null);
 });
 
-test('El Corte Inglés excluye Portugal y no inventa puntos para códigos internos',()=>{
-  const portugal=parseElCorteInglesListing({job_requisitions:[eciListed('JR149187','Braga')],total_results:1},0).offers[0]!;
-  assert.equal(adaptElCorteInglesDetail(portugal,eciDetail('JR149187','PT','Braga'),checkedAt,()=>null),null);
+test('El Corte Inglés no inventa puntos para códigos internos',()=>{
   const internal=parseElCorteInglesListing({job_requisitions:[eciListed('JR151341','0030908')],total_results:1},0).offers[0]!;
-  const job=adaptElCorteInglesDetail(internal,eciDetail('JR151341','ES','0030908'),checkedAt,()=>madridResolved);
+  const job=adaptElCorteInglesListing(internal,checkedAt,()=>madridResolved);
   assert.equal(job?.location,null);
-  assert.equal(job?.city,'0030908');
+  assert.equal(job?.city,'Sin localidad verificada');
 });
 
-test('El Corte Inglés pagina todo el listado y conserva solo fichas españolas',async()=>{
+test('El Corte Inglés pagina todo el listado solicitando solo España',async()=>{
   const requests:{url:string;method:string;body:string}[]=[];
   const fetchImpl=(async(input:string|URL|Request,init?:RequestInit)=>{
     const request=input instanceof Request?input:new Request(input,init);
@@ -222,14 +219,13 @@ test('El Corte Inglés pagina todo el listado y conserva solo fichas españolas'
     requests.push({url:url.href,method:request.method,body:request.method==='POST'?await request.clone().text():''});
     if(url.hostname==='empleo.elcorteingles.es'){
       const page=Number(url.searchParams.get('page'));
-      const rows=page===0?[eciListed('JR155839')]:[eciListed('JR149187','Braga')];
+      const rows=page===0?[eciListed('JR155839')]:[eciListed('JR149187','Sevilla')];
       return new Response(JSON.stringify({job_requisitions:rows,total_results:2}),{headers:{'content-type':'application/json'}});
     }
-    const id=url.pathname.match(/(JR\d+)$/)?.[1]??'';
-    return new Response(eciDetail(id,id==='JR149187'?'PT':'ES',id==='JR149187'?'Braga':'Madrid'),{headers:{'content-type':'text/html'}});
+    throw new Error('No debe consultarse Workday');
   }) as typeof fetch;
   const jobs=await fetchElCorteInglesOffers(checkedAt,city=>city==='Madrid'?madridResolved:null,fetchImpl,1);
-  assert.deepEqual(jobs.map(job=>job.id),['ELCORTEINGLES-JR155839']);
+  assert.deepEqual(jobs.map(job=>job.id),['ELCORTEINGLES-JR155839','ELCORTEINGLES-JR149187']);
   const listingRequests=requests.filter(item=>item.url.includes('empleo.elcorteingles.es'));
   assert.deepEqual(listingRequests.map(item=>[new URL(item.url).searchParams.get('page'),new URL(item.url).searchParams.get('size'),item.method,item.body]),[
     ['0','1','POST',JSON.stringify({location:[],contract_type:[],department:[],company:[],campaign:false,new_talent:false,is_fp_offers:false,employment_type:[],search_term:'',country:['ES']})],
@@ -251,16 +247,15 @@ test('El Corte Inglés repite una vez si el total cambia durante la captura',asy
       return new Response(JSON.stringify({job_requisitions:rows,total_results:total}),{headers:{'content-type':'application/json'}});
     }
     const id=url.pathname.match(/(JR\d+)$/)?.[1]??'';
-    return new Response(eciDetail(id),{headers:{'content-type':'text/html'}});
+    throw new Error(`No debe consultarse Workday: ${id}`);
   }) as typeof fetch;
   const jobs=await fetchElCorteInglesOffers(checkedAt,()=>null,fetchImpl,1);
   assert.equal(jobs.length,2);
   assert.deepEqual(pages,[0,1,0,1]);
 });
 
-test('El Corte Inglés reintenta una vez fallos transitorios del listado y la ficha',async()=>{
+test('El Corte Inglés reintenta una vez fallos transitorios del listado',async()=>{
   let listingCalls=0;
-  let detailCalls=0;
   const fetchImpl=(async(input:string|URL|Request)=>{
     const url=new URL(input instanceof Request?input.url:String(input));
     if(url.hostname==='empleo.elcorteingles.es'){
@@ -268,14 +263,11 @@ test('El Corte Inglés reintenta una vez fallos transitorios del listado y la fi
       if(listingCalls===1)throw new TypeError('fetch failed');
       return new Response(JSON.stringify({job_requisitions:[eciListed('JR155839')],total_results:1}),{headers:{'content-type':'application/json'}});
     }
-    detailCalls+=1;
-    if(detailCalls===1)return new Response('',{status:503,headers:{'content-type':'text/html'}});
-    return new Response(eciDetail('JR155839'),{headers:{'content-type':'text/html'}});
+    throw new Error('No debe consultarse Workday');
   }) as typeof fetch;
   const jobs=await fetchElCorteInglesOffers(checkedAt,()=>null,fetchImpl);
   assert.equal(jobs.length,1);
   assert.equal(listingCalls,2);
-  assert.equal(detailCalls,2);
 });
 
 test('El Corte Inglés rechaza destinos externos, duplicados y capturas incompletas',async()=>{
@@ -284,7 +276,7 @@ test('El Corte Inglés rechaza destinos externos, duplicados y capturas incomple
   await assert.rejects(()=>fetchElCorteInglesOffers(checkedAt,()=>null,(async(input:string|URL|Request)=>{
     const url=new URL(input instanceof Request?input.url:String(input));
     if(url.hostname==='empleo.elcorteingles.es')return new Response(JSON.stringify(duplicate),{headers:{'content-type':'application/json'}});
-    return new Response(JSON.stringify(eciDetail('JR155839')),{headers:{'content-type':'application/json'}});
+    throw new Error('No debe consultarse Workday');
   }) as typeof fetch,100),/repetido/i);
 });
 

@@ -1,8 +1,6 @@
 import type {PublicJob} from '../model.ts';
-import {dateInSpain,htmlToParagraphs} from '../normalize.ts';
-import {fetchHtml} from '../http.ts';
+import {dateInSpain} from '../normalize.ts';
 import type {CityResolver} from './bizneo.ts';
-import {attribute,descendants,documentOf,textOf} from './html-dom.ts';
 import {approximateMunicipalNote} from './shared.ts';
 
 export const elCorteInglesListingUrl='https://empleo.elcorteingles.es/ep/ofertas';
@@ -93,54 +91,21 @@ function categoryFor(areas:readonly string[]):Pick<PublicJob,'category'|'categor
   return {category:'servicios',categoryLabel:'Servicios y comercio'};
 }
 
-function jobPosting(html:string):Record<string,unknown> {
-  const scripts=descendants(documentOf(html),element=>element.tagName==='script'&&attribute(element,'type')==='application/ld+json');
-  for(const script of scripts){
-    try{
-      const parsed:unknown=JSON.parse(textOf(script));
-      if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed)&&(parsed as {'@type'?:unknown})['@type']==='JobPosting') return parsed as Record<string,unknown>;
-    } catch { /* Ignora bloques JSON-LD ajenos a la oferta. */ }
-  }
-  throw new TypeError('Ficha El Corte Inglés sin JobPosting verificable');
-}
-
-export function adaptElCorteInglesDetail(
-  offer:ListedOffer,html:string,checkedAt:string,resolveCity:CityResolver,
-):PublicJob|null {
-  const posting=jobPosting(html);
-  const identifier=record(posting.identifier);
-  const detailTitle=normalizedSpace(posting.title);
-  if(text(identifier.value).toUpperCase()!==offer.id||!detailTitle) throw new TypeError('Detalle El Corte Inglés no corresponde al listado');
-  const requirement=record(posting.applicantLocationRequirements);
-  if(text(requirement.name)!=='Spain') return null;
-  const remote=text(posting.jobLocationType)==='TELECOMMUTE'||/remot|teletrabajo/i.test(detailTitle);
-  const rawLocations=posting.jobLocation;
-  const locations=rawLocations===undefined||rawLocations===null?[]:Array.isArray(rawLocations)?rawLocations.map(record):[record(rawLocations)];
-  if(!locations.length&&!remote) throw new TypeError('Ubicación El Corte Inglés ausente');
-  for(const location of locations){
-    const address=record(location.address);
-    if(text(address.addressCountry)!=='Spain') return null;
-  }
-  const paragraphs=htmlToParagraphs(text(posting.description));
-  if(!paragraphs.length) throw new TypeError('Detalle El Corte Inglés vacío');
-  const originalLocation=offer.location;
-  const multiple=locations.length>1;
-  const internalCode=/^\d{5,}$/.test(originalLocation)||/work\s*space/i.test(originalLocation);
-  const listedCity=!remote&&!multiple&&!internalCode?resolveCity(originalLocation):null;
-  const detailLocality=locations.length===1?text(record(locations[0]!.address).addressLocality):'';
-  const detailCity=detailLocality?resolveCity(detailLocality):null;
-  const resolved=listedCity&&(!detailLocality||(detailCity?.location?.point?.[0]===listedCity.location?.point?.[0]&&
-    detailCity?.location?.point?.[1]===listedCity.location?.point?.[1]))?listedCity:null;
-  const published=text(posting.datePosted).slice(0,10);
-  const validPublished=/^\d{4}-\d{2}-\d{2}$/.test(published)&&published<=dateInSpain(checkedAt);
-  const closing=text(posting.validThrough).slice(0,10);
-  const validClosing=/^\d{4}-\d{2}-\d{2}$/.test(closing)&&(!validPublished||closing>=published);
-  const category=categoryFor(offer.areas);
-  return {kind:'job',sourceId,source:sourceLabel,id:`ELCORTEINGLES-${offer.id}`,title:detailTitle,
-    employer:'El Corte Inglés',city:originalLocation,province:resolved?.province??'Sin verificar',region:resolved?.region??'España',
-    ...category,regime:remote?'Remoto':'Oferta de empleo',places:null,paragraphs,sourceUrl:offer.externalUrl,
-    publishedAt:validPublished?published:dateInSpain(checkedAt),...(validPublished?{}:{dateKind:'observed' as const}),checkedAt,
-    closingDate:validClosing?closing:null,salary:null,applicationRegistration:'external_required',selection:null,
+/** The official Spain-filtered listing is the source of truth: Workday currently serves only an SPA shell. */
+export function adaptElCorteInglesListing(offer:ListedOffer,checkedAt:string,resolveCity:CityResolver):PublicJob {
+  const remote=/remot|teletrabajo/i.test(`${offer.title} ${offer.location}`);
+  const internalCode=/^\d{5,}$/.test(offer.location)||/work\s*space/i.test(offer.location);
+  const resolved=remote||internalCode?null:resolveCity(offer.location);
+  const paragraphs=[
+    ...(offer.employeeType?[`Tipo de empleo: ${offer.employeeType}.`]:[]),
+    ...(offer.timeType?[`Jornada: ${offer.timeType}.`]:[]),
+  ];
+  return {kind:'job',sourceId,source:sourceLabel,id:`ELCORTEINGLES-${offer.id}`,title:offer.title,
+    employer:'El Corte Inglés',city:internalCode?'Sin localidad verificada':offer.location,
+    province:resolved?.province??'Sin verificar',region:resolved?.region??'España',
+    ...categoryFor(offer.areas),regime:remote?'Remoto':'Oferta de empleo',places:null,paragraphs,
+    sourceUrl:offer.externalUrl,publishedAt:dateInSpain(checkedAt),dateKind:'observed',checkedAt,
+    closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,
     location:resolved?.location?{...resolved.location,note:approximateMunicipalNote}:null};
 }
 
@@ -176,13 +141,7 @@ async function fetchSnapshot(checkedAt:string,resolveCity:CityResolver,fetchImpl
     }
   }
   if(expected===null||found.size!==expected) throw new SnapshotChangedError('Paginación El Corte Inglés incompleta');
-  const jobs:PublicJob[]=[];
-  const offers=[...found.values()];
-  for(let index=0;index<offers.length;index+=4){
-    const batch=await Promise.all(offers.slice(index,index+4).map(async offer=>
-      adaptElCorteInglesDetail(offer,await retryTransient(()=>fetchHtml(offer.externalUrl,{fetchImpl,maxBytes:2_000_000})),checkedAt,resolveCity)));
-    jobs.push(...batch.filter((job):job is PublicJob=>job!==null));
-  }
+  const jobs=[...found.values()].map(offer=>adaptElCorteInglesListing(offer,checkedAt,resolveCity));
   if(!jobs.length) throw new TypeError('No hay ofertas españolas de El Corte Inglés');
   return jobs;
 }

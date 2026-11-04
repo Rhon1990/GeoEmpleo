@@ -19,6 +19,8 @@ Estos endpoints no constituyen una API pública documentada para terceros. El co
 
 Solo se admitirán publicaciones cuya información devuelta por el portal confirme España (`ES`). Se excluirán Portugal, autocandidaturas sin vacante concreta, registros sin identificador estable, ofertas cerradas y ubicaciones internas que no puedan asociarse inequívocamente con un municipio español.
 
+**Ajuste tras la prueba real del 04/11/2026:** Workday entrega una aplicación SPA sin `JobPosting` en el HTML y su API de detalle respondió 403. El listado oficial filtrado con `country: ["ES"]` es la única fuente automatizable verificada. No permite comprobar el país otra vez por oferta ni obtener su descripción completa o fechas originales. Las ubicaciones internas permanecen en el listado como ofertas españolas filtradas, sin marcador; no se publican como municipios.
+
 ## Arquitectura propuesta
 
 Se añadirá un conector dedicado y desacoplado, con un identificador estable como `elcorteingles-oficial`. El conector será responsable de:

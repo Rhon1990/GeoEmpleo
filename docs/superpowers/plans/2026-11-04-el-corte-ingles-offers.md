@@ -270,3 +270,5 @@ Publicar la rama `codex/el-corte-ingles-offers`, crear PR contra `main` y adjunt
 - [ ] **Step 3: Validar publicación tras merge**
 
 Ejecutar manualmente el workflow diario existente y comprobar por HTTPS `https://geoempleo360.com/data/calls.json`: `checkedAt` nuevo, JSON válido, IDs únicos, presencia de `elcorteingles-oficial`, logo accesible y tarjetas/marcadores coherentes.
+
+**Evidencia de ejecución 04/11/2026:** La ficha Workday no contiene `JobPosting` y su API de detalle respondió 403. Se adaptó el conector al listado oficial filtrado por `ES`, sin crear descripciones o fechas inexistentes. Una ejecución aislada de `runDaily` terminó `success`: 365 ofertas, 291 puntos, IDs únicos. El paso de publicación continúa pendiente de la comprobación HTTPS.
