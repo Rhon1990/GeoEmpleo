@@ -1,13 +1,13 @@
 import type {PublicJob} from '../model.ts';
 import {dateInSpain,htmlToParagraphs} from '../normalize.ts';
-import {fetchJson} from '../http.ts';
+import {fetchHtml} from '../http.ts';
 import type {CityResolver} from './bizneo.ts';
+import {attribute,descendants,documentOf,textOf} from './html-dom.ts';
 import {approximateMunicipalNote} from './shared.ts';
 
 export const elCorteInglesListingUrl='https://empleo.elcorteingles.es/ep/ofertas';
 const listingEndpoint='https://empleo.elcorteingles.es/ep/api/job-requisitions/obtain';
 const workdaySiteHost='wd3.myworkdaysite.com';
-const workdayApiBase='https://wd3.myworkdayjobs.com/wday/cxs/elcorteingles/Ext';
 const sourceId='elcorteingles-oficial';
 const sourceLabel='El Corte Inglés · portal oficial';
 const defaultPageSize=100;
@@ -22,12 +22,22 @@ interface ListedOffer {
   readonly employeeType:string;
   readonly timeType:string;
   readonly externalUrl:string;
-  readonly path:string;
 }
 
 interface ListingPage {
   readonly total:number;
   readonly offers:ListedOffer[];
+}
+
+class SnapshotChangedError extends TypeError {}
+
+function isTransient(error:unknown):boolean {
+  return error instanceof Error&&(error.message==='fetch failed'||error.name==='AbortError'||error.name==='TimeoutError'||/^HTTP (?:429|5\d\d)$/.test(error.message));
+}
+
+async function retryTransient<T>(operation:()=>Promise<T>):Promise<T> {
+  try{return await operation();}
+  catch(error){if(!isTransient(error))throw error;return operation();}
 }
 
 function record(value:unknown):Record<string,unknown> {
@@ -39,13 +49,18 @@ function text(value:unknown):string {
   return typeof value==='string'?value.trim():'';
 }
 
-function officialPath(value:unknown,id:string):{url:string;path:string} {
+function normalizedSpace(value:unknown):string {
+  return text(value).replace(/\s+/g,' ');
+}
+
+function officialUrl(value:unknown,id:string):string {
   const raw=text(value);
   const url=new URL(raw);
   const prefix='/recruiting/elcorteingles/Ext';
+  const expectedSuffix=new RegExp(`_${id}(?:-\\d+)?$`);
   if(url.protocol!=='https:'||url.hostname!==workdaySiteHost||url.port||url.username||url.password||url.search||url.hash||
-    !url.pathname.startsWith(`${prefix}/job/`)||!url.pathname.endsWith(`_${id}`)) throw new TypeError('URL El Corte Inglés no autorizada');
-  return {url:url.href,path:url.pathname.slice(prefix.length)};
+    !url.pathname.startsWith(`${prefix}/job/`)||!expectedSuffix.test(url.pathname)) throw new TypeError('URL El Corte Inglés no autorizada');
+  return url.href;
 }
 
 export function parseElCorteInglesListing(input:unknown,page:number):ListingPage {
@@ -56,15 +71,15 @@ export function parseElCorteInglesListing(input:unknown,page:number):ListingPage
   const offers=payload.job_requisitions.map(value=>{
     const item=record(value);
     const id=text(item.job_requisition_id).toUpperCase();
-    const title=text(item.job_posting_title);
+    const title=normalizedSpace(item.job_posting_title);
     const location=text(item.job_location_name);
     if(!/^JR\d{4,12}$/.test(id)||!title||!location||!Array.isArray(item.job_areas)||
       !item.job_areas.every(area=>typeof area==='string'&&area.trim())) throw new TypeError('Oferta El Corte Inglés incompleta');
-    const external=officialPath(item.external_url,id);
+    const externalUrl=officialUrl(item.external_url,id);
     const apply=text(item.job_apply_url);
-    if(apply&&apply!==`${external.url}/apply`) throw new TypeError('URL de solicitud El Corte Inglés no autorizada');
+    if(apply&&apply!==`${externalUrl}/apply`) throw new TypeError('URL de solicitud El Corte Inglés no autorizada');
     return {id,title,location,areas:item.job_areas.map(area=>(area as string).trim()),
-      employeeType:text(item.job_employee_type),timeType:text(item.job_time_type),externalUrl:external.url,path:external.path};
+      employeeType:text(item.job_employee_type),timeType:text(item.job_time_type),externalUrl};
   });
   if(new Set(offers.map(offer=>offer.id)).size!==offers.length) throw new TypeError('ID El Corte Inglés repetido');
   return {total:Number(payload.total_results),offers};
@@ -78,36 +93,54 @@ function categoryFor(areas:readonly string[]):Pick<PublicJob,'category'|'categor
   return {category:'servicios',categoryLabel:'Servicios y comercio'};
 }
 
-function checkedDetailUrl(value:unknown,offer:ListedOffer):string {
-  const external=officialPath(value,offer.id);
-  if(external.path!==offer.path) throw new TypeError('Detalle El Corte Inglés no corresponde al listado');
-  return external.url;
+function jobPosting(html:string):Record<string,unknown> {
+  const scripts=descendants(documentOf(html),element=>element.tagName==='script'&&attribute(element,'type')==='application/ld+json');
+  for(const script of scripts){
+    try{
+      const parsed:unknown=JSON.parse(textOf(script));
+      if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed)&&(parsed as {'@type'?:unknown})['@type']==='JobPosting') return parsed as Record<string,unknown>;
+    } catch { /* Ignora bloques JSON-LD ajenos a la oferta. */ }
+  }
+  throw new TypeError('Ficha El Corte Inglés sin JobPosting verificable');
 }
 
 export function adaptElCorteInglesDetail(
-  offer:ListedOffer,input:unknown,checkedAt:string,resolveCity:CityResolver,
+  offer:ListedOffer,html:string,checkedAt:string,resolveCity:CityResolver,
 ):PublicJob|null {
-  const info=record(record(input).jobPostingInfo);
-  if(info.posted!==true) return null;
-  if(text(info.jobReqId).toUpperCase()!==offer.id||text(info.title)!==offer.title) throw new TypeError('Detalle El Corte Inglés no corresponde al listado');
-  const country=record(record(info.jobRequisitionLocation).country);
-  if(text(country.alpha2Code)!=='ES') return null;
-  const sourceUrl=checkedDetailUrl(info.externalUrl,offer);
-  const paragraphs=htmlToParagraphs(text(info.jobDescription));
+  const posting=jobPosting(html);
+  const identifier=record(posting.identifier);
+  const detailTitle=normalizedSpace(posting.title);
+  if(text(identifier.value).toUpperCase()!==offer.id||!detailTitle) throw new TypeError('Detalle El Corte Inglés no corresponde al listado');
+  const requirement=record(posting.applicantLocationRequirements);
+  if(text(requirement.name)!=='Spain') return null;
+  const remote=text(posting.jobLocationType)==='TELECOMMUTE'||/remot|teletrabajo/i.test(detailTitle);
+  const rawLocations=posting.jobLocation;
+  const locations=rawLocations===undefined||rawLocations===null?[]:Array.isArray(rawLocations)?rawLocations.map(record):[record(rawLocations)];
+  if(!locations.length&&!remote) throw new TypeError('Ubicación El Corte Inglés ausente');
+  for(const location of locations){
+    const address=record(location.address);
+    if(text(address.addressCountry)!=='Spain') return null;
+  }
+  const paragraphs=htmlToParagraphs(text(posting.description));
   if(!paragraphs.length) throw new TypeError('Detalle El Corte Inglés vacío');
-  const originalLocation=text(info.location)||offer.location;
-  const remote=/remot|teletrabajo/i.test(`${text(info.remoteType)} ${offer.title}`);
-  const multiple=Array.isArray(info.additionalLocations)&&info.additionalLocations.length>0;
+  const originalLocation=offer.location;
+  const multiple=locations.length>1;
   const internalCode=/^\d{5,}$/.test(originalLocation)||/work\s*space/i.test(originalLocation);
-  const resolved=!remote&&!multiple&&!internalCode?resolveCity(originalLocation):null;
-  const published=text(info.startDate);
+  const listedCity=!remote&&!multiple&&!internalCode?resolveCity(originalLocation):null;
+  const detailLocality=locations.length===1?text(record(locations[0]!.address).addressLocality):'';
+  const detailCity=detailLocality?resolveCity(detailLocality):null;
+  const resolved=listedCity&&(!detailLocality||(detailCity?.location?.point?.[0]===listedCity.location?.point?.[0]&&
+    detailCity?.location?.point?.[1]===listedCity.location?.point?.[1]))?listedCity:null;
+  const published=text(posting.datePosted).slice(0,10);
   const validPublished=/^\d{4}-\d{2}-\d{2}$/.test(published)&&published<=dateInSpain(checkedAt);
+  const closing=text(posting.validThrough).slice(0,10);
+  const validClosing=/^\d{4}-\d{2}-\d{2}$/.test(closing)&&(!validPublished||closing>=published);
   const category=categoryFor(offer.areas);
-  return {kind:'job',sourceId,source:sourceLabel,id:`ELCORTEINGLES-${offer.id}`,title:offer.title,
+  return {kind:'job',sourceId,source:sourceLabel,id:`ELCORTEINGLES-${offer.id}`,title:detailTitle,
     employer:'El Corte Inglés',city:originalLocation,province:resolved?.province??'Sin verificar',region:resolved?.region??'España',
-    ...category,regime:remote?'Remoto':'Oferta de empleo',places:null,paragraphs,sourceUrl,
+    ...category,regime:remote?'Remoto':'Oferta de empleo',places:null,paragraphs,sourceUrl:offer.externalUrl,
     publishedAt:validPublished?published:dateInSpain(checkedAt),...(validPublished?{}:{dateKind:'observed' as const}),checkedAt,
-    closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,
+    closingDate:validClosing?closing:null,salary:null,applicationRegistration:'external_required',selection:null,
     location:resolved?.location?{...resolved.location,note:approximateMunicipalNote}:null};
 }
 
@@ -115,7 +148,9 @@ async function postListing(page:number,size:number,fetchImpl:typeof fetch):Promi
   const url=new URL(listingEndpoint);
   url.searchParams.set('page',String(page));
   url.searchParams.set('size',String(size));
-  const response=await fetchImpl(url,{method:'POST',headers:{accept:'application/json','content-type':'application/json'},body:'{}',
+  const filters={location:[],contract_type:[],department:[],company:[],campaign:false,new_talent:false,
+    is_fp_offers:false,employment_type:[],search_term:'',country:['ES']};
+  const response=await fetchImpl(url,{method:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify(filters),
     redirect:'error',signal:AbortSignal.timeout(40_000)});
   if(!response.ok) throw new Error(`HTTP ${response.status}`);
   if(!response.headers.get('content-type')?.toLowerCase().includes('json')) throw new TypeError('El Corte Inglés no devolvió JSON');
@@ -129,23 +164,23 @@ async function fetchSnapshot(checkedAt:string,resolveCity:CityResolver,fetchImpl
   const found=new Map<string,ListedOffer>();
   let expected:number|null=null;
   for(let page=0;page<maxPages&&(expected===null||found.size<expected);page++){
-    const parsed=parseElCorteInglesListing(await postListing(page,pageSize,fetchImpl),page);
+    const parsed=parseElCorteInglesListing(await retryTransient(()=>postListing(page,pageSize,fetchImpl)),page);
     if(expected===null){
       if(parsed.total<1) throw new TypeError('Listado El Corte Inglés vacío');
       expected=parsed.total;
-    } else if(parsed.total!==expected) throw new TypeError('Listado El Corte Inglés cambió durante la captura');
-    if(!parsed.offers.length) throw new TypeError('Página El Corte Inglés vacía');
+    } else if(parsed.total!==expected) throw new SnapshotChangedError('Listado El Corte Inglés cambió durante la captura');
+    if(!parsed.offers.length) throw new SnapshotChangedError('Página El Corte Inglés vacía');
     for(const offer of parsed.offers){
-      if(found.has(offer.id)) throw new TypeError('ID El Corte Inglés repetido entre páginas');
+      if(found.has(offer.id)) throw new SnapshotChangedError('ID El Corte Inglés repetido entre páginas');
       found.set(offer.id,offer);
     }
   }
-  if(expected===null||found.size!==expected) throw new TypeError('Paginación El Corte Inglés incompleta');
+  if(expected===null||found.size!==expected) throw new SnapshotChangedError('Paginación El Corte Inglés incompleta');
   const jobs:PublicJob[]=[];
   const offers=[...found.values()];
   for(let index=0;index<offers.length;index+=4){
     const batch=await Promise.all(offers.slice(index,index+4).map(async offer=>
-      adaptElCorteInglesDetail(offer,await fetchJson(`${workdayApiBase}${offer.path}`,{fetchImpl,maxBytes:2_000_000}),checkedAt,resolveCity)));
+      adaptElCorteInglesDetail(offer,await retryTransient(()=>fetchHtml(offer.externalUrl,{fetchImpl,maxBytes:2_000_000})),checkedAt,resolveCity)));
     jobs.push(...batch.filter((job):job is PublicJob=>job!==null));
   }
   if(!jobs.length) throw new TypeError('No hay ofertas españolas de El Corte Inglés');
@@ -155,5 +190,9 @@ async function fetchSnapshot(checkedAt:string,resolveCity:CityResolver,fetchImpl
 export async function fetchElCorteInglesOffers(
   checkedAt:string,resolveCity:CityResolver,fetchImpl:typeof fetch=fetch,pageSize=defaultPageSize,
 ):Promise<PublicJob[]> {
-  return fetchSnapshot(checkedAt,resolveCity,fetchImpl,pageSize);
+  try{return await fetchSnapshot(checkedAt,resolveCity,fetchImpl,pageSize);}
+  catch(error){
+    if(!(error instanceof SnapshotChangedError)) throw error;
+    return fetchSnapshot(checkedAt,resolveCity,fetchImpl,pageSize);
+  }
 }

@@ -223,13 +223,14 @@ test('runner publica El Corte Inglés y conserva su instantánea si el portal fa
    job_areas:['Centros comerciales'],job_employee_type:'Empleo',job_time_type:'Completa',
    external_url:'https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Vendedor-a_JR155839',
    job_apply_url:'https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Vendedor-a_JR155839/apply'};
-  const detail={jobPostingInfo:{posted:true,jobReqId:'JR155839',title:'Vendedor/a',jobDescription:'<p>Atención al cliente.</p>',
-   externalUrl:listed.external_url,jobRequisitionLocation:{country:{alpha2Code:'ES'}},country:{descriptor:'Spain'},
-   location:'Madrid',additionalLocations:[],startDate:'2026-11-03'}};
+  const detail=`<html><head><script type="application/ld+json">${JSON.stringify({
+   '@type':'JobPosting',identifier:{value:'JR155839'},title:'Vendedor/a',description:'<p>Atención al cliente.</p>',
+   applicantLocationRequirements:{name:'Spain'},jobLocation:{address:{addressCountry:'Spain',addressLocality:'Madrid'}},
+   datePosted:'2026-11-03',validThrough:'2026-11-30'})}</script></head></html>`;
   const successFetch=(async(input:string|URL|Request)=>{
    const url=new URL(input instanceof Request?input.url:String(input));
    if(url.hostname==='empleo.elcorteingles.es')return new Response(JSON.stringify({job_requisitions:[listed],total_results:1}),{headers:{'content-type':'application/json'}});
-   if(url.hostname==='wd3.myworkdayjobs.com')return new Response(JSON.stringify(detail),{headers:{'content-type':'application/json'}});
+   if(url.hostname==='wd3.myworkdaysite.com')return new Response(detail,{headers:{'content-type':'text/html'}});
    throw new Error('host inesperado');
   }) as typeof fetch;
   const first=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['elcorteingles-oficial'],checkedAt:'2026-11-04T08:00:00Z',fetchImpl:successFetch});

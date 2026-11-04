@@ -4,9 +4,9 @@
 
 **Goal:** Importar diariamente las vacantes oficiales de El Corte Inglés ubicadas en España, mostrarlas con ubicación municipal verificada y su logo local en GeoEmpleo360.
 
-**Architecture:** Un conector dedicado leerá el listado paginado público de `empleo.elcorteingles.es`, validará cada enlace Workday y consultará su ficha oficial para confirmar `country.alpha2Code === "ES"`. El conector devolverá `PublicJob[]` y reutilizará el runner, `reconcileSource`, el resolver municipal nacional y el sistema de marcas existentes; un fallo conservará la instantánea anterior de esta fuente.
+**Architecture:** Un conector dedicado leerá el listado paginado público de `empleo.elcorteingles.es` con `country: ["ES"]`, validará cada enlace Workday y consultará su ficha oficial `JobPosting` para confirmar España. El conector devolverá `PublicJob[]` y reutilizará el runner, `reconcileSource`, el resolver municipal nacional y el sistema de marcas existentes; un fallo conservará la instantánea anterior de esta fuente.
 
-**Tech Stack:** TypeScript, Node.js `fetch`, Workday CXS, `node:test`, Firebase static build, GitHub Actions existente.
+**Tech Stack:** TypeScript, Node.js `fetch`, frontend público oficial y JSON-LD `JobPosting` de Workday, `node:test`, Firebase static build, GitHub Actions existente.
 
 ---
 
@@ -84,17 +84,13 @@ Adaptar con `htmlToParagraphs`, `dateInSpain`, `CityResolver`, categoría deriva
 
 - [ ] **Step 4: Añadir paginación y consulta de detalles**
 
-Implementar `POST https://empleo.elcorteingles.es/ep/api/job-requisitions/obtain?page=<n>&size=100` con cuerpo `{}`, límite de 10 páginas/1.000 filas, `content-type` JSON y timeout de 40 segundos. Verificar total constante, páginas no vacías, IDs únicos y suma exacta. Para cada fila consultar por lotes de cuatro la URL CXS derivada de la ruta Workday:
+Implementar `POST https://empleo.elcorteingles.es/ep/api/job-requisitions/obtain?page=<n>&size=100` con el cuerpo de filtros usado por el frontend oficial (`location`, `contract_type`, `department`, `company` y `employment_type` vacíos; `campaign`, `new_talent` e `is_fp_offers` falsos; `search_term` vacío; `country: ["ES"]`), límite de 10 páginas/1.000 filas, `content-type` JSON y timeout de 40 segundos. Verificar total constante, páginas no vacías, IDs únicos y suma exacta. Para cada fila consultar por lotes de cuatro la ficha pública `external_url` de Workday y leer su `JobPosting` JSON-LD, incluidos ID, país, descripción y ubicación.
 
-```ts
-const detailUrl=`https://wd3.myworkdayjobs.com/wday/cxs/elcorteingles/Ext${new URL(offer.externalUrl).pathname.replace('/recruiting/elcorteingles/Ext','')}`;
-```
-
-La captura debe lanzar si el listado está vacío, incompleto o si ninguna ficha confirma España. Reintentar una vez únicamente errores estructurales de snapshot, igual que el patrón Workday existente.
+La captura debe lanzar si el listado está vacío, incompleto o si ninguna ficha confirma España. Reintentar una vez errores transitorios de red/HTTP por solicitud y una vez el barrido completo ante cambios estructurales del snapshot.
 
 - [ ] **Step 5: Completar pruebas de paginación y seguridad**
 
-El `fetchImpl` de prueba debe comprobar método POST, `page`, `size=100`, cuerpo `{}`, devolver dos páginas y detalles ES/PT. Añadir aserciones para total, exclusión PT, enlace no autorizado, ID repetido, cambio de total, respuesta vacía y ubicación interna `0030908` sin marcador.
+El `fetchImpl` de prueba debe comprobar método POST, `page`, `size=100`, cuerpo con `country: ["ES"]`, devolver dos páginas y detalles ES/PT. Añadir aserciones para total, exclusión PT, enlace no autorizado, ID repetido, cambio de total, respuesta vacía y ubicación interna `0030908` sin marcador.
 
 - [ ] **Step 6: Ejecutar pruebas y comprobar GREEN**
 

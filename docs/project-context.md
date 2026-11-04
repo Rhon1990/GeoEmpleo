@@ -352,6 +352,10 @@ La captura temporal terminó `success`: 493 ofertas verificadas y 455 puntos mun
 
 Lupa exige verificación interactiva y su URL devuelve HTTP 405 a la captura automática; Inditex devuelve HTTP 403; NTT DATA muestra 32 resultados españoles en el navegador, pero su portal dinámico todavía no tiene un canal de extracción diaria validado. Permanecen pendientes, sin ofertas atribuidas ni marcadores inventados. El detalle y el estado de las fuentes figuran en [fuentes-de-ofertas.md](fuentes-de-ofertas.md).
 
+## El Corte Inglés — 04/11/2026
+
+La rama `codex/el-corte-ingles-offers` añade `elcorteingles-oficial` al registro y al runner de la ingesta diaria, junto a un logotipo local obtenido del portal de empleo oficial. El conector consulta el listado paginado con el filtro original `country: ["ES"]` y comprueba cada ficha pública `JobPosting` de Workday: identificador, país España, descripción y ubicación. Rechaza paginación incompleta, duplicados y enlaces ajenos; reintenta de forma acotada fallos transitorios y conserva el catálogo anterior si falla la fuente. Solo crea puntos municipales cuando el resolver nacional identifica una localidad única; remoto, múltiples sedes, códigos internos y ubicaciones no verificadas permanecen sin punto. El endpoint del frontend no es una API pública documentada. Aún falta una captura completa en GitHub Actions y verificación HTTPS; no se atribuye a esta fuente ninguna cifra ni publicación pública en esta rama.
+
 ## Actualización completa y hora visible — 28/10/2026
 
 La etiqueta del catálogo muestra fecha y hora de `checkedAt` en zona `Europe/Madrid`, no solo el día. El workflow tiene tres intentos programados a las 05:37, 07:37 y 09:37 de Madrid; los dos últimos son respaldos que omiten la captura si el catálogo público ya tiene una actualización del mismo día. La ejecución manual `40658043000` publicó a las 08:36:59 UTC (09:36:59 en Madrid); la ejecución programada posterior `40674743242` sí arrancó, pero su paso de ingesta se omitió correctamente al detectar ese `checkedAt`. Esto explica el registro de Actions sin confundirlo con una ejecución diaria fallida.
