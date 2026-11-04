@@ -30,6 +30,7 @@ const publicBrands={
   'bizneo-coviran':['/brands/coviran.png','Covirán'],
   'bizneo-iss':['/brands/iss.png','ISS Facility Services'],
   'workday-accenture':['/brands/accenture.svg','Accenture'],
+  'elcorteingles-oficial':['/brands/el-corte-ingles.svg','El Corte Inglés'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {
