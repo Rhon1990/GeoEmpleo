@@ -16,6 +16,7 @@ import {cleceListingUrl} from './connectors/clece.ts';
 import {domusViListingUrl} from './connectors/domusvi.ts';
 import {indraListingUrl} from './connectors/indra.ts';
 import {accentureListingUrl} from './connectors/accenture.ts';
+import {elCorteInglesListingUrl} from './connectors/el-corte-ingles.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -132,6 +133,8 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:indraListingUrl,licenseUrl:null},
   {id:'workday-accenture',name:'Accenture · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:accentureListingUrl,licenseUrl:null},
+  {id:'elcorteingles-oficial',name:'El Corte Inglés · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:elCorteInglesListingUrl,licenseUrl:null},
 ];
 
 export interface SourceRegistry {

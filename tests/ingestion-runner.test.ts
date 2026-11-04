@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {gzipSync} from 'node:zlib';
 import {fetchJson} from '../packages/ingestion/src/http.ts';
 import {formatRunReportLines,runDaily} from '../packages/ingestion/src/runner.ts';
+import {sourceRegistry} from '../packages/ingestion/src/registry.ts';
 
 const windows1252Characters=new Map([['€',0x80],['“',0x93],['”',0x94],['–',0x96]]);
 function encodeWindows1252(value:string):Uint8Array {
@@ -198,6 +199,58 @@ test('runner despacha Carrefour y Lidl como fuentes diarias y publica sus vacant
   assert.deepEqual(catalog.calls.map((job:{sourceId:string;location?:unknown})=>[job.sourceId,job.location!==null]),[
    ['carrefour-talentforjobs',true],['lidl-search-api',true],
   ]);
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('El Corte Inglés está registrado como fuente ATS española activa',()=>{
+ assert.deepEqual(sourceRegistry.get('elcorteingles-oficial'),{
+  id:'elcorteingles-oficial',name:'El Corte Inglés · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+  endpoint:'https://empleo.elcorteingles.es/ep/ofertas',licenseUrl:null,
+ });
+});
+
+test('runner publica El Corte Inglés y conserva su instantánea si el portal falla',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-eci-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-11-03T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-11-04',license:'test',places:[{
+   id:'madrid',name:'Madrid',province:'Madrid',municipality:'Madrid',latitude:40.4168,longitude:-3.7038,
+   sourceUrl:'https://example.org/madrid',precision:'locality',
+  }]})));
+  const listed={job_requisition_id:'JR155839',job_posting_title:'Vendedor/a',job_location_name:'Madrid',
+   job_areas:['Centros comerciales'],job_employee_type:'Empleo',job_time_type:'Completa',
+   external_url:'https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Vendedor-a_JR155839',
+   job_apply_url:'https://wd3.myworkdaysite.com/recruiting/elcorteingles/Ext/job/MADRID/Vendedor-a_JR155839/apply'};
+  const detail={jobPostingInfo:{posted:true,jobReqId:'JR155839',title:'Vendedor/a',jobDescription:'<p>Atención al cliente.</p>',
+   externalUrl:listed.external_url,jobRequisitionLocation:{country:{alpha2Code:'ES'}},country:{descriptor:'Spain'},
+   location:'Madrid',additionalLocations:[],startDate:'2026-11-03'}};
+  const successFetch=(async(input:string|URL|Request)=>{
+   const url=new URL(input instanceof Request?input.url:String(input));
+   if(url.hostname==='empleo.elcorteingles.es')return new Response(JSON.stringify({job_requisitions:[listed],total_results:1}),{headers:{'content-type':'application/json'}});
+   if(url.hostname==='wd3.myworkdayjobs.com')return new Response(JSON.stringify(detail),{headers:{'content-type':'application/json'}});
+   throw new Error('host inesperado');
+  }) as typeof fetch;
+  const first=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['elcorteingles-oficial'],checkedAt:'2026-11-04T08:00:00Z',fetchImpl:successFetch});
+  assert.deepEqual(first.sources,[{sourceId:'elcorteingles-oficial',status:'success',received:1,mapped:1,reason:null}]);
+  const published=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(published.calls[0]?.id,'ELCORTEINGLES-JR155839');
+
+  const vithasListing='<span class="paginationLabel">Resultados 1 – 1 de 1</span><table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Medico/1234567890/">Médico/a</a></td><td class="colLocation">Madrid, ES</td><td class="colDate">3 nov 2026</td></tr></table>';
+  const vithasDetail='<meta itemprop="datePosted" content="2026-11-03"><h1>Médico/a</h1><span itemprop="description"><p>Atención a pacientes.</p></span>';
+  const failureFetch=(async(input:string|URL|Request)=>{
+   const url=new URL(input instanceof Request?input.url:String(input));
+   if(url.hostname==='empleo.elcorteingles.es')return new Response('',{status:500});
+   if(url.hostname==='empleo.vithas.es')return new Response(url.pathname.startsWith('/job/')?vithasDetail:vithasListing,{headers:{'content-type':'text/html'}});
+   throw new Error('host inesperado');
+  }) as typeof fetch;
+  const second=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
+   sourceIds:['elcorteingles-oficial','successfactors-vithas'],checkedAt:'2026-11-04T09:00:00Z',fetchImpl:failureFetch});
+  assert.equal(second.status,'partial');
+  assert.deepEqual(second.sources.map(source=>source.status),['failed','success']);
+  const retained=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.ok(retained.calls.some((job:{id:string})=>job.id==='ELCORTEINGLES-JR155839'));
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
