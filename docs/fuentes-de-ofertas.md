@@ -1,6 +1,6 @@
 # Fuentes de ofertas de GeoEmpleo
 
-Inventario operativo revisado el **28/10/2026**. El registro ejecutable es
+Inventario operativo revisado el **04/11/2026**. El registro ejecutable es
 [`packages/ingestion/src/registry.ts`](../packages/ingestion/src/registry.ts) y la
 lista que recorre la ingesta diaria está en
 [`packages/ingestion/src/runner.ts`](../packages/ingestion/src/runner.ts).
@@ -8,8 +8,8 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene ahora 28 identificadores marcados como `active`, con adaptador
-en el runner. Covirán, ISS y Accenture están publicados en la web pública. La
+El registro de esta rama tiene 29 identificadores marcados como `active`, con adaptador
+en el runner. El Corte Inglés está pendiente de primera captura completa y publicación. Covirán, ISS y Accenture están publicados en la web pública. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar
@@ -46,6 +46,15 @@ que sigan abiertas.
 | `bizneo-coviran` | [Covirán](https://jobs.coviran.com/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 6 vacantes concretas, 6 con punto; autocandidaturas excluidas |
 | `bizneo-iss` | [ISS Facility Services](https://jobs.iss.es/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 13 vacantes, 9 con punto |
 | `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Publicación 28/10/2026: 274 fichas españolas, 131 con punto; país validado por ficha |
+| `elcorteingles-oficial` | [El Corte Inglés](https://empleo.elcorteingles.es/ep/ofertas) | Listado paginado del frontend oficial, filtro `ES` | Captura aislada 04/11/2026: 365 ofertas y 291 puntos; pendiente de publicación |
+
+El conector de El Corte Inglés envía `country: ["ES"]` al listado paginado. La
+ficha Workday sirve una aplicación sin `JobPosting` legible, así que el listado
+es la evidencia de país, título, localidad y enlace. Solo sitúa municipios
+españoles resueltos inequívocamente; códigos internos y ubicaciones no resueltas
+quedan sin marcador. La fecha se marca como primera observación y una captura
+fallida conserva la instantánea anterior.
+El endpoint del frontend no es una API documentada para terceros y puede cambiar.
 
 El catálogo incluye además **cuatro anuncios BOE** (`sourceId: boe`)
 incorporados como selección estática. `npm run ingest:daily` **no** los consulta
