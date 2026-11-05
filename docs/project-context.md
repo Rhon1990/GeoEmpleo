@@ -2,7 +2,7 @@
 
 Última revisión: 5 de noviembre de 2026, Europe/Madrid.
 
-Estado público verificado el 05/11/2026 después de publicar seis conectores empresariales: 15.675 ofertas, `checkedAt=2026-11-05T08:49:06.261Z`. Adecco no forma parte de ese catálogo. Las cifras históricas de secciones posteriores describen capturas anteriores.
+Estado público verificado el 05/11/2026: 19.522 ofertas con IDs únicos, `checkedAt=2026-11-05T11:46:13.302Z`, en `geoempleo360.com` y Firebase Hosting. Adecco aporta 3.759 ofertas, 3.569 con municipio verificado. El enlace de solicitud de su API llevaba al inicio de sesión; el conector usa ahora la ficha pública de `adecco.com/es-es/ofertas-trabajo/{jobId}`. Se verificaron cinco fichas distribuidas por el catálogo y los tres IDs aportados por el usuario. Las cifras históricas de secciones posteriores describen capturas anteriores.
 
 ## Propósito y alcance confirmado
 
@@ -384,7 +384,7 @@ La rama `codex/nine-employer-sources` añade `talentforjobs-alcampo` al registro
 
 La web oficial de Decathlon integra un widget TalentClue que publica todas las filas con ID, país, provincia y municipio. El nuevo conector `talentclue-decathlon` valida esos campos y los enlaces oficiales, excluye países ajenos a España y usa el municipio solo si coincide con la provincia en el nomenclátor nacional. Una captura aislada obtuvo 395 ofertas con IDs únicos, 378 con punto; nueve filas no publican provincia ni municipio y quedan sin marcador. El widget no facilita fecha ni descripción completa, por lo que se muestra una nota transparente, la fecha de primera observación y el enlace a la ficha original. La lectura masiva de fichas provocó HTTP 429, por lo que la actualización diaria consulta únicamente el listado. Se incorporó el logotipo oficial azul. Aún falta publicación y verificación HTTPS.
 
-La regresión de MAPFRE confirmó una captura aislada de 62 fichas únicas, 37 con punto; ya estaba conectada y no se duplica. Adecco tiene un endpoint de búsqueda en su frontend, pero devuelve 27.572 resultados en 2.757 páginas de 10: no se activa hasta resolver el coste de captura y carga en la web estática sin truncar el conjunto. Manpower ofrece fichas públicas, pero `robots.txt` prohíbe la captura (`Disallow: /`) y el HTML básico del listado no incluye las filas; requiere un feed o permiso antes de automatizarse.
+La regresión de MAPFRE confirmó una captura aislada de 62 fichas únicas, 37 con punto; ya estaba conectada y no se duplica. En esta evaluación inicial, Adecco devolvía 27.572 resultados en 2.757 páginas; el conector posterior filtra país y vigencia antes de paginar y comprueba la integridad de la captura. Manpower ofrece fichas públicas, pero `robots.txt` prohíbe la captura (`Disallow: /`) y el HTML básico del listado no incluye las filas; requiere un feed o permiso antes de automatizarse.
 
 ## Corrección de capturas Vithas y Accenture — 30/10/2026
 

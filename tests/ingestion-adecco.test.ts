@@ -23,7 +23,7 @@ test('Adecco pagina el listado vigente español y sitúa solo municipios confirm
  const jobs=await fetchAdeccoOffers(checkedAt,(city)=>city==='Madrid'?madrid:null,fetchImpl);
  assert.deepEqual(requests.sort((a,b)=>a-b),[0,10]);
  assert.equal(jobs.length,11);
- assert.equal(jobs[0]?.sourceUrl,'https://portalcandidatos.es.adecco.com/oferta-empleo/oferta-1_3UR1?isExternalApply=true');
+ assert.equal(jobs[0]?.sourceUrl,'https://www.adecco.com/es-es/ofertas-trabajo/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1');
  assert.deepEqual(jobs[0]?.location?.point,[-3.7,40.4]);
  assert.equal(jobs[10]?.location,null);
  assert.equal(jobs[0]?.closingDate,'2026-12-01');

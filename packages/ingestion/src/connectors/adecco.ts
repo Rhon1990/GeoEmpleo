@@ -35,7 +35,7 @@ function listedJob(input:ListingJob,checkedAt:string,resolveCity:CityResolver):P
     title:input.jobTitle.trim(),employer:'Adecco',city,province:province?.name??'Sin verificar',region:province?.region??'España',
     category:'otros',categoryLabel:'Otros sectores',regime:'Oferta de empleo',places:positions,
     paragraphs:[`Oferta publicada por Adecco para ${city}.`,'Consulta las funciones, requisitos y condiciones en la ficha original.'],
-    sourceUrl:url.href,publishedAt:dateInSpain(input.postedDate),checkedAt,closingDate:input.postingEndDate.slice(0,10),
+    sourceUrl:`${adeccoListingUrl}/${input.jobId.toLowerCase()}`,publishedAt:dateInSpain(input.postedDate),checkedAt,closingDate:input.postingEndDate.slice(0,10),
     salary:null,applicationRegistration:'external_required',selection:null,
     location:coherent?resolved?.location??null:null};
 }
