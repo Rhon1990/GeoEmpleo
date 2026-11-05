@@ -1,6 +1,6 @@
 # Fuentes de ofertas de GeoEmpleo
 
-Inventario operativo revisado el **04/11/2026**. El registro ejecutable es
+Inventario operativo revisado el **05/11/2026**. El registro ejecutable es
 [`packages/ingestion/src/registry.ts`](../packages/ingestion/src/registry.ts) y la
 lista que recorre la ingesta diaria está en
 [`packages/ingestion/src/runner.ts`](../packages/ingestion/src/runner.ts).
@@ -8,8 +8,8 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro de esta rama tiene 29 identificadores marcados como `active`, con adaptador
-en el runner. El Corte Inglés está pendiente de primera captura completa y publicación. Covirán, ISS y Accenture están publicados en la web pública. La
+El registro de esta rama tiene 35 identificadores marcados como `active`, con adaptador
+en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon tienen captura aislada completa en esta rama y aún no se han publicado. El Corte Inglés también está pendiente de publicación. Covirán, ISS y Accenture están publicados en la web pública. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar
@@ -30,7 +30,13 @@ que sigan abiertas.
 | `successfactors-mapfre` | [MAPFRE](https://jobs.mapfre.com/go/PROFESIONALES/3296401/) | SuccessFactors | Actualizada |
 | `successfactors-capgemini` | [Capgemini](https://careers.capgemini.com/search/?q=&locationsearch=Spain) | SuccessFactors | Actualizada |
 | `successfactors-melia` | [Meliá Hotels International](https://careers.melia.com/go/Profesionales-de-hotel/8861001/) | SuccessFactors | Actualizada |
+| `successfactors-kpmg` | [KPMG](https://carreras.kpmg.es/search/) | SuccessFactors | Captura aislada 04/11/2026: 177 fichas completas, 132 con punto; cuatro descripciones vacías y una ficha cubierta excluidas |
+| `successfactors-deloitte` | [Deloitte](https://empleo.es.deloitte.com/search/) | SuccessFactors, tarjetas | Captura aislada 04/11/2026: 314 fichas únicas, 279 con punto |
+| `successfactors-ilunion` | [ILUNION](https://empleo.ilunion.com/Ilunion/go/TODAS-LAS-OFERTAS-ILUNION/9135102/) | SuccessFactors, tarjetas | Captura aislada 04/11/2026: 439 fichas únicas, 205 con punto; tres fichas de Fundación ONCE y una cubierta excluidas |
 | `teamtailor-dia` | [DIA](https://empleo.dia.es/jobs) | Teamtailor | Actualizada; 118 publicaciones, 95 con punto |
+| `teamtailor-leroy` | [Leroy Merlin](https://empleo.leroymerlin.es/jobs) | Teamtailor | Captura aislada 04/11/2026: 263 fichas únicas, 200 con municipio confirmado en título |
+| `talentforjobs-alcampo` | [Alcampo](https://talentforjobs.com/particular/alcampo/ofertas-empleo.aspx) | TalentForJobs | Captura aislada 05/11/2026: 633 fichas únicas y 605 con punto municipal; ID estable tomado de la ficha, no del enlace temporal |
+| `talentclue-decathlon` | [Decathlon](https://trabajaconnosotros.decathlon.es/ofertas/) | TalentClue | Captura aislada 05/11/2026: 395 fichas españolas únicas, 378 con punto; el listado no publica fecha ni descripción completa, se enlaza la ficha y la fecha es primera observación |
 | `carrefour-talentforjobs` | [Carrefour](https://www.carrefour.es/trabaja-en-carrefour/envia-tu-curriculum/mas-info/) | TalentForJobs | Captura directa 27/10/2026: 887 publicaciones, 716 con punto municipal |
 | `lidl-search-api` | [Lidl España](https://empleo.lidl.es/buscar-empleo) | Buscador oficial JSON | Captura directa 27/10/2026: 259 publicaciones, 224 con punto municipal |
 | `talentclue-mcdonalds` | [McDonald's](https://careers.talentclue.com/es/company/6285677f44a78f103ce17087c20ecee7/jsoffers/modal?order=Fecha&sort=asc) | TalentClue | Actualizada |
@@ -78,6 +84,8 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
 | NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |
 | Elecnor | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
+| Adecco | El [buscador oficial](https://www.adecco.com/es-es/ofertas-trabajo) anuncia 27.572 fichas en 2.757 páginas de 10 en la lectura del 05/11/2026; se identificó el endpoint del frontend, pero no hay una captura completa segura para el tamaño del catálogo estático | Diseñar partición, control de volumen y validación de todas las páginas sin agotar el workflow ni el navegador público |
+| Manpower | El [listado público](https://www.manpower.es/es/all-jobs) aparece en el navegador, pero el HTML básico no trae las filas y el [robots.txt](https://www.manpower.es/robots.txt) indica `Disallow: /` para `User-agent: *` | Solicitar un feed o permiso de acceso autorizado antes de activar una captura automática |
 
 Otros portales y empresas solicitados se documentan en la
 [auditoría nacional](planning/2026-10-19-ampliacion-nacional-fuentes.md) y el

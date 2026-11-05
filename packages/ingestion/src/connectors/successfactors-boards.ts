@@ -28,4 +28,25 @@ export const successFactorsBoards: readonly SuccessFactorsBoard[] = [
     category:'hosteleria',categoryLabel:'Turismo y hostelería',sourceLabel:'Meliá · empleo oficial',
     requireCityMentionInTitle:true,skipVerifiedClosed:true,pageSize:25,maxPages:40,
   },
+  {
+    sourceId:'successfactors-kpmg',hostname:'carreras.kpmg.es',employer:'KPMG',
+    listingPath:'/search/?createNewAlert=false&q=&locationsearch=',jobPathPattern,
+    category:'otros',categoryLabel:'Otros sectores',sourceLabel:'KPMG · empleo oficial',
+    pageSize:100,maxPages:10,paginationOffsetParam:'startrow',skipVerifiedClosed:true,skipEmptyDescription:true,retryTransientErrors:true,
+  },
+  {
+    sourceId:'successfactors-deloitte',hostname:'empleo.es.deloitte.com',employer:'Deloitte',
+    listingPath:'/search/?q=',paginationPath:'/tile-search-results/?q=',jobPathPattern,
+    category:'tecnologia',categoryLabel:'Tecnología y consultoría',sourceLabel:'Deloitte · empleo oficial',
+    listingFormat:'tile',pageSize:25,maxPages:40,paginationOffsetParam:'startrow',retryTransientErrors:true,
+    remoteFromDescription:false,
+  },
+  {
+    sourceId:'successfactors-ilunion',hostname:'empleo.ilunion.com',employer:'ILUNION',
+    listingPath:'/Ilunion/go/TODAS-LAS-OFERTAS-ILUNION/9135102/',
+    paginationPath:'/Ilunion/tile-search-results/category/9135102/',jobPathPattern,
+    category:'otros',categoryLabel:'Otros sectores',sourceLabel:'ILUNION · empleo oficial',
+    listingFormat:'tile',pageSize:10,maxPages:80,paginationOffsetParam:'startrow',retryTransientErrors:true,skipVerifiedClosed:true,
+    requireCityMentionInTitle:true,excludedJobPathPattern:/^\/fundacion-once\/job\/[^/]+\/\d+\/$/,
+  },
 ];

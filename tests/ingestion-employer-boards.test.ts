@@ -294,7 +294,8 @@ test('Bizneo reconcilia páginas solapadas sin duplicar una oferta real',async()
 
 test('tablones SuccessFactors oficiales tienen identidad, categoría y URL propias',()=>{
   assert.deepEqual(successFactorsBoards.map(item=>item.sourceId),[
-    'successfactors-vithas','successfactors-mapfre','successfactors-capgemini','successfactors-melia',
+    'successfactors-vithas','successfactors-mapfre','successfactors-capgemini','successfactors-melia','successfactors-kpmg',
+    'successfactors-deloitte','successfactors-ilunion',
   ]);
   for(const item of successFactorsBoards) {
     assert.match(item.hostname,/^[a-z0-9.-]+$/);
@@ -302,6 +303,133 @@ test('tablones SuccessFactors oficiales tienen identidad, categoría y URL propi
     assert.ok(item.categoryLabel);
     assert.ok(item.employer);
   }
+});
+
+test('KPMG conserva una fuente única y sitúa solo su municipio español verificado',async()=>{
+  const kpmg=successFactorsBoards.find(item=>item.sourceId==='successfactors-kpmg');
+  assert.ok(kpmg);
+  assert.equal(sourceRegistry.get(kpmg.sourceId)?.status,'active');
+  const listing='<span class="paginationLabel">Resultados 1 – 1 de 1</span><table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Auditoria/1444635133/">Auditor/a</a></td><td class="colLocation">Madrid, ES, 28046</td><td class="colDate">4 nov 2026</td></tr></table>';
+  const detail='<meta itemprop="datePosted" content="2026-11-04"><h1 id="job-title">Auditor/a</h1><span itemprop="description"><p>Auditoría financiera en Madrid.</p></span>';
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    assert.equal(url.hostname,'carreras.kpmg.es');
+    return new Response(url.pathname.startsWith('/job/')?detail:listing,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(kpmg,'2026-11-04T13:00:00Z',city=>city==='Madrid'?madridResolved:null,fetchImpl);
+  assert.equal(jobs.length,1);
+  assert.equal(jobs[0]?.sourceUrl,'https://carreras.kpmg.es/job/Madrid-Auditoria/1444635133/');
+  assert.deepEqual(jobs[0]?.location?.point,[-3.7038,40.4168]);
+});
+
+test('KPMG omite fichas confirmadas como cubiertas o publicadas sin descripción',async()=>{
+  const kpmg=successFactorsBoards.find(item=>item.sourceId==='successfactors-kpmg');
+  assert.ok(kpmg);
+  const row=(id:string)=>`<tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Puesto/${id}/">Puesto ${id}</a></td><td class="colLocation">Madrid, ES, 28046</td></tr>`;
+  const listing=`<span class="paginationLabel">Resultados 1 – 3 de 3</span><table>${row('1')}${row('2')}${row('3')}</table>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    if(!url.pathname.startsWith('/job/'))return new Response(listing,{headers:{'content-type':'text/html'}});
+    const id=url.pathname.match(/\/(\d+)\/$/)?.[1];
+    const html=id==='1'?'<div class="jobDisplayShell"><p><strong>Lo sentimos, esta posición ya está cubierta.</strong></p></div>'
+      :id==='2'?'<div class="jobDisplayShell"><meta itemprop="datePosted" content="2026-11-04"><h1>Puesto 2</h1><span itemprop="description"><div></div></span></div>'
+      :'<div class="jobDisplayShell"><meta itemprop="datePosted" content="2026-11-04"><h1>Puesto 3</h1><span itemprop="description"><p>Oferta completa.</p></span></div>';
+    return new Response(html,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(kpmg,'2026-11-04T13:00:00Z',()=>null,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.title),['Puesto 3']);
+});
+
+test('KPMG reintenta una respuesta 504 transitoria sin perder la ficha',async()=>{
+  const kpmg=successFactorsBoards.find(item=>item.sourceId==='successfactors-kpmg');
+  assert.ok(kpmg);
+  const listing='<span class="paginationLabel">Resultados 1 – 1 de 1</span><table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Puesto/1444635133/">Puesto</a></td><td class="colLocation">Madrid, ES, 28046</td></tr></table>';
+  const detail='<meta itemprop="datePosted" content="2026-11-04"><h1 id="job-title">Puesto</h1><span itemprop="description"><p>Oferta completa.</p></span>';
+  let detailCalls=0;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    if(!url.pathname.startsWith('/job/'))return new Response(listing,{headers:{'content-type':'text/html'}});
+    detailCalls++;
+    return detailCalls===1?new Response('',{status:504,headers:{'content-type':'text/html'}}):new Response(detail,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(kpmg,'2026-11-04T13:00:00Z',()=>null,fetchImpl);
+  assert.equal(detailCalls,2);
+  assert.equal(jobs.length,1);
+});
+
+test('SuccessFactors lee una sola ficha por tarjeta y valida las páginas de Deloitte',async()=>{
+  const board:SuccessFactorsBoard={sourceId:'successfactors-deloitte',hostname:'empleo.es.deloitte.com',employer:'Deloitte',
+    listingPath:'/search/?q=',jobPathPattern:/^\/job\/[^/]+\/\d+\/$/,category:'tecnologia',categoryLabel:'Tecnología y consultoría',
+    sourceLabel:'Deloitte · empleo oficial',pageSize:1,maxPages:3,paginationOffsetParam:'startrow',listingFormat:'tile',
+    paginationPath:'/tile-search-results/'};
+  const tile=(id:string,index:number)=>`<li class="job-tile" data-row-index="${index}"><div class="sub-section-desktop"><a class="jobTitle-link" href="/job/Madrid-Puesto/${id}/">Puesto ${id}</a><div class="section-field location"><div>Madrid, ES</div></div></div><div class="sub-section-mobile"><a class="jobTitle-link" href="/job/Madrid-Puesto/${id}/">Puesto ${id}</a></div></li>`;
+  const first=`<span id="tile-search-results-label">Mostrando 1 a 1 de 2 puestos</span><ul>${tile('1',1)}</ul>`;
+  const second=tile('2',2);
+  const requested:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);requested.push(url.pathname+url.search);
+    const html=url.pathname.startsWith('/job/')?`<meta itemprop="datePosted" content="2026-11-04"><h1 id="job-title">Puesto ${url.pathname.match(/\/(\d+)\/$/)?.[1]}</h1><span itemprop="description"><p>Trabajo en Madrid.</p></span>`:
+      url.pathname.startsWith('/tile-search-results/')?second:first;
+    return new Response(html,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(board,'2026-11-04T13:00:00Z',city=>city==='Madrid'?madridResolved:null,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.id),['SUCCESSFACTORS-SUCCESSFACTORS-DELOITTE-1','SUCCESSFACTORS-SUCCESSFACTORS-DELOITTE-2']);
+  assert.ok(requested.some(url=>url.startsWith('/tile-search-results/')&&url.includes('startrow=1')));
+  assert.equal(jobs[0]?.location?.point[0],-3.7038);
+});
+
+test('SuccessFactors no confunde la etiqueta visual de una tarjeta con su localidad',()=>{
+  const tileBoard:SuccessFactorsBoard={...successFactorsBoard,listingFormat:'tile'};
+  const html='<span id="tile-search-results-label">Mostrando 1 a 1 de 1 puestos</span><ul><li class="job-tile"><a class="jobTitle-link" href="/job/Madrid-Puesto/1234567890/">Puesto</a><div class="section-field location"><span class="section-label">Ubicación</span><div>Madrid, ES</div></div></li></ul>';
+  assert.equal(parseSuccessFactorsListing(html,tileBoard).offers[0]?.city,'Madrid');
+});
+
+test('SuccessFactors identifica el título de ILUNION dentro del encabezado de la ficha',()=>{
+  const tileBoard:SuccessFactorsBoard={...successFactorsBoard,listingFormat:'tile'};
+  const offer={url:'https://jobs.example.es/job/Madrid-Puesto/1234567890/',title:'Puesto',city:'Madrid',provinceHint:null,listedDate:'',ambiguousLocation:false};
+  const html='<meta itemprop="datePosted" content="2026-11-04"><h1><span>PUESTO: </span><span itemprop="title">Puesto</span></h1><span itemprop="description"><p>Oferta vigente.</p></span>';
+  assert.equal(adaptSuccessFactorsDetail(offer,html,'2026-11-04T13:00:00Z',()=>null,tileBoard).title,'Puesto');
+});
+
+test('Deloitte conserva el municipio de oficina pese a su texto genérico de teletrabajo',()=>{
+  const board=successFactorsBoards.find(item=>item.sourceId==='successfactors-deloitte');
+  assert.ok(board);
+  const html='<span id="tile-search-results-label">Mostrando 1 a 1 de 1 puestos</span><ul><li class="job-tile"><a class="jobTitle-link" href="/job/Madrid-Puesto/1234567890/">Puesto</a><div class="section-field location"><span>Ubicación</span><div>Madrid, España</div></div></li></ul>';
+  const offer=parseSuccessFactorsListing(html,board).offers[0]!;
+  const detail='<meta itemprop="datePosted" content="2026-11-04"><h1 id="job-title">Puesto</h1><span itemprop="description"><p>En Madrid tendrás horario flexible y un buen equilibrio entre el teletrabajo y el trabajo en equipo en nuestras oficinas.</p></span>';
+  const job=adaptSuccessFactorsDetail(offer,detail,'2026-11-04T13:00:00Z',city=>city==='Madrid'?madridResolved:null,board);
+  assert.equal(job.city,'Madrid');
+  assert.deepEqual(job.location?.point,[-3.7038,40.4168]);
+});
+
+test('ILUNION contabiliza pero no atribuye a la marca fichas de Fundación ONCE',async()=>{
+  const board:SuccessFactorsBoard={...successFactorsBoards.find(item=>item.sourceId==='successfactors-ilunion')!,pageSize:2};
+  const tile=(href:string,title:string,index:number)=>`<li class="job-tile" data-row-index="${index}"><a class="jobTitle-link" href="${href}">${title}</a><div class="section-field city"><span>Población</span><div>Madrid</div></div></li>`;
+  const listing=`<span id="tile-search-results-label">Mostrando 1 a 2 de 2 puestos</span><ul>${tile('/job/Madrid-Puesto/1234567890/','Puesto',1)}${tile('/fundacion-once/job/Madrid-INSERTA/2234567890/','INSERTA',2)}</ul>`;
+  const detail='<meta itemprop="datePosted" content="2026-11-04"><h1>Puesto</h1><span itemprop="description"><p>Oferta vigente.</p></span>';
+  const requested:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);requested.push(url.pathname);
+    return new Response(url.pathname.startsWith('/job/')?detail:listing,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(board,'2026-11-04T13:00:00Z',()=>null,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.title),['Puesto']);
+  assert.equal(requested.some(path=>path.startsWith('/fundacion-once/')),false);
+  assert.throws(()=>parseSuccessFactorsListing(listing.replace('/fundacion-once/job/Madrid-INSERTA/2234567890/','https://evil.test/fundacion-once/job/Madrid-INSERTA/2234567890/'),board),/URL/);
+});
+
+test('ILUNION omite una ficha retirada aunque siga en su listado',async()=>{
+  const board:SuccessFactorsBoard={...successFactorsBoards.find(item=>item.sourceId==='successfactors-ilunion')!,pageSize:2};
+  const row=(id:string)=>`<li class="job-tile"><a class="jobTitle-link" href="/job/Madrid-Puesto/${id}/">Puesto ${id}</a><div class="section-field city"><div>Madrid</div></div></li>`;
+  const listing=`<span id="tile-search-results-label">Mostrando 1 a 2 de 2 puestos</span><ul>${row('1')}${row('2')}</ul>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:input);
+    const html=url.pathname.endsWith('/2/')?'<div class="jobDisplayShell">Lo sentimos, esta posición ya está cubierta.</div>':
+      url.pathname.endsWith('/1/')?'<meta itemprop="datePosted" content="2026-11-04"><h1>Puesto 1</h1><span itemprop="description"><p>Oferta vigente.</p></span>':listing;
+    return new Response(html,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchSuccessFactorsOffers(board,'2026-11-04T13:00:00Z',()=>null,fetchImpl);
+  assert.equal(jobs.length,1);
 });
 
 test('Bizneo publica solo fichas del dominio verificado y geolocaliza un municipio único', () => {

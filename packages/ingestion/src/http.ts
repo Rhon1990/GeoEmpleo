@@ -1,5 +1,13 @@
 export type JsonEncoding='utf-8'|'windows-1252';
 export interface FetchOptions {fetchImpl?:typeof fetch;timeoutMs?:number;maxBytes?:number;encoding?:JsonEncoding}
+export async function retryTransient<T>(operation:()=>Promise<T>):Promise<T> {
+  try {return await operation();}
+  catch(error) {
+    if(!(error instanceof Error)||!(['fetch failed'].includes(error.message)||
+      error.name==='AbortError'||error.name==='TimeoutError'||/^HTTP (?:429|5\d\d)$/.test(error.message))) throw error;
+    return operation();
+  }
+}
 export async function fetchHtml(url:string,options:FetchOptions={}):Promise<string> {
   const address=new URL(url);
   if(address.protocol!=='https:'||address.username||address.password) throw new TypeError('URL HTTPS requerida');

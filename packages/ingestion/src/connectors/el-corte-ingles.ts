@@ -1,4 +1,5 @@
 import type {PublicJob} from '../model.ts';
+import {retryTransient} from '../http.ts';
 import {dateInSpain} from '../normalize.ts';
 import type {CityResolver} from './bizneo.ts';
 import {approximateMunicipalNote} from './shared.ts';
@@ -28,15 +29,6 @@ interface ListingPage {
 }
 
 class SnapshotChangedError extends TypeError {}
-
-function isTransient(error:unknown):boolean {
-  return error instanceof Error&&(error.message==='fetch failed'||error.name==='AbortError'||error.name==='TimeoutError'||/^HTTP (?:429|5\d\d)$/.test(error.message));
-}
-
-async function retryTransient<T>(operation:()=>Promise<T>):Promise<T> {
-  try{return await operation();}
-  catch(error){if(!isTransient(error))throw error;return operation();}
-}
 
 function record(value:unknown):Record<string,unknown> {
   if(!value||typeof value!=='object'||Array.isArray(value)) throw new TypeError('Respuesta El Corte Inglés inválida');

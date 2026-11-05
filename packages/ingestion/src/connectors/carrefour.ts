@@ -79,7 +79,7 @@ export function parseCarrefourListing(html:string):CarrefourListingPage {
   return {offers,currentPage,totalPages,nextPageValue};
 }
 
-function postbackFields(html:string,pageValue:number):URLSearchParams {
+export function postbackFields(html:string,pageValue:number):URLSearchParams {
   const document=documentOf(html);
   const form=descendants(document,element=>element.tagName==='form'&&attribute(element,'id')==='form1')[0];
   if(!form) throw new TypeError('Formulario Carrefour ausente');
@@ -137,7 +137,7 @@ async function readHtml(response:Response):Promise<string> {
   return html;
 }
 
-async function requestPage(url:string,fetchImpl:typeof fetch,body?:URLSearchParams):Promise<string> {
+export async function requestPage(url:string,fetchImpl:typeof fetch,body?:URLSearchParams):Promise<string> {
   const response=await fetchImpl(url,{
     method:body?'POST':'GET',
     headers:body?{accept:'text/html','content-type':'application/x-www-form-urlencoded'}:{accept:'text/html'},

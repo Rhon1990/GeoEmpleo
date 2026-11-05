@@ -17,9 +17,9 @@ export interface TeamtailorOffer {
   readonly title: string;
 }
 
-async function fetchTurboStream(url: string, fetchImpl: typeof fetch): Promise<string> {
+export async function fetchTurboStream(url: string, fetchImpl: typeof fetch, hostname = diaHost): Promise<string> {
   const address = new URL(url);
-  if (address.protocol !== 'https:' || address.hostname !== diaHost || address.port || address.username || address.password) {
+  if (address.protocol !== 'https:' || address.hostname !== hostname || address.port || address.username || address.password) {
     throw new TypeError('URL de paginación DIA no autorizada');
   }
   const response = await fetchImpl(address, {
@@ -120,7 +120,7 @@ function validatedJobUrl(raw: string): string {
   return url.href;
 }
 
-function listingDocuments(html: string): string[] {
+export function listingDocuments(html: string): string[] {
   if (!html.includes('<turbo-stream')) return [html];
   const streams = [...html.matchAll(/<turbo-stream\b([^>]*)>([\s\S]*?)<\/turbo-stream>/gi)];
   if (!streams.length) throw new TypeError('Respuesta de paginación DIA inválida');
