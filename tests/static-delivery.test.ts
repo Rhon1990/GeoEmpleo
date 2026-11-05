@@ -50,6 +50,25 @@ test('el catálogo estático devuelve solo ofertas del área y conserva el detal
   assert.equal(catalogLoads,1);
 });
 
+test('el total nacional no cambia al activar el mapa y distingue ofertas sin punto', async () => {
+  const data={checkedAt:catalog.checkedAt,calls:[
+    jobs[0],jobs[1],
+    {...jobs[0],id:'sin-punto',title:'Operario rural',location:null},
+  ]};
+  const fetchData=createStaticDataFetch({fetchImpl:async()=>new Response(JSON.stringify(data))});
+  const scoped=await (await fetchData('/api/jobs?bounds=-4.5,40.6,-4,40.9')).json();
+  assert.equal(scoped.total,1);
+  assert.equal(scoped.catalogTotal,3);
+  assert.equal(scoped.catalogMappedTotal,2);
+  assert.deepEqual(scoped.mapJobs.map((item:{id:string})=>item.id),['segovia-1']);
+  const unbounded=await (await fetchData('/api/jobs')).json();
+  assert.equal(unbounded.catalogTotal,3);
+  assert.equal(unbounded.catalogMappedTotal,2);
+  const filtered=await (await fetchData('/api/jobs?q=Operario&bounds=-4.5,40.6,-4,40.9')).json();
+  assert.equal(filtered.catalogTotal,2);
+  assert.equal(filtered.catalogMappedTotal,1);
+});
+
 test('el filtro de empresa agrupa McDonald’s y presenta DIA sin coincidencias de Jandía', async () => {
   const companyCatalog={checkedAt:catalog.checkedAt,calls:[
     {...jobs[0],id:'dia-1',employer:'DIA',title:'Cajero en Ávila'},

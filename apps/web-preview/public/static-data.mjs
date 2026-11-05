@@ -1,5 +1,5 @@
 import {employerFacet,searchCalls} from './catalog.mjs';
-import {summaryFields,projectFields,mapSummaries} from './job-projections.mjs';
+import {summaryFields,projectFields,mapSummaries,countMappedJobs} from './job-projections.mjs';
 
 const normalize=value=>value.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('es').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 
@@ -67,11 +67,13 @@ export function createStaticDataFetch({fetchImpl=fetch}={}) {
     if(parsed.pathname==='/api/jobs') {
       const data=await catalog();
       const calls=data.calls;
-      const matches=searchCalls(calls,filtersFrom(params));
+      const filters=filtersFrom(params);
+      const nationalMatches=searchCalls(calls,{...filters,bounds:undefined});
+      const matches=filters.bounds?searchCalls(nationalMatches,{bounds:filters.bounds}):nationalMatches;
       const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
       const employers=new Map();
       for(const call of calls)if(call.employer){const facet=employerFacet(call.employer,call.sourceId);if(!employers.has(facet.id))employers.set(facet.id,facet.label);}
-      return json({checkedAt:data.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))},total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)});
+      return json({checkedAt:data.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))},catalogTotal:nationalMatches.length,catalogMappedTotal:countMappedJobs(nationalMatches),total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)});
     }
     if(parsed.pathname==='/api/job') {
       if(params.getAll('id').length!==1||!params.get('id')||params.get('id').length>120)throw new TypeError('ID inválido');

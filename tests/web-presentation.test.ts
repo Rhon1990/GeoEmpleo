@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cardVisualTheme,detailBadge,formatDateTime,offerDates,placesLabel,jobPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
+import {cardVisualTheme,detailBadge,formatDateTime,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
 import {markerGroups,expandedZoom} from '../apps/web-preview/public/google-map.mjs';
 test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>{
  assert.equal(placesLabel({places:null}),'Plazas no publicadas');
@@ -38,6 +38,30 @@ test('distingue la primera detección de la última comprobación individual en 
 test('muestra la hora real de actualización del catálogo en Europe/Madrid',()=>{
  assert.equal(formatDateTime('2026-10-28T08:36:59.596Z'),'28 oct 2026 · 09:36 h');
  assert.equal(formatDateTime('2026-06-01T08:36:00Z'),'1 jun 2026 · 10:36 h');
+});
+test('el titular mantiene el total nacional y explica las ofertas ubicables y visibles',()=>{
+ const page={catalogTotal:20136,catalogMappedTotal:17972,total:17972};
+ const desktop=resultCountPresentation(page,{hasBounds:true});
+ const mobile=resultCountPresentation({...page,total:20136},{hasBounds:false});
+ assert.equal(desktop.title,'20.136 ofertas reales');
+ assert.equal(mobile.title,desktop.title);
+ assert.match(desktop.scope,/17\.972 con ubicación verificable/);
+ assert.match(desktop.scope,/2\.164 sin punto en el mapa/);
+ assert.match(desktop.scope,/17\.972 en la zona visible/);
+ assert.doesNotMatch(mobile.scope,/zona visible/);
+ assert.deepEqual(resultCountPresentation({catalogTotal:3,catalogMappedTotal:2,total:1},{hasBounds:true}),{
+  title:'3 ofertas reales',
+  scope:'2 con ubicación verificable · 1 sin punto en el mapa · 1 en la zona visible',
+ });
+ assert.equal(resultCountPresentation({catalogTotal:0,catalogMappedTotal:0,total:0},{hasBounds:false}).scope,'');
+ assert.deepEqual(resultCountPresentation(null),{title:'Cargando oportunidades…',scope:''});
+});
+test('el radio muestra el resultado cercano y conserva el total nacional como contexto',()=>{
+ const page={catalogTotal:20136,catalogMappedTotal:17972,total:17972};
+ const result=resultCountPresentation(page,{hasBounds:true,radiusKm:5,radiusCount:0});
+ assert.equal(result.title,'0 ofertas reales a 5 km en la zona visible');
+ assert.match(result.scope,/20\.136 en el catálogo/);
+ assert.doesNotMatch(result.scope,/17\.972 en la zona visible/);
 });
 test('presenta ofertas directas sin inventar un enlace externo ni degradar salario y ubicación',()=>{
  const direct={kind:'job',sourceId:'direct-employer',source:'Anunciante en GeoEmpleo360',salary:{minMinor:150000,maxMinor:170000,currency:'EUR',period:'month',basis:'gross',paymentsPerYear:14},location:{precision:'employer_declared'}};

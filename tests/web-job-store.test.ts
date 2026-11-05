@@ -13,6 +13,9 @@ async function fixture(run:(store:ReturnType<typeof createJobStore>,path:string)
 test('devuelve solo ofertas del viewport y resúmenes sin descripción',()=>fixture(async store=>{
  const page=await store.query(new URLSearchParams({bounds:'-2,37,0,39',q:'TECNICO'}));
  assert.equal(page.total,1);assert.deepEqual(page.jobs.map(j=>j.id),['inside']);assert.equal('paragraphs' in page.jobs[0],false);
+ assert.equal(page.catalogTotal,3);assert.equal(page.catalogMappedTotal,2);
+ const unbounded=await store.query(new URLSearchParams({q:'TECNICO'}));
+ assert.equal(unbounded.total,3);assert.equal(unbounded.catalogTotal,3);assert.equal(unbounded.catalogMappedTotal,2);
  assert.deepEqual((await store.detail('inside'))?.paragraphs,['Detalle completo']);assert.equal(await store.detail('missing'),null);
  assert.ok(page.facets.categories.some((c:{id:string})=>c.id==='tecnico'));
 }));
@@ -39,4 +42,14 @@ test('incluye ofertas directas publicadas en resultados, detalle, fuentes y filt
  assert.ok(page.facets.regions.includes('Castilla y León'));
  assert.ok(page.facets.categories.some(item=>item.id==='otros'&&item.label==='Otras oportunidades'));
  assert.equal((await store.detail('direct-1'))?.sourceId,'direct-employer');
+}));
+test('el servidor local aplica el filtro de empresa al total nacional y al mapa',()=>fixture(async(_store,path)=>{
+ const direct={...job('direct-company',[-4.4,40.8]),employer:'Empresa distinta',sourceId:'direct-employer'};
+ const store=createJobStore(path,()=>[direct]);
+ const page=await store.query(new URLSearchParams({employer:'empresa-distinta'}));
+ assert.equal(page.catalogTotal,1);
+ assert.equal(page.catalogMappedTotal,1);
+ assert.equal(page.total,1);
+ assert.deepEqual(page.jobs.map(item=>item.id),['direct-company']);
+ assert.deepEqual(page.facets.employers.find(item=>item.id==='empresa-distinta'),{id:'empresa-distinta',label:'Empresa distinta'});
 }));
