@@ -8,8 +8,8 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro de esta rama tiene 35 identificadores marcados como `active`, con adaptador
-en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon tienen captura aislada completa en esta rama y aún no se han publicado. El Corte Inglés también está pendiente de publicación. Covirán, ISS y Accenture están publicados en la web pública. La
+El registro tiene 35 identificadores marcados como `active`, con adaptador
+en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar
@@ -84,7 +84,7 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
 | NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |
 | Elecnor | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
-| Adecco | El [buscador oficial](https://www.adecco.com/es-es/ofertas-trabajo) anuncia 27.572 fichas en 2.757 páginas de 10 en la lectura del 05/11/2026; se identificó el endpoint del frontend, pero no hay una captura completa segura para el tamaño del catálogo estático | Diseñar partición, control de volumen y validación de todas las páginas sin agotar el workflow ni el navegador público |
+| Adecco | El [buscador oficial](https://www.adecco.com/es-es/ofertas-trabajo) sí ofrece un endpoint de consulta. Una captura aislada el 05/11/2026 encontró **3.745 ofertas españolas vigentes con ID único**, 3.553 con municipio verificable y ninguna fecha de cierre vencida. El adaptador y sus pruebas quedaron preparados, pero **no están en la ingesta diaria ni publicados**. Las [condiciones de uso](https://www.adecco.com/es-es/condiciones-de-uso) restringen la extracción y reutilización del contenido salvo autorización o excepción legal aplicable. No se halló un feed de distribución para terceros. | Resolver el derecho de reutilización o encontrar un feed autorizado antes de activar el adaptador; el acceso técnico no da permiso para republicar el listado completo |
 | Manpower | El [listado público](https://www.manpower.es/es/all-jobs) aparece en el navegador, pero el HTML básico no trae las filas y el [robots.txt](https://www.manpower.es/robots.txt) indica `Disallow: /` para `User-agent: *` | Solicitar un feed o permiso de acceso autorizado antes de activar una captura automática |
 
 Otros portales y empresas solicitados se documentan en la
