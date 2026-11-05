@@ -38,8 +38,9 @@ export function createJobStore(path,publicJobs=()=>[]) {
       const calls=[...catalog.calls,...publicJobs()];
       const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
       const facets={categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es'))};
-      const matches=searchCalls(calls,filters);
-      return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)};
+      const nationalMatches=searchCalls(calls,{...filters,bounds:undefined});
+      const matches=filters.bounds?searchCalls(nationalMatches,{bounds:filters.bounds}):nationalMatches;
+      return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,catalogTotal:nationalMatches.length,catalogMappedTotal:mapSummaries(nationalMatches).length,total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)};
     },
     async detail(id) {
       if(typeof id!=='string' || !id || id.length>120) throw new TypeError('Parámetros de detalle inválidos');
