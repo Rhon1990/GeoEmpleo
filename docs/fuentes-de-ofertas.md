@@ -53,7 +53,7 @@ que sigan abiertas.
 | `bizneo-iss` | [ISS Facility Services](https://jobs.iss.es/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 13 vacantes, 9 con punto |
 | `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Publicación 28/10/2026: 274 fichas españolas, 131 con punto; país validado por ficha |
 | `elcorteingles-oficial` | [El Corte Inglés](https://empleo.elcorteingles.es/ep/ofertas) | Listado paginado del frontend oficial, filtro `ES` | Captura aislada 04/11/2026: 365 ofertas y 291 puntos; pendiente de publicación |
-| `adecco-oficial` | [Adecco](https://www.adecco.com/es-es/ofertas-trabajo) | Endpoint del buscador oficial; filtro de cierre y país; ficha pública individual por `jobId` | Captura pública 05/11/2026: 3.759 ofertas vigentes con ID único y 3.569 con municipio verificado; se publica solo título, localidad, fecha, enlace y datos factuales mínimos |
+| `adecco-oficial` | [Adecco](https://www.adecco.com/es-es/ofertas-trabajo) | Endpoint del buscador oficial; filtro de cierre y país; ficha pública individual por `jobId`; retira ausentes tras captura completa | Captura 05/11/2026 12:19 UTC: 3.775 ofertas con ID único y 3.584 con municipio verificado; se publica solo título, localidad, fecha, enlace y datos factuales mínimos |
 
 El conector de El Corte Inglés envía `country: ["ES"]` al listado paginado. La
 ficha Workday sirve una aplicación sin `JobPosting` legible, así que el listado

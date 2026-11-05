@@ -1,9 +1,9 @@
 import type {PublicCatalog,PublicJob} from './model.ts';
 import {dateInSpain} from './normalize.ts';
-export interface ReconcilePolicy {missingRetentionDays?:number;supersededSourceIds?:readonly string[]}
+export interface ReconcilePolicy {missingRetentionDays?:number;retainMissingUntilClosingDate?:boolean;supersededSourceIds?:readonly string[]}
 
 function retainMissing(job:PublicJob,today:string,checkedAt:string,policy:ReconcilePolicy):boolean {
-  if(job.closingDate!==null) return job.closingDate>=today;
+  if(job.closingDate!==null&&policy.retainMissingUntilClosingDate!==false) return job.closingDate>=today;
   if(policy.missingRetentionDays===undefined) return true;
   if(!Number.isInteger(policy.missingRetentionDays)||policy.missingRetentionDays<0) throw new TypeError('Retención de ausentes inválida');
   const previous=Date.parse(job.checkedAt),current=Date.parse(checkedAt);

@@ -155,6 +155,7 @@ export async function runDaily(options:RunOptions) {
                 :national?.resolve??(()=>null));
         next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{
           missingRetentionDays:source.kind==='ats'||sourceId==='ecyl-castilla-leon'?0:7,
+          ...(sourceId==='adecco-oficial'?{retainMissingUntilClosingDate:false}:{}),
           ...(sourceId==='taleo-eulen'?{supersededSourceIds:['selectminds-eulen']}:{}),
         });
         sources.push({sourceId,status:'success',received:jobs.length,mapped:jobs.filter(job=>job.location!==null).length,reason:null});
