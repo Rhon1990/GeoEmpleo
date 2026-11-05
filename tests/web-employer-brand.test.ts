@@ -37,6 +37,7 @@ const publicBrands={
   'bizneo-iss':['/brands/iss.png','ISS Facility Services'],
   'workday-accenture':['/brands/accenture.svg','Accenture'],
   'elcorteingles-oficial':['/brands/el-corte-ingles.svg','El Corte Inglés'],
+  'adecco-oficial':['/brands/adecco.svg','Adecco'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {
@@ -56,6 +57,11 @@ test('el logotipo blanco de KPMG conserva contraste en tarjetas y detalle',()=>{
   const css=readFileSync(resolve('apps/web-preview/public/styles.css'),'utf8');
   assert.match(css,/\.job-visual:has\(img\[src\$="kpmg\.png"\]\)\{background:#[0-9a-f]{6}\}/);
   assert.match(css,/\.detail-brand img\[src\$="kpmg\.png"\]\{background:#[0-9a-f]{6}/);
+});
+
+test('la página atribuye las ofertas de Adecco al portal oficial',()=>{
+ const html=readFileSync(resolve('apps/web-preview/public/index.html'),'utf8');
+ assert.match(html,/href="https:\/\/www\.adecco\.com\/es-es\/ofertas-trabajo"[^>]*>Adecco<\/a>/);
 });
 
 test('fuentes públicas y anuncios directos muestran la identidad neutra de GeoEmpleo360', () => {
