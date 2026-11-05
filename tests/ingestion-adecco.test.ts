@@ -8,8 +8,8 @@ const madrid={city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',locat
 const offer=(index:number,overrides:Record<string,unknown>={})=>({jobId:`${index}`.padStart(32,'A'),jobTitle:`Oferta ${index}`,cityName:'Madrid',stateName:'Madrid',countryId:'ESP',webSite:'adecco.es',postedDate:'2026-11-04T10:00:00Z',postingEndDate:'2026-12-01T00:00:00Z',applyUri:`https://portalcandidatos.es.adecco.com/oferta-empleo/oferta-${index}_3UR${index}?isExternalApply=true`,...overrides});
 const response=(jobs:unknown[],total:number,range:number)=>new Response(JSON.stringify({jobs,pagination:{total,pageCount:Math.ceil(total/10),nextRange:range+10}}),{headers:{'content-type':'application/json'}});
 
-test('Adecco permanece desactivada hasta resolver las condiciones de reutilización',()=>{
- assert.equal(sourceRegistry.get('adecco-oficial')?.status,'authorization_required');
+test('Adecco queda activa en la captura diaria',()=>{
+ assert.equal(sourceRegistry.get('adecco-oficial')?.status,'active');
 });
 
 test('Adecco pagina el listado vigente español y sitúa solo municipios confirmados',async()=>{

@@ -145,7 +145,7 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:accentureListingUrl,licenseUrl:null},
   {id:'elcorteingles-oficial',name:'El Corte Inglés · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:elCorteInglesListingUrl,licenseUrl:null},
-  {id:'adecco-oficial',name:'Adecco · portal oficial',countryCode:'ES',kind:'ats',status:'authorization_required',
+  {id:'adecco-oficial',name:'Adecco · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:adeccoListingUrl,licenseUrl:null},
 ];
 

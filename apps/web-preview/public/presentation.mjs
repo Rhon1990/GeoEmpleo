@@ -41,6 +41,7 @@ const employerBrands={
   'bizneo-iss':{src:'/brands/iss.png',alt:'ISS Facility Services'},
   'workday-accenture':{src:'/brands/accenture.svg',alt:'Accenture'},
   'elcorteingles-oficial':{src:'/brands/el-corte-ingles.svg',alt:'El Corte Inglés'},
+  'adecco-oficial':{src:'/brands/adecco.svg',alt:'Adecco'},
 };
 export const neutralBrand={src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo360'};
 export const employerBrand=job=>employerBrands[job.sourceId]??neutralBrand;

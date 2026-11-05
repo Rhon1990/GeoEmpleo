@@ -8,7 +8,7 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene 35 identificadores marcados como `active`, con adaptador
+El registro tiene 36 identificadores marcados como `active`, con adaptador
 en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
@@ -53,6 +53,7 @@ que sigan abiertas.
 | `bizneo-iss` | [ISS Facility Services](https://jobs.iss.es/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 13 vacantes, 9 con punto |
 | `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Publicación 28/10/2026: 274 fichas españolas, 131 con punto; país validado por ficha |
 | `elcorteingles-oficial` | [El Corte Inglés](https://empleo.elcorteingles.es/ep/ofertas) | Listado paginado del frontend oficial, filtro `ES` | Captura aislada 04/11/2026: 365 ofertas y 291 puntos; pendiente de publicación |
+| `adecco-oficial` | [Adecco](https://www.adecco.com/es-es/ofertas-trabajo) | Endpoint del buscador oficial; filtro de cierre y país | Captura aislada 05/11/2026: 3.758 ofertas vigentes con ID único y 3.565 con municipio verificado; se publica solo título, localidad, fecha, enlace y datos factuales mínimos |
 
 El conector de El Corte Inglés envía `country: ["ES"]` al listado paginado. La
 ficha Workday sirve una aplicación sin `JobPosting` legible, así que el listado
@@ -61,6 +62,11 @@ españoles resueltos inequívocamente; códigos internos y ubicaciones no resuel
 quedan sin marcador. La fecha se marca como primera observación y una captura
 fallida conserva la instantánea anterior.
 El endpoint del frontend no es una API documentada para terceros y puede cambiar.
+
+La captura de Adecco usa únicamente metadatos factuales y enlaces oficiales, sin
+copiar el texto completo de las fichas. Las [condiciones de uso de Adecco](https://www.adecco.com/es-es/condiciones-de-uso)
+restringen la extracción y reutilización del contenido; el canal técnico no
+equivale a una licencia de distribución y sigue existiendo riesgo contractual.
 
 El catálogo incluye además **cuatro anuncios BOE** (`sourceId: boe`)
 incorporados como selección estática. `npm run ingest:daily` **no** los consulta
@@ -84,7 +90,6 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
 | NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |
 | Elecnor | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
-| Adecco | El [buscador oficial](https://www.adecco.com/es-es/ofertas-trabajo) sí ofrece un endpoint de consulta. Una captura aislada el 05/11/2026 encontró **3.745 ofertas españolas vigentes con ID único**, 3.553 con municipio verificable y ninguna fecha de cierre vencida. El adaptador y sus pruebas quedaron preparados, pero **no están en la ingesta diaria ni publicados**. Las [condiciones de uso](https://www.adecco.com/es-es/condiciones-de-uso) restringen la extracción y reutilización del contenido salvo autorización o excepción legal aplicable. No se halló un feed de distribución para terceros. | Resolver el derecho de reutilización o encontrar un feed autorizado antes de activar el adaptador; el acceso técnico no da permiso para republicar el listado completo |
 | Manpower | El [listado público](https://www.manpower.es/es/all-jobs) aparece en el navegador, pero el HTML básico no trae las filas y el [robots.txt](https://www.manpower.es/robots.txt) indica `Disallow: /` para `User-agent: *` | Solicitar un feed o permiso de acceso autorizado antes de activar una captura automática |
 
 Otros portales y empresas solicitados se documentan en la
