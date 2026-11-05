@@ -16,7 +16,7 @@
 - Modify: `tests/static-delivery.test.ts`, `tests/web-job-store.test.ts`
 - Modify: `apps/web-preview/public/static-data.mjs`, `apps/web-preview/job-store.mjs`
 
-- [ ] Add assertions to the existing viewport fixtures: with three offers (inside point, outside point, unknown point), `total` must be 1, `catalogTotal` 3, `catalogMappedTotal` 2 and `mapJobs` must contain only the inside offer. Requery without bounds and confirm totals remain 3 and 2. Include a text or company filter and assert the national total respects it.
+- [ ] Add assertions to the existing viewport fixtures: with three offers (inside point, outside point, unknown point), `total` must be 1, `catalogTotal` 3, `catalogMappedTotal` 2 and `mapJobs` must contain only the inside offer. Requery without bounds and confirm totals remain 3 and 2. Include text and company filters and assert the national total respects them in both adapters.
 - [ ] Run `node --test tests/static-delivery.test.ts tests/web-job-store.test.ts`; confirm the new assertions fail because `catalogTotal` is absent.
 - [ ] In each adapter, parse filters once, compute `nationalMatches=searchCalls(calls,{...filters,bounds:undefined})`, reuse it as `matches` without bounds or apply viewport filtering with `searchCalls(nationalMatches,{bounds:filters.bounds})`, then return `catalogTotal:nationalMatches.length` and `catalogMappedTotal:mapSummaries(nationalMatches).length` alongside unchanged `total`, `jobs` and `mapJobs`.
 - [ ] Re-run both test files; expect all tests to pass. Commit the contract and tests.
@@ -27,7 +27,7 @@
 - Modify: `tests/web-presentation.test.ts`
 - Modify: `apps/web-preview/public/presentation.mjs`, `apps/web-preview/public/app.mjs`, `apps/web-preview/public/index.html`
 
-- [ ] Add a focused test for `resultCountPresentation({catalogTotal:20136,catalogMappedTotal:17972,total:17972},{hasBounds:true})`: the title says `20.136 ofertas reales`, and the detail reports 17.972 mappable, 17.972 in the visible zone, and 2.164 without verified point. Repeat with `total:20136,hasBounds:false` and with a filtered catalog of 3 offers.
+- [ ] Add a focused test for `resultCountPresentation({catalogTotal:20136,catalogMappedTotal:17972,total:17972},{hasBounds:true})`: the title says `20.136 ofertas reales`, and the detail reports 17.972 mappable, 17.972 in the visible zone, and 2.164 without verified point. Repeat with `total:20136,hasBounds:false`, with a filtered catalog of 3 offers, and with a 5 km radius whose nearby count is zero.
 - [ ] Run `node --test tests/web-presentation.test.ts`; confirm the new test fails because the formatter is missing.
 - [ ] Implement `resultCountPresentation` in `presentation.mjs` using `Intl.NumberFormat('es-ES')`. Return `{title,scope}`. Include a scope fragment for the visible zone only when bounds are present and avoid a stale total when the page is null.
 - [ ] Add `<p id="result-scope">` next to the existing `#result-summary`. In `render()`, use the formatter to set `#result-count` and `#result-scope`, leaving `resultSummary`, the 300-card truncation notice, map data and error handling intact.

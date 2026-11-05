@@ -1,9 +1,9 @@
 import {readFile,stat} from 'node:fs/promises';
-import {searchCalls} from './public/catalog.mjs';
+import {employerFacet,searchCalls} from './public/catalog.mjs';
 import {summaryFields,projectFields,mapSummaries,countMappedJobs} from './public/job-projections.mjs';
 function parseFilters(params) {
   const filters={};
-  for(const [name,max] of [['q',200],['city',120],['category',80]]) {
+  for(const [name,max] of [['q',200],['city',120],['category',80],['employer',120]]) {
     if(params.getAll(name).length>1 || (params.get(name)?.length??0)>max) throw new TypeError('Parámetros de búsqueda inválidos');
     filters[name]=params.get(name)??'';
   }
@@ -37,7 +37,9 @@ export function createJobStore(path,publicJobs=()=>[]) {
       const {catalog}=await load();
       const calls=[...catalog.calls,...publicJobs()];
       const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
-      const facets={categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es'))};
+      const employers=new Map();
+      for(const call of calls)if(call.employer){const facet=employerFacet(call.employer,call.sourceId);if(!employers.has(facet.id))employers.set(facet.id,facet.label);}
+      const facets={categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))};
       const nationalMatches=searchCalls(calls,{...filters,bounds:undefined});
       const matches=filters.bounds?searchCalls(nationalMatches,{bounds:filters.bounds}):nationalMatches;
       return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,catalogTotal:nationalMatches.length,catalogMappedTotal:countMappedJobs(nationalMatches),total:matches.length,truncated:matches.length>300,jobs:matches.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(matches)};

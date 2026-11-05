@@ -65,12 +65,19 @@ export function resultSummary(results) {
  if(known===0)return 'Consulta condiciones y vigencia en cada anuncio';
  return `${known} plazas indicadas${unknown?` · ${unknown} ${unknown===1?'oferta sin cifra de plazas':'ofertas sin cifra de plazas'}`:''}`;
 }
-export function resultCountPresentation(page,{hasBounds=false}={}) {
+/** @param {{total:number,catalogTotal?:number,catalogMappedTotal?:number,mapJobs?:unknown[]}|null} page @param {{hasBounds?:boolean,radiusKm?:number|null,radiusCount?:number|null}} [options] */
+export function resultCountPresentation(page,{hasBounds=false,radiusKm=null,radiusCount=null}={}) {
  if(!page)return {title:'Cargando oportunidades…',scope:''};
  const format=value=>new Intl.NumberFormat('es-ES',{useGrouping:'always'}).format(value);
  const total=page.catalogTotal??page.total;
  const mapped=page.catalogMappedTotal??page.mapJobs?.length??0;
  const unmapped=Math.max(0,total-mapped);
+ if(radiusKm!==null&&radiusCount!==null) {
+  const title=`${format(radiusCount)} ${radiusCount===1?'oferta real':'ofertas reales'} a ${format(radiusKm)} km${hasBounds?' en la zona visible':''}`;
+  const parts=[`${format(total)} en el catálogo`,`${format(mapped)} con ubicación verificable`];
+  if(unmapped)parts.push(`${format(unmapped)} sin punto en el mapa`);
+  return {title,scope:parts.join(' · ')};
+ }
  const title=`${format(total)} ${total===1?'oferta real':'ofertas reales'}`;
  if(total===0)return {title,scope:''};
  const parts=[`${format(mapped)} con ubicación verificable`];

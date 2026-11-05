@@ -255,7 +255,7 @@ function render() {
     adSlotRequested=true;
     requestAdSlot(slot,adsenseConfig);
   }
-  const countPresentation=resultCountPresentation(page,{hasBounds:Boolean(searchBounds)});
+  const countPresentation=resultCountPresentation(page,{hasBounds:Boolean(searchBounds),radiusKm:geography.radiusKm,radiusCount:mapResults.length});
   document.querySelector('#result-count').textContent=countPresentation.title;
   document.querySelector('#result-scope').textContent=countPresentation.scope;
   const summary=resultSummary(results);

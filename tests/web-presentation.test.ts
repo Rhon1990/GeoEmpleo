@@ -56,6 +56,13 @@ test('el titular mantiene el total nacional y explica las ofertas ubicables y vi
  assert.equal(resultCountPresentation({catalogTotal:0,catalogMappedTotal:0,total:0},{hasBounds:false}).scope,'');
  assert.deepEqual(resultCountPresentation(null),{title:'Cargando oportunidades…',scope:''});
 });
+test('el radio muestra el resultado cercano y conserva el total nacional como contexto',()=>{
+ const page={catalogTotal:20136,catalogMappedTotal:17972,total:17972};
+ const result=resultCountPresentation(page,{hasBounds:true,radiusKm:5,radiusCount:0});
+ assert.equal(result.title,'0 ofertas reales a 5 km en la zona visible');
+ assert.match(result.scope,/20\.136 en el catálogo/);
+ assert.doesNotMatch(result.scope,/17\.972 en la zona visible/);
+});
 test('presenta ofertas directas sin inventar un enlace externo ni degradar salario y ubicación',()=>{
  const direct={kind:'job',sourceId:'direct-employer',source:'Anunciante en GeoEmpleo360',salary:{minMinor:150000,maxMinor:170000,currency:'EUR',period:'month',basis:'gross',paymentsPerYear:14},location:{precision:'employer_declared'}};
  const view=jobPresentation(direct);

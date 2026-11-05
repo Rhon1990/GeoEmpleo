@@ -6,10 +6,10 @@ El mismo catálogo público contiene 20.136 ofertas únicas: 17.972 con coordena
 
 ## Comportamiento aprobado
 
-- El titular de resultados muestra el total de ofertas que coinciden con los filtros de texto, territorio, empresa y área profesional, sin aplicar el rectángulo visible del mapa. Es el mismo número en escritorio y móvil para la misma búsqueda.
+- Sin filtro de distancia, el titular muestra el total de ofertas que coinciden con texto, territorio, empresa y área profesional, sin aplicar el rectángulo visible del mapa. Es el mismo número en escritorio y móvil para la misma búsqueda.
 - Un texto secundario indica cuántas ofertas tienen ubicación verificable. Cuando el mapa está activo, indica además cuántas están en la zona visible. Las ofertas sin punto permanecen en el total, pero nunca reciben un marcador inventado.
 - Las tarjetas y marcadores siguen limitados a la zona visible cuando hay límites del mapa. Se conserva el límite actual de 300 tarjetas y el mensaje de truncamiento.
-- Los filtros, la selección de una oferta y la búsqueda por radio mantienen su comportamiento actual. El resultado sin datos y los errores de carga se expresan como tales, sin presentar el último total como si fuera nuevo.
+- Al elegir un radio, el titular sigue mostrando las ofertas cercanas efectivamente presentadas; el total del catálogo pasa al desglose. Si el mapa limita los resultados, el titular indica que el radio se aplica en la zona visible. Los filtros restantes y la selección de una oferta mantienen su comportamiento. El resultado sin datos y los errores de carga se expresan como tales, sin presentar el último total como si fuera nuevo.
 
 ## Diseño técnico
 
