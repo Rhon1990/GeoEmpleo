@@ -2,7 +2,7 @@
 
 Última revisión: 5 de noviembre de 2026, Europe/Madrid.
 
-Estado público verificado el 05/11/2026: 19.522 ofertas con IDs únicos, `checkedAt=2026-11-05T11:46:13.302Z`, en `geoempleo360.com` y Firebase Hosting. Adecco aporta 3.759 ofertas, 3.569 con municipio verificado. El enlace de solicitud de su API llevaba al inicio de sesión; el conector usa ahora la ficha pública de `adecco.com/es-es/ofertas-trabajo/{jobId}`. Se verificaron cinco fichas distribuidas por el catálogo y los tres IDs aportados por el usuario. Las cifras históricas de secciones posteriores describen capturas anteriores.
+La publicación HTTPS del 05/11/2026 a las 12:19 UTC contenía 19.577 ofertas con IDs únicos en `geoempleo360.com` y Firebase Hosting; su captura Adecco recibió 3.775 fichas, 3.584 con municipio verificado. Nueve fichas Adecco ausentes del último listado seguían retenidas por una fecha futura de cierre y conservaban la URL de solicitud con inicio de sesión. La política específica de Adecco retira esas fichas cuando una captura completa ya no las incluye; las fichas capturadas abren el detalle público de `adecco.com/es-es/ofertas-trabajo/{jobId}`. Las cifras cambian con cada ejecución; el estado vigente se verifica en `data/calls.json` y en el informe de ingesta. Las cifras históricas de secciones posteriores describen capturas anteriores.
 
 ## Propósito y alcance confirmado
 

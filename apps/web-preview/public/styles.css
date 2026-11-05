@@ -31,6 +31,8 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 .job-visual:has(img[src$="telepizza.svg"]){background:#c8102e}
 .job-visual:has(img[src$="accenture.svg"]){background:#22112f}
 .job-visual:has(img[src$="kpmg.png"]){background:#00338d}
+.job-visual:has(img[src$="adecco.svg"]){background:#c81d25}
+.job-visual:has(img[src$="deloitte.png"]){background:#242424}
 .job-visual:has(img[src$="alcampo.png"]){background:#e30613}
 .employer-name{font-size:12px;color:var(--ink);font-weight:650}
 .job-card .job-meta .meta-tag:nth-child(n+3){display:none}
@@ -39,6 +41,8 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 .detail-brand img[src$="telepizza.svg"]{background:#c8102e;border-color:#c8102e}
 .detail-brand img[src$="accenture.svg"]{background:#22112f;border-color:#22112f}
 .detail-brand img[src$="kpmg.png"]{background:#00338d;border-color:#00338d}
+.detail-brand img[src$="adecco.svg"]{background:#c81d25;border-color:#c81d25}
+.detail-brand img[src$="deloitte.png"]{background:#242424;border-color:#242424}
 .detail-brand img[src$="alcampo.png"]{background:#e30613;border-color:#e30613}
 .detail-brand img[src$="accenture.svg"]{width:112px}
 .detail-brand .detail-employer{margin:0;line-height:1.5}

@@ -37,6 +37,12 @@ test('retiene una oferta ausente sin cierre durante siete días exactos',()=>{
  assert.ok(atLimit.calls.some(item=>item.id==='ECYL-MISSING'));
  assert.ok(!afterLimit.calls.some(item=>item.id==='ECYL-MISSING'));
 });
+test('una fuente completa puede retirar ofertas ausentes aunque el cierre previsto sea futuro',()=>{
+ const base={...catalog,calls:[job('ADECCO-OLD','adecco-oficial','2026-12-31'),job('OTHER','boe',null)]} as PublicCatalog;
+ const incoming=[job('ADECCO-NEW','adecco-oficial','2026-12-31')];
+ const next=reconcileSource(base,'adecco-oficial',incoming,at,{missingRetentionDays:0,retainMissingUntilClosingDate:false});
+ assert.deepEqual(next.calls.map(item=>item.id).sort(),['ADECCO-NEW','OTHER']);
+});
 test('una fuente sucesora retira el espejo anterior solo tras una captura válida',()=>{
  const base={...catalog,calls:[job('EULEN-OLD','selectminds-eulen',null),job('OTHER','boe',null)]} as PublicCatalog;
  const incoming=[job('EULEN-NEW','taleo-eulen',null)];
