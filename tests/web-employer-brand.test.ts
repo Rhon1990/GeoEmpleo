@@ -16,7 +16,13 @@ const publicBrands={
   'successfactors-mapfre':['/brands/mapfre.png','MAPFRE'],
   'successfactors-capgemini':['/brands/capgemini.png','Capgemini'],
   'successfactors-melia':['/brands/melia.svg','Meliá Hotels International'],
+  'successfactors-kpmg':['/brands/kpmg.png','KPMG'],
+  'successfactors-deloitte':['/brands/deloitte.png','Deloitte'],
+  'successfactors-ilunion':['/brands/ilunion.jpg','ILUNION'],
   'teamtailor-dia':['/brands/dia.png','DIA'],
+  'teamtailor-leroy':['/brands/leroy-merlin.png','Leroy Merlin'],
+  'talentforjobs-alcampo':['/brands/alcampo.png','Alcampo'],
+  'talentclue-decathlon':['/brands/decathlon.png','Decathlon'],
   'carrefour-talentforjobs':['/brands/carrefour.svg','Carrefour'],
   'lidl-search-api':['/brands/lidl.svg','Lidl'],
   'disa-empleo':['/brands/disa.png','Grupo DISA'],
@@ -44,6 +50,12 @@ test('cada portal empresarial verificado muestra un asset local de su marca', ()
     else if(src.endsWith('.webp'))assert.equal(content.toString('ascii',8,12),'WEBP',`${sourceId} debe ser WebP válido`);
     else assert.deepEqual([...content.subarray(0,3)],[255,216,255],`${sourceId} debe ser JPEG válido`);
   }
+});
+
+test('el logotipo blanco de KPMG conserva contraste en tarjetas y detalle',()=>{
+  const css=readFileSync(resolve('apps/web-preview/public/styles.css'),'utf8');
+  assert.match(css,/\.job-visual:has\(img\[src\$="kpmg\.png"\]\)\{background:#[0-9a-f]{6}\}/);
+  assert.match(css,/\.detail-brand img\[src\$="kpmg\.png"\]\{background:#[0-9a-f]{6}/);
 });
 
 test('fuentes públicas y anuncios directos muestran la identidad neutra de GeoEmpleo360', () => {

@@ -15,6 +15,12 @@ Estos archivos se sirven desde GeoEmpleo360 para evitar peticiones de imagen a t
 | `mapfre.png` | MAPFRE | [Portal de empleo](https://jobs.mapfre.com/go/PROFESIONALES/3296401/) |
 | `capgemini.png` | Capgemini | [Portal de empleo](https://careers.capgemini.com/search/) |
 | `melia.svg` | Meliá Hotels International | [Portal de empleo](https://careers.melia.com/go/Profesionales-de-hotel/8861001/) |
+| `kpmg.png` | KPMG | [Cabecera del portal de empleo](https://carreras.kpmg.es/search/) |
+| `deloitte.png` | Deloitte | [Cabecera del portal de empleo](https://empleo.es.deloitte.com/search/) |
+| `ilunion.jpg` | ILUNION | [Cabecera del portal de empleo](https://empleo.ilunion.com/Ilunion/go/TODAS-LAS-OFERTAS-ILUNION/9135102/); el recurso también muestra a Fundación ONCE, cuyas ofertas se excluyen de la fuente ILUNION |
+| `leroy-merlin.png` | Leroy Merlin | [Logotipo del portal oficial](https://empleo.leroymerlin.es/jobs); imagen servida por su CDN Teamtailor |
+| `alcampo.png` | Alcampo | [Logotipo blanco de la web corporativa oficial](https://alcampocorporativo.es/trabaja-con-nosotros/); las tarjetas usan fondo rojo para conservar contraste |
+| `decathlon.png` | Decathlon | [Logotipo azul del portal oficial](https://trabajaconnosotros.decathlon.es/ofertas/) |
 | `dia.png` | DIA | [Portal de empleo](https://empleo.dia.es/jobs) |
 | `carrefour.svg` | Carrefour | [Simple Icons](https://simpleicons.org/?q=carrefour) |
 | `lidl.svg` | Lidl | [Simple Icons](https://simpleicons.org/?q=lidl) |

@@ -6,6 +6,9 @@ import { kfcListingUrl } from './connectors/kfc.ts';
 import { disaEndpoint } from './connectors/disa.ts';
 import { successFactorsBoards } from './connectors/successfactors-boards.ts';
 import { diaListingUrl } from './connectors/teamtailor.ts';
+import {leroyMerlinListingUrl} from './connectors/leroy-merlin.ts';
+import {alcampoListingUrl} from './connectors/alcampo.ts';
+import {decathlonListingUrl} from './connectors/decathlon.ts';
 import { carrefourListingUrl } from './connectors/carrefour.ts';
 import { lidlSearchEndpoint } from './connectors/lidl.ts';
 import {quironsaludListingUrl} from './connectors/quironsalud.ts';
@@ -107,6 +110,12 @@ const definitions: readonly SourceDefinition[] = [
   })),
   {id:'teamtailor-dia',name:'DIA · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
     endpoint:diaListingUrl,licenseUrl:null},
+  {id:'teamtailor-leroy',name:'Leroy Merlin · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:leroyMerlinListingUrl,licenseUrl:null},
+  {id:'talentforjobs-alcampo',name:'Alcampo · TalentForJobs',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:alcampoListingUrl,licenseUrl:null},
+  {id:'talentclue-decathlon',name:'Decathlon · TalentClue',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:decathlonListingUrl,licenseUrl:null},
   {id:'talentclue-mcdonalds',name:"McDonald's · TalentClue",countryCode:'ES',kind:'ats',status:'active',
     endpoint:talentClueListingUrl,licenseUrl:null},
   {id:'amrest-kfc',name:'KFC · AmRest',countryCode:'ES',kind:'ats',status:'active',

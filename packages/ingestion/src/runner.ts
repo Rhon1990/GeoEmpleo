@@ -11,6 +11,9 @@ import {fetchKfcOffers} from './connectors/kfc.ts';
 import {fetchDisaOffers} from './connectors/disa.ts';
 import {fetchSuccessFactorsOffers} from './connectors/successfactors.ts';
 import {fetchDiaOffers} from './connectors/teamtailor.ts';
+import {fetchLeroyMerlinOffers} from './connectors/leroy-merlin.ts';
+import {fetchAlcampoOffers} from './connectors/alcampo.ts';
+import {fetchDecathlonOffers} from './connectors/decathlon.ts';
 import {fetchCarrefourOffers} from './connectors/carrefour.ts';
 import {fetchLidlOffers} from './connectors/lidl.ts';
 import {fetchQuironsaludOffers} from './connectors/quironsalud.ts';
@@ -30,7 +33,7 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture','elcorteingles-oficial'] as const;
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','teamtailor-leroy','talentforjobs-alcampo','talentclue-decathlon','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture','elcorteingles-oficial'] as const;
 type ImplementedSourceId=string;
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
@@ -118,6 +121,12 @@ export async function runDaily(options:RunOptions) {
               ? await fetchDisaOffers(checkedAt,national?.resolve??(()=>null),options.fetchImpl)
             : sourceId==='teamtailor-dia'
               ? await fetchDiaOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+            : sourceId==='teamtailor-leroy'
+              ? await fetchLeroyMerlinOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+            : sourceId==='talentforjobs-alcampo'
+              ? await fetchAlcampoOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+            : sourceId==='talentclue-decathlon'
+              ? await fetchDecathlonOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='carrefour-talentforjobs'
               ? await fetchCarrefourOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='lidl-search-api'
