@@ -38,6 +38,7 @@ const publicBrands={
   'workday-accenture':['/brands/accenture.svg','Accenture'],
   'elcorteingles-oficial':['/brands/el-corte-ingles.svg','El Corte Inglés'],
   'adecco-oficial':['/brands/adecco.svg','Adecco'],
+  'gigroup-oficial':['/brands/gi-group.jpg','Gi Group'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {
@@ -70,6 +71,11 @@ test('los logotipos claros de Adecco y Deloitte conservan contraste en tarjetas 
 test('la página atribuye las ofertas de Adecco al portal oficial',()=>{
  const html=readFileSync(resolve('apps/web-preview/public/index.html'),'utf8');
  assert.match(html,/href="https:\/\/www\.adecco\.com\/es-es\/ofertas-trabajo"[^>]*>Adecco<\/a>/);
+});
+
+test('la página atribuye Gi Group a su listado oficial',()=>{
+ const html=readFileSync(resolve('apps/web-preview/public/index.html'),'utf8');
+ assert.match(html,/href="https:\/\/es\.gigroup\.com\/ofertas-de-trabajo\/"[^>]*>Gi Group<\/a>/);
 });
 
 test('fuentes públicas y anuncios directos muestran la identidad neutra de GeoEmpleo360', () => {

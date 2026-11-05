@@ -8,7 +8,7 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene 36 identificadores marcados como `active`, con adaptador
+El registro tiene 37 identificadores marcados como `active`, con adaptador
 en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
@@ -54,6 +54,7 @@ que sigan abiertas.
 | `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Publicación 28/10/2026: 274 fichas españolas, 131 con punto; país validado por ficha |
 | `elcorteingles-oficial` | [El Corte Inglés](https://empleo.elcorteingles.es/ep/ofertas) | Listado paginado del frontend oficial, filtro `ES` | Captura aislada 04/11/2026: 365 ofertas y 291 puntos; pendiente de publicación |
 | `adecco-oficial` | [Adecco](https://www.adecco.com/es-es/ofertas-trabajo) | Endpoint del buscador oficial; filtro de cierre y país; ficha pública individual por `jobId`; retira ausentes tras captura completa | Captura 05/11/2026 12:19 UTC: 3.775 ofertas con ID único y 3.584 con municipio verificado; se publica solo título, localidad, fecha, enlace y datos factuales mínimos |
+| `gigroup-oficial` | [Gi Group](https://es.gigroup.com/ofertas-de-trabajo/) | Listado y fichas `JobPosting` del portal oficial | Captura aislada 05/11/2026: 427 ofertas españolas únicas, 415 con municipio verificado; comprobar el catálogo público vigente para el conteo actual |
 
 El conector de El Corte Inglés envía `country: ["ES"]` al listado paginado. La
 ficha Workday sirve una aplicación sin `JobPosting` legible, así que el listado
@@ -91,6 +92,7 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |
 | Elecnor | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
 | Manpower | El [listado público](https://www.manpower.es/es/all-jobs) aparece en el navegador, pero el HTML básico no trae las filas y el [robots.txt](https://www.manpower.es/robots.txt) indica `Disallow: /` para `User-agent: *` | Solicitar un feed o permiso de acceso autorizado antes de activar una captura automática |
+| Triangle Solutions | El [portal Viterbit](https://trianglerrhh.viterbit.site/) muestra ofertas en navegador, pero la captura programada recibe HTTP 403 | Conseguir un feed o acceso oficial estable; no publicar fichas ni puntos no verificados |
 
 Otros portales y empresas solicitados se documentan en la
 [auditoría nacional](planning/2026-10-19-ampliacion-nacional-fuentes.md) y el

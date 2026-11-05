@@ -25,6 +25,7 @@ import {fetchIndraOffers} from './connectors/indra.ts';
 import {accentureFailureReason,fetchAccentureOffers} from './connectors/accenture.ts';
 import {fetchElCorteInglesOffers} from './connectors/el-corte-ingles.ts';
 import {fetchAdeccoOffers} from './connectors/adecco.ts';
+import {fetchGiGroupOffers} from './connectors/gi-group.ts';
 import {successFactorsBoards} from './connectors/successfactors-boards.ts';
 import {reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
@@ -34,7 +35,7 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','teamtailor-leroy','talentforjobs-alcampo','talentclue-decathlon','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture','elcorteingles-oficial','adecco-oficial'] as const;
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','teamtailor-leroy','talentforjobs-alcampo','talentclue-decathlon','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture','elcorteingles-oficial','adecco-oficial','gigroup-oficial'] as const;
 type ImplementedSourceId=string;
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
@@ -150,6 +151,8 @@ export async function runDaily(options:RunOptions) {
               ? await fetchElCorteInglesOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='adecco-oficial'
               ? await fetchAdeccoOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+            : sourceId==='gigroup-oficial'
+              ? await fetchGiGroupOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : adaptSource(sourceId,await fetchJson(source.endpoint,{fetchImpl:options.fetchImpl,encoding:encodingFor(sourceId)}),checkedAt,
               sourceId==='sef-murcia'?murciaResolver.status==='fulfilled'&&murciaResolver.value!==null?murciaResolver.value:()=>null
                 :national?.resolve??(()=>null));

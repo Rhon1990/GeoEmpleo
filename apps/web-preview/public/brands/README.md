@@ -35,5 +35,6 @@ Estos archivos se sirven desde GeoEmpleo360 para evitar peticiones de imagen a t
 | `iss.png` | ISS Facility Services | [Portal oficial de empleo](https://jobs.iss.es/jobs) |
 | `accenture.svg` | Accenture | [Portal oficial de empleo](https://www.accenture.com/es-es/careers/jobsearch) |
 | `el-corte-ingles.svg` | El Corte Inglés | [Portal oficial de empleo](https://empleo.elcorteingles.es/ep/ofertas) |
+| `gi-group.jpg` | Gi Group | [Logotipo incluido en el JobPosting del portal oficial](https://es.gigroup.com/ofertas-de-trabajo/) |
 
 La atribución de imagen se cubre mediante pruebas en `tests/web-employer-brand.test.ts`. Las ofertas públicas, directas y de fuentes sin empleador empresarial identificable usan `geoempleo-neutral.svg`.

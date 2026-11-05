@@ -8,6 +8,32 @@ import {fetchJson} from '../packages/ingestion/src/http.ts';
 import {formatRunReportLines,runDaily} from '../packages/ingestion/src/runner.ts';
 import {sourceRegistry} from '../packages/ingestion/src/registry.ts';
 
+test('runner publica Gi Group con enlace de ficha y sin punto no verificado',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-gigroup-'));
+ try {
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-11-04T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-11-05',license:'test',places:[]})));
+  const detailUrl='https://es.gigroup.com/ofertas-de-trabajo-detalle/madrid-oferta/104837/';
+  const listing='<a class="ggp-job-title-url" href="/ofertas-de-trabajo-detalle/madrid-oferta/104837/">Operario</a>';
+  const detail=`<script type="application/ld+json">${JSON.stringify({'@type':'JobPosting',identifier:{value:'104837'},title:'Operario/a',description:'<p>Turno de mañana.</p>',datePosted:'2026-11-04',validThrough:'2026-12-04',jobLocation:{address:{addressLocality:'Madrid',addressRegion:'Madrid'}}})}</script>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const url=String(input instanceof Request?input.url:input);
+   const body=url===detailUrl?detail:url==='https://es.gigroup.com/ofertas-de-trabajo/'?listing
+    :'<div class="ggp-job-results">Lo sentimos, tu búsqueda no ha generado resultados. Inténtalo de nuevo.</div>';
+   return new Response(body,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['gigroup-oficial'],checkedAt:'2026-11-05T12:00:00Z',fetchImpl});
+  assert.equal(report.status,'success');
+  assert.equal(report.sources[0]?.received,1);
+  const catalog=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(catalog.calls[0]?.sourceUrl,detailUrl);
+  assert.equal(catalog.calls[0]?.location,null);
+ } finally {await rm(dir,{recursive:true,force:true});}
+});
+
 const windows1252Characters=new Map([['€',0x80],['“',0x93],['”',0x94],['–',0x96]]);
 function encodeWindows1252(value:string):Uint8Array {
  return Uint8Array.from([...value].map(character=>{
