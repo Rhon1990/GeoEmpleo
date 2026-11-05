@@ -1,7 +1,7 @@
 import { searchCalls } from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs';
-import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerDates,placesLabel,jobPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
+import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261026-origin';
 import {requestLocationWithPermission} from './location-permission.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
@@ -255,8 +255,9 @@ function render() {
     adSlotRequested=true;
     requestAdSlot(slot,adsenseConfig);
   }
-  const count=geography.radiusKm===null?page?.total??results.length:mapResults.length;
-  document.querySelector('#result-count').textContent=`${count} ${count===1?'oferta real':'ofertas reales'}${searchBounds?' en esta zona':''}`;
+  const countPresentation=resultCountPresentation(page,{hasBounds:Boolean(searchBounds)});
+  document.querySelector('#result-count').textContent=countPresentation.title;
+  document.querySelector('#result-scope').textContent=countPresentation.scope;
   const summary=resultSummary(results);
   document.querySelector('#result-summary').textContent=page?.truncated?`Mostrando 300 de ${page.total} tarjetas · El mapa incluye todos los puntos`:summary;
   document.querySelector('#empty-state').hidden=loadError||results.length>0||mapResults.length>0;
@@ -316,7 +317,7 @@ const search=createViewportSearch({
     }
   },
   onError(){
-    calls=[];loadError=true;list.setAttribute('aria-busy','false');render();
+    calls=[];page=null;loadError=true;list.setAttribute('aria-busy','false');render();
     document.querySelector('#result-count').textContent='No se pudo actualizar esta zona';
     document.querySelector('#search-status').textContent='Comprueba la conexión y pulsa Buscar oportunidades para reintentar.';
   },
