@@ -21,6 +21,7 @@ import {indraListingUrl} from './connectors/indra.ts';
 import {accentureListingUrl} from './connectors/accenture.ts';
 import {elCorteInglesListingUrl} from './connectors/el-corte-ingles.ts';
 import {adeccoListingUrl} from './connectors/adecco.ts';
+import {giGroupListingUrl} from './connectors/gi-group.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -147,6 +148,8 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:elCorteInglesListingUrl,licenseUrl:null},
   {id:'adecco-oficial',name:'Adecco · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:adeccoListingUrl,licenseUrl:null},
+  {id:'gigroup-oficial',name:'Gi Group · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:giGroupListingUrl,licenseUrl:null},
 ];
 
 export interface SourceRegistry {
