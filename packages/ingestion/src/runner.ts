@@ -26,6 +26,7 @@ import {accentureFailureReason,fetchAccentureOffers} from './connectors/accentur
 import {fetchElCorteInglesOffers} from './connectors/el-corte-ingles.ts';
 import {fetchAdeccoOffers} from './connectors/adecco.ts';
 import {fetchGiGroupOffers} from './connectors/gi-group.ts';
+import {fetchCapgeminiOffers} from './connectors/capgemini.ts';
 import {successFactorsBoards} from './connectors/successfactors-boards.ts';
 import {expireFailedSource,reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
@@ -125,6 +126,8 @@ export async function runDaily(options:RunOptions) {
         const national=nationalResolver.status==='fulfilled'?nationalResolver.value:null;
         const jobs=board
           ? await fetchBizneoOffers(board,checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+          : sourceId==='successfactors-capgemini'
+            ? await fetchCapgeminiOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
           : successFactorsBoard
             ? await fetchSuccessFactorsOffers(successFactorsBoard,checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
           : sourceId==='talentclue-mcdonalds'

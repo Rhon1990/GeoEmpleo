@@ -46,18 +46,24 @@ function validatedJobUrl(raw:string,board:SuccessFactorsBoard):string {
   return url.href;
 }
 
+function countrySuffix(raw:string):{index:number;code:string;multiple:boolean}|null {
+  const match=/,\s*([A-Z]{2})(?:,\s*\d{1,5})?(\s*\+\s*\d+\s+(?:more|más)\s*(?:…|\.\.\.)?)?\s*$/iu.exec(raw);
+  return match?{index:match.index,code:match[1]!.toUpperCase(),multiple:Boolean(match[2])}:null;
+}
+
 function locationParts(raw:string):{city:string;provinceHint:string|null;ambiguousLocation:boolean} {
   const normalized=raw.replace(/\s+/g,' ').trim();
-  const withoutCountry=normalized.replace(/,?\s*(?:ES(?:,\s*\d{1,5})?|España)\s*$/i,'').trim();
+  const suffix=countrySuffix(normalized);
+  const withoutCountry=(suffix?normalized.slice(0,suffix.index):normalized.replace(/,?\s*España\s*$/i,'')).trim();
   const parenthesized=/^(.+?)\s*\(([^)]+)\)$/.exec(withoutCountry);
-  if(parenthesized) return {city:parenthesized[1]!.trim(),provinceHint:parenthesized[2]!.trim(),ambiguousLocation:false};
+  if(parenthesized) return {city:parenthesized[1]!.trim(),provinceHint:parenthesized[2]!.trim(),ambiguousLocation:Boolean(suffix?.multiple)};
   const parts=withoutCountry.split(',').map(part=>part.trim()).filter(Boolean);
-  if(parts.length===1) return {city:parts[0]??normalized,provinceHint:null,ambiguousLocation:false};
+  if(parts.length===1) return {city:parts[0]??normalized,provinceHint:null,ambiguousLocation:Boolean(suffix?.multiple)};
   if(parts.length===2&&/^[A-Z]{1,2}$/.test(parts[1]!)) {
-    return {city:parts[0]!,provinceHint:null,ambiguousLocation:false};
+    return {city:parts[0]!,provinceHint:null,ambiguousLocation:Boolean(suffix?.multiple)};
   }
   if(parts.length===2&&canonicalSpanishProvince(parts[1]!)) {
-    return {city:parts[0]!,provinceHint:parts[1]!,ambiguousLocation:false};
+    return {city:parts[0]!,provinceHint:parts[1]!,ambiguousLocation:Boolean(suffix?.multiple)};
   }
   return {city:withoutCountry||normalized,provinceHint:null,ambiguousLocation:true};
 }
@@ -107,15 +113,15 @@ export function parseSuccessFactorsListing(html:string,board:SuccessFactorsBoard
     if(seen.has(url)) throw new TypeError('Oferta SuccessFactors duplicada');
     seen.add(url);
     observedUrls.push(url);
-    if(/,\s*[A-Z]{2}(?:,\s*\d{1,5})?\s*$/.test(rawLocation)&&
-      !/,\s*ES(?:,\s*\d{1,5})?\s*$/.test(rawLocation)) return [];
+    const country=countrySuffix(rawLocation);
+    if(country&&country.code!=='ES') return [];
     const title=textOf(link);
     if(!title) throw new TypeError('Título SuccessFactors ausente');
     return [{url,title,listedDate:dateCell?textOf(dateCell):'',...locationParts(rawLocation)}];
   });
   const label=descendants(document,element=>tile?attribute(element,'id')==='tile-search-results-label':hasClass(element,'paginationLabel'))[0];
-  const total=label?/\bde\s+(\d+)\b/i.exec(textOf(label))?.[1]:null;
-  const totalCount=total?Number(total):null;
+  const total=label?/(?:\bde\b|\bof\b)\s+(\d(?:[\d.,\s]*\d)?)\b/iu.exec(textOf(label))?.[1]:null;
+  const totalCount=total?Number(total.replace(/[.,\s]/g,'')):null;
   const pageCount=totalCount?Math.ceil(totalCount/board.pageSize):1;
   if(!Number.isSafeInteger(pageCount)||pageCount<1||pageCount>board.maxPages) throw new TypeError('Paginación SuccessFactors inválida');
   return {offers,excludedUrls,observedUrls,pageCount,totalCount};

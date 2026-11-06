@@ -22,6 +22,7 @@ import {accentureListingUrl} from './connectors/accenture.ts';
 import {elCorteInglesListingUrl} from './connectors/el-corte-ingles.ts';
 import {adeccoListingUrl} from './connectors/adecco.ts';
 import {giGroupListingUrl} from './connectors/gi-group.ts';
+import {capgeminiListingUrl} from './connectors/capgemini.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -108,7 +109,8 @@ const definitions: readonly SourceDefinition[] = [
   ...successFactorsBoards.map(board=>({
     id:board.sourceId,name:board.sourceLabel,countryCode:'ES' as const,
     kind:'ats' as const,status:'active' as const,
-    endpoint:new URL(board.listingPath,`https://${board.hostname}`).href,licenseUrl:null,
+    endpoint:board.sourceId==='successfactors-capgemini'
+      ?capgeminiListingUrl:new URL(board.listingPath,`https://${board.hostname}`).href,licenseUrl:null,
   })),
   {id:'teamtailor-dia',name:'DIA · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
     endpoint:diaListingUrl,licenseUrl:null},
