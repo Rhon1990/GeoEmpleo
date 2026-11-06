@@ -18,17 +18,17 @@ que sigan abiertas.
 | ID de fuente | Portal de origen | Canal | Evidencia de ejecución |
 |---|---|---|---|
 | `sef-murcia` | [SEF Murcia](https://sefapps.carm.es/sefApps/rest/ofertas/ofertas) | Datos públicos | Fallida; catálogo anterior conservado |
-| `ecyl-castilla-leon` | [ECYL Castilla y León](https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/ofertas-de-empleo/exports/json) | Datos públicos | Actualizada |
-| `lanbide-euskadi` | [Lanbide](https://apps.lanbide.euskadi.net/apps/OF_OFERTAS_ODE_JSON) | Datos públicos | Actualizada |
+| `ecyl-castilla-leon` | [ECYL Castilla y León](https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/ofertas-de-empleo/exports/json) | Datos públicos; valida fichas canónicas y páginas 404 servidas con HTTP 200 | Captura aislada 06/11/2026: 402 ofertas vigentes, 378 con punto |
+| `lanbide-euskadi` | [Lanbide](https://apps.lanbide.euskadi.net/apps/OF_OFERTAS_ODE_JSON) | Datos públicos; retira ausentes tras captura completa | Captura aislada 06/11/2026: 618 ofertas vigentes, 595 con punto |
 | `andalucia-entidades` | [Junta de Andalucía, entidades instrumentales](https://datos.juntadeandalucia.es/api/v0/job-offering-public-sector/search?announcement_status=En%20curso&job_official_degree_requirements=-&announcement_type=-&provinces=-&job_agreement=-&order_by=id&mode=DESC&format=json&size=0) | Datos públicos | Actualizada |
 | `lever-jobandtalent` | [Job&Talent](https://api.lever.co/v0/postings/jobandtalent?mode=json) | Lever | Actualizada |
 | `lever-skydance` | [Skydance Animation Madrid](https://api.lever.co/v0/postings/skydance?mode=json) | Lever | Actualizada |
-| `bizneo-burger-king` | [Burger King España](https://empleo.bkspain.es/jobs) | Tablón Bizneo | Actualizada |
+| `bizneo-burger-king` | [Burger King España](https://empleo.bkspain.es/jobs) | Tablón Bizneo | Portal 404 el 06/11/2026; la instantánea fallida caduca a las 72 horas |
 | `bizneo-plenergy` | [Plenergy](https://empleo.plenergy.es/jobs) | Tablón Bizneo | Actualizada |
 | `bizneo-telepizza` | [Telepizza](https://ofertas.fooddeliverybrands.com/jobs) | Tablón Bizneo | Actualizada |
 | `successfactors-vithas` | [Vithas](https://empleo.vithas.es/search/?createNewAlert=false&q=&locationsearch=) | SuccessFactors | Actualizada |
 | `successfactors-mapfre` | [MAPFRE](https://jobs.mapfre.com/go/PROFESIONALES/3296401/) | SuccessFactors | Actualizada |
-| `successfactors-capgemini` | [Capgemini](https://careers.capgemini.com/search/?q=&locationsearch=Spain) | SuccessFactors | Actualizada |
+| `successfactors-capgemini` | [Capgemini España](https://www.capgemini.com/es-es/join-us/) | Endpoint JSON del buscador oficial español; fichas finales en SuccessFactors | Captura aislada 06/11/2026: 282 ofertas españolas, 117 con municipio verificado |
 | `successfactors-melia` | [Meliá Hotels International](https://careers.melia.com/go/Profesionales-de-hotel/8861001/) | SuccessFactors | Actualizada |
 | `successfactors-kpmg` | [KPMG](https://carreras.kpmg.es/search/) | SuccessFactors | Captura aislada 04/11/2026: 177 fichas completas, 132 con punto; cuatro descripciones vacías y una ficha cubierta excluidas |
 | `successfactors-deloitte` | [Deloitte](https://empleo.es.deloitte.com/search/) | SuccessFactors, tarjetas | Captura aislada 04/11/2026: 314 fichas únicas, 279 con punto |
