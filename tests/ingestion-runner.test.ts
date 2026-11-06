@@ -174,6 +174,7 @@ test('runner informa un código seguro cuando Accenture responde con error HTTP'
    const host=new URL(input instanceof Request?input.url:String(input)).hostname;
    if(host==='accenture.wd103.myworkdayjobs.com') return new Response('',{status:429});
    if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(ecyl),{headers:{'content-type':'application/json'}});
+   if(host==='empleo.jcyl.es') return new Response(null,{status:200});
    throw new Error('host inesperado');
   }) as typeof fetch;
   const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
@@ -181,6 +182,27 @@ test('runner informa un código seguro cuando Accenture responde con error HTTP'
   assert.equal(report.status,'partial');
   assert.equal(report.sources[0]?.reason,'accenture_http_429');
   assert.ok(!(await readFile(reportPath,'utf8')).includes('host inesperado'));
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('runner ECYL no publica una ficha canónica que responde 404',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-ecyl-links-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-11-05T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-11-06',license:'test',places:[]})));
+  const offer=(id:string)=>({titulo:`Oferta ${id}`,provincia:'SEGOVIA',fecha_publicacion:'2026-11-05',descripcion:'<p>Oferta real.</p>',localidad_asset0:'RIAZA',identificador:id,actualizacionmetadatos:'2026-11-05',enlace_al_contenido:`https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${id}/Empleo`});
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const url=new URL(input instanceof Request?input.url:String(input));
+   if(url.hostname==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify([offer('1285693000001'),offer('1285693000002')]),{headers:{'content-type':'application/json'}});
+   if(url.hostname==='empleo.jcyl.es') return new Response(null,{status:url.pathname.includes('1285693000002')?404:200});
+   throw new Error('host inesperado');
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['ecyl-castilla-leon'],checkedAt:'2026-11-06T08:00:00Z',fetchImpl});
+  const published=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(report.sources[0]?.received,1);
+  assert.deepEqual(published.calls.map((job:{id:string})=>job.id),['ECYL-1285693000001']);
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
@@ -200,6 +222,7 @@ test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',
   const host=new URL(input instanceof Request?input.url:input).hostname;
   if(host==='sefapps.carm.es') throw new Error('secreto de red');
   if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(cyl),{headers:{'content-type':'application/json'}});
+  if(host==='empleo.jcyl.es') return new Response(null,{status:200});
   if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
   throw new Error('host inesperado');
  }) as typeof fetch;
@@ -326,6 +349,7 @@ test('runner publica success con tres fuentes seleccionadas',async()=>{
   const host=new URL(input instanceof Request?input.url:input).hostname;
   if(host==='sefapps.carm.es') return new Response(murcia,{headers:{'content-type':'application/json'}});
   if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(cyl),{headers:{'content-type':'application/json'}});
+  if(host==='empleo.jcyl.es') return new Response(null,{status:200});
   if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
   throw new Error('host inesperado');
  }) as typeof fetch;

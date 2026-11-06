@@ -1,4 +1,5 @@
 import type { PlaceResolver } from '../geography.ts';
+import { fetchStatus } from '../http.ts';
 import type { PublicJob } from '../model.ts';
 import { canonicalSpanishProvince } from '../national-geography.ts';
 import { attribute, descendants, documentOf, textOf } from './html-dom.ts';
@@ -205,4 +206,24 @@ export function adaptCylOffers(
     });
   }
   return jobs;
+}
+
+export async function filterUnavailableCylOffers(
+  jobs:readonly PublicJob[],
+  fetchImpl:typeof fetch=fetch,
+):Promise<PublicJob[]> {
+  const checked:PublicJob[]=[];
+  for(let index=0;index<jobs.length;index+=8) {
+    const batch=await Promise.all(jobs.slice(index,index+8).map(async job=>{
+      const url=new URL(job.sourceUrl);
+      if(url.hostname!=='empleo.jcyl.es') return job;
+      const status=await fetchStatus(url.href,{fetchImpl});
+      if(status===404||status===410) return null;
+      if(status<200||status>=300) throw new TypeError('Validación ECYL no disponible');
+      return job;
+    }));
+    checked.push(...batch.filter((job):job is PublicJob=>job!==null));
+  }
+  if(jobs.length>0&&checked.length===0) throw new TypeError('Sin ofertas ECYL con destino verificable');
+  return checked;
 }

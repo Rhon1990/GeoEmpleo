@@ -1,7 +1,7 @@
 import {readFile,mkdir,open,rm} from 'node:fs/promises';
 import {dirname} from 'node:path';
 import {adaptAndaluciaOffers} from './connectors/andalucia.ts';
-import {adaptCylOffers} from './connectors/cyl.ts';
+import {adaptCylOffers,filterUnavailableCylOffers} from './connectors/cyl.ts';
 import {adaptLanbideOffers} from './connectors/lanbide.ts';
 import {adaptLeverOffers,leverBoards} from './connectors/lever.ts';
 import {adaptMurciaOffers} from './connectors/murcia.ts';
@@ -76,6 +76,18 @@ function adaptSource(sourceId:ImplementedSourceId,input:unknown,checkedAt:string
 
 function encodingFor(sourceId:ImplementedSourceId):JsonEncoding {
   return sourceId==='lanbide-euskadi'?'windows-1252':'utf-8';
+}
+
+async function fetchOpenSource(
+  sourceId:ImplementedSourceId,
+  endpoint:string,
+  checkedAt:string,
+  resolve:PlaceResolver,
+  fetchImpl:typeof fetch|undefined,
+):Promise<PublicJob[]> {
+  const input=await fetchJson(endpoint,{fetchImpl,encoding:encodingFor(sourceId)});
+  const jobs=adaptSource(sourceId,input,checkedAt,resolve);
+  return sourceId==='ecyl-castilla-leon'?filterUnavailableCylOffers(jobs,fetchImpl):jobs;
 }
 
 export async function runDaily(options:RunOptions) {
@@ -153,9 +165,9 @@ export async function runDaily(options:RunOptions) {
               ? await fetchAdeccoOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='gigroup-oficial'
               ? await fetchGiGroupOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
-            : adaptSource(sourceId,await fetchJson(source.endpoint,{fetchImpl:options.fetchImpl,encoding:encodingFor(sourceId)}),checkedAt,
+            : await fetchOpenSource(sourceId,source.endpoint,checkedAt,
               sourceId==='sef-murcia'?murciaResolver.status==='fulfilled'&&murciaResolver.value!==null?murciaResolver.value:()=>null
-                :national?.resolve??(()=>null));
+                :national?.resolve??(()=>null),options.fetchImpl);
         const removeMissingImmediately=source.kind==='ats'||sourceId==='ecyl-castilla-leon'||sourceId==='lanbide-euskadi';
         next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{
           missingRetentionDays:removeMissingImmediately?0:7,

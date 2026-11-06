@@ -8,6 +8,15 @@ export async function retryTransient<T>(operation:()=>Promise<T>):Promise<T> {
     return operation();
   }
 }
+export async function fetchStatus(url:string,options:FetchOptions={}):Promise<number> {
+  const address=new URL(url);
+  if(address.protocol!=='https:'||address.username||address.password) throw new TypeError('URL HTTPS requerida');
+  const response=await (options.fetchImpl??fetch)(address,{
+    headers:{accept:'text/html'},redirect:'error',signal:AbortSignal.timeout(options.timeoutMs??40_000),
+  });
+  await response.body?.cancel();
+  return response.status;
+}
 export async function fetchHtml(url:string,options:FetchOptions={}):Promise<string> {
   const address=new URL(url);
   if(address.protocol!=='https:'||address.username||address.password) throw new TypeError('URL HTTPS requerida');
