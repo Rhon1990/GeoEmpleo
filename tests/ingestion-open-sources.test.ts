@@ -139,6 +139,15 @@ test('ECYL retira fichas canónicas 404 y conserva destinos oficiales utilizable
   assert.equal(requested.length,2);
 });
 
+test('ECYL retira la página de error 404 que el portal devuelve con estado HTTP 200',async()=>{
+  const adapted=adaptCylOffers([cylOffer('1285690969239')],checkedAt,()=>location);
+  const fetchImpl=(async()=>new Response(
+    '<!doctype html><title>404 Error - Junta de Castilla y León</title><h1>Página no encontrada</h1>',
+    {status:200,headers:{'content-type':'text/html;charset=utf-8'}},
+  )) as typeof fetch;
+  await assert.rejects(()=>filterUnavailableCylOffers(adapted,fetchImpl),/Sin ofertas ECYL con destino verificable/);
+});
+
 test('ECYL no interpreta un bloqueo de un destino externo como oferta retirada',async()=>{
   const application='https://www.infojobs.net/segovia/oferta/of-123';
   const adapted=adaptCylOffers([cylOffer('1285689059832',{descripcion:`<a href="${application}">Inscripción</a>`})],checkedAt,()=>location);

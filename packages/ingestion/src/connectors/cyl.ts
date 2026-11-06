@@ -1,5 +1,5 @@
 import type { PlaceResolver } from '../geography.ts';
-import { fetchStatus } from '../http.ts';
+import { fetchHtmlProbe } from '../http.ts';
 import type { PublicJob } from '../model.ts';
 import { canonicalSpanishProvince } from '../national-geography.ts';
 import { attribute, descendants, documentOf, textOf } from './html-dom.ts';
@@ -217,9 +217,11 @@ export async function filterUnavailableCylOffers(
     const batch=await Promise.all(jobs.slice(index,index+8).map(async job=>{
       const url=new URL(job.sourceUrl);
       if(url.hostname!=='empleo.jcyl.es') return job;
-      const status=await fetchStatus(url.href,{fetchImpl});
-      if(status===404||status===410) return null;
-      if(status<200||status>=300) throw new TypeError('Validación ECYL no disponible');
+      const probe=await fetchHtmlProbe(url.href,{fetchImpl});
+      if(probe.status===404||probe.status===410
+        ||/<title>\s*404 Error - Junta de Castilla y León\s*<\/title>/iu.test(probe.prefix)
+        ||/\/errores\/css\/error-404\.css/iu.test(probe.prefix)) return null;
+      if(probe.status<200||probe.status>=300) throw new TypeError('Validación ECYL no disponible');
       return job;
     }));
     checked.push(...batch.filter((job):job is PublicJob=>job!==null));
