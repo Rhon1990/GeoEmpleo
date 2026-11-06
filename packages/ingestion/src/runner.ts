@@ -1,7 +1,7 @@
 import {readFile,mkdir,open,rm} from 'node:fs/promises';
 import {dirname} from 'node:path';
 import {adaptAndaluciaOffers} from './connectors/andalucia.ts';
-import {adaptCylOffers} from './connectors/cyl.ts';
+import {adaptCylOffers,filterUnavailableCylOffers} from './connectors/cyl.ts';
 import {adaptLanbideOffers} from './connectors/lanbide.ts';
 import {adaptLeverOffers,leverBoards} from './connectors/lever.ts';
 import {adaptMurciaOffers} from './connectors/murcia.ts';
@@ -26,8 +26,9 @@ import {accentureFailureReason,fetchAccentureOffers} from './connectors/accentur
 import {fetchElCorteInglesOffers} from './connectors/el-corte-ingles.ts';
 import {fetchAdeccoOffers} from './connectors/adecco.ts';
 import {fetchGiGroupOffers} from './connectors/gi-group.ts';
+import {fetchCapgeminiOffers} from './connectors/capgemini.ts';
 import {successFactorsBoards} from './connectors/successfactors-boards.ts';
-import {reconcileSource} from './catalog.ts';
+import {expireFailedSource,reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
 import {fetchJson,type JsonEncoding} from './http.ts';
 import {createNationalCityResolver,createNationalPlaceResolver,loadNationalGazetteer} from './national-geography.ts';
@@ -78,6 +79,18 @@ function encodingFor(sourceId:ImplementedSourceId):JsonEncoding {
   return sourceId==='lanbide-euskadi'?'windows-1252':'utf-8';
 }
 
+async function fetchOpenSource(
+  sourceId:ImplementedSourceId,
+  endpoint:string,
+  checkedAt:string,
+  resolve:PlaceResolver,
+  fetchImpl:typeof fetch|undefined,
+):Promise<PublicJob[]> {
+  const input=await fetchJson(endpoint,{fetchImpl,encoding:encodingFor(sourceId)});
+  const jobs=adaptSource(sourceId,input,checkedAt,resolve);
+  return sourceId==='ecyl-castilla-leon'?filterUnavailableCylOffers(jobs,fetchImpl):jobs;
+}
+
 export async function runDaily(options:RunOptions) {
   const {catalogPath,placesPath,reportPath}=options;
   const checkedAt=options.checkedAt??new Date().toISOString();
@@ -113,6 +126,8 @@ export async function runDaily(options:RunOptions) {
         const national=nationalResolver.status==='fulfilled'?nationalResolver.value:null;
         const jobs=board
           ? await fetchBizneoOffers(board,checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+          : sourceId==='successfactors-capgemini'
+            ? await fetchCapgeminiOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
           : successFactorsBoard
             ? await fetchSuccessFactorsOffers(successFactorsBoard,checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
           : sourceId==='talentclue-mcdonalds'
@@ -153,17 +168,19 @@ export async function runDaily(options:RunOptions) {
               ? await fetchAdeccoOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
             : sourceId==='gigroup-oficial'
               ? await fetchGiGroupOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
-            : adaptSource(sourceId,await fetchJson(source.endpoint,{fetchImpl:options.fetchImpl,encoding:encodingFor(sourceId)}),checkedAt,
+            : await fetchOpenSource(sourceId,source.endpoint,checkedAt,
               sourceId==='sef-murcia'?murciaResolver.status==='fulfilled'&&murciaResolver.value!==null?murciaResolver.value:()=>null
-                :national?.resolve??(()=>null));
+                :national?.resolve??(()=>null),options.fetchImpl);
+        const removeMissingImmediately=source.kind==='ats'||sourceId==='ecyl-castilla-leon'||sourceId==='lanbide-euskadi';
         next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{
-          missingRetentionDays:source.kind==='ats'||sourceId==='ecyl-castilla-leon'?0:7,
+          missingRetentionDays:removeMissingImmediately?0:7,
           ...(sourceId==='adecco-oficial'?{retainMissingUntilClosingDate:false}:{}),
           ...(sourceId==='taleo-eulen'?{supersededSourceIds:['selectminds-eulen']}:{}),
         });
         sources.push({sourceId,status:'success',received:jobs.length,mapped:jobs.filter(job=>job.location!==null).length,reason:null});
         successes+=1;
       } catch(error) {
+        if(sourceId==='bizneo-burger-king') next=expireFailedSource(next,sourceId,checkedAt,3);
         const reason=sourceId==='workday-accenture'?accentureFailureReason(error):'source_fetch_or_validation_failed';
         sources.push({sourceId,status:'failed',received:0,mapped:0,reason});
       }

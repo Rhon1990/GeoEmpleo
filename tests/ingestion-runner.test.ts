@@ -132,6 +132,34 @@ test('runner publica una oferta empresarial oficial y conserva la fuente fallida
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
+test('runner caduca Burger King tras 72 horas de fallo sin afectar una fuente correcta',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-burger-king-expiry-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  const stale={kind:'job',sourceId:'bizneo-burger-king',source:'Burger King España · portal de empleo',id:'BIZNEO-BURGER-KING-OLD',
+   title:'Oferta anterior',employer:'Burger King España',city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',
+   category:'hosteleria',categoryLabel:'Turismo y hostelería',regime:'Oferta de empleo',places:null,paragraphs:['Oferta anterior.'],
+   sourceUrl:'https://empleo.bkspain.es/jobs/oferta-anterior',publishedAt:'2026-11-01',checkedAt:'2026-11-01T08:00:00Z',
+   closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,location:null};
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-11-01T08:00:00Z',publishedAt:'2026-11-01',mode:'verified_snapshot',sourceConditions:'x',calls:[stale]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-11-04',license:'test',places:[]})));
+  const lanbide=[{codigo:'162026012345',desEmpleo:'Técnico/a',desPuesto:'Oferta vigente.',pais:'ESPAÑA',provincia:'GIPUZKOA',municipio:'DONOSTIA/SAN SEBASTIÁN',fecPub:'04/11/2026',url:'https://web.lanbide.eus/apps/OF_DETALLE_OFERTA_TRABAJO?IDRG=162026012345'}];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const host=new URL(input instanceof Request?input.url:String(input)).hostname;
+   if(host==='empleo.bkspain.es') return new Response('',{status:404});
+   if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
+   throw new Error('host inesperado');
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
+   sourceIds:['bizneo-burger-king','lanbide-euskadi'],checkedAt:'2026-11-04T08:00:00.001Z',fetchImpl});
+  const published=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(report.status,'partial');
+  assert.ok(!published.calls.some((job:{sourceId:string})=>job.sourceId==='bizneo-burger-king'));
+  assert.ok(published.calls.some((job:{sourceId:string})=>job.sourceId==='lanbide-euskadi'));
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
 test('runner informa un código seguro cuando Accenture responde con error HTTP',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-accenture-diagnostic-'));try{
   const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
@@ -146,6 +174,7 @@ test('runner informa un código seguro cuando Accenture responde con error HTTP'
    const host=new URL(input instanceof Request?input.url:String(input)).hostname;
    if(host==='accenture.wd103.myworkdayjobs.com') return new Response('',{status:429});
    if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(ecyl),{headers:{'content-type':'application/json'}});
+   if(host==='empleo.jcyl.es') return new Response(null,{status:200});
    throw new Error('host inesperado');
   }) as typeof fetch;
   const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
@@ -153,6 +182,27 @@ test('runner informa un código seguro cuando Accenture responde con error HTTP'
   assert.equal(report.status,'partial');
   assert.equal(report.sources[0]?.reason,'accenture_http_429');
   assert.ok(!(await readFile(reportPath,'utf8')).includes('host inesperado'));
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('runner ECYL no publica una ficha canónica que responde 404',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-ecyl-links-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-11-05T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-11-06',license:'test',places:[]})));
+  const offer=(id:string)=>({titulo:`Oferta ${id}`,provincia:'SEGOVIA',fecha_publicacion:'2026-11-05',descripcion:'<p>Oferta real.</p>',localidad_asset0:'RIAZA',identificador:id,actualizacionmetadatos:'2026-11-05',enlace_al_contenido:`https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/${id}/Empleo`});
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const url=new URL(input instanceof Request?input.url:String(input));
+   if(url.hostname==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify([offer('1285693000001'),offer('1285693000002')]),{headers:{'content-type':'application/json'}});
+   if(url.hostname==='empleo.jcyl.es') return new Response(null,{status:url.pathname.includes('1285693000002')?404:200});
+   throw new Error('host inesperado');
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['ecyl-castilla-leon'],checkedAt:'2026-11-06T08:00:00Z',fetchImpl});
+  const published=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(report.sources[0]?.received,1);
+  assert.deepEqual(published.calls.map((job:{id:string})=>job.id),['ECYL-1285693000001']);
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
@@ -172,6 +222,7 @@ test('runner publica fuentes correctas una vez, aísla fallos y es idempotente',
   const host=new URL(input instanceof Request?input.url:input).hostname;
   if(host==='sefapps.carm.es') throw new Error('secreto de red');
   if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(cyl),{headers:{'content-type':'application/json'}});
+  if(host==='empleo.jcyl.es') return new Response(null,{status:200});
   if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
   throw new Error('host inesperado');
  }) as typeof fetch;
@@ -298,6 +349,7 @@ test('runner publica success con tres fuentes seleccionadas',async()=>{
   const host=new URL(input instanceof Request?input.url:input).hostname;
   if(host==='sefapps.carm.es') return new Response(murcia,{headers:{'content-type':'application/json'}});
   if(host==='analisis.datosabiertos.jcyl.es') return new Response(JSON.stringify(cyl),{headers:{'content-type':'application/json'}});
+  if(host==='empleo.jcyl.es') return new Response(null,{status:200});
   if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
   throw new Error('host inesperado');
  }) as typeof fetch;
@@ -310,10 +362,10 @@ test('runner publica success con tres fuentes seleccionadas',async()=>{
   {sourceId:'ecyl-castilla-leon',status:'success',received:1,mapped:0,reason:null},
   {sourceId:'lanbide-euskadi',status:'success',received:1,mapped:0,reason:null},
  ]);
- assert.equal(report.published,5);
+ assert.equal(report.published,4);
  const updated=JSON.parse(await readFile(catalogPath,'utf8'));
  assert.ok(!updated.calls.some((job:{id:string})=>job.id==='ECYL-OLD'));
- assert.ok(updated.calls.some((job:{id:string})=>job.id==='LANBIDE-OLD'));
+ assert.ok(!updated.calls.some((job:{id:string})=>job.id==='LANBIDE-OLD'));
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 

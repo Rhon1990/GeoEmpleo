@@ -503,6 +503,25 @@ test('SuccessFactors valida el dominio oficial y geolocaliza una localidad espa�
   assert.throws(()=>parseSuccessFactorsListing(listing.replace('/job/Dependiente-Vicar/1234567890/','https://evil.test/job/Falso/123/'),successFactorsBoard),/URL/);
 });
 
+test('SuccessFactors interpreta un contador de paginación en inglés',()=>{
+  const listing='<span class="paginationLabel">Results <b>1 – 25</b> of <b>1,837</b></span><table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Puesto/1234567890/">Puesto</a></td><td class="colLocation">Madrid, ES</td></tr></table>';
+  const parsed=parseSuccessFactorsListing(listing,{...successFactorsBoard,pageSize:25,maxPages:80});
+  assert.equal(parsed.totalCount,1837);
+  assert.equal(parsed.pageCount,74);
+});
+
+test('SuccessFactors filtra países extranjeros y conserva España en ubicaciones múltiples',()=>{
+  const listing='<table>'
+    +'<tr class="data-row"><td><a class="jobTitle-link" href="/job/Dallas-Puesto/1234567890/">US</a></td><td class="colLocation">Dallas, TX, US +5 more…</td></tr>'
+    +'<tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-Puesto/1234567891/">ES</a></td><td class="colLocation">Madrid, ES +2 more…</td></tr>'
+    +'</table>';
+  const parsed=parseSuccessFactorsListing(listing,successFactorsBoard);
+  assert.deepEqual(parsed.offers.map(offer=>({title:offer.title,city:offer.city,ambiguous:offer.ambiguousLocation})),[
+    {title:'ES',city:'Madrid',ambiguous:true},
+  ]);
+  assert.equal(parsed.observedUrls.length,2);
+});
+
 test('SuccessFactors no sitúa ofertas remotas o territoriales ambiguas',()=>{
   const listing='<table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Consultor-remoto/9876543210/">Consultor/a</a></td><td class="colLocation">Madrid, Barcelona, ES</td><td class="colDate">24 oct 2026</td></tr></table>';
   const offer=parseSuccessFactorsListing(listing,successFactorsBoard).offers[0]!;
@@ -545,20 +564,29 @@ test('SuccessFactors evita situar el hotel en la capital provincial indicada por
   assert.equal(adaptSuccessFactorsDetail(offer,detail,checkedAt,resolveBarcelona,hotelBoard).location,null);
 });
 
-test('SuccessFactors conserva el filtro de España al paginar una búsqueda',async()=>{
-  const spanishBoard=successFactorsBoards.find(item=>item.sourceId==='successfactors-capgemini')!;
-  const list=(id:string,title:string)=>`<span class="paginationLabel">Resultados 1 – 25 de 26</span><table><tr class="data-row"><td><a class="jobTitle-link" href="/job/Madrid-${id}/${id}/">${title}</a></td><td class="colLocation">Madrid, ES</td></tr></table>`;
-  const fetched:string[]=[];
+test('SuccessFactors puede recorrer un listado global y abrir solo fichas españolas',async()=>{
+  const configured=successFactorsBoards.find(item=>item.sourceId==='successfactors-capgemini')!;
+  const spanishBoard={...configured,listingPath:'/search/?q=&locationsearch=',pageSize:2,maxPages:2,paginationOffsetParam:'startrow' as const};
+  const row=(id:string,title:string,city:string,country:string)=>`<tr class="data-row"><td><a class="jobTitle-link" href="/job/${city}-${id}/${id}/">${title}</a></td><td class="colLocation">${city}, ${country}</td></tr>`;
+  const listingStarts:number[]=[];
+  let detailCalls=0;
   const fetchImpl=(async(input:string|URL|Request)=>{
     const url=new URL(input instanceof Request?input.url:input);
-    fetched.push(url.href);
-    if(url.pathname.startsWith('/job/')) return new Response(`<meta itemprop="datePosted" content="2026-10-24"><h1>${url.pathname.includes('111')?'Uno':'Dos'}</h1><span itemprop="description"><p>Oficio verificable.</p></span>`,{headers:{'content-type':'text/html'}});
-    assert.equal(url.searchParams.get('locationsearch'),'Spain');
-    return new Response(url.pathname.includes('/25/')?list('222','Dos'):list('111','Uno'),{headers:{'content-type':'text/html'}});
+    if(url.pathname.startsWith('/job/')) {
+      detailCalls+=1;
+      return new Response(`<meta itemprop="datePosted" content="2026-11-05"><h1>${url.pathname.includes('111')?'Uno':'Dos'}</h1><span itemprop="description"><p>Oficio verificable.</p></span>`,{headers:{'content-type':'text/html'}});
+    }
+    const start=Number(url.searchParams.get('startrow')??0);
+    listingStarts.push(start);
+    const rows=start===0
+      ?row('111','Uno','Madrid','ES')+row('901','Portugal uno','Lisboa','PT')
+      :row('222','Dos','Barcelona','ES')+row('902','Portugal dos','Porto','PT');
+    return new Response(`<span class="paginationLabel">Resultados 1 – 2 de 4</span><table>${rows}</table>`,{headers:{'content-type':'text/html'}});
   }) as typeof fetch;
-  const jobs=await fetchSuccessFactorsOffers(spanishBoard,'2026-10-26T12:00:00Z',()=>null,fetchImpl);
-  assert.equal(jobs.length,2);
-  assert.equal(fetched.filter(url=>url.includes('/search/')).length,2);
+  const jobs=await fetchSuccessFactorsOffers(spanishBoard,'2026-11-06T12:00:00Z',()=>null,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.city),['Madrid','Barcelona']);
+  assert.deepEqual(listingStarts,[0,2]);
+  assert.equal(detailCalls,2);
 });
 
 test('Vithas pagina con startrow sin repetir la primera página',async()=>{

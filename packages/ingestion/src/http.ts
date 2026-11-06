@@ -8,6 +8,50 @@ export async function retryTransient<T>(operation:()=>Promise<T>):Promise<T> {
     return operation();
   }
 }
+export async function fetchStatus(url:string,options:FetchOptions={}):Promise<number> {
+  const address=new URL(url);
+  if(address.protocol!=='https:'||address.username||address.password) throw new TypeError('URL HTTPS requerida');
+  const response=await (options.fetchImpl??fetch)(address,{
+    headers:{accept:'text/html'},redirect:'error',signal:AbortSignal.timeout(options.timeoutMs??40_000),
+  });
+  await response.body?.cancel();
+  return response.status;
+}
+export interface HtmlProbe {status:number;prefix:string}
+export async function fetchHtmlProbe(url:string,options:FetchOptions={}):Promise<HtmlProbe> {
+  const address=new URL(url);
+  if(address.protocol!=='https:'||address.username||address.password) throw new TypeError('URL HTTPS requerida');
+  const response=await (options.fetchImpl??fetch)(address,{
+    headers:{accept:'text/html'},redirect:'error',signal:AbortSignal.timeout(options.timeoutMs??40_000),
+  });
+  if(response.status<200||response.status>=300) {
+    await response.body?.cancel();
+    return {status:response.status,prefix:''};
+  }
+  const contentType=response.headers.get('content-type')?.toLowerCase();
+  if(contentType&&!contentType.includes('html')) {
+    await response.body?.cancel();
+    throw new TypeError('La fuente no devolvió HTML');
+  }
+  if(!response.body) return {status:response.status,prefix:''};
+  const limit=options.maxBytes??16_384;
+  const reader=response.body.getReader();
+  const chunks:Uint8Array[]=[];
+  let size=0;
+  try {
+    while(size<limit) {
+      const {done,value}=await reader.read();
+      if(done) break;
+      const remaining=limit-size;
+      chunks.push(value.byteLength<=remaining?value:value.subarray(0,remaining));
+      size+=Math.min(value.byteLength,remaining);
+      if(size===limit) await reader.cancel();
+    }
+  } finally {reader.releaseLock();}
+  const bytes=new Uint8Array(size);let offset=0;
+  for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+  return {status:response.status,prefix:new TextDecoder('utf-8').decode(bytes)};
+}
 export async function fetchHtml(url:string,options:FetchOptions={}):Promise<string> {
   const address=new URL(url);
   if(address.protocol!=='https:'||address.username||address.password) throw new TypeError('URL HTTPS requerida');

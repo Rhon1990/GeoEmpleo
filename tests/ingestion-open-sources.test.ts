@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { adaptCylOffers } from '../packages/ingestion/src/connectors/cyl.ts';
+import { adaptCylOffers,filterUnavailableCylOffers } from '../packages/ingestion/src/connectors/cyl.ts';
 import { adaptLanbideOffers } from '../packages/ingestion/src/connectors/lanbide.ts';
 import { sourceRegistry } from '../packages/ingestion/src/registry.ts';
 
@@ -119,6 +119,40 @@ test('ECYL ignora enlaces de inscripción con dominio no verificado', () => {
   const jobs=adaptCylOffers([{...cylRaw,descripcion:'<a href="https://untrusted.example/oferta">Más información e inscripción</a>'}],checkedAt,()=>location);
 
   assert.equal(jobs[0]?.sourceUrl,cylOfficialUrl);
+});
+
+test('ECYL retira fichas canónicas 404 y conserva destinos oficiales utilizables',async()=>{
+  const application='https://empleocastillayleon.jcyl.es/oficinavirtual/buscoEmpleoPub.do?srvc=ver&scope=reg&cod=396251';
+  const adapted=adaptCylOffers([
+    cylOffer('1285689059829',{descripcion:`<a href="${application}">Oficina Virtual</a>`}),
+    cylOffer('1285689059830'),
+    cylOffer('1285689059831'),
+  ],checkedAt,()=>location);
+  const requested:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:String(input));
+    requested.push(url.href);
+    return new Response(null,{status:url.pathname.includes('1285689059831')?404:200});
+  }) as typeof fetch;
+  const jobs=await filterUnavailableCylOffers(adapted,fetchImpl);
+  assert.deepEqual(jobs.map(job=>job.id),['ECYL-1285689059829','ECYL-1285689059830']);
+  assert.equal(requested.length,2);
+});
+
+test('ECYL retira la página de error 404 que el portal devuelve con estado HTTP 200',async()=>{
+  const adapted=adaptCylOffers([cylOffer('1285690969239')],checkedAt,()=>location);
+  const fetchImpl=(async()=>new Response(
+    '<!doctype html><title>404 Error - Junta de Castilla y León</title><h1>Página no encontrada</h1>',
+    {status:200,headers:{'content-type':'text/html;charset=utf-8'}},
+  )) as typeof fetch;
+  await assert.rejects(()=>filterUnavailableCylOffers(adapted,fetchImpl),/Sin ofertas ECYL con destino verificable/);
+});
+
+test('ECYL no interpreta un bloqueo de un destino externo como oferta retirada',async()=>{
+  const application='https://www.infojobs.net/segovia/oferta/of-123';
+  const adapted=adaptCylOffers([cylOffer('1285689059832',{descripcion:`<a href="${application}">Inscripción</a>`})],checkedAt,()=>location);
+  const jobs=await filterUnavailableCylOffers(adapted,(async()=>new Response(null,{status:403})) as typeof fetch);
+  assert.equal(jobs[0]?.sourceUrl,application);
 });
 
 test('ECYL resuelve nacionalmente solo cuando no publica geográfico', () => {

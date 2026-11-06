@@ -18,9 +18,9 @@ export const successFactorsBoards: readonly SuccessFactorsBoard[] = [
   },
   {
     sourceId:'successfactors-capgemini',hostname:'careers.capgemini.com',employer:'Capgemini',
-    listingPath:'/search/?q=&locationsearch=Spain',jobPathPattern,
+    listingPath:'/search/?q=&locationsearch=',jobPathPattern,
     category:'tecnologia',categoryLabel:'Tecnología y consultoría',sourceLabel:'Capgemini · empleo oficial',
-    pageSize:25,maxPages:40,
+    pageSize:25,maxPages:80,paginationOffsetParam:'startrow',
   },
   {
     sourceId:'successfactors-melia',hostname:'careers.melia.com',employer:'Meliá Hotels International',
