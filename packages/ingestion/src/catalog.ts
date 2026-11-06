@@ -2,6 +2,24 @@ import type {PublicCatalog,PublicJob} from './model.ts';
 import {dateInSpain} from './normalize.ts';
 export interface ReconcilePolicy {missingRetentionDays?:number;retainMissingUntilClosingDate?:boolean;supersededSourceIds?:readonly string[]}
 
+export function expireFailedSource(
+  catalog:PublicCatalog,
+  sourceId:string,
+  checkedAt:string,
+  retentionDays:number,
+):PublicCatalog {
+  if(!Number.isInteger(retentionDays)||retentionDays<0) throw new TypeError('Retención de fuente fallida inválida');
+  const current=Date.parse(checkedAt);
+  if(!Number.isFinite(current)) throw new TypeError('Fecha de caducidad inválida');
+  const calls=catalog.calls.filter(job=>{
+    if(job.sourceId!==sourceId) return true;
+    const previous=Date.parse(job.checkedAt);
+    if(!Number.isFinite(previous)) throw new TypeError('Fecha de comprobación inválida');
+    return current-previous<=retentionDays*86_400_000;
+  });
+  return {...catalog,calls};
+}
+
 function retainMissing(job:PublicJob,today:string,checkedAt:string,policy:ReconcilePolicy):boolean {
   if(job.closingDate!==null&&policy.retainMissingUntilClosingDate!==false) return job.closingDate>=today;
   if(policy.missingRetentionDays===undefined) return true;

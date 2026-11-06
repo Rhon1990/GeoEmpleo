@@ -132,6 +132,34 @@ test('runner publica una oferta empresarial oficial y conserva la fuente fallida
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
+test('runner caduca Burger King tras 72 horas de fallo sin afectar una fuente correcta',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-burger-king-expiry-'));try{
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  const stale={kind:'job',sourceId:'bizneo-burger-king',source:'Burger King España · portal de empleo',id:'BIZNEO-BURGER-KING-OLD',
+   title:'Oferta anterior',employer:'Burger King España',city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',
+   category:'hosteleria',categoryLabel:'Turismo y hostelería',regime:'Oferta de empleo',places:null,paragraphs:['Oferta anterior.'],
+   sourceUrl:'https://empleo.bkspain.es/jobs/oferta-anterior',publishedAt:'2026-11-01',checkedAt:'2026-11-01T08:00:00Z',
+   closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,location:null};
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-11-01T08:00:00Z',publishedAt:'2026-11-01',mode:'verified_snapshot',sourceConditions:'x',calls:[stale]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-11-04',license:'test',places:[]})));
+  const lanbide=[{codigo:'162026012345',desEmpleo:'Técnico/a',desPuesto:'Oferta vigente.',pais:'ESPAÑA',provincia:'GIPUZKOA',municipio:'DONOSTIA/SAN SEBASTIÁN',fecPub:'04/11/2026',url:'https://web.lanbide.eus/apps/OF_DETALLE_OFERTA_TRABAJO?IDRG=162026012345'}];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const host=new URL(input instanceof Request?input.url:String(input)).hostname;
+   if(host==='empleo.bkspain.es') return new Response('',{status:404});
+   if(host==='apps.lanbide.euskadi.net') return new Response(new Uint8Array(encodeWindows1252(JSON.stringify(lanbide))),{headers:{'content-type':'application/json'}});
+   throw new Error('host inesperado');
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,
+   sourceIds:['bizneo-burger-king','lanbide-euskadi'],checkedAt:'2026-11-04T08:00:00.001Z',fetchImpl});
+  const published=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.equal(report.status,'partial');
+  assert.ok(!published.calls.some((job:{sourceId:string})=>job.sourceId==='bizneo-burger-king'));
+  assert.ok(published.calls.some((job:{sourceId:string})=>job.sourceId==='lanbide-euskadi'));
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+
 test('runner informa un código seguro cuando Accenture responde con error HTTP',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-accenture-diagnostic-'));try{
   const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp,readFile,readdir,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {reconcileSource} from '../packages/ingestion/src/catalog.ts';
+import {expireFailedSource,reconcileSource} from '../packages/ingestion/src/catalog.ts';
 import {writeJsonAtomic} from '../packages/ingestion/src/storage.ts';
 import type {PublicCatalog,PublicJob} from '../packages/ingestion/src/model.ts';
 const job=(id:string,sourceId='sef-murcia',closingDate:string|null='2026-10-26')=>({id,sourceId,publishedAt:'2026-10-01',checkedAt:'2026-10-14T05:30:00Z',closingDate}) as PublicJob;
@@ -50,6 +50,18 @@ test('una fuente sucesora retira el espejo anterior solo tras una captura válid
  assert.deepEqual(next.calls.map(item=>item.id).sort(),['EULEN-NEW','OTHER']);
  assert.throws(()=>reconcileSource(base,'taleo-eulen',[],at,{supersededSourceIds:['selectminds-eulen']}));
  assert.deepEqual(base.calls.map(item=>item.id),['EULEN-OLD','OTHER']);
+});
+test('caduca una fuente fallida después de su ventana sin tocar otras fuentes',()=>{
+ const base={...catalog,calls:[
+  {...job('BIZNEO-BK','bizneo-burger-king',null),checkedAt:'2026-11-01T08:00:00Z'},
+  {...job('OTHER','lanbide-euskadi',null),checkedAt:'2026-11-01T08:00:00Z'},
+ ]} as PublicCatalog;
+ const retained=expireFailedSource(base,'bizneo-burger-king','2026-11-04T08:00:00Z',3);
+ const expired=expireFailedSource(base,'bizneo-burger-king','2026-11-04T08:00:00.001Z',3);
+ assert.ok(retained.calls.some(item=>item.id==='BIZNEO-BK'));
+ assert.ok(!expired.calls.some(item=>item.id==='BIZNEO-BK'));
+ assert.ok(expired.calls.some(item=>item.id==='OTHER'));
+ assert.throws(()=>expireFailedSource({...base,calls:[{...base.calls[0]!,checkedAt:'invalid'}]},'bizneo-burger-king','2026-11-04T08:00:00Z',3),/Fecha/);
 });
 test('escribe JSON atómicamente y limpia temporales ante error',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geoempleo-'));try{

@@ -27,7 +27,7 @@ import {fetchElCorteInglesOffers} from './connectors/el-corte-ingles.ts';
 import {fetchAdeccoOffers} from './connectors/adecco.ts';
 import {fetchGiGroupOffers} from './connectors/gi-group.ts';
 import {successFactorsBoards} from './connectors/successfactors-boards.ts';
-import {reconcileSource} from './catalog.ts';
+import {expireFailedSource,reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
 import {fetchJson,type JsonEncoding} from './http.ts';
 import {createNationalCityResolver,createNationalPlaceResolver,loadNationalGazetteer} from './national-geography.ts';
@@ -165,6 +165,7 @@ export async function runDaily(options:RunOptions) {
         sources.push({sourceId,status:'success',received:jobs.length,mapped:jobs.filter(job=>job.location!==null).length,reason:null});
         successes+=1;
       } catch(error) {
+        if(sourceId==='bizneo-burger-king') next=expireFailedSource(next,sourceId,checkedAt,3);
         const reason=sourceId==='workday-accenture'?accentureFailureReason(error):'source_fetch_or_validation_failed';
         sources.push({sourceId,status:'failed',received:0,mapped:0,reason});
       }
