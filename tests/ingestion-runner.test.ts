@@ -310,10 +310,10 @@ test('runner publica success con tres fuentes seleccionadas',async()=>{
   {sourceId:'ecyl-castilla-leon',status:'success',received:1,mapped:0,reason:null},
   {sourceId:'lanbide-euskadi',status:'success',received:1,mapped:0,reason:null},
  ]);
- assert.equal(report.published,5);
+ assert.equal(report.published,4);
  const updated=JSON.parse(await readFile(catalogPath,'utf8'));
  assert.ok(!updated.calls.some((job:{id:string})=>job.id==='ECYL-OLD'));
- assert.ok(updated.calls.some((job:{id:string})=>job.id==='LANBIDE-OLD'));
+ assert.ok(!updated.calls.some((job:{id:string})=>job.id==='LANBIDE-OLD'));
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 

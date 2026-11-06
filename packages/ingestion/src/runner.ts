@@ -156,8 +156,9 @@ export async function runDaily(options:RunOptions) {
             : adaptSource(sourceId,await fetchJson(source.endpoint,{fetchImpl:options.fetchImpl,encoding:encodingFor(sourceId)}),checkedAt,
               sourceId==='sef-murcia'?murciaResolver.status==='fulfilled'&&murciaResolver.value!==null?murciaResolver.value:()=>null
                 :national?.resolve??(()=>null));
+        const removeMissingImmediately=source.kind==='ats'||sourceId==='ecyl-castilla-leon'||sourceId==='lanbide-euskadi';
         next=reconcileSource(next,sourceId,jobs,checkedAt,sourceId==='sef-murcia'?{}:{
-          missingRetentionDays:source.kind==='ats'||sourceId==='ecyl-castilla-leon'?0:7,
+          missingRetentionDays:removeMissingImmediately?0:7,
           ...(sourceId==='adecco-oficial'?{retainMissingUntilClosingDate:false}:{}),
           ...(sourceId==='taleo-eulen'?{supersededSourceIds:['selectminds-eulen']}:{}),
         });
