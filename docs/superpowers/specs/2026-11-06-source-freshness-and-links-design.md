@@ -1,6 +1,6 @@
 # Corrección de vigencia y enlaces de fuentes
 
-Fecha: 6 de noviembre de 2026  
+Fecha: 6 de noviembre de 2026
 Estado: aprobado para planificación
 
 ## Objetivo
