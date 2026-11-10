@@ -15,7 +15,7 @@ Sustituir el bloque móvil «Primera oferta de esta zona» por un carrusel que p
 - El encabezado mostrará «N ofertas en esta zona» a la izquierda y, a la derecha, la navegación compacta «‹ X de N ›».
 - Se mostrará una sola tarjeta activa por paso. No habrá una segunda tarjeta detrás ni contenido parcialmente cubierto.
 - La navegación admitirá desplazamiento horizontal táctil con ajuste a una tarjeta y dos flechas en el encabezado.
-- Las flechas no tendrán círculo, fondo ni borde visible. Mantendrán un área táctil de 44 px alrededor del chevrón.
+- Las flechas usarán los SVG oficiales locales de Google Material Symbols `arrow_back_ios` y `arrow_forward_ios`, sin círculo, fondo ni borde visible. El icono medirá 24 px dentro de un área táctil de 44 px.
 - La tarjeta ocupará todo el ancho del bloque. Las flechas nunca se superpondrán al logotipo, título, localidad ni metadatos.
 - La flecha anterior estará desactivada en la primera oferta y la siguiente en la última.
 - Cada tarjeta reutilizará la identidad empresarial existente: logotipo real cuando esté disponible y marca neutral de GeoEmpleo360 como fallback.
@@ -57,7 +57,7 @@ El bloque seguirá oculto fuera de `@media(max-width:780px)`. La cuadrícula de 
 
 ## Interacción y accesibilidad
 
-- Las flechas tendrán al menos 44 px de área táctil, etiquetas «Oferta anterior» y «Oferta siguiente», y un chevrón visible sin contenedor circular.
+- Las flechas tendrán al menos 44 px de área táctil, etiquetas «Oferta anterior» y «Oferta siguiente», y un Material Symbol de 24 px oculto a tecnologías de asistencia. El icono heredará el color petróleo y pasará a gris mediante el estado `disabled` real.
 - El carrusel usará desplazamiento horizontal nativo, `scroll-snap-type` y `scroll-snap-align`.
 - Al usar una flecha, el foco permanecerá en ella y la tarjeta cambiará mediante desplazamiento suave, salvo si el usuario prefiere movimiento reducido.
 - El contador se actualizará después del desplazamiento sin anunciar repetidamente toda la tarjeta.
@@ -87,7 +87,7 @@ Las pruebas automatizadas cubrirán:
 - estados de las flechas en primera, intermedia, última y única oferta;
 - contador singular/plural y posición;
 - apertura del detalle y menú de tres puntos desde cualquier tarjeta;
-- reglas móviles con scroll snap, tarjeta de ancho completo, flechas en el encabezado sin círculo y objetivos de 44 px;
+- reglas móviles con scroll snap, tarjeta de ancho completo, SVG locales `arrow_back_ios` y `arrow_forward_ios` en el encabezado sin círculo, iconos de 24 px y objetivos de 44 px;
 - proyección de mapa suficiente para renderizar la tarjeta sin incluir la descripción;
 - conservación visual de la tarjeta activa cuando el mapa emite una actualización con los mismos IDs;
 - ausencia del carrusel y de las flechas en escritorio.
