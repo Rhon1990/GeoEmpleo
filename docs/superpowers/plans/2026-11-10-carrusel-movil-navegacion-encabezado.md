@@ -22,6 +22,8 @@
 - Modify `tests/web-mobile-offer-carousel.test.ts`: protect ordered-ID equality semantics.
 - Modify `tests/web-brand-layout.test.ts`: protect header navigation, touch targets, full-width track and desktop isolation.
 - Modify `docs/project-context.md`: describe header navigation and stable active-slide behavior.
+- Create `apps/web-preview/public/icons/material-symbols/arrow-back-ios.svg`: official local Google Material Symbol for previous offer.
+- Create `apps/web-preview/public/icons/material-symbols/arrow-forward-ios.svg`: official local Google Material Symbol for next offer.
 
 ### Task 1: Complete mapped-offer card projection
 
@@ -236,7 +238,89 @@ npm run typecheck
 
 Expected: all focused tests pass and no TypeScript errors are reported.
 
-### Task 4: Context, complete verification and browser QA
+### Task 4: Replace text chevrons with local Google Material Symbols
+
+**Files:**
+- Create: `apps/web-preview/public/icons/material-symbols/arrow-back-ios.svg`
+- Create: `apps/web-preview/public/icons/material-symbols/arrow-forward-ios.svg`
+- Modify: `tests/web-brand-layout.test.ts`
+- Modify: `apps/web-preview/public/index.html`
+- Modify: `apps/web-preview/public/styles.css`
+
+- [ ] **Step 1: Write failing icon and markup assertions**
+
+Extend the Material Symbols test to read both new assets and require their SVG view boxes:
+
+```ts
+for(const icon of ['favorite-outline','favorite-filled','share','more-vert','location-on','close','arrow-back-ios','arrow-forward-ios']){
+  const svg=await readFile(new URL(`../apps/web-preview/public/icons/material-symbols/${icon}.svg`,import.meta.url),'utf8');
+  assert.match(svg,/<svg[^>]+viewBox=/);
+}
+```
+
+In the carousel test, require each arrow button to contain one hidden icon and no visible text:
+
+```ts
+const previous=allElements.find(element=>attribute(element,'id')==='featured-previous')!;
+const next=allElements.find(element=>attribute(element,'id')==='featured-next')!;
+assert.equal(textContent(previous).trim(),'');
+assert.equal(textContent(next).trim(),'');
+assert.equal(attribute(elements(previous).find(element=>hasClass(element,'arrow-back-ios-icon'))!,'aria-hidden'),'true');
+assert.equal(attribute(elements(next).find(element=>hasClass(element,'arrow-forward-ios-icon'))!,'aria-hidden'),'true');
+assert.match(css,/\.arrow-back-ios-icon\{[^}]*arrow-back-ios\.svg/);
+assert.match(css,/\.arrow-forward-ios-icon\{[^}]*arrow-forward-ios\.svg/);
+```
+
+- [ ] **Step 2: Run the static layout test and confirm RED**
+
+Run: `node --test tests/web-brand-layout.test.ts`
+
+Expected: FAIL because the SVG files and icon spans do not exist.
+
+- [ ] **Step 3: Add the official local SVG assets**
+
+Download the 24 px outlined SVGs from the official Google Fonts host:
+
+```bash
+curl -sS https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/arrow_back_ios/default/24px.svg
+curl -sS https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/arrow_forward_ios/default/24px.svg
+```
+
+Store the validated SVG contents as `arrow-back-ios.svg` and `arrow-forward-ios.svg`. Do not add a web-font request or runtime dependency.
+
+- [ ] **Step 4: Replace the visible characters with decorative icon spans**
+
+Use these button contents while preserving IDs and accessible names:
+
+```html
+<button type="button" id="featured-previous" class="mobile-carousel-arrow" aria-label="Oferta anterior"><span class="material-icon carousel-arrow-icon arrow-back-ios-icon" aria-hidden="true"></span></button>
+<button type="button" id="featured-next" class="mobile-carousel-arrow" aria-label="Oferta siguiente"><span class="material-icon carousel-arrow-icon arrow-forward-ios-icon" aria-hidden="true"></span></button>
+```
+
+- [ ] **Step 5: Add mask styles and keep the 44 px target**
+
+Add:
+
+```css
+.carousel-arrow-icon{width:24px;height:24px}
+.arrow-back-ios-icon{mask-image:url('/icons/material-symbols/arrow-back-ios.svg');-webkit-mask-image:url('/icons/material-symbols/arrow-back-ios.svg')}
+.arrow-forward-ios-icon{mask-image:url('/icons/material-symbols/arrow-forward-ios.svg');-webkit-mask-image:url('/icons/material-symbols/arrow-forward-ios.svg')}
+```
+
+Keep `.mobile-carousel-arrow` at 44 × 44 px, without border, background or border radius. Bump the stylesheet cache key to `20261110-mobile-zone-carousel-material-arrows`.
+
+- [ ] **Step 6: Run focused tests and typecheck**
+
+Run:
+
+```bash
+node --test tests/web-brand-layout.test.ts tests/web-mobile-offer-carousel.test.ts
+npm run typecheck
+```
+
+Expected: all focused tests pass and the SVG assets are loaded locally.
+
+### Task 5: Context, complete verification and browser QA
 
 **Files:**
 - Modify: `docs/project-context.md`
@@ -271,9 +355,9 @@ Expected: the preview reports 19,535 catalog offers and the current `checkedAt`,
 
 Verify all of the following with the real 10-offer Villacastín viewport:
 
-- the heading reads `10 ofertas en esta zona` and navigation reads `‹ 1 de 10 ›`;
+- the heading reads `10 ofertas en esta zona` and the counter reads `1 de 10` between the Google back/forward icons;
 - the card spans the available width and shows its real employer logo;
-- chevrons have no visible circle, border or background;
+- Google icons measure 24 px, inherit the enabled/disabled color and have no visible circle, border or background;
 - next changes the visible card and counter to `2 de 10`;
 - a map refresh with the same IDs leaves the second card visible;
 - swipe, three-dot actions and card detail remain operational;
