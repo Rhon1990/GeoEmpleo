@@ -152,6 +152,16 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:adeccoListingUrl,licenseUrl:null},
   {id:'gigroup-oficial',name:'Gi Group · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:giGroupListingUrl,licenseUrl:null},
+  {id:'mercadona-oficial',name:'Mercadona · portal oficial',countryCode:'ES',kind:'ats',status:'candidate',
+    endpoint:'https://mercadona.avature.net/es_ES/Careers/SearchJobs/',licenseUrl:null},
+  {id:'sacyr-oficial',name:'Sacyr · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:'https://sacyrpeople.sacyr.com/jobs?country=Spain&query=&split_view=true',licenseUrl:null},
+  {id:'acciona-oficial',name:'Acciona · portal oficial',countryCode:'ES',kind:'ats',status:'candidate',
+    endpoint:'https://www.acciona.com/es/nuestro-proposito/trabaja-con-nosotros/ofertas-empleo',licenseUrl:null},
+  {id:'ferrovial-oficial',name:'Ferrovial · portal oficial',countryCode:'ES',kind:'ats',status:'authorization_required',
+    endpoint:'https://www.ferrovial.com/es/empleo/ofertas/?country_job_posting=Espa%C3%B1a',licenseUrl:null},
+  {id:'stef-oficial',name:'STEF · portal oficial',countryCode:'ES',kind:'ats',status:'candidate',
+    endpoint:'https://stef.jobs/es/envia-mi-solicitud/',licenseUrl:null},
 ];
 
 export interface SourceRegistry {

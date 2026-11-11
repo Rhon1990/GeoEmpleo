@@ -39,6 +39,8 @@ const publicBrands={
   'elcorteingles-oficial':['/brands/el-corte-ingles.svg','El Corte Inglés'],
   'adecco-oficial':['/brands/adecco.svg','Adecco'],
   'gigroup-oficial':['/brands/gi-group.jpg','Gi Group'],
+  'sacyr-oficial':['/brands/sacyr.png','Sacyr'],
+  'crit-oficial':['/brands/grupo-crit.png','Grupo Crit'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {
