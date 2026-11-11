@@ -14,6 +14,11 @@ const previewAssets = new Map([
   ['/analytics.mjs', ['analytics.mjs','text/javascript; charset=utf-8']],
   ['/search-share.mjs', ['search-share.mjs','text/javascript; charset=utf-8']],
   ['/retention.mjs', ['retention.mjs','text/javascript; charset=utf-8']],
+  ['/static-data.mjs', ['static-data.mjs','text/javascript; charset=utf-8']],
+  ['/mobile-offer-carousel.mjs', ['mobile-offer-carousel.mjs','text/javascript; charset=utf-8']],
+  ['/adsense.mjs', ['adsense.mjs','text/javascript; charset=utf-8']],
+  ['/territories.mjs', ['territories.mjs','text/javascript; charset=utf-8']],
+  ['/job-projections.mjs', ['job-projections.mjs','text/javascript; charset=utf-8']],
   ['/presentation.mjs', ['presentation.mjs','text/javascript; charset=utf-8']],
   ['/catalog.mjs', ['catalog.mjs','text/javascript; charset=utf-8']],
   ['/geography.mjs', ['geography.mjs','text/javascript; charset=utf-8']],
@@ -26,7 +31,17 @@ const previewAssets = new Map([
   ['/data/places.json', ['data/places.json','application/json; charset=utf-8']],
 ]);
 
-export function previewAsset(path) {return previewAssets.get(path);}
+const brandAssets = [
+  'accenture.svg','adecco.svg','alcampo.png','burger-king.svg','capgemini.png','carrefour.svg','clece.png','coviran.png','decathlon.png','deloitte.png','dia.png','disa.png','domusvi.png','el-corte-ingles.svg','eulen.webp','geoempleo-neutral.svg','gi-group.jpg','ilunion.jpg','indra.png','iss.png','jobandtalent.png','kfc.svg','kpmg.png','leroy-merlin.png','lidl.svg','mapfre.png','mcdonalds.svg','melia.svg','plenergy.png','quironsalud.jpg','randstad.svg','skydance.jpg','telepizza.svg','vithas.png',
+];
+const materialSymbolAssets = ['arrow-back-ios.svg','arrow-forward-ios.svg','close.svg','favorite-filled.svg','favorite-outline.svg','location-on.svg','more-vert.svg','share.svg'];
+const imageContentType = name => name.endsWith('.svg') ? 'image/svg+xml' : name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg';
+const visualAssets = new Map([
+  ...brandAssets.map(name=>[`/brands/${name}`,[`brands/${name}`,imageContentType(name)]]),
+  ...materialSymbolAssets.map(name=>[`/icons/material-symbols/${name}`,[`icons/material-symbols/${name}`,'image/svg+xml']]),
+]);
+
+export function previewAsset(path) {return previewAssets.get(path)??visualAssets.get(path);}
 
 export function resolvePreviewPath(target) {
   try { return new URL(target, 'http://127.0.0.1').pathname; }

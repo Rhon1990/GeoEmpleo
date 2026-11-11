@@ -377,13 +377,14 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(mobileRules,/#mobile-clear-filters\{[^}]*display:inline-flex/);
   assert.match(mobileRules,/#clear-filters\{[^}]*display:none/);
   assert.match(app,/querySelector\('#mobile-clear-filters'\)\.addEventListener\('click',clear\)/);
-  assert.match(app,/import \{createMobileOfferCarousel\} from '\.\/mobile-offer-carousel\.mjs\?v=20261110-mobile-zone-carousel-header'/);
+  assert.match(app,/import \{createMobileOfferCarousel,mobileOfferCarouselSlides\} from '\.\/mobile-offer-carousel\.mjs\?v=20261111-national-carousel-performance'/);
   assert.match(app,/function renderMobileOfferCarousel\(offers\)/);
   assert.match(app,/renderMobileOfferCarousel\(mapResults\)/);
   assert.match(app,/const sameOffers=featuredCarousel\.matches\(offers\)/);
   assert.match(app,/if\(sameOffers\)return/);
   assert.doesNotMatch(app,/featuredCard\.replaceChildren\(\.\.\.\(results\.length\?\[card\(results\[0\]\)\]/);
-  assert.match(app,/offers\.map\(call\s*=>\s*\{[\s\S]*mobile-offer-slide/);
+  assert.match(app,/mobileOfferCarouselSlides\(featuredOffers,state\)/);
+  assert.match(app,/slides\.offers\.map\(call\s*=>\s*\{[\s\S]*mobile-offer-slide/);
   assert.match(app,/featuredPrevious\.addEventListener\('click'/);
   assert.match(app,/featuredNext\.addEventListener\('click'/);
   assert.match(app,/featuredCard\.addEventListener\('scroll'/);

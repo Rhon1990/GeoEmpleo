@@ -13,7 +13,7 @@ import {siteFetch} from './static-data.mjs?v=20261110-mobile-zone-carousel';
 import {createAnalyticsController,isProductionAnalyticsHost,loadFirebaseAnalytics} from './analytics.mjs';
 import {adInsertionIndex,loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 import {selectableTerritories} from './territories.mjs';
-import {createMobileOfferCarousel} from './mobile-offer-carousel.mjs?v=20261110-mobile-zone-carousel-header';
+import {createMobileOfferCarousel,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261111-national-carousel-performance';
 
 const analyticsController=createAnalyticsController({config:null,loadSdk:()=>loadFirebaseAnalytics()});
 const retention=createRetentionStore();
@@ -112,6 +112,8 @@ const featuredNext=document.querySelector('#featured-next');
 const featuredCarousel=createMobileOfferCarousel();
 let featuredScrollFrame=null;
 let featuredSyncing=false;
+let featuredActiveSlot=0;
+let featuredOffers=[];
 const newSinceButton=document.querySelector('#new-since');
 const newSinceListButton=document.querySelector('#new-since-list');
 favoritesButton.addEventListener('click',()=>{renderSaved();savedDialog.showModal();});
@@ -132,7 +134,12 @@ featuredCard.addEventListener('scroll',()=>{
   featuredScrollFrame=requestAnimationFrame(()=>{
     featuredScrollFrame=null;
     if(!featuredCard.clientWidth)return;
-    updateMobileCarouselControls(featuredCarousel.select(Math.round(featuredCard.scrollLeft/featuredCard.clientWidth)));
+    const nextSlot=Math.round(featuredCard.scrollLeft/featuredCard.clientWidth);
+    const delta=nextSlot-featuredActiveSlot;
+    if(!delta)return;
+    const state=featuredCarousel.move(delta);
+    updateMobileCarouselControls(state);
+    renderMobileCarouselSlides(state);
   });
 });
 const activeGeography = () => searchGeography(origin,radiusSelect.value,Boolean(location.value));
@@ -446,33 +453,39 @@ function updateMobileCarouselControls(state) {
   featuredNext.disabled=!state.hasNext;
 }
 
-function scrollMobileCarouselTo(state,behavior='smooth') {
-  featuredCard.scrollTo({left:state.index*featuredCard.clientWidth,behavior});
+function scrollMobileCarouselTo(behavior='auto') {
+  featuredCard.scrollTo({left:featuredActiveSlot*featuredCard.clientWidth,behavior});
 }
 
 function moveMobileCarousel(delta) {
   const state=featuredCarousel.move(delta);
   updateMobileCarouselControls(state);
-  const behavior=window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
-  scrollMobileCarouselTo(state,behavior);
+  renderMobileCarouselSlides(state);
 }
 
-function renderMobileOfferCarousel(offers) {
-  const sameOffers=featuredCarousel.matches(offers);
-  const state=featuredCarousel.update(offers);
-  featured.hidden=state.total===0;
-  updateMobileCarouselControls(state);
-  if(sameOffers)return;
+function renderMobileCarouselSlides(state) {
+  const slides=mobileOfferCarouselSlides(featuredOffers,state);
+  featuredActiveSlot=slides.activeSlot;
   featuredSyncing=true;
-  featuredCard.replaceChildren(...offers.map(call=>{
+  featuredCard.replaceChildren(...slides.offers.map(call=>{
     const slide=element('div',undefined,'mobile-offer-slide');
     slide.append(card(call));
     return slide;
   }));
   requestAnimationFrame(()=>{
-    scrollMobileCarouselTo(state,'auto');
+    scrollMobileCarouselTo();
     requestAnimationFrame(()=>{featuredSyncing=false;});
   });
+}
+
+function renderMobileOfferCarousel(offers) {
+  const sameOffers=featuredCarousel.matches(offers);
+  featuredOffers=offers;
+  const state=featuredCarousel.update(offers);
+  featured.hidden=state.total===0;
+  updateMobileCarouselControls(state);
+  if(sameOffers)return;
+  renderMobileCarouselSlides(state);
 }
 
 function visibleCards(results) {

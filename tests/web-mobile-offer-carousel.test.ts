@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createMobileOfferCarousel } from '../apps/web-preview/public/mobile-offer-carousel.mjs';
+import { createMobileOfferCarousel, mobileOfferCarouselSlides } from '../apps/web-preview/public/mobile-offer-carousel.mjs';
 
 const offers = (...ids: string[]) => ids.map(id => ({ id }));
 
@@ -57,4 +57,16 @@ test('identifies an unchanged ordered offer sequence', () => {
   assert.equal(carousel.matches(offers('a', 'b', 'c')), true);
   assert.equal(carousel.matches(offers('b', 'a', 'c')), false);
   assert.equal(carousel.matches(offers('a', 'b')), false);
+});
+
+test('keeps a national carousel to the active offer and its immediate neighbours', () => {
+  const carousel = createMobileOfferCarousel();
+  const nationalOffers = Array.from({ length: 20957 }, (_, index) => ({ id: `offer-${index}` }));
+  carousel.update(nationalOffers);
+  const state = carousel.select(10478);
+
+  assert.deepEqual(mobileOfferCarouselSlides(nationalOffers, state), {
+    offers: nationalOffers.slice(10477, 10480),
+    activeSlot: 1,
+  });
 });

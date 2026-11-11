@@ -25,17 +25,33 @@ export function cameraPlan(calls,origin) {
 // Screen-space groups retain a real member point; the label identifies an area, not a job address.
 export function markerGroups(calls,zoom=20) {
   const groups=[];
+  const buckets=new Map();
+  const groupOrder=new Map();
+  const threshold=80;
   const scale=256*2**zoom;
   const pixel=point=>{
     const latitude=Math.max(-85.05,Math.min(85.05,point[1]))*Math.PI/180;
     return [(point[0]+180)/360*scale,(1-Math.log(Math.tan(latitude)+1/Math.cos(latitude))/Math.PI)/2*scale];
   };
+  const bucketFor=position=>[Math.floor(position[0]/threshold),Math.floor(position[1]/threshold)];
+  const bucketKey=(x,y)=>`${x},${y}`;
   for(const call of calls) {
     if(!isPoint(call.location?.point)) continue;
     const point=call.location.point;
     const position=pixel(point);
-    let group=groups.find(candidate=>Math.hypot(candidate.pixel[0]-position[0],candidate.pixel[1]-position[1])<80);
-    if(!group){group={key:point.join(','),point:[...point],pixel:position,calls:[]};groups.push(group);}
+    const [bucketX,bucketY]=bucketFor(position);
+    let group;
+    for(let x=bucketX-1;x<=bucketX+1;x++)for(let y=bucketY-1;y<=bucketY+1;y++)for(const candidate of buckets.get(bucketKey(x,y))??[]) {
+      if(Math.hypot(candidate.pixel[0]-position[0],candidate.pixel[1]-position[1])>=threshold)continue;
+      if(!group||groupOrder.get(candidate)<groupOrder.get(group))group=candidate;
+    }
+    if(!group){
+      group={key:point.join(','),point:[...point],pixel:position,calls:[]};
+      groups.push(group);groupOrder.set(group,groups.length-1);
+      const key=bucketKey(bucketX,bucketY);
+      if(!buckets.has(key))buckets.set(key,[]);
+      buckets.get(key).push(group);
+    }
     group.calls.push(call);
   }
   return groups;

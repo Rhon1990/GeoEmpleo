@@ -95,6 +95,14 @@ test('agrupa puntos cercanos al alejar y los separa al ampliar, sin perder ofert
  assert.equal(markerGroups(calls,6).flatMap((g:{calls:unknown[]})=>g.calls).length,3);
 });
 
+test('agrupa un mapa nacional sin recorrer cada punto contra todos los anteriores',()=>{
+ const calls=Array.from({length:10000},(_,index)=>({id:`offer-${index}`,location:{point:[-9+(index%100)*.1,36+Math.floor(index/100)*.07]}}));
+ const started=performance.now();
+ const groups=markerGroups(calls,20);
+ assert.equal(groups.length,calls.length);
+ assert.ok(performance.now()-started<300);
+});
+
 test('un grupo siempre permite ampliar aunque el encuadre automático mantenga el zoom',()=>{
  assert.equal(expandedZoom(8,8),9);assert.equal(expandedZoom(8,7),9);assert.equal(expandedZoom(8,11),11);
 });
