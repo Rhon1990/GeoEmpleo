@@ -23,3 +23,13 @@ export function createWorkspaceView(apply,initial='jobs',activateMap=()=>{}) {
     },
   };
 }
+
+/** @param {(expanded:boolean)=>void} apply */
+export function createDisclosure(apply) {
+  let expanded=false;
+  apply(expanded);
+  return {
+    snapshot:()=>expanded,
+    toggle() {expanded=!expanded;apply(expanded);},
+  };
+}

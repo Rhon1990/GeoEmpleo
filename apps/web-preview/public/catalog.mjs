@@ -37,3 +37,21 @@ export function searchCalls(calls, filters = {}) {
       && matchesGeography(call,filters);
   });
 }
+
+/** Keeps every source record; only groups cards that look identical to readers.
+ * @template {{title:string,employer:string,city:string}} T
+ * @param {T[]} calls
+ * @returns {T[][]}
+ */
+export function groupSimilarOffers(calls) {
+  /** @type {T[][]} */
+  const groups=[];
+  let previousKey=null;
+  for(const call of calls) {
+    const key=[call.title,call.employer,call.city].map(value=>normalize(value??'')).join('\u0000');
+    if(key!==previousKey)groups.push([]);
+    groups.at(-1).push(call);
+    previousKey=key;
+  }
+  return groups;
+}

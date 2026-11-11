@@ -1,5 +1,6 @@
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
+import {isDeepStrictEqual} from 'node:util';
 
 function option(name) {
   const index=process.argv.indexOf(name);
@@ -12,6 +13,14 @@ export function validateCatalog(catalog,expectedCheckedAt) {
   if(ids.some(id=>typeof id!=='string'||id.length===0)||new Set(ids).size!==ids.length)throw new TypeError('El catálogo contiene IDs vacíos o duplicados');
   if(expectedCheckedAt&&catalog.checkedAt!==expectedCheckedAt)throw new TypeError('El checkedAt del catálogo no coincide con la captura validada');
   return catalog;
+}
+
+export function validateCatalogParity(candidate,publicCatalog) {
+  validateCatalog(candidate);
+  validateCatalog(publicCatalog);
+  if(!publicCatalog.calls.length)throw new TypeError('El catálogo público está vacío');
+  if(!isDeepStrictEqual(candidate,publicCatalog))throw new TypeError('El catálogo candidato no coincide con el catálogo público; se cancela la publicación');
+  return {offers:candidate.calls.length,checkedAt:candidate.checkedAt};
 }
 
 export function validateDailyRun(report,catalog,startedAt,now=Date.now()) {
@@ -32,9 +41,17 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href) {
   const startedAt=option('--started-at');
   const expectedCheckedAt=option('--expected-checked-at');
   const remoteUrl=option('--url');
+  const matchesUrl=option('--matches-url');
 
   try {
-    if(remoteUrl) {
+    if(matchesUrl) {
+      if(!catalogPath)throw new TypeError('Falta --catalog');
+      const candidate=JSON.parse(await readFile(catalogPath,'utf8'));
+      const response=await fetch(matchesUrl,{headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(30_000)});
+      if(!response.ok)throw new Error(`HTTPS devolvió ${response.status}`);
+      const result=validateCatalogParity(candidate,await response.json());
+      console.log(`Catálogo preservado: ${result.offers} ofertas idénticas; ${result.checkedAt}.`);
+    } else if(remoteUrl) {
       const response=await fetch(remoteUrl,{headers:{'cache-control':'no-cache'}});
       if(!response.ok)throw new Error(`HTTPS devolvió ${response.status}`);
       const catalog=validateCatalog(await response.json(),expectedCheckedAt);

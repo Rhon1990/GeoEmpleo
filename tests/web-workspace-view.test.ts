@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createWorkspaceView} from '../apps/web-preview/public/workspace-view.mjs';
+import {createWorkspaceView,createDisclosure} from '../apps/web-preview/public/workspace-view.mjs';
 
 test('aplica ofertas inicialmente y permite alternar ambas vistas',()=>{
   const applied:string[]=[];
@@ -39,4 +39,14 @@ test('rechaza vistas desconocidas sin modificar la selección',()=>{
   assert.deepEqual(applied,['jobs']);
   assert.throws(()=>createWorkspaceView(view=>applied.push(view),'unknown'),RangeError);
   assert.deepEqual(applied,['jobs']);
+});
+
+test('el panel secundario móvil comienza cerrado y conserva su estado al alternar',()=>{
+  const applied:boolean[]=[];
+  const filters=createDisclosure(expanded=>applied.push(expanded));
+  assert.equal(filters.snapshot(),false);
+  filters.toggle();
+  assert.equal(filters.snapshot(),true);
+  filters.toggle();
+  assert.deepEqual(applied,[false,true,false]);
 });

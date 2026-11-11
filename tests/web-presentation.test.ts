@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cardVisualTheme,detailBadge,formatDateTime,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
+import {cardVisualTheme,detailBadge,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary} from '../apps/web-preview/public/presentation.mjs';
+
+test('una fecha de publicación antigua avisa aunque la fuente se comprobara ayer',()=>{
+ const now=new Date('2026-11-08T10:00:00Z');
+ assert.match(offerAgeWarning({publishedAt:'2023-09-12',checkedAt:'2026-11-07T08:00:00Z'},now)??'',/Publicación antigua/);
+ assert.equal(offerAgeWarning({publishedAt:'2026-11-06',checkedAt:'2026-11-07T08:00:00Z'},now),null);
+});
 import {markerGroups,expandedZoom} from '../apps/web-preview/public/google-map.mjs';
 test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>{
  assert.equal(placesLabel({places:null}),'Plazas no publicadas');

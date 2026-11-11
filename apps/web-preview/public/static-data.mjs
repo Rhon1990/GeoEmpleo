@@ -1,5 +1,5 @@
 import {employerFacet,searchCalls} from './catalog.mjs';
-import {summaryFields,projectFields,mapSummaries,countMappedJobs} from './job-projections.mjs';
+import {summaryFields,projectFields,mapSummaries,countMappedJobs} from './job-projections.mjs?v=20261110-mobile-zone-carousel';
 
 const normalize=value=>value.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('es').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 

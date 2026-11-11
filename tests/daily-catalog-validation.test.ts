@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateDailyRun} from '../tools/validate-daily-catalog.mjs';
+import {validateCatalogParity,validateDailyRun} from '../tools/validate-daily-catalog.mjs';
 
 const startedAt='2026-10-26T05:37:00.000Z';
 const checkedAt='2026-10-26T05:38:00.000Z';
@@ -25,4 +25,13 @@ test('rechaza IDs duplicados',()=>{
 
 test('rechaza una captura parcial sin ninguna fuente actualizada',()=>{
   assert.throws(()=>validateDailyRun({...report,sources:report.sources.map(source=>({...source,status:'failed'}))},catalog,startedAt),/ninguna fuente actualizada/);
+});
+
+test('una publicación de interfaz conserva exactamente el catálogo público',()=>{
+  assert.deepEqual(validateCatalogParity(catalog,structuredClone(catalog)),{offers:2,checkedAt});
+  assert.throws(()=>validateCatalogParity({...catalog,calls:catalog.calls.slice(0,1)},catalog),/no coincide/);
+  assert.throws(()=>validateCatalogParity({...catalog,calls:[{id:'sef-1'},{id:'otra'}]},catalog),/no coincide/);
+  assert.throws(()=>validateCatalogParity({...catalog,calls:[{id:'sef-1',title:'cambiado'},{id:'dia-1'}]},catalog),/no coincide/);
+  assert.throws(()=>validateCatalogParity({...catalog,checkedAt:'2026-10-27T05:38:00.000Z'},catalog),/no coincide/);
+  assert.throws(()=>validateCatalogParity({checkedAt,calls:[]},{checkedAt,calls:[]}),/vacío/);
 });

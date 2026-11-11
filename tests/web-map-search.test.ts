@@ -1,7 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,visibleMapJobs} from '../apps/web-preview/public/map-search.mjs';
+import * as mapSearch from '../apps/web-preview/public/map-search.mjs';
 import {searchCalls} from '../apps/web-preview/public/catalog.mjs';
+
+test('la ubicación del dispositivo no activa Limpiar filtros, pero los criterios elegidos sí',()=>{
+ const hasActive=(mapSearch as typeof mapSearch & {hasActiveSearchFilters?:(filters:Record<string,string>)=>boolean}).hasActiveSearchFilters;
+ assert.equal(typeof hasActive,'function');
+ assert.equal(hasActive!({originSource:'device'}),false);
+ assert.equal(hasActive!({originSource:'manual'}),true);
+ for(const filter of [{query:'peón'},{territory:'Madrid'},{category:'servicios'},{employer:'Empresa'},{radius:'25'}]){
+  assert.equal(hasActive!(filter),true);
+ }
+ assert.equal(hasActive!({}),false);
+});
 
 test('el mapa conserva puntos fuera de las primeras 300 tarjetas y respeta el radio',()=>{
  const page={jobs:[{id:'first',location:{point:[-3.7,40.4]}}],mapJobs:[{id:'first',location:{point:[-3.7,40.4]}},{id:'later',location:{point:[-3.71,40.4]}},{id:'far',location:{point:[-4.5,40.4]}}]};

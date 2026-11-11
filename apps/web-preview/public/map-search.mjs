@@ -10,6 +10,10 @@ export function searchGeography(origin,radiusValue,hasTerritory=false) {
   return {origin,radiusKm:Number.isFinite(radiusKm)?radiusKm:null};
 }
 
+export function hasActiveSearchFilters({query='',territory='',category='',employer='',radius='',originSource='none'}={}) {
+  return Boolean(query||territory||category||employer||radius||originSource==='manual');
+}
+
 export function originSearchTransition(point) {
   if(!isPoint(point))throw new TypeError('El origen debe ser un punto válido.');
   return {origin:[...point],territory:'',bounds:null,pendingTerritory:null};

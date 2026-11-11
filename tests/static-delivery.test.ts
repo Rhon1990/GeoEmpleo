@@ -10,7 +10,7 @@ import {gzipSync} from 'node:zlib';
 
 const point = (longitude:number,latitude:number) => ({point:[longitude,latitude]});
 const jobs = [
-  {id:'segovia-1',title:'Operario rural',employer:'Empresa real',city:'Villacastín',province:'Segovia',region:'Castilla y León',category:'industria',categoryLabel:'Industria',source:'ECYL',sourceId:'ecyl-castilla-leon',location:point(-4.1,40.7),paragraphs:['Texto original'],dateKind:'observed',publishedAt:'2026-10-20',checkedAt:'2026-10-23T09:00:00Z'},
+  {id:'segovia-1',title:'Operario rural',employer:'Empresa real',city:'Villacastín',province:'Segovia',region:'Castilla y León',category:'industria',categoryLabel:'Industria',source:'ECYL',sourceId:'ecyl-castilla-leon',sourceUrl:'https://example.com/segovia-1',places:1,salary:null,location:point(-4.1,40.7),paragraphs:['Texto original'],dateKind:'observed',publishedAt:'2026-10-20',checkedAt:'2026-10-23T09:00:00Z'},
   {id:'madrid-1',title:'Técnico',employer:'Empresa real',city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',category:'tecnologia',categoryLabel:'Tecnología',source:'ECYL',sourceId:'ecyl-castilla-leon',location:point(-3.7,40.4),paragraphs:['Otro texto']},
 ];
 const catalog = {checkedAt:'2026-10-24T08:00:00Z',calls:jobs};
@@ -42,6 +42,33 @@ test('el catálogo estático devuelve solo ofertas del área y conserva el detal
   assert.equal(result.jobs[0].checkedAt,'2026-10-23T09:00:00Z');
   assert.equal(result.jobs[0].paragraphs,undefined);
   assert.deepEqual(result.mapJobs.map((item:{id:string})=>item.id),['segovia-1']);
+  assert.deepEqual(
+    {
+      sourceId:result.mapJobs[0].sourceId,
+      sourceUrl:result.mapJobs[0].sourceUrl,
+      province:result.mapJobs[0].province,
+      category:result.mapJobs[0].category,
+      categoryLabel:result.mapJobs[0].categoryLabel,
+      places:result.mapJobs[0].places,
+      publishedAt:result.mapJobs[0].publishedAt,
+      dateKind:result.mapJobs[0].dateKind,
+      checkedAt:result.mapJobs[0].checkedAt,
+      salary:result.mapJobs[0].salary,
+    },
+    {
+      sourceId:'ecyl-castilla-leon',
+      sourceUrl:'https://example.com/segovia-1',
+      province:'Segovia',
+      category:'industria',
+      categoryLabel:'Industria',
+      places:1,
+      publishedAt:'2026-10-20',
+      dateKind:'observed',
+      checkedAt:'2026-10-23T09:00:00Z',
+      salary:null,
+    },
+  );
+  assert.equal(result.mapJobs[0].paragraphs,undefined);
   assert.equal(result.checkedAt,catalog.checkedAt);
   const detail=await (await fetchData('/api/job?id=segovia-1')).json();
   assert.deepEqual(detail.paragraphs,['Texto original']);

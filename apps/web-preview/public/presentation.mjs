@@ -8,6 +8,12 @@ export function offerDates(call) {
   checked:{label:'Última comprobación en GeoEmpleo360',short:'Comprobada',value:formatDate(call.checkedAt)},
  };
 }
+/** A recent source check does not make an old publication date recent. */
+export function offerAgeWarning(call,now=new Date()) {
+ const published=Date.parse(call?.publishedAt??'');
+ if(!Number.isFinite(published)||now.getTime()-published<=90*86400000)return null;
+ return `${call.dateKind==='observed'?'Detección':'Publicación'} antigua · comprueba la vigencia en el origen`;
+}
 const employerBrands={
   'talentclue-mcdonalds':{src:'/brands/mcdonalds.svg',alt:'McDonald’s'},
   'bizneo-burger-king':{src:'/brands/burger-king.svg',alt:'Burger King'},

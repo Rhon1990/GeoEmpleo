@@ -1,8 +1,10 @@
 const consentKey='geoempleo-analytics-consent';
-const eventNames=new Set(['page_view','search_submitted','filter_used','offer_detail_opened','map_action']);
+const eventNames=new Set(['page_view','search_submitted','search_no_results','filter_used','offer_detail_opened','offer_original_clicked','map_action','saved_search_opened','saved_offer_opened','new_offers_viewed']);
 const filterTypes=new Set(['category','employer','territory','distance']);
 const mapActions=new Set(['show_map','search_visible_area','use_my_location','show_spain','choose_zone']);
 const routes=new Set(['/','/publicar']);
+
+export const isProductionAnalyticsHost=host=>['geoempleo360.com','www.geoempleo360.com','geoempleo-49978.web.app'].includes(host);
 
 function validConfig(config) {
   return ['apiKey','appId','projectId','measurementId'].every(key=>typeof config?.[key]==='string'&&config[key].trim());

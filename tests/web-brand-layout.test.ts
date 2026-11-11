@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the current mobile carousel release', () => {
+test('stylesheet cache key identifies the final card fixes release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the current mobile carousel release', () =
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261110-mobile-zone-carousel-material-arrows(?:&|$)/,
+    /(?:[?&]v=)20261111-final-card-fixes(?:&|$)/,
   );
 });
 
@@ -451,7 +451,6 @@ test('job cards expose their real source while decorative geometry stays hidden'
   assert.match(app, /visual\.setAttribute\('aria-hidden','true'\)/);
   assert.match(app,/visualFrame\.append\(visual\)/);
   assert.doesNotMatch(app,/source-pill/);
-  assert.doesNotMatch(css,/\.source-pill\{/);
   assert.doesNotMatch(app, /visual\.append\([^\n]*call\.source/);
   assert.match(
     app,

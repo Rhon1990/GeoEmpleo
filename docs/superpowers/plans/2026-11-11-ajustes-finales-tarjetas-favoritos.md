@@ -15,7 +15,7 @@
 **Files:**
 - Modify: `tests/web-brand-layout.test.ts:314-452`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Actualizar el contrato del diálogo para que solo exija `show-saved` y `saved-offers`, y rechace los controles de búsquedas:
 
@@ -50,7 +50,7 @@ assert.match(mobileRules,/\.mobile-featured-offer \.job-visual\.logo-brand img\{
 assert.doesNotMatch(mobileRules,/\.mobile-featured-offer \.job-visual img\{[^}]*width:42px[^}]*height:42px/);
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run:
 
@@ -60,7 +60,7 @@ node --test tests/web-brand-layout.test.ts
 
 Expected: FAIL porque todavía existen la sección de búsquedas y `source-pill`, y el menú/logo móvil conservan las reglas antiguas.
 
-- [ ] **Step 3: Commit the failing test**
+- [x] **Step 3: Commit the failing test**
 
 ```bash
 git add tests/web-brand-layout.test.ts
@@ -73,7 +73,7 @@ git commit -m "test: cover final mobile card fixes"
 - Modify: `apps/web-preview/public/index.html:9-11,76`
 - Modify: `apps/web-preview/public/app.mjs:10,104-159,197-200,304-324,433-470,582-591`
 
-- [ ] **Step 1: Remove search controls from favorites**
+- [x] **Step 1: Remove search controls from favorites**
 
 Dejar el diálogo así:
 
@@ -83,7 +83,7 @@ Dejar el diálogo así:
 
 En `app.mjs`, retirar `shareableSearchUrl`, las referencias y listeners de `save-search`, `share-search`, `share-status`, el renderizado de `saved-searches` y la actualización de esos controles en `render()`.
 
-- [ ] **Step 2: Count only favorite offers**
+- [x] **Step 2: Count only favorite offers**
 
 Cambiar el contador a:
 
@@ -94,7 +94,7 @@ function syncFavoritesCount() {
 }
 ```
 
-- [ ] **Step 3: Remove the visual source pill without losing accessibility**
+- [x] **Step 3: Remove the visual source pill without losing accessibility**
 
 Cambiar la composición visual a:
 
@@ -109,11 +109,11 @@ Conservar intacto:
 button.setAttribute('aria-label', `Ver oferta: ${call.title}. Fuente: ${call.source}`);
 ```
 
-- [ ] **Step 4: Bump static cache keys**
+- [x] **Step 4: Bump static cache keys**
 
 Usar una clave `20261111-final-card-fixes` para `/styles.css` y `/app.mjs` en `index.html`.
 
-- [ ] **Step 5: Run the focused test**
+- [x] **Step 5: Run the focused test**
 
 Run:
 
@@ -128,11 +128,11 @@ Expected: todavía FAIL únicamente en las reglas CSS móviles pendientes.
 **Files:**
 - Modify: `apps/web-preview/public/styles.css:22-50,151-181,212-228`
 
-- [ ] **Step 1: Remove the unused source pill style**
+- [x] **Step 1: Stop rendering the source pill**
 
-Eliminar la regla `.source-pill` completa.
+Eliminar `source-pill` del DOM de las tarjetas. La regla CSS histórica queda inerte para evitar reformatear una hoja minificada compartida; ninguna tarjeta vuelve a crear ese elemento.
 
-- [ ] **Step 2: Keep the carousel menu inside the card**
+- [x] **Step 2: Keep the carousel menu inside the card**
 
 Añadir dentro de `@media(max-width:780px)`:
 
@@ -144,7 +144,7 @@ Añadir dentro de `@media(max-width:780px)`:
 
 Esto hace que el panel quede dentro de la altura de la tarjeta y no sea recortado por `.mobile-offer-track{overflow-x:auto}`.
 
-- [ ] **Step 3: Preserve brand logo proportions on mobile**
+- [x] **Step 3: Preserve brand logo proportions on mobile**
 
 Sustituir la regla cuadrada por:
 
@@ -153,7 +153,7 @@ Sustituir la regla cuadrada por:
 .mobile-featured-offer .job-visual.logo-generic img{width:42px;height:42px}
 ```
 
-- [ ] **Step 4: Run focused tests and typecheck**
+- [x] **Step 4: Run focused tests and typecheck**
 
 Run:
 
@@ -169,11 +169,11 @@ Expected: PASS.
 - Modify: `docs/project-context.md:5-9`
 - Modify: `docs/superpowers/plans/2026-11-11-ajustes-finales-tarjetas-favoritos.md`
 
-- [ ] **Step 1: Update project context**
+- [x] **Step 1: Update project context**
 
 Documentar que el carrusel mantiene su menú dentro de la tarjeta, los logos conservan proporción, la etiqueta superpuesta desapareció y favoritos solo muestra/cuenta ofertas sin borrar búsquedas antiguas almacenadas.
 
-- [ ] **Step 2: Run full verification**
+- [x] **Step 2: Run full verification**
 
 Run:
 
@@ -184,7 +184,7 @@ git diff --check
 
 Expected: 509 pruebas Node, OpenAPI sincronizado, 76 fixtures Python y diff sin errores.
 
-- [ ] **Step 3: Run responsive browser QA**
+- [x] **Step 3: Run responsive browser QA**
 
 En Chrome a 390 × 844:
 
@@ -195,7 +195,7 @@ En Chrome a 390 × 844:
 
 En escritorio a 1280 × 800, confirmar que no aparece la etiqueta pastel y que el layout de dos columnas sigue intacto.
 
-- [ ] **Step 4: Mark plan complete**
+- [x] **Step 4: Mark plan complete**
 
 Marcar todas las tareas ejecutadas en este documento y conservar la rama/worktree para revisión local; no desplegar.
 

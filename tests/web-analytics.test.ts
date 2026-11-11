@@ -1,6 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createAnalyticsController } from '../apps/web-preview/public/analytics.mjs';
+import { createAnalyticsController,isProductionAnalyticsHost } from '../apps/web-preview/public/analytics.mjs';
+
+test('la analítica de producción no se habilita en localhost ni en vistas de prueba',()=>{
+  assert.equal(isProductionAnalyticsHost('geoempleo360.com'),true);
+  assert.equal(isProductionAnalyticsHost('geoempleo-49978.web.app'),true);
+  assert.equal(isProductionAnalyticsHost('localhost'),false);
+  assert.equal(isProductionAnalyticsHost('127.0.0.1'),false);
+});
 
 function createHarness(initial='') {
   const values=new Map(initial?[["geoempleo-analytics-consent",initial]]:[]);
@@ -101,4 +108,14 @@ test('solo permite eventos y valores categóricos definidos, nunca texto libre',
     ['filter_used',{filter_type:'employer'}],
     ['map_action',{action:'search_visible_area'}],
   ]);
+});
+
+test('la salida a la oferta original se mide solo con consentimiento y sin datos de la oferta',async()=>{
+  const h=createHarness();
+  const controller=createAnalyticsController({config,storage:h.storage as unknown as Storage,loadSdk:async()=>h.sdk,location:{pathname:'/'} as Location});
+  assert.equal(await controller.track('offer_original_clicked'),false);
+  await controller.accept();
+  assert.equal(await controller.track('offer_original_clicked',{url:'https://origen.example/oferta'}),false);
+  assert.equal(await controller.track('offer_original_clicked'),true);
+  assert.deepEqual(h.calls.filter(([kind])=>kind==='event').map(([, ,name,params])=>[name,params]),[['offer_original_clicked',{}]]);
 });
