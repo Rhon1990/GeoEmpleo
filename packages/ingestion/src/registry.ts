@@ -154,6 +154,8 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:giGroupListingUrl,licenseUrl:null},
   {id:'mercadona-oficial',name:'Mercadona · portal oficial',countryCode:'ES',kind:'ats',status:'candidate',
     endpoint:'https://mercadona.avature.net/es_ES/Careers/SearchJobs/',licenseUrl:null},
+  {id:'crit-oficial',name:'Grupo Crit · portal oficial',countryCode:'ES',kind:'ats',status:'candidate',
+    endpoint:'https://jobs.grupo-crit.com/',licenseUrl:null},
   {id:'sacyr-oficial',name:'Sacyr · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:'https://sacyrpeople.sacyr.com/jobs?country=Spain&query=&split_view=true',licenseUrl:null},
   {id:'acciona-oficial',name:'Acciona · portal oficial',countryCode:'ES',kind:'ats',status:'candidate',

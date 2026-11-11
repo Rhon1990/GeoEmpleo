@@ -50,7 +50,6 @@ const employerBrands={
   'adecco-oficial':{src:'/brands/adecco.svg',alt:'Adecco'},
   'gigroup-oficial':{src:'/brands/gi-group.jpg',alt:'Gi Group'},
   'sacyr-oficial':{src:'/brands/sacyr.png',alt:'Sacyr'},
-  'crit-oficial':{src:'/brands/grupo-crit.png',alt:'Grupo Crit'},
 };
 export const neutralBrand={src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo360'};
 export const employerBrand=job=>employerBrands[job.sourceId]??neutralBrand;

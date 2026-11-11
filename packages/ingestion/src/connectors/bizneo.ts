@@ -10,8 +10,6 @@ export interface BizneoBoard {
   readonly category:string;
   readonly categoryLabel:string;
   readonly excludedTitlePattern?:RegExp;
-  readonly maxPages?:number;
-  readonly maxJobs?:number;
 }
 
 export interface ResolvedCity {
@@ -29,7 +27,6 @@ export const bizneoBoards:readonly BizneoBoard[]=[
   {sourceId:'bizneo-telepizza',hostname:'ofertas.fooddeliverybrands.com',employer:'Telepizza',category:'hosteleria',categoryLabel:'Turismo y hostelería'},
   {sourceId:'bizneo-coviran',hostname:'jobs.coviran.com',employer:'Covirán',category:'servicios',categoryLabel:'Servicios y comercio',excludedTitlePattern:/^autocandidatura\b/i},
   {sourceId:'bizneo-iss',hostname:'jobs.iss.es',employer:'ISS Facility Services',category:'oficios',categoryLabel:'Oficios técnicos'},
-  {sourceId:'crit-oficial',hostname:'jobs.grupo-crit.com',employer:'Grupo Crit',category:'otros',categoryLabel:'Otros sectores',maxPages:120,maxJobs:2_000},
 ];
 
 function validatedJobUrl(raw:string,board:BizneoBoard):string {
@@ -61,7 +58,7 @@ export function parseBizneoListing(html:string,board:BizneoBoard):{offers:Bizneo
   const nextUrl=next?attribute(next,'href'):null;
   const page=nextUrl?new URL(nextUrl,`https://${board.hostname}`).searchParams.get('page'):null;
   const nextPage=page&&/^\d+$/.test(page)?Number(page):null;
-  if(nextPage!==null&&(!Number.isSafeInteger(nextPage)||nextPage<2||nextPage>(board.maxPages??20))) throw new TypeError('Paginación Bizneo inválida');
+  if(nextPage!==null&&(!Number.isSafeInteger(nextPage)||nextPage<2||nextPage>20)) throw new TypeError('Paginación Bizneo inválida');
   return {offers,nextPage};
 }
 
@@ -102,7 +99,7 @@ export async function fetchBizneoOffers(board:BizneoBoard,checkedAt:string,resol
     if(parsed.nextPage!==page+1) throw new TypeError('Salto de página Bizneo inválido');
     page=parsed.nextPage;
   }
-  if(found.size===0||found.size>(board.maxJobs??300)) throw new TypeError('Volumen Bizneo inesperado');
+  if(found.size===0||found.size>300) throw new TypeError('Volumen Bizneo inesperado');
   const offers=[...found.values()];
   const jobs:PublicJob[]=[];
   for(let index=0;index<offers.length;index+=4){
