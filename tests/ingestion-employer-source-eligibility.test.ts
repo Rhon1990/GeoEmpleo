@@ -20,11 +20,11 @@ test('las seis fuentes empresariales solicitadas quedan inventariadas con URL HT
   }
 });
 
-test('solo Sacyr está activa hasta comprobar el contrato completo de los otros portales',()=>{
+test('Sacyr y STEF están activas tras comprobar su contrato completo',()=>{
   assert.equal(sourceRegistry.get('sacyr-oficial')?.status,'active');
   assert.equal(sourceRegistry.get('mercadona-oficial')?.status,'candidate');
   assert.equal(sourceRegistry.get('crit-oficial')?.status,'candidate');
   assert.equal(sourceRegistry.get('acciona-oficial')?.status,'candidate');
   assert.equal(sourceRegistry.get('ferrovial-oficial')?.status,'authorization_required');
-  assert.equal(sourceRegistry.get('stef-oficial')?.status,'candidate');
+  assert.equal(sourceRegistry.get('stef-oficial')?.status,'active');
 });

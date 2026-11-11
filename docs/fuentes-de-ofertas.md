@@ -8,7 +8,7 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene 38 identificadores marcados como `active`, con adaptador
+El registro tiene 39 identificadores marcados como `active`, con adaptador
 en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
@@ -56,6 +56,7 @@ que sigan abiertas.
 | `adecco-oficial` | [Adecco](https://www.adecco.com/es-es/ofertas-trabajo) | Endpoint del buscador oficial; filtro de cierre y país; ficha pública individual por `jobId`; retira ausentes tras captura completa | Captura 05/11/2026 12:19 UTC: 3.775 ofertas con ID único y 3.584 con municipio verificado; se publica solo título, localidad, fecha, enlace y datos factuales mínimos |
 | `gigroup-oficial` | [Gi Group](https://es.gigroup.com/ofertas-de-trabajo/) | Listado y fichas `JobPosting` del portal oficial | Captura aislada 05/11/2026: 427 ofertas españolas únicas, 415 con municipio verificado; comprobar el catálogo público vigente para el conteo actual |
 | `sacyr-oficial` | [Sacyr](https://sacyrpeople.sacyr.com/jobs?country=Spain&query=&split_view=true) | Teamtailor; listado con filtro España y fichas `JobPosting` | Captura temporal 11/11/2026: 95 fichas, 61 con municipio verificado; la fuente entra en la siguiente actualización diaria |
+| `stef-oficial` | [STEF](https://apply.stef.jobs/search/?createNewAlert=false&q=&locationsearch=) | SuccessFactors; listado global paginado y fichas completas; conserva solo `ES` | Captura aislada 11/11/2026: 41 fichas españolas, 16 con municipio verificado; la fuente entra en la siguiente actualización diaria |
 
 El conector de El Corte Inglés envía `country: ["ES"]` al listado paginado. La
 ficha Workday sirve una aplicación sin `JobPosting` legible, así que el listado
@@ -91,7 +92,6 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | Grupo Crit | El portal oficial expone listado y fichas, pero respondió HTTP 429 al lector automatizado en páginas 1, 2 y 100 el 11/11/2026 | Obtener un feed o permiso de acceso estable; no eludir el límite ni publicar una captura parcial |
 | Acciona | La página corporativa aportada no expone aún un listado y ficha públicos completos en la captura | Identificar el proveedor oficial, validar país, ID, paginación y detalle antes de activar |
 | Ferrovial | El portal oficial aportado responde HTTP 403 a la captura | Obtener un canal público autorizado y estable; no eludir la protección |
-| STEF | La página española expone títulos, enlaces e información de ubicación; las fichas finales viven en `apply.stef.jobs` | Validar el listado completo, ID y detalle de cada ficha antes de activar |
 | Inditex | El [portal oficial](https://www.inditexpeople.com/es/es/joinus/offers) bloquea la captura automatizada con HTTP 403 | Conseguir un canal público autorizado y estable |
 | SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
 | NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |

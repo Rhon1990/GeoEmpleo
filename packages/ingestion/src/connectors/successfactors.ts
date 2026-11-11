@@ -120,7 +120,7 @@ export function parseSuccessFactorsListing(html:string,board:SuccessFactorsBoard
     return [{url,title,listedDate:dateCell?textOf(dateCell):'',...locationParts(rawLocation)}];
   });
   const label=descendants(document,element=>tile?attribute(element,'id')==='tile-search-results-label':hasClass(element,'paginationLabel'))[0];
-  const total=label?/(?:\bde\b|\bof\b)\s+(\d(?:[\d.,\s]*\d)?)\b/iu.exec(textOf(label))?.[1]:null;
+  const total=label?/(?:\bde\b|\bof\b|\bsur\b)\s+(\d(?:[\d.,\s]*\d)?)\b/iu.exec(textOf(label))?.[1]:null;
   const totalCount=total?Number(total.replace(/[.,\s]/g,'')):null;
   const pageCount=totalCount?Math.ceil(totalCount/board.pageSize):1;
   if(!Number.isSafeInteger(pageCount)||pageCount<1||pageCount>board.maxPages) throw new TypeError('Paginación SuccessFactors inválida');

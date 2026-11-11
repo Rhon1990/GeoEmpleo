@@ -40,6 +40,7 @@ const publicBrands={
   'adecco-oficial':['/brands/adecco.svg','Adecco'],
   'gigroup-oficial':['/brands/gi-group.jpg','Gi Group'],
   'sacyr-oficial':['/brands/sacyr.png','Sacyr'],
+  'stef-oficial':['/brands/stef.png','STEF'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {
