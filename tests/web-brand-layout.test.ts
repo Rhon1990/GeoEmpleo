@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key includes the GeoEmpleo360 wordmark patch version', () => {
+test('stylesheet cache key identifies the current mobile carousel release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key includes the GeoEmpleo360 wordmark patch version', ()
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261028-geoempleo360-brand(?:&|$)/,
+    /(?:[?&]v=)20261110-mobile-zone-carousel-material-arrows(?:&|$)/,
   );
 });
 
@@ -311,13 +311,147 @@ test('mobile cards use a single-column results grid', () => {
   assert.match(mobileRules, /\.job-list\{[^}]*grid-template-columns:1fr/);
 });
 
+test('mobile map exposes an accessible visible-zone carousel and one favorites entry point',()=>{
+  const featured=allElements.find(element=>attribute(element,'id')==='mobile-featured-offer');
+  const map=allElements.find(element=>attribute(element,'id')==='google-map');
+  const footnote=allElements.find(element=>hasClass(element,'map-footer'));
+  assert.ok(featured&&map&&footnote);
+  assert.ok(elements(featured.parentNode!).indexOf(map)<elements(featured.parentNode!).indexOf(featured));
+  assert.ok(elements(featured.parentNode!).indexOf(featured)<elements(featured.parentNode!).indexOf(footnote));
+  for(const id of ['show-saved','new-since','new-since-list','mobile-zone-offers-title','mobile-zone-offers-counter','featured-previous','featured-card','featured-next'])assert.ok(allElements.some(element=>attribute(element,'id')===id));
+  assert.equal(attribute(allElements.find(element=>attribute(element,'id')==='featured-previous')!,'aria-label'),'Oferta anterior');
+  assert.equal(attribute(allElements.find(element=>attribute(element,'id')==='featured-next')!,'aria-label'),'Oferta siguiente');
+  const previous=allElements.find(element=>attribute(element,'id')==='featured-previous')!;
+  const next=allElements.find(element=>attribute(element,'id')==='featured-next')!;
+  const previousIcon=elements(previous).find(element=>hasClass(element,'arrow-back-ios-icon'));
+  const nextIcon=elements(next).find(element=>hasClass(element,'arrow-forward-ios-icon'));
+  assert.equal(textContent(previous).trim(),'');
+  assert.equal(textContent(next).trim(),'');
+  assert.ok(previousIcon&&nextIcon);
+  assert.equal(attribute(previousIcon,'aria-hidden'),'true');
+  assert.equal(attribute(nextIcon,'aria-hidden'),'true');
+  const carouselNavigation=allElements.find(element=>hasClass(element,'mobile-carousel-navigation'));
+  assert.ok(carouselNavigation);
+  assert.deepEqual(
+    elements(carouselNavigation).map(element=>attribute(element,'id')).filter(Boolean),
+    ['featured-previous','mobile-zone-offers-counter','featured-next'],
+  );
+  const actions=allElements.find(element=>hasClass(element,'search-actions'));
+  assert.ok(actions);
+  assert.deepEqual(elements(actions).filter(element=>element.tagName==='button').map(element=>attribute(element,'id')),['mobile-filter-toggle','show-saved','mobile-clear-filters']);
+  assert.equal(textContent(elements(actions).find(element=>attribute(element,'id')==='show-saved')!), '(0) Favoritos');
+  assert.match(textContent(elements(actions).find(element=>attribute(element,'id')==='mobile-clear-filters')!),/Limpiar filtros/);
+  assert.equal(attribute(elements(actions).find(element=>attribute(element,'id')==='mobile-clear-filters')!,'hidden'),'');
+  const favorites=allElements.find(element=>attribute(element,'id')==='saved-dialog');
+  assert.ok(favorites);
+  assert.ok(elements(favorites).some(element=>attribute(element,'id')==='saved-offers'));
+  for(const id of ['save-search','share-search','share-status','saved-searches']){
+    assert.equal(elements(favorites).some(element=>attribute(element,'id')===id),false);
+  }
+  assert.doesNotMatch(textContent(favorites),/Búsquedas|Añadir búsqueda|Compartir búsqueda/);
+  assert.match(app,/const count=retention\.savedOffers\(\)\.length/);
+  assert.doesNotMatch(app,/const count=retention\.savedOffers\(\)\.length\+retention\.savedSearches\(\)\.length/);
+  assert.match(css,/\.search-actions\{display:flex/);
+  assert.match(ruleForSelector(css,'#new-filter-clear,#new-since-list'),/color:var\(--petrol\)/);
+  assert.match(ruleForSelector(css,'.mobile-featured-offer'),/display:none/);
+  const mobileRules=mediaBlocksForMaxWidth(css,780).join('\n');
+  assert.match(mobileRules,/\.mobile-featured-offer\{[^}]*display:block/);
+  assert.match(mobileRules,/\.mobile-carousel-navigation\{[^}]*display:flex[^}]*align-items:center/);
+  assert.match(mobileRules,/\.mobile-offer-carousel\{[^}]*display:block/);
+  assert.match(mobileRules,/\.mobile-offer-track\{[^}]*overflow-x:auto[^}]*scroll-snap-type:x mandatory/);
+  assert.match(mobileRules,/\.mobile-offer-slide\{[^}]*scroll-snap-align:start/);
+  assert.match(mobileRules,/\.mobile-carousel-arrow\{[^}]*min-width:44px[^}]*min-height:44px[^}]*border:0[^}]*background:transparent/);
+  assert.doesNotMatch(mobileRules,/\.mobile-carousel-arrow\{[^}]*border-radius/);
+  assert.match(css,/\.carousel-arrow-icon\{[^}]*width:24px[^}]*height:24px/);
+  assert.match(css,/\.arrow-back-ios-icon\{[^}]*arrow-back-ios\.svg/);
+  assert.match(css,/\.arrow-forward-ios-icon\{[^}]*arrow-forward-ios\.svg/);
+  assert.doesNotMatch(mobileRules,/\.mobile-carousel-arrow\{[^}]*position:absolute/);
+  assert.match(mobileRules,/\.mobile-featured-offer \.job-visual-frame\{[^}]*display:block/);
+  assert.match(mobileRules,/\.job-visual-frame\{[^}]*height:5\dpx/);
+  assert.match(mobileRules,/\.mobile-featured-offer \.card-footer \.offer-actions\{[^}]*position:static/);
+  assert.match(mobileRules,/\.mobile-featured-offer \.offer-actions-toggle\{[^}]*position:absolute[^}]*top:8px[^}]*right:8px/);
+  assert.match(mobileRules,/\.mobile-featured-offer \.offer-actions-menu\{[^}]*top:48px[^}]*right:8px[^}]*bottom:auto/);
+  assert.match(mobileRules,/\.mobile-featured-offer \.job-visual\.logo-brand img\{[^}]*width:auto[^}]*height:auto[^}]*max-width:calc\(100% - 28px\)[^}]*max-height:40px/);
+  assert.doesNotMatch(mobileRules,/\.mobile-featured-offer \.job-visual img\{[^}]*width:42px[^}]*height:42px/);
+  assert.match(mobileRules,/\.dynamic-map\{[^}]*height:38dvh/);
+  assert.match(mobileRules,/#mobile-clear-filters\{[^}]*display:inline-flex/);
+  assert.match(mobileRules,/#clear-filters\{[^}]*display:none/);
+  assert.match(app,/querySelector\('#mobile-clear-filters'\)\.addEventListener\('click',clear\)/);
+  assert.match(app,/import \{createMobileOfferCarousel\} from '\.\/mobile-offer-carousel\.mjs\?v=20261110-mobile-zone-carousel-header'/);
+  assert.match(app,/function renderMobileOfferCarousel\(offers\)/);
+  assert.match(app,/renderMobileOfferCarousel\(mapResults\)/);
+  assert.match(app,/const sameOffers=featuredCarousel\.matches\(offers\)/);
+  assert.match(app,/if\(sameOffers\)return/);
+  assert.doesNotMatch(app,/featuredCard\.replaceChildren\(\.\.\.\(results\.length\?\[card\(results\[0\]\)\]/);
+  assert.match(app,/offers\.map\(call\s*=>\s*\{[\s\S]*mobile-offer-slide/);
+  assert.match(app,/featuredPrevious\.addEventListener\('click'/);
+  assert.match(app,/featuredNext\.addEventListener\('click'/);
+  assert.match(app,/featuredCard\.addEventListener\('scroll'/);
+});
+
+test('Material Symbols muestra corazón, compartir, navegación y más opciones sin botones circulares',async()=>{
+  for(const icon of ['favorite-outline','favorite-filled','share','more-vert','location-on','close','arrow-back-ios','arrow-forward-ios']){
+    const svg=await readFile(new URL(`../apps/web-preview/public/icons/material-symbols/${icon}.svg`,import.meta.url),'utf8');
+    assert.match(svg,/<svg[^>]+viewBox=/);
+  }
+  assert.match(css,/\.card-footer\{[^}]*position:relative[^}]*flex-direction:column/);
+  assert.match(css,/\.save-offer\{[^}]*width:36px[^}]*height:36px/);
+  assert.match(css,/\.card-footer \.offer-actions\{[^}]*position:absolute[^}]*right:10px/);
+  assert.match(css,/\.offer-actions-menu \.save-offer\{[^}]*position:static/);
+  assert.match(css,/\.favorite-icon\{[^}]*favorite-outline\.svg/);
+  assert.match(css,/\.save-offer\[aria-pressed="true"\] \.favorite-icon\{[^}]*favorite-filled\.svg/);
+  assert.match(css, /--favorite:#c62828/);
+  assert.match(ruleForSelector(css,'.save-offer'),/color:var\(--favorite\)/);
+  assert.match(css,/\.share-icon\{[^}]*share\.svg/);
+  assert.match(css,/\.more-vert-icon\{[^}]*more-vert\.svg/);
+  assert.doesNotMatch(ruleForSelector(css,'.save-offer'),/border-radius:50%/);
+  assert.doesNotMatch(ruleForSelector(css,'.offer-actions-toggle'),/border-radius:50%/);
+  assert.match(app,/button\.setAttribute\('aria-pressed',String\(saved\)\)/);
+  assert.match(app,/button\.prepend\(materialIcon\('share-icon'\)\)/);
+  assert.match(app,/toggle\.append\(materialIcon\('more-vert-icon'\)\)/);
+});
+
+test('cada tarjeta abre un menú de tres acciones y conserva el detalle al pulsar la tarjeta',()=>{
+  assert.match(app,/function offerActionsMenu\(call\)/);
+  assert.match(app,/footer\.append\(original\?\?element\('span',call\.id\),offerActionsMenu\(call\)\)/);
+  assert.match(app,/shareOfferButton\(call,\{label:'Compartir oferta'/);
+  assert.match(app,/offerMapLink\(call,\{className:'offer-menu-location'/);
+  assert.match(app,/button\.addEventListener\('click', \(\) => showDetail\(call\)\)/);
+});
+
+test('el detalle prioriza salida, favorito y ubicación antes de datos y descripción',()=>{
+  assert.match(app,/function detailActions\(call,presentation\)/);
+  assert.match(app,/sourceLink\(presentation\.sourceLink,call\.sourceUrl,'primary-button'\)/);
+  assert.match(app,/detailSecondary\.append\(saveOfferButton\(call,\{showLabel:true,savedLabel:'En favoritos'/);
+  assert.match(app,/shareOfferButton\(call,\{label:'Compartir'/);
+  assert.match(app,/offerMapLink\(call,\{className:'detail-map-link'/);
+  assert.match(app,/body\.append\(brandHeader,title,detailActions\(call,presentation\),facts\)/);
+  assert.match(ruleForSelector(css,'.detail-actions'),/display:grid/);
+  assert.match(ruleForSelector(css,'.detail-actions .primary-button'),/min-height:48px/);
+  assert.match(ruleForSelector(css,'.detail-actions .primary-button'),/width:100%/);
+  assert.match(ruleForSelector(css,'.detail-secondary-actions'),/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(ruleForSelector(css,'.detail-secondary-actions>a,.detail-secondary-actions>button'),/min-height:48px/);
+  const mobileRules=mediaBlocksForMaxWidth(css,780).join('\n');
+  assert.match(mobileRules,/\.detail-secondary-actions>a,\.detail-secondary-actions>button\{[^}]*flex-direction:column/);
+});
+
+test('favoritos ofrece compartir, ubicación y eliminación accesible mediante X',()=>{
+  assert.match(app,/function savedOfferActions\(item\)/);
+  assert.match(app,/shareOfferButton\(item,\{label:null/);
+  assert.match(app,/offerMapLink\(item,\{className:'saved-offer-location'/);
+  assert.match(app,/materialIcon\('close-icon'\)/);
+  assert.match(app,/remove\.setAttribute\('aria-label',`Eliminar de favoritos: \$\{item\.title\}`\)/);
+  assert.doesNotMatch(app,/element\('button','(?:Quitar|Eliminar)'\).*item\.title/);
+  assert.match(ruleForSelector(css,'.saved-offer-actions'),/display:flex/);
+  assert.match(ruleForSelector(css,'.saved-offer-actions>a,.saved-offer-actions>button'),/width:44px[^}]*height:44px/);
+  assert.match(ruleForSelector(css,'.remove-saved-offer'),/color:var\(--favorite\)/);
+});
+
 test('job cards expose their real source while decorative geometry stays hidden', () => {
   assert.match(app, /visual\.setAttribute\('aria-hidden','true'\)/);
-  assert.match(
-    app,
-    /visualFrame\.append\(visual, element\('span',call\.source,'source-pill'\)\)/,
-    'Expected the source pill to be a sibling of the aria-hidden visual',
-  );
+  assert.match(app,/visualFrame\.append\(visual\)/);
+  assert.doesNotMatch(app,/source-pill/);
+  assert.doesNotMatch(css,/\.source-pill\{/);
   assert.doesNotMatch(app, /visual\.append\([^\n]*call\.source/);
   assert.match(
     app,
@@ -548,8 +682,22 @@ test('mobile preserves document flow with a single visible workspace panel', () 
   assert.equal(attribute(switcher,'role'),'group');
   assert.equal(attribute(switcher,'aria-label'),'Vista principal');
   const buttons=elements(switcher).filter(node=>node.tagName==='button');
-  assert.deepEqual(buttons.map(node=>attribute(node,'data-workspace-view')),['jobs','map']);
+  assert.deepEqual(buttons.map(node=>attribute(node,'data-workspace-view')),['map','jobs']);
   assert.deepEqual(buttons.map(node=>attribute(node,'aria-pressed')),['true','false']);
+  const workspace=allElements.find(node=>hasClass(node,'workspace'));
+  assert.equal(workspace&&attribute(workspace,'data-view'),'map');
+});
+
+test('mobile secondary filters start collapsed while desktop keeps them visible',()=>{
+  const toggle=allElements.find(node=>attribute(node,'id')==='mobile-filter-toggle');
+  const filters=allElements.find(node=>attribute(node,'id')==='advanced-filters');
+  assert.ok(toggle&&filters);
+  assert.equal(attribute(toggle,'aria-expanded'),'false');
+  assert.equal(attribute(toggle,'aria-controls'),'advanced-filters');
+  assert.match(ruleForSelector(css,'.search-actions .mobile-filter-toggle'),/display:none/);
+  const mobile=mediaBlocksForMaxWidth(css,780).join('\n');
+  assert.match(mobile,/\.search-actions \.mobile-filter-toggle\{[^}]*display:inline-flex/);
+  assert.match(mobile,/\.advanced-filters\[data-expanded="false"\]\{[^}]*display:none/);
 });
 
 test('mobile map overlay stays compact and centered above the map', () => {
