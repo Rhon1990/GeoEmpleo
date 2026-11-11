@@ -88,7 +88,7 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | Unide | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
 | Farmacia | Es un sector, no una empresa canónica | Integrar fuentes verificables del sector sin atribuir una marca ficticia |
 | Lupa Supermercados | [Portal oficial](https://lupa.epreselec.com/Ofertas/Ofertas.aspx) devuelve HTTP 405 y una verificación interactiva a la captura programada | Obtener un canal permitido y estable, sin eludir la verificación |
-| Mercadona | Portal Avature oficial comprobado; mezcla España y Portugal y expone 384 resultados en páginas de seis | Aplicar un filtro de país verificable y validar cada ficha antes de activar |
+| Mercadona | El filtro oficial España devuelve 337 resultados paginados de seis en Avature y las fichas publican título, municipio y descripción; la captura aislada completa del 11/11/2026 no superó su validación | Aislar el motivo de la validación completa con una captura reproducible; no activar ni publicar una lista parcial |
 | Grupo Crit | El portal oficial expone listado y fichas, pero respondió HTTP 429 al lector automatizado en páginas 1, 2 y 100 el 11/11/2026 | Obtener un feed o permiso de acceso estable; no eludir el límite ni publicar una captura parcial |
 | Acciona | La página corporativa aportada no expone aún un listado y ficha públicos completos en la captura | Identificar el proveedor oficial, validar país, ID, paginación y detalle antes de activar |
 | Ferrovial | El portal oficial aportado responde HTTP 403 a la captura | Obtener un canal público autorizado y estable; no eludir la protección |
