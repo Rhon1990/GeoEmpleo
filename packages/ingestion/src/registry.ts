@@ -163,7 +163,7 @@ const definitions: readonly SourceDefinition[] = [
   {id:'acciona-oficial',name:'Acciona · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:accionaListingUrl,licenseUrl:null},
   {id:'ferrovial-oficial',name:'Ferrovial · portal oficial',countryCode:'ES',kind:'ats',status:'authorization_required',
-    endpoint:'https://www.ferrovial.com/es/empleo/ofertas/?country_job_posting=Espa%C3%B1a',licenseUrl:null},
+    endpoint:'https://www.ferrovial.com/es-es/empleo/ofertas/',licenseUrl:'https://www.ferrovial.com/es/aviso-legal/'},
 ];
 
 export interface SourceRegistry {
