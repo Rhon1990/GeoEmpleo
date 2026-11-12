@@ -8,7 +8,7 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene 40 identificadores marcados como `active`, con adaptador
+El registro tiene 41 identificadores marcados como `active`, con adaptador
 en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
@@ -58,6 +58,7 @@ que sigan abiertas.
 | `sacyr-oficial` | [Sacyr](https://sacyrpeople.sacyr.com/jobs?country=Spain&query=&split_view=true) | Teamtailor; listado con filtro España y fichas `JobPosting` | Captura temporal 11/11/2026: 95 fichas, 61 con municipio verificado; la fuente entra en la siguiente actualización diaria |
 | `stef-oficial` | [STEF](https://apply.stef.jobs/search/?createNewAlert=false&q=&locationsearch=) | SuccessFactors; listado global paginado y fichas completas; conserva solo `ES` | Captura aislada 11/11/2026: 41 fichas españolas, 16 con municipio verificado; la fuente entra en la siguiente actualización diaria |
 | `mercadona-oficial` | [Mercadona](https://mercadona.avature.net/es_ES/Careers/SearchJobs/?2307=243&2307_format=2105&listFilterMode=1&jobRecordsPerPage=6) | Avature; listado oficial paginado con filtro España, ID, municipio, descripción y enlace de solicitud | Captura aislada 12/11/2026: 336 ofertas españolas, 215 con municipio verificado; la fuente entra en la siguiente actualización diaria |
+| `acciona-oficial` | [Acciona](https://www.acciona.com/es/nuestro-proposito/trabaja-con-nosotros/ofertas-empleo) | Listado oficial con todos los empleos incrustados; filtra país `ESP`, valida ID, fecha, texto y enlace de detalle | Captura aislada 12/11/2026: 238 ofertas españolas, 209 con municipio verificado; la fuente entra en la siguiente actualización diaria |
 
 El conector de El Corte Inglés envía `country: ["ES"]` al listado paginado. La
 ficha Workday sirve una aplicación sin `JobPosting` legible, así que el listado
@@ -89,9 +90,8 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | Unide | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar catálogo oficial público con ID, vigencia y localidad |
 | Farmacia | Es un sector, no una empresa canónica | Integrar fuentes verificables del sector sin atribuir una marca ficticia |
 | Lupa Supermercados | [Portal oficial](https://lupa.epreselec.com/Ofertas/Ofertas.aspx) devuelve HTTP 405 y una verificación interactiva a la captura programada | Obtener un canal permitido y estable, sin eludir la verificación |
-| Grupo Crit | El portal oficial expone listado y fichas, pero respondió HTTP 429 al lector automatizado en páginas 1, 2 y 100 el 11/11/2026 | Obtener un feed o permiso de acceso estable; no eludir el límite ni publicar una captura parcial |
-| Acciona | La página corporativa aportada no expone aún un listado y ficha públicos completos en la captura | Identificar el proveedor oficial, validar país, ID, paginación y detalle antes de activar |
-| Ferrovial | El portal oficial aportado responde HTTP 403 a la captura | Obtener un canal público autorizado y estable; no eludir la protección |
+| Grupo Crit | El portal Bizneo respondió HTTP 200 para una página y una ficha el 12/11/2026, pero enumera 100 páginas y antes respondió HTTP 429 durante la captura | Validar un canal autorizado capaz de cubrir el listado y detalles completos sin provocar límites; no activar una captura parcial |
+| Ferrovial | El portal oficial aportado sigue respondiendo HTTP 403 a la captura el 12/11/2026 | Obtener un canal público autorizado y estable; no eludir la protección |
 | Inditex | El [portal oficial](https://www.inditexpeople.com/es/es/joinus/offers) bloquea la captura automatizada con HTTP 403 | Conseguir un canal público autorizado y estable |
 | SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
 | NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |
