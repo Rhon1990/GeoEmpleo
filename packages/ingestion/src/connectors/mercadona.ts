@@ -1,0 +1,18 @@
+import type {PublicJob} from '../model.ts';
+import {fetchHtml} from '../http.ts';
+import type {CityResolver} from './bizneo.ts';
+import {approximateMunicipalNote} from './shared.ts';
+import {attribute,descendants,documentOf,hasClass,innerHtml,textOf} from './html-dom.ts';
+import {htmlToParagraphs} from '../normalize.ts';
+
+export const mercadonaListingUrl='https://mercadona.avature.net/es_ES/Careers/SearchJobs/?2307=243&2307_format=2105&listFilterMode=1&jobRecordsPerPage=6';
+const pageSize=6;
+type Offer={id:string;title:string;city:string;description:string;url:string};
+function parse(html:string,offset:number):{total:number;offers:Offer[]}{
+ const doc=documentOf(html);const country=descendants(doc,e=>e.tagName==='option'&&attribute(e,'value')==='243'&&attribute(e,'selected')==='1')[0];if(!country||textOf(country)!=='España')throw new TypeError('Mercadona sin filtro España');
+ const legend=descendants(doc,e=>hasClass(e,'list-controls__text__legend'))[0];const total=Number(/(\d+)\s+resultados/i.exec(attribute(legend,'aria-label')??'')?.[1]);if(!Number.isSafeInteger(total)||total<1||offset>=total)throw new TypeError('Paginación Mercadona inválida');
+ const offers=descendants(doc,e=>e.tagName==='article'&&hasClass(e,'article--result')).map(article=>{const link=descendants(article,e=>e.tagName==='a'&&hasClass(e,'link'))[0];const city=textOf(descendants(article,e=>hasClass(e,'list-item-town'))[0]!);const url=new URL(attribute(link!,'href')??'',mercadonaListingUrl);const match=/^\/es_ES\/Careers\/JobDetail\/[^/]+\/(\d+)$/.exec(url.pathname);if(!link||url.hostname!=='mercadona.avature.net'||!match)throw new TypeError('URL Mercadona no autorizada');const title=textOf(link).replace(new RegExp(`\\s+-\\s+${city}$`),'').trim();const content=descendants(article,e=>hasClass(e,'article__content'))[0];const description=content?htmlToParagraphs(innerHtml(content)).join(' '):'';if(!title||!city||!description)throw new TypeError('Oferta Mercadona incompleta');return {id:match[1]!,title,city,description,url:url.href};});if(!offers.length||offers.length>pageSize||new Set(offers.map(o=>o.id)).size!==offers.length)throw new TypeError('Página Mercadona inválida');return {total,offers};
+}
+export async function fetchMercadonaOffers(checkedAt:string,resolveCity:CityResolver,fetchImpl:typeof fetch=fetch):Promise<PublicJob[]>{
+ const first=parse(await fetchHtml(mercadonaListingUrl,{fetchImpl}),0);const offers=[...first.offers];const ids=new Set(offers.map(o=>o.id));for(let offset=pageSize;offset<first.total;offset+=pageSize){const url=new URL(mercadonaListingUrl);url.searchParams.set('jobOffset',String(offset));const page=parse(await fetchHtml(url.href,{fetchImpl}),offset);if(page.total!==first.total)throw new TypeError('Total Mercadona cambió');for(const o of page.offers){if(ids.has(o.id))throw new TypeError('ID Mercadona duplicado');ids.add(o.id);offers.push(o);}}if(offers.length!==first.total)throw new TypeError('Captura Mercadona incompleta');return offers.map(o=>{const resolved=resolveCity(o.city);return {kind:'job',sourceId:'mercadona-oficial',source:'Mercadona · portal oficial',id:`MERCADONA-${o.id}`,title:o.title,employer:'Mercadona',city:resolved?.city??o.city,province:resolved?.province??'Sin verificar',region:resolved?.region??'España',category:'servicios',categoryLabel:'Servicios y comercio',regime:'Oferta de empleo',places:null,paragraphs:[o.description],sourceUrl:o.url,publishedAt:checkedAt.slice(0,10),dateKind:'observed',checkedAt,closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,location:resolved?.location?{...resolved.location,note:approximateMunicipalNote}:null};});
+}

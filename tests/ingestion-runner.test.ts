@@ -34,6 +34,35 @@ test('runner publica Gi Group con enlace de ficha y sin punto no verificado',asy
  } finally {await rm(dir,{recursive:true,force:true});}
 });
 
+test('runner publica Sacyr como fuente diaria y conserva el contrato Teamtailor',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'geoempleo-sacyr-'));
+ try {
+  const catalogPath=join(dir,'calls.json'),placesPath=join(dir,'places.json');
+  const nationalPlacesPath=join(dir,'spain-places.json.gz'),reportPath=join(dir,'latest.json');
+  await writeFile(catalogPath,JSON.stringify({checkedAt:'2026-11-10T00:00:00Z',publishedAt:null,mode:'verified_snapshot',sourceConditions:'x',calls:[]}));
+  await writeFile(placesPath,JSON.stringify({places:[]}));
+  await writeFile(nationalPlacesPath,gzipSync(JSON.stringify({retrievedAt:'2026-11-11',license:'test',places:[{
+   id:'madrid',name:'Madrid',province:'Madrid',municipality:'Madrid',latitude:40.4168,longitude:-3.7038,
+   sourceUrl:'https://example.test/madrid',precision:'locality',
+  }]})));
+  const title='Oficial de 1ª Madrid';
+  const listing=`<h2>1 vacantes</h2><ul id="jobs_list_container"><li><a data-turbo="false" href="https://sacyrpeople.sacyr.com/jobs/8703655-oficial-de-1-madrid">${title}</a></li></ul>`;
+  const detail=`<h1>${title}</h1><script type="application/ld+json">${JSON.stringify({
+   '@type':'JobPosting',title,identifier:{value:'8703655'},datePosted:'2026-11-11T09:00:00+01:00',description:'<p>Trabajo en obra civil.</p>',
+   jobLocation:[{address:{addressLocality:'Madrid',addressRegion:'Madrid',addressCountry:'ES'}}],
+  })}</script>`;
+  const fetchImpl=(async(input:string|URL|Request)=>{
+   const url=new URL(input instanceof Request?input.url:input);
+   return new Response(url.pathname.startsWith('/jobs/8703655-')?detail:listing,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const report=await runDaily({catalogPath,placesPath,nationalPlacesPath,reportPath,sourceIds:['sacyr-oficial'],checkedAt:'2026-11-11T12:00:00Z',fetchImpl});
+  assert.equal(report.status,'success');
+  assert.deepEqual(report.sources,[{sourceId:'sacyr-oficial',status:'success',received:1,mapped:1,reason:null}]);
+  const catalog=JSON.parse(await readFile(catalogPath,'utf8'));
+  assert.deepEqual(catalog.calls.map((job:{id:string})=>job.id),['TEAMTAILOR-SACYR-8703655']);
+ } finally {await rm(dir,{recursive:true,force:true});}
+});
+
 const windows1252Characters=new Map([['€',0x80],['“',0x93],['”',0x94],['–',0x96]]);
 function encodeWindows1252(value:string):Uint8Array {
  return Uint8Array.from([...value].map(character=>{

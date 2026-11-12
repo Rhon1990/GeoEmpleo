@@ -39,6 +39,10 @@ const publicBrands={
   'elcorteingles-oficial':['/brands/el-corte-ingles.svg','El Corte Inglés'],
   'adecco-oficial':['/brands/adecco.svg','Adecco'],
   'gigroup-oficial':['/brands/gi-group.jpg','Gi Group'],
+  'sacyr-oficial':['/brands/sacyr.png','Sacyr'],
+  'stef-oficial':['/brands/stef.png','STEF'],
+  'mercadona-oficial':['/brands/mercadona.webp','Mercadona'],
+  'acciona-oficial':['/brands/acciona.svg','Acciona'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {

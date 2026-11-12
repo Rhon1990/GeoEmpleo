@@ -22,6 +22,8 @@ import {accentureListingUrl} from './connectors/accenture.ts';
 import {elCorteInglesListingUrl} from './connectors/el-corte-ingles.ts';
 import {adeccoListingUrl} from './connectors/adecco.ts';
 import {giGroupListingUrl} from './connectors/gi-group.ts';
+import {mercadonaListingUrl} from './connectors/mercadona.ts';
+import {accionaListingUrl} from './connectors/acciona.ts';
 import {capgeminiListingUrl} from './connectors/capgemini.ts';
 
 const definitions: readonly SourceDefinition[] = [
@@ -152,6 +154,16 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:adeccoListingUrl,licenseUrl:null},
   {id:'gigroup-oficial',name:'Gi Group · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:giGroupListingUrl,licenseUrl:null},
+  {id:'mercadona-oficial',name:'Mercadona · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:mercadonaListingUrl,licenseUrl:null},
+  {id:'crit-oficial',name:'Grupo Crit · portal oficial',countryCode:'ES',kind:'ats',status:'candidate',
+    endpoint:'https://jobs.grupo-crit.com/',licenseUrl:null},
+  {id:'sacyr-oficial',name:'Sacyr · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:'https://sacyrpeople.sacyr.com/jobs?country=Spain&query=&split_view=true',licenseUrl:null},
+  {id:'acciona-oficial',name:'Acciona · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:accionaListingUrl,licenseUrl:null},
+  {id:'ferrovial-oficial',name:'Ferrovial · portal oficial',countryCode:'ES',kind:'ats',status:'authorization_required',
+    endpoint:'https://www.ferrovial.com/es/empleo/ofertas/?country_job_posting=Espa%C3%B1a',licenseUrl:null},
 ];
 
 export interface SourceRegistry {

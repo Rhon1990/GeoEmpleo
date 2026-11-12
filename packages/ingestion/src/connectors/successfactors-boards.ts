@@ -49,4 +49,10 @@ export const successFactorsBoards: readonly SuccessFactorsBoard[] = [
     listingFormat:'tile',pageSize:10,maxPages:80,paginationOffsetParam:'startrow',retryTransientErrors:true,skipVerifiedClosed:true,
     requireCityMentionInTitle:true,excludedJobPathPattern:/^\/fundacion-once\/job\/[^/]+\/\d+\/$/,
   },
+  {
+    sourceId:'stef-oficial',hostname:'apply.stef.jobs',employer:'STEF',
+    listingPath:'/search/?createNewAlert=false&q=&locationsearch=',jobPathPattern,
+    category:'transporte',categoryLabel:'Transporte y logística',sourceLabel:'STEF · empleo oficial',
+    pageSize:20,maxPages:20,paginationOffsetParam:'startrow',
+  },
 ];
