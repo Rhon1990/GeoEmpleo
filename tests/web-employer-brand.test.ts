@@ -41,6 +41,7 @@ const publicBrands={
   'gigroup-oficial':['/brands/gi-group.jpg','Gi Group'],
   'sacyr-oficial':['/brands/sacyr.png','Sacyr'],
   'stef-oficial':['/brands/stef.png','STEF'],
+  'mercadona-oficial':['/brands/mercadona.webp','Mercadona'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {

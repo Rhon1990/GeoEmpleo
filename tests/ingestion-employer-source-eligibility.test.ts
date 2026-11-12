@@ -20,9 +20,9 @@ test('las seis fuentes empresariales solicitadas quedan inventariadas con URL HT
   }
 });
 
-test('Sacyr y STEF están activas tras comprobar su contrato completo',()=>{
+test('Mercadona, Sacyr y STEF están activas tras comprobar su contrato completo',()=>{
   assert.equal(sourceRegistry.get('sacyr-oficial')?.status,'active');
-  assert.equal(sourceRegistry.get('mercadona-oficial')?.status,'candidate');
+  assert.equal(sourceRegistry.get('mercadona-oficial')?.status,'active');
   assert.equal(sourceRegistry.get('crit-oficial')?.status,'candidate');
   assert.equal(sourceRegistry.get('acciona-oficial')?.status,'candidate');
   assert.equal(sourceRegistry.get('ferrovial-oficial')?.status,'authorization_required');
