@@ -41,7 +41,7 @@ const publicBrands={
   'gigroup-oficial':['/brands/gi-group.jpg','Gi Group'],
   'sacyr-oficial':['/brands/sacyr.png','Sacyr'],
   'stef-oficial':['/brands/stef.png','STEF'],
-  'mercadona-oficial':['/brands/mercadona.webp','Mercadona'],
+  'mercadona-oficial':['/brands/mercadona.svg','Mercadona'],
   'acciona-oficial':['/brands/acciona.svg','Acciona'],
 };
 

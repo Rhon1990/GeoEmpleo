@@ -51,7 +51,7 @@ const employerBrands={
   'gigroup-oficial':{src:'/brands/gi-group.jpg',alt:'Gi Group'},
   'sacyr-oficial':{src:'/brands/sacyr.png',alt:'Sacyr'},
   'stef-oficial':{src:'/brands/stef.png',alt:'STEF'},
-  'mercadona-oficial':{src:'/brands/mercadona.webp',alt:'Mercadona'},
+  'mercadona-oficial':{src:'/brands/mercadona.svg',alt:'Mercadona'},
   'acciona-oficial':{src:'/brands/acciona.svg',alt:'Acciona'},
 };
 export const neutralBrand={src:'/brands/geoempleo-neutral.svg',alt:'GeoEmpleo360'};
