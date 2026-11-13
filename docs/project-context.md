@@ -2,7 +2,9 @@
 
 ## Descubrimiento orgánico — 13/11/2026
 
-La portada usa el dominio canónico `https://geoempleo360.com/`, metadatos de título y descripción para empleo en España, Open Graph, datos `WebSite`, un favicon PNG rastreable derivado de la marca Ruta G y el logotipo completo para enlaces compartidos. El texto público describe las fuentes y el mapa sin afirmar cobertura exhaustiva. `robots.txt` anuncia `sitemap.xml`.
+La portada usa el dominio canónico `https://geoempleo360.com/`, título de pestaña `Geoempleo360`, descripción para empleo en España, Open Graph, datos `WebSite`, un favicon PNG cuadrado y transparente adaptado del archivo de marca aportado por el usuario y el logotipo completo para enlaces compartidos. El texto público describe las fuentes y el mapa sin afirmar cobertura exhaustiva. `robots.txt` anuncia `sitemap.xml`.
+
+La portada incluye la etiqueta HTML de verificación para la propiedad de prefijo `https://geoempleo360.com/` en Google Search Console. La verificación por GA4 no sirve porque la etiqueta de Analytics se carga tras el consentimiento; no se modifica ese comportamiento. La etiqueta de Search Console debe permanecer en el `<head>` para conservar la propiedad verificada.
 
 El build estático crea `/empleo/{region}/` y `/empleo/sector/{categoria}/` solo para grupos con diez o más ofertas del catálogo que recibió el build. Cada página presenta hasta veinte anuncios recientes con título, anunciante, localidad, fecha disponible, fuente, enlace original y acceso a la búsqueda del mapa. La portada conserva sus filtros superiores y no muestra un directorio de zonas y sectores en el pie; el sitemap incluye únicamente las páginas generadas más la portada. El build diario y el despliegue manual regeneran estas páginas desde el catálogo público vigente; no modifican `data/calls.json`, conectores ni futuras ofertas. No se publica `JobPosting` en páginas de listados o en URLs `?oferta=`. La indexación, el snippet y el ranking dependen del buscador y se medirán en Search Console.
 
