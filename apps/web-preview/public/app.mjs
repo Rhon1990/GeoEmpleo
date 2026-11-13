@@ -110,7 +110,6 @@ const featuredCounter=document.querySelector('#mobile-zone-offers-counter');
 const featuredPrevious=document.querySelector('#featured-previous');
 const featuredNext=document.querySelector('#featured-next');
 const featuredCarousel=createMobileOfferCarousel();
-let featuredScrollFrame=null;
 let featuredSyncing=false;
 let featuredActiveSlot=0;
 let featuredOffers=[];
@@ -129,19 +128,23 @@ newSinceListButton.addEventListener('click',showNewOffers);
 document.querySelector('#new-filter-clear').addEventListener('click',()=>{newOnly=false;render();});
 featuredPrevious.addEventListener('click',()=>moveMobileCarousel(-1));
 featuredNext.addEventListener('click',()=>moveMobileCarousel(1));
-featuredCard.addEventListener('scroll',()=>{
-  if(featuredSyncing||featuredScrollFrame!==null)return;
-  featuredScrollFrame=requestAnimationFrame(()=>{
-    featuredScrollFrame=null;
-    if(!featuredCard.clientWidth)return;
-    const nextSlot=Math.round(featuredCard.scrollLeft/featuredCard.clientWidth);
-    const delta=nextSlot-featuredActiveSlot;
-    if(!delta)return;
-    const state=featuredCarousel.move(delta);
-    updateMobileCarouselControls(state);
-    renderMobileCarouselSlides(state);
+function settleMobileCarousel() {
+  if(featuredSyncing||!featuredCard.clientWidth)return;
+  const nextSlot=Math.round(featuredCard.scrollLeft/featuredCard.clientWidth);
+  const delta=nextSlot-featuredActiveSlot;
+  if(!delta)return;
+  const state=featuredCarousel.move(delta);
+  updateMobileCarouselControls(state);
+  renderMobileCarouselSlides(state);
+}
+if('onscrollend' in featuredCard)featuredCard.addEventListener('scrollend',settleMobileCarousel);
+else {
+  let scrollTimer;
+  featuredCard.addEventListener('scroll',()=>{
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(settleMobileCarousel,180);
   });
-});
+}
 const activeGeography = () => searchGeography(origin,radiusSelect.value,Boolean(location.value));
 
 function element(tag, text, className) {

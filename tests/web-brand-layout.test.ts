@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the STEF logo contrast release', () => {
+test('stylesheet cache key identifies the mobile carousel release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the STEF logo contrast release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261113-stef-logo-contrast(?:&|$)/,
+    /(?:[?&]v=)20261113-mobile-cards-detail(?:&|$)/,
   );
 });
 
@@ -359,7 +359,8 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(mobileRules,/\.mobile-carousel-navigation\{[^}]*display:flex[^}]*align-items:center/);
   assert.match(mobileRules,/\.mobile-offer-carousel\{[^}]*display:block/);
   assert.match(mobileRules,/\.mobile-offer-track\{[^}]*overflow-x:auto[^}]*scroll-snap-type:x mandatory/);
-  assert.match(mobileRules,/\.mobile-offer-slide\{[^}]*scroll-snap-align:start/);
+  assert.match(mobileRules,/\.mobile-offer-slide\{[^}]*scroll-snap-align:center/);
+  assert.match(mobileRules,/\.mobile-featured-offer \.job-card\{[^}]*height:auto;min-height:220px/);
   assert.match(mobileRules,/\.mobile-carousel-arrow\{[^}]*min-width:44px[^}]*min-height:44px[^}]*border:0[^}]*background:transparent/);
   assert.doesNotMatch(mobileRules,/\.mobile-carousel-arrow\{[^}]*border-radius/);
   assert.match(css,/\.carousel-arrow-icon\{[^}]*width:24px[^}]*height:24px/);
@@ -387,6 +388,7 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(app,/slides\.offers\.map\(call\s*=>\s*\{[\s\S]*mobile-offer-slide/);
   assert.match(app,/featuredPrevious\.addEventListener\('click'/);
   assert.match(app,/featuredNext\.addEventListener\('click'/);
+  assert.match(app,/featuredCard\.addEventListener\('scrollend',settleMobileCarousel\)/);
   assert.match(app,/featuredCard\.addEventListener\('scroll'/);
 });
 
