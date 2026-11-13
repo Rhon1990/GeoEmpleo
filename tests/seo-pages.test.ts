@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import {mkdtemp,mkdir,readFile,writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {test} from 'node:test';
+import {gzipSync} from 'node:zlib';
+import {buildStaticSite} from '../tools/build-static-site.mjs';
+
+test('el build publica páginas útiles y un sitemap solo para grupos con ofertas',async()=>{
+  const root=await mkdtemp(join(tmpdir(),'geoempleo-seo-'));
+  const source=join(root,'public'),output=join(root,'hosting');
+  await mkdir(join(source,'data'),{recursive:true});
+  await writeFile(join(source,'index.html'),'<html lang="es"><head></head><body><a href="/publicar">Publicar oferta</a><!--SEO_DIRECTORY--></body></html>');
+  const calls=Array.from({length:11},(_,i)=>({id:`job-${i}`,kind:'job',title:i===0?'<script>alert(1)</script>':'Operario',employer:'Empresa real',city:'Villacastín',region:'Castilla y León',province:'Segovia',category:'industria',categoryLabel:'Industria',source:'ECYL',sourceUrl:`https://example.com/jobs/${i}`,publishedAt:'2026-11-12',dateKind:'published'}));
+  calls.push({id:'solo',kind:'job',title:'Oferta única',employer:'Otra',city:'Madrid',province:'Madrid',region:'Comunidad de Madrid',category:'cultura',categoryLabel:'Cultura',source:'Portal',sourceUrl:'https://example.com/solo',publishedAt:'2026-11-10',dateKind:'published'});
+  const catalog=JSON.stringify({checkedAt:'2026-11-13T04:01:00Z',calls});
+  await writeFile(join(source,'data','calls.json'),catalog);
+  const placesPath=join(root,'places.gz');
+  await writeFile(placesPath,gzipSync(JSON.stringify({places:[{name:'Villacastín',label:'Villacastín, Segovia',aliases:[],postalCodes:['40150']}]})));
+  await buildStaticSite({sourceDir:source,placesGzipPath:placesPath,outputDir:output,config:{googleMapsApiKey:'restricted'}});
+  const region=await readFile(join(output,'empleo','castilla-y-leon','index.html'),'utf8');
+  const sector=await readFile(join(output,'empleo','sector','industria','index.html'),'utf8');
+  const sitemap=await readFile(join(output,'sitemap.xml'),'utf8');
+  const home=await readFile(join(output,'index.html'),'utf8');
+  assert.match(region,/Ofertas de empleo en Castilla y León/);
+  assert.match(region,/rel="canonical" href="https:\/\/geoempleo360\.com\/empleo\/castilla-y-leon\/"/);
+  assert.match(region,/&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
+  assert.doesNotMatch(region,/<script>alert\(1\)<\/script>/);
+  assert.match(region,/\?city=Castilla\+y\+Le%C3%B3n/);
+  assert.match(region,/https:\/\/example\.com\/jobs\/0/);
+  assert.match(sector,/\?category=industria/);
+  assert.match(sitemap,/https:\/\/geoempleo360\.com\/empleo\/castilla-y-leon\//);
+  assert.doesNotMatch(sitemap,/comunidad-de-madrid|\/cultura\//);
+  assert.match(home,/href="\/empleo\/sector\/industria\/"/);
+  assert.doesNotMatch(home,/href="\/empleo\/comunidad-de-madrid\/"/);
+  assert.equal(await readFile(join(output,'data','calls.json'),'utf8'),catalog);
+});

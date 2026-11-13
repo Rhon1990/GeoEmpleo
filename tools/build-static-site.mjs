@@ -1,10 +1,11 @@
 import {cp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
 import {gunzipSync} from 'node:zlib';
-import {basename,join,resolve} from 'node:path';
+import {basename,dirname,join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parseEnv} from 'node:util';
 import {shardPlaces} from '../apps/web-preview/public/static-data.mjs';
 import {publicAdSenseConfig,publicMapConfig} from '../apps/web-preview/config.mjs';
+import {seoPages} from './seo-pages.mjs';
 
 const projectRoot=fileURLToPath(new URL('../',import.meta.url));
 const excluded=new Set(['publish.html','publish.mjs','manage.html','manage.mjs','submission.css']);
@@ -24,7 +25,10 @@ export async function buildStaticSite({sourceDir,placesGzipPath,outputDir,config
   const indexPath=join(outputDir,'index.html');
   const index=await readFile(indexPath,'utf8');
   if(!index.includes('<html lang="es">')||!index.includes('href="/publicar"'))throw new TypeError('Estructura de la página no reconocida');
-  await writeFile(indexPath,index.replace('<html lang="es">','<html lang="es" data-delivery="static">').replace(/ nonce="__CSP_NONCE__"/g,'').replace('<a href="/publicar">Publicar oferta</a>','').replaceAll('El área visible se consulta al servidor','El área visible filtra el catálogo'));
+  const seo=seoPages(catalog.calls,catalog.checkedAt);
+  await writeFile(indexPath,index.replace('<html lang="es">','<html lang="es" data-delivery="static">').replace(/ nonce="__CSP_NONCE__"/g,'').replace('<a href="/publicar">Publicar oferta</a>','').replaceAll('El área visible se consulta al servidor','El área visible filtra el catálogo').replace('<!--SEO_DIRECTORY-->',seo.directory));
+  for(const page of seo.pages){const path=join(outputDir,page.path.slice(1),'index.html');await mkdir(dirname(path),{recursive:true});await writeFile(path,page.html);}
+  await writeFile(join(outputDir,'sitemap.xml'),seo.sitemap);
   const publisherId=config?.adsense?.publisherId;
   const slotId=config?.adsense?.slotId;
   const validPublisher=typeof publisherId==='string'&&/^ca-pub-\d{16}$/.test(publisherId);
