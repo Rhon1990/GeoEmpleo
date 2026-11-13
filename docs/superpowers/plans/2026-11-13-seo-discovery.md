@@ -4,7 +4,7 @@
 
 **Goal:** Improve GeoEmpleo360's search appearance and publish crawlable regional and sector pages without changing any offer.
 
-**Architecture:** Keep the existing static Firebase build. The home page provides search metadata and a crawlable brand asset; a small build-time module renders only region and sector pages backed by the catalog that the protected workflow already downloads from production. The generated directory and sitemap share exactly the same eligible-page list.
+**Architecture:** Keep the existing static Firebase build. The home page provides search metadata and a crawlable brand asset; a small build-time module renders only region and sector pages backed by the catalog that the protected workflow already downloads from production. The sitemap lists exactly the eligible pages; the home page keeps its existing filters and footer without a directory, per the user's preview feedback.
 
 **Tech Stack:** HTML, CSS, Node.js 24 ESM, Node test runner, Firebase Hosting.
 
@@ -23,9 +23,9 @@
 
 **Files:** create `tools/seo-pages.mjs`, `apps/web-preview/public/seo.css`, `tests/seo-pages.test.ts`; modify `tools/build-static-site.mjs`, `apps/web-preview/public/index.html`, `tests/static-delivery.test.ts`.
 
-- [ ] **Step 1: Write failing tests** for a catalog with 11 jobs in one region and sector plus one hostile title. Assert pages `/empleo/castilla-y-leon/index.html` and `/empleo/sector/industria/index.html` exist, use distinct titles/canonicals, escape the title, show dates and source links, and link back to `/?city=Castilla+y+Le%C3%B3n` or `/?category=industria`. Assert a group with fewer than 10 jobs produces no page, no sitemap entry and no home-directory link. Assert catalog bytes are unchanged.
+- [ ] **Step 1: Write failing tests** for a catalog with 11 jobs in one region and sector plus one hostile title. Assert pages `/empleo/castilla-y-leon/index.html` and `/empleo/sector/industria/index.html` exist, use distinct titles/canonicals, escape the title, show dates and source links, and link back to `/?city=Castilla+y+Le%C3%B3n` or `/?category=industria`. Assert a group with fewer than 10 jobs produces no page or sitemap entry, and the home page shows no directory. Assert catalog bytes are unchanged.
 - [ ] **Step 2: Run** `node --test tests/seo-pages.test.ts tests/static-delivery.test.ts`; expect the new assertions to fail.
-- [ ] **Step 3: Implement** `seo-pages.mjs` as a pure page descriptor/HTML generator plus a writer called by `buildStaticSite`. Derive groups from actual `calls`; exclude the country label `España`, missing category, and malformed source URLs. Generate stable accent-free slugs, reject slug collisions, HTML/XML-escape all catalog fields, sort by published/detected date then ID, and display at most 20 jobs per page with honest date labels. Use only factual title, company, municipality, source and dates. Generate HTML for pages with at least 10 offers, a home directory, and a sitemap from the same descriptors. Add small responsive `seo.css` and one placeholder in the home footer that the static build replaces with the generated directory.
+- [ ] **Step 3: Implement** `seo-pages.mjs` as a pure page descriptor/HTML generator plus a writer called by `buildStaticSite`. Derive groups from actual `calls`; exclude the country label `España`, missing category, and malformed source URLs. Generate stable accent-free slugs, reject slug collisions, HTML/XML-escape all catalog fields, sort by published/detected date then ID, and display at most 20 jobs per page with honest date labels. Use only factual title, company, municipality, source and dates. Generate HTML for pages with at least 10 offers and a sitemap from the same descriptors. Add small responsive `seo.css` while preserving the existing home footer and filters.
 - [ ] **Step 4: Run** `node --test tests/seo-pages.test.ts tests/static-delivery.test.ts tests/web-seo-metadata.test.ts`; expect all pass. Commit the generator, integration and tests.
 
 ### Task 3: Product context, regression and protected publication

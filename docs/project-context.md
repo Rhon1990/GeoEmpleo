@@ -1,5 +1,11 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Descubrimiento orgánico — 13/11/2026
+
+La portada usa el dominio canónico `https://geoempleo360.com/`, metadatos de título y descripción para empleo en España, Open Graph, datos `WebSite`, un favicon PNG rastreable derivado de la marca Ruta G y el logotipo completo para enlaces compartidos. El texto público describe las fuentes y el mapa sin afirmar cobertura exhaustiva. `robots.txt` anuncia `sitemap.xml`.
+
+El build estático crea `/empleo/{region}/` y `/empleo/sector/{categoria}/` solo para grupos con diez o más ofertas del catálogo que recibió el build. Cada página presenta hasta veinte anuncios recientes con título, anunciante, localidad, fecha disponible, fuente, enlace original y acceso a la búsqueda del mapa. La portada conserva sus filtros superiores y no muestra un directorio de zonas y sectores en el pie; el sitemap incluye únicamente las páginas generadas más la portada. El build diario y el despliegue manual regeneran estas páginas desde el catálogo público vigente; no modifican `data/calls.json`, conectores ni futuras ofertas. No se publica `JobPosting` en páginas de listados o en URLs `?oferta=`. La indexación, el snippet y el ranking dependen del buscador y se medirán en Search Console.
+
 ## Ajuste de ancho en tableta — 13/11/2026
 
 Las cuadrículas de `body` y `main` usan una columna `minmax(0,1fr)`. Así, entre 781 y 1100 px, el contenido intrínseco de la búsqueda y los filtros no ensancha la página ni recorta la mitad derecha del mapa. La distribución móvil bajo 780 px y las dos columnas de ordenador se conservan. Este ajuste es solo de CSS; no cambia mapa, ofertas ni búsqueda.

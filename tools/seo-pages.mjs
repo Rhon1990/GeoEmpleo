@@ -43,8 +43,7 @@ export function seoPages(calls,checkedAt){
   ].sort((a,b)=>a.label.localeCompare(b.label,'es'));
   const paths=new Set();
   for(const page of pages){if(paths.has(page.path))throw new TypeError(`Ruta SEO duplicada: ${page.path}`);paths.add(page.path);}
-  const directory=pages.length?`<details class="seo-directory"><summary>Explora empleo por zona y sector</summary><nav aria-label="Explorar empleo por zona y sector"><ul>${pages.map(page=>`<li><a href="${page.path}">${escapeHtml(`Empleo en ${page.label}`)}</a></li>`).join('')}</ul></nav></details>`:'';
   const lastmod=validDate(checkedAt)?`<lastmod>${checkedAt.slice(0,10)}</lastmod>`:'';
   const sitemap=`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['/',...pages.map(page=>page.path)].map(path=>`<url><loc>${origin}${path}</loc>${lastmod}</url>`).join('\n')}\n</urlset>\n`;
-  return {pages:pages.map(page=>({path:page.path,html:pageHtml(page,checkedAt)})),directory,sitemap};
+  return {pages:pages.map(page=>({path:page.path,html:pageHtml(page,checkedAt)})),sitemap};
 }

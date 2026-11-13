@@ -31,7 +31,7 @@ test('el build publica páginas útiles y un sitemap solo para grupos con oferta
   assert.match(sector,/\?category=industria/);
   assert.match(sitemap,/https:\/\/geoempleo360\.com\/empleo\/castilla-y-leon\//);
   assert.doesNotMatch(sitemap,/comunidad-de-madrid|\/cultura\//);
-  assert.match(home,/href="\/empleo\/sector\/industria\/"/);
+  assert.doesNotMatch(home,/Explora empleo por zona y sector|href="\/empleo\/sector\/industria\/"/);
   assert.doesNotMatch(home,/href="\/empleo\/comunidad-de-madrid\/"/);
   assert.equal(await readFile(join(output,'data','calls.json'),'utf8'),catalog);
 });

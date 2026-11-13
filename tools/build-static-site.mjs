@@ -26,7 +26,7 @@ export async function buildStaticSite({sourceDir,placesGzipPath,outputDir,config
   const index=await readFile(indexPath,'utf8');
   if(!index.includes('<html lang="es">')||!index.includes('href="/publicar"'))throw new TypeError('Estructura de la página no reconocida');
   const seo=seoPages(catalog.calls,catalog.checkedAt);
-  await writeFile(indexPath,index.replace('<html lang="es">','<html lang="es" data-delivery="static">').replace(/ nonce="__CSP_NONCE__"/g,'').replace('<a href="/publicar">Publicar oferta</a>','').replaceAll('El área visible se consulta al servidor','El área visible filtra el catálogo').replace('<!--SEO_DIRECTORY-->',seo.directory));
+  await writeFile(indexPath,index.replace('<html lang="es">','<html lang="es" data-delivery="static">').replace(/ nonce="__CSP_NONCE__"/g,'').replace('<a href="/publicar">Publicar oferta</a>','').replaceAll('El área visible se consulta al servidor','El área visible filtra el catálogo').replace('<!--SEO_DIRECTORY-->',''));
   for(const page of seo.pages){const path=join(outputDir,page.path.slice(1),'index.html');await mkdir(dirname(path),{recursive:true});await writeFile(path,page.html);}
   await writeFile(join(outputDir,'sitemap.xml'),seo.sitemap);
   const publisherId=config?.adsense?.publisherId;
