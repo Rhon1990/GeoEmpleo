@@ -155,7 +155,7 @@ test('index.html parses without HTML errors', () => {
 });
 
 test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordmark', () => {
-  assert.match(html, /<title>GeoEmpleo360 · Tu próximo trabajo, más cerca<\/title>/);
+  assert.match(html, /<title>Ofertas de empleo en España \| GeoEmpleo360<\/title>/);
   assert.match(html, /aria-label="GeoEmpleo360, inicio"/);
   assert.match(publishHtml, /<title>Publicar una oferta · GeoEmpleo360<\/title>/);
   assert.match(manageHtml, /<title>Gestionar mi oferta · GeoEmpleo360<\/title>/);
@@ -216,7 +216,7 @@ test('header uses the Ruta G mark and split wordmark', () => {
   assert.equal(textContent(empleo).trim(), 'empleo');
 });
 
-test('favicon encodes the Ruta G route, destination and destination dot', () => {
+test('favicon PNG derives from the Ruta G route, destination and destination dot', async () => {
   const favicon = allElements.find(
     element => element.tagName === 'link' && attribute(element, 'rel') === 'icon',
   );
@@ -224,8 +224,8 @@ test('favicon encodes the Ruta G route, destination and destination dot', () => 
 
   const href = attribute(favicon, 'href');
   assert.ok(href);
-  assert.ok(href.startsWith('data:image/svg+xml,'));
-  const faviconSvg = parseFragment(decodeURIComponent(href.slice(href.indexOf(',') + 1)));
+  assert.equal(href, '/favicon.png');
+  const faviconSvg = parseFragment(await readFile(new URL('../apps/web-preview/public/favicon.svg', import.meta.url), 'utf8'));
   const route = elements(faviconSvg).find(
     element => element.tagName === 'path' && attribute(element, 'd') === 'M42.5 18.2A18 18 0 1 0 42 39.1',
   );
