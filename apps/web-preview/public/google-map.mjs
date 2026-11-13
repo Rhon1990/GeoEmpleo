@@ -153,6 +153,10 @@ export async function createGoogleMap(host,config,events,initial={}) {
   }
   map.addListener('zoom_changed',renderMarkers);
   map.addListener('idle',()=>events.onViewport?.());
+  await new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>{listener.remove();reject(new Error('El mapa tardó demasiado en iniciar.'));},20000);
+    const listener=map.addListener('idle',()=>{clearTimeout(timer);listener.remove();events.onReady?.();resolve();});
+  });
   return {
     select,
     preview,

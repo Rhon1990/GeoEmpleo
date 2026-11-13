@@ -18,6 +18,7 @@ test('sirve todos los módulos importados por la aplicación web',() => {
   assert.deepEqual(previewAsset('/retention.mjs'),['retention.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/static-data.mjs'),['static-data.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/mobile-offer-carousel.mjs'),['mobile-offer-carousel.mjs','text/javascript; charset=utf-8']);
+  assert.deepEqual(previewAsset('/map-loading.mjs'),['map-loading.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/adsense.mjs'),['adsense.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/territories.mjs'),['territories.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/job-projections.mjs'),['job-projections.mjs','text/javascript; charset=utf-8']);
@@ -30,6 +31,7 @@ test('sirve los recursos visuales usados por las tarjetas y el carrusel móvil',
   assert.deepEqual(previewAsset('/brands/jobandtalent.png'),['brands/jobandtalent.png','image/png']);
   assert.deepEqual(previewAsset('/icons/material-symbols/arrow-back-ios.svg'),['icons/material-symbols/arrow-back-ios.svg','image/svg+xml']);
   assert.deepEqual(previewAsset('/icons/material-symbols/arrow-forward-ios.svg'),['icons/material-symbols/arrow-forward-ios.svg','image/svg+xml']);
+  assert.deepEqual(previewAsset('/icons/material-symbols/progress-activity.svg'),['icons/material-symbols/progress-activity.svg','image/svg+xml']);
   assert.equal(previewAsset('/brands/no-existe.svg'),undefined);
   assert.equal(previewAsset('/icons/material-symbols/../styles.css'),undefined);
 });

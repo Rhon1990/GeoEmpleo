@@ -1,6 +1,7 @@
 import {searchCalls,groupSimilarOffers} from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
-import {createGoogleMap,markerGroups} from './google-map.mjs';
+import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261113-map-loader';
+import {createMapLoadingState} from './map-loading.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261108-filter-state';
 import {requestLocationWithPermission} from './location-permission.mjs';
@@ -85,6 +86,15 @@ const mapHost = document.querySelector('#google-map');
 const mapState = document.querySelector('#map-state');
 const mapMessage = document.querySelector('#map-message');
 const loadMapButton = document.querySelector('#load-map');
+const mapLoading = document.querySelector('#map-loading');
+const mapLoadingLabel = document.querySelector('#map-loading-label');
+const mapPanel = document.querySelector('#map-panel');
+const mapLoadingState = createMapLoadingState(mode => {
+  mapLoading.hidden=mode==='hidden';
+  mapLoading.dataset.phase=mode;
+  mapLoadingLabel.textContent=mode==='refresh'?'Actualizando ofertas…':'Cargando mapa y ofertas…';
+  mapPanel.setAttribute('aria-busy',String(mode==='initial'));
+});
 const mapIsVisible = () => mapHost.clientWidth>0&&mapHost.clientHeight>0;
 const workspace = document.querySelector('.workspace');
 const viewButtons = document.querySelectorAll('[data-workspace-view]');
@@ -555,6 +565,7 @@ function render() {
     mapController=null;
     mapHost.replaceChildren(mapState);
     mapMessage.textContent='El mapa no está disponible ahora. Puedes seguir consultando las ofertas en la lista.';
+    mapLoadingState.fail();
   });
   syncJobInteraction(interaction.snapshot());
   const mapped=mapResults.length;
@@ -595,13 +606,13 @@ function updateFacets(facets) {
 
 const search=createViewportSearch({
   fetchImpl:siteFetch,
-  onLoading(){list.setAttribute('aria-busy','true');document.querySelector('#search-status').textContent='Actualizando ofertas de la zona…';},
+  onLoading(){list.setAttribute('aria-busy','true');document.querySelector('#search-status').textContent='Actualizando ofertas de la zona…';mapLoadingState.searchStarted();},
   onResult(result){
     if(!Array.isArray(result.jobs)||!Array.isArray(result.mapJobs)||!result.facets)throw new Error('Respuesta de catálogo inválida');
     calls=result.jobs;page=result;loadError=false;
     updateFacets(result.facets);
     document.querySelector('#snapshot-label').textContent=`Catálogo actualizado el ${formatDateTime(result.checkedAt)} · ${result.sources.length} fuentes`;
-    list.setAttribute('aria-busy','false');render();
+    list.setAttribute('aria-busy','false');render();mapLoadingState.searchFinished();
     if(result.total===0)void analyticsController.track('search_no_results');
     document.querySelector('#results').scrollTop=0;
     document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
@@ -611,7 +622,7 @@ const search=createViewportSearch({
     }
   },
   onError(){
-    calls=[];page=null;loadError=true;list.setAttribute('aria-busy','false');render();
+    calls=[];page=null;loadError=true;list.setAttribute('aria-busy','false');render();mapLoadingState.searchFinished();
     document.querySelector('#result-count').textContent='No se pudo actualizar esta zona';
     document.querySelector('#search-status').textContent='Comprueba la conexión y pulsa Buscar oportunidades para reintentar.';
   },
@@ -766,12 +777,13 @@ document.querySelector('#use-location').addEventListener('click',()=>{void analy
 async function startMap({interactive=false}={}) {
   if(mapStarting||mapController)return;
   const revision=originRevision;
+  mapLoadingState.retry();
   mapStarting=true;loadMapButton.disabled=true;
   try {
     const response=await fetch('/config.json');
     if(!response.ok)throw new Error('Configuración local no disponible.');
     const config=await response.json();
-    if(!config.googleMapsApiKey){mapMessage.textContent='Falta la configuración del mapa. Puedes buscar en la lista o elegir una localidad.';requestSearch({immediate:true,allowList:true});return;}
+    if(!config.googleMapsApiKey){mapMessage.textContent='Falta la configuración del mapa. Puedes buscar en la lista o elegir una localidad.';mapLoadingState.fail();requestSearch({immediate:true,allowList:true});return;}
     mapMessage.textContent='Permite tu ubicación para empezar cerca de ti; también puedes elegir una localidad.';
     const position=originRevision===revision&&(interactive||!location.value)?await useMyLocation({interactive}):null;
     mapMessage.textContent='Cargando el mapa y las ofertas de tu zona…';
@@ -780,13 +792,14 @@ async function startMap({interactive=false}={}) {
       onSelect(id){const call=calls.find(item=>item.id===id)??page?.mapJobs.find(item=>item.id===id);if(call)void showDetail(call,{panMap:false,revealCard:true});},
       onOrigin(point){originInput.value='';setOrigin(point,'Zona elegida en el mapa');},
       onViewport(){if(mapController&&mapIsVisible())requestSearch();},
+      onReady(){mapLoadingState.mapReady();},
     },{point:origin,zoom:origin?(position?.zoom??10):6});
     if(originRevision!==mapRevision){if(origin)mapController.focus(origin);else mapController.overview();}
     for(const id of ['choose-origin','search-area','show-all-map'])document.getElementById(id).disabled=false;
     render();requestSearch();
   }catch(error){
     mapMessage.textContent=`${error.message} La búsqueda en lista sigue disponible.`;
-    mapHost.replaceChildren(mapState);requestSearch({immediate:true,allowList:true});
+    mapHost.replaceChildren(mapState);mapLoadingState.fail();requestSearch({immediate:true,allowList:true});
   }finally{mapStarting=false;loadMapButton.disabled=false;}
 }
 loadMapButton.addEventListener('click',()=>{void analyticsController.track('map_action',{action:'show_map'});void startMap();});
