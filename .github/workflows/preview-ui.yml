@@ -41,7 +41,7 @@ jobs:
 
       - name: Recuperar y contrastar el catálogo público vigente
         run: |
-          node tools/prepare-daily-refresh.mjs
+          GITHUB_EVENT_NAME=workflow_dispatch node tools/prepare-daily-refresh.mjs
           for origin in https://geoempleo360.com https://geoempleo-49978.web.app; do
             node tools/validate-daily-catalog.mjs \
               --catalog apps/web-preview/public/data/calls.json \
