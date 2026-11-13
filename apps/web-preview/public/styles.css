@@ -105,9 +105,10 @@ dialog{max-width:calc(100vw - 32px)}
 .search-actions .mobile-filter-toggle{display:none}
 #mobile-clear-filters{display:none}
 .mobile-featured-offer{display:none}
-.job-card{display:flex;flex-direction:column}
-.card-open{display:flex;flex:1;flex-direction:column;align-items:stretch}
+.job-card{display:flex;flex-direction:column;height:350px}
+.card-open{display:flex;flex:1;flex-direction:column;align-items:stretch;min-height:0;overflow:hidden}
 .job-visual-frame{flex:none}
+.job-card h3{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .card-footer{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-height:68px;padding:8px 54px 8px 14px}
 .material-icon{display:inline-block;width:24px;height:24px;flex:none;background:currentColor;mask-repeat:no-repeat;mask-position:center;mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain}
 .favorite-icon{mask-image:url('/icons/material-symbols/favorite-outline.svg');-webkit-mask-image:url('/icons/material-symbols/favorite-outline.svg')}
