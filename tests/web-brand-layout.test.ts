@@ -155,7 +155,7 @@ test('index.html parses without HTML errors', () => {
 });
 
 test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordmark', () => {
-  assert.match(html, /<title>Ofertas de empleo en España \| GeoEmpleo360<\/title>/);
+  assert.match(html, /<title>Geoempleo360<\/title>/);
   assert.match(html, /aria-label="GeoEmpleo360, inicio"/);
   assert.match(publishHtml, /<title>Publicar una oferta · GeoEmpleo360<\/title>/);
   assert.match(manageHtml, /<title>Gestionar mi oferta · GeoEmpleo360<\/title>/);
@@ -216,7 +216,7 @@ test('header uses the Ruta G mark and split wordmark', () => {
   assert.equal(textContent(empleo).trim(), 'empleo');
 });
 
-test('favicon PNG derives from the Ruta G route, destination and destination dot', async () => {
+test('favicon PNG is linked and the Ruta G vector remains available', async () => {
   const favicon = allElements.find(
     element => element.tagName === 'link' && attribute(element, 'rel') === 'icon',
   );

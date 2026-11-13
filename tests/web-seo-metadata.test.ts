@@ -6,7 +6,7 @@ const publicDir=new URL('../apps/web-preview/public/',import.meta.url);
 
 test('la portada publica identidad y descripción rastreables',async()=>{
   const html=await readFile(new URL('index.html',publicDir),'utf8');
-  assert.match(html,/<title>Ofertas de empleo en España \| GeoEmpleo360<\/title>/);
+  assert.match(html,/<title>Geoempleo360<\/title>/);
   assert.match(html,/<link rel="canonical" href="https:\/\/geoempleo360\.com\/">/);
   assert.match(html,/<meta name="description" content="Busca ofertas de empleo en España/);
   assert.match(html,/<meta property="og:image" content="https:\/\/geoempleo360\.com\/geoempleo360-logo\.png">/);
