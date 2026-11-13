@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Indicador de carga del mapa — 13/11/2026
+
+La vista del mapa muestra desde el HTML inicial «Cargando mapa y ofertas…» con un SVG local de Google Material Symbols. El indicador desaparece cuando Google Maps emite su primer `idle` y la primera consulta de ofertas termina de aplicar los puntos, incluso si la respuesta válida está vacía. Las consultas posteriores muestran solo una señal pequeña sobre el mapa, sin ocultarlo. Los fallos retiran el indicador y conservan el mensaje o la búsqueda en lista existentes; el primer `idle` tiene un límite de 20 segundos. Se respeta `prefers-reduced-motion`. El cambio no modifica el catálogo ni la ingesta. Véase la [especificación aprobada](superpowers/specs/2026-11-13-map-loading-indicator-design.md).
+
 ## Carrusel de ofertas en móvil — 13/11/2026
 
 El carrusel bajo el mapa se muestra hasta 780 px. Sus tarjetas tienen una altura mínima compacta que crece si el contenido lo necesita; la lista móvil ajusta la altura de cada tarjeta a su contenido. Por encima de 780 px se mantiene la distribución de lista y mapa. Cada tarjeta del carrusel ocupa el ancho del carril y se ajusta al centro. La selección y el reemplazo de sus tres tarjetas virtuales ocurren al terminar el desplazamiento, con una espera breve como alternativa para navegadores sin `scrollend`; los gestos rápidos y lentos no interrumpen la pista a mitad del movimiento. En el detalle móvil, la etiqueta de procedencia puede ocupar varias líneas sin desplazar el diálogo horizontalmente. Entre 781 y 1100 px, la búsqueda pasa a una segunda fila del encabezado para evitar desbordes. Este cambio es de presentación y no altera las ofertas ni su orden.

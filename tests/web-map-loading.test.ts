@@ -4,7 +4,7 @@ import {createMapLoadingState} from '../apps/web-preview/public/map-loading.mjs'
 
 test('la primera carga espera mapa y catálogo; las siguientes no tapan el mapa',() => {
   const states:string[]=[];
-  const loading=createMapLoadingState(state=>states.push(state));
+  const loading=createMapLoadingState((state:string)=>states.push(state));
   assert.equal(states.at(-1),'initial');
 
   loading.searchStarted();
@@ -21,7 +21,7 @@ test('la primera carga espera mapa y catálogo; las siguientes no tapan el mapa'
 
 test('el fallo retira el indicador y el reintento reinicia la carga',() => {
   const states:string[]=[];
-  const loading=createMapLoadingState(state=>states.push(state));
+  const loading=createMapLoadingState((state:string)=>states.push(state));
   loading.searchStarted();
   loading.fail();
   assert.equal(states.at(-1),'hidden');

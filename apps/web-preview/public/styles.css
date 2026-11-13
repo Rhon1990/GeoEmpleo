@@ -212,6 +212,14 @@ dialog{max-width:calc(100vw - 32px)}
 .remove-saved-offer{color:var(--favorite)}
 .saved-row .remove-saved-offer{color:var(--favorite)}
 .saved-offer-feedback{flex-basis:100%;min-width:0}
+.map-loading{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;gap:12px;padding:18px;background:#e9efedee;color:var(--petrol-dark);font-size:14px;font-weight:650;text-align:center}
+.map-loading[hidden]{display:none}
+.map-loading[data-phase="refresh"]{inset:70px 12px auto auto;gap:7px;padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;box-shadow:0 3px 12px #0002;font-size:12px;pointer-events:none}
+.map-loading-icon{width:28px;height:28px;mask-image:url('/icons/material-symbols/progress-activity.svg');-webkit-mask-image:url('/icons/material-symbols/progress-activity.svg');animation:map-loading-spin 1s linear infinite}
+.map-loading[data-phase="refresh"] .map-loading-icon{width:18px;height:18px}
+@keyframes map-loading-spin{to{transform:rotate(360deg)}}
+@media(max-width:780px){.map-loading[data-phase="initial"]{inset:0 0 auto;height:60vh;height:60dvh;min-height:380px}}
+@media(prefers-reduced-motion:reduce){.map-loading-icon{animation:none}}
 @media(max-width:780px){
   .detail-secondary-actions>a,.detail-secondary-actions>button{min-height:64px;padding:7px 4px;gap:4px;flex-direction:column;font-size:10px;line-height:1.15}
 }
