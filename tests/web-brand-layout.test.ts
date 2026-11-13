@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the final card fixes release', () => {
+test('stylesheet cache key identifies the equal card layout release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the final card fixes release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261111-final-card-fixes(?:&|$)/,
+    /(?:[?&]v=)20261113-equal-card-layout(?:&|$)/,
   );
 });
 
