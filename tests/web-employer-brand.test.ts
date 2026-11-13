@@ -72,6 +72,12 @@ test('los logotipos claros de Adecco y Deloitte conservan contraste en tarjetas 
  }
 });
 
+test('el logotipo blanco de Sacyr conserva contraste en tarjetas y detalle',()=>{
+ const css=readFileSync(resolve('apps/web-preview/public/styles.css'),'utf8');
+ assert.match(css,/\.job-visual:has\(img\[src\$="sacyr\.png"\]\)\{background:#[0-9a-f]{6}\}/);
+ assert.match(css,/\.detail-brand img\[src\$="sacyr\.png"\]\{background:#[0-9a-f]{6}/);
+});
+
 test('la página atribuye las ofertas de Adecco al portal oficial',()=>{
  const html=readFileSync(resolve('apps/web-preview/public/index.html'),'utf8');
  assert.match(html,/href="https:\/\/www\.adecco\.com\/es-es\/ofertas-trabajo"[^>]*>Adecco<\/a>/);
