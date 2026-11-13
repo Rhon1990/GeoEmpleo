@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Ajuste de ancho en tableta — 13/11/2026
+
+Las cuadrículas de `body` y `main` usan una columna `minmax(0,1fr)`. Así, entre 781 y 1100 px, el contenido intrínseco de la búsqueda y los filtros no ensancha la página ni recorta la mitad derecha del mapa. La distribución móvil bajo 780 px y las dos columnas de ordenador se conservan. Este ajuste es solo de CSS; no cambia mapa, ofertas ni búsqueda.
+
 ## Indicador de carga del mapa — 13/11/2026
 
 La vista del mapa muestra desde el HTML inicial «Cargando mapa y ofertas…» con un SVG local de Google Material Symbols. El indicador desaparece cuando Google Maps emite su primer `idle` y la primera consulta de ofertas termina de aplicar los puntos, incluso si la respuesta válida está vacía. Las consultas posteriores muestran solo una señal pequeña sobre el mapa, sin ocultarlo. Los fallos retiran el indicador y conservan el mensaje o la búsqueda en lista existentes; el primer `idle` tiene un límite de 20 segundos. Se respeta `prefers-reduced-motion`. El cambio no modifica el catálogo ni la ingesta. Véase la [especificación aprobada](superpowers/specs/2026-11-13-map-loading-indicator-design.md).
