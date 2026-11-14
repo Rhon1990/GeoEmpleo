@@ -3,11 +3,6 @@ const slotPattern=/^\d{6,20}$/;
 const requestedSlots=new WeakSet();
 const slotObservers=new WeakMap();
 
-export function adInsertionIndex(resultCount,config) {
-  if(config?.enabled!==true||!Number.isInteger(resultCount)||resultCount<9)return null;
-  return 8;
-}
-
 export function validAdSensePublisher(publisherId) {
   return typeof publisherId==='string'&&publisherPattern.test(publisherId);
 }
@@ -39,7 +34,7 @@ export function requestAdSlot(slot,config,windowObject=globalThis) {
   if(!slot||config?.enabled!==true||!validAdSensePublisher(config.publisherId)||!slotPattern.test(config.slotId)||requestedSlots.has(slot))return false;
   slot.dataset.adClient=config.publisherId;
   slot.dataset.adSlot=config.slotId;
-  slot.dataset.adFormat='auto';
+  slot.dataset.adFormat='horizontal';
   slot.dataset.fullWidthResponsive='true';
   slot.style.display='block';
   try {
@@ -54,8 +49,9 @@ export function requestAdSlot(slot,config,windowObject=globalThis) {
 export function watchAdStatus(slot,container,{MutationObserverClass=globalThis.MutationObserver}={}) {
   if(!slot||!container||typeof MutationObserverClass!=='function')return false;
   const observer=new MutationObserverClass(()=>{
-    if(slot.dataset.adStatus==='filled')container.hidden=false;
-    else if(slot.dataset.adStatus==='unfilled')container.hidden=true;
+    if(container.contains?.(slot)===false)return;
+    if(slot.dataset.adStatus==='filled'){delete container.dataset.pending;container.hidden=false;}
+    else if(slot.dataset.adStatus==='unfilled'){delete container.dataset.pending;container.hidden=true;}
   });
   observer.observe(slot,{attributes:true,attributeFilter:['data-ad-status']});
   slotObservers.set(slot,observer);
