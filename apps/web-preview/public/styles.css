@@ -65,6 +65,11 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 .ad-unit{grid-column:1/-1;align-self:stretch;border:1px solid var(--line);border-radius:12px;background:#f8faf9;padding:12px}
 .ad-unit[hidden]{display:none}
 .ad-unit-label{display:block;margin-bottom:7px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+#footer-ad{grid-column:1;grid-row:3;width:min(100%,970px);min-width:0;margin:0 auto;padding:8px 18px;border:0;border-top:1px solid var(--line);border-radius:0;background:var(--paper)}
+#footer-ad .adsbygoogle{display:block;max-width:100%;overflow:hidden}
+#footer-ad[data-pending="true"]{position:absolute;width:min(100%,970px);visibility:hidden;pointer-events:none}
+#footer-ad+.site-footer{grid-row:4}
+@media(max-width:780px){#footer-ad{width:100%;padding:8px 18px}}
 .categories{flex-wrap:nowrap;overflow-x:auto;min-width:0;scrollbar-width:thin}
 .filter-controls{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
 .employer-filter-label{display:flex;align-items:center;gap:7px;white-space:nowrap;color:var(--muted);font-size:11px}

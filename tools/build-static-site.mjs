@@ -32,8 +32,8 @@ export async function buildStaticSite({sourceDir,placesGzipPath,outputDir,config
   const publisherId=config?.adsense?.publisherId;
   const slotId=config?.adsense?.slotId;
   const validPublisher=typeof publisherId==='string'&&/^ca-pub-\d{16}$/.test(publisherId);
-  const enabled=config?.adsense?.enabled===true&&validPublisher&&typeof slotId==='string'&&/^\d{6,20}$/.test(slotId);
-  const adsense={enabled,...(validPublisher?{publisherId}:{}),...(enabled?{slotId}:{})};
+  const validSlot=validPublisher&&typeof slotId==='string'&&/^\d{6,20}$/.test(slotId);
+  const adsense={enabled:false,...(validPublisher?{publisherId}:{}),...(validSlot?{slotId}:{})};
   const publicConfig={...config,adsense};
   await writeFile(join(outputDir,'config.json'),JSON.stringify(analyticsConfig?{...publicConfig,firebaseAnalytics:analyticsConfig}:publicConfig));
   const adsTxtPath=join(outputDir,'ads.txt');

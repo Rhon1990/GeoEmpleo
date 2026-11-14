@@ -12,7 +12,8 @@ import {offerIdFromUrl,shareableOfferUrl} from './search-share.mjs?v=20261108-of
 import {createRetentionStore} from './retention.mjs';
 import {siteFetch} from './static-data.mjs?v=20261110-mobile-zone-carousel';
 import {createAnalyticsController,isProductionAnalyticsHost,loadFirebaseAnalytics} from './analytics.mjs';
-import {adInsertionIndex,loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
+import {loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
+import {observeAdsToggle} from './ad-toggle.mjs';
 import {selectableTerritories} from './territories.mjs';
 import {createMobileOfferCarousel,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261111-national-carousel-performance';
 
@@ -22,8 +23,38 @@ const analyticsPanel=document.querySelector('#analytics-consent-panel');
 const adPrivacySettings=document.querySelector('#ad-privacy-settings');
 let adsenseConfig={enabled:false};
 let adsensePublisherReady=false;
-let adContainer=null;
+const adContainer=document.querySelector('#footer-ad');
 let adSlotRequested=false;
+let adRevision=0;
+let activeAds=false;
+async function applyAdsEnabled(enabled) {
+  if(enabled&&activeAds&&adSlotRequested)return;
+  const revision=++adRevision;
+  adContainer.hidden=true;
+  delete adContainer.dataset.pending;
+  if(!enabled||!validAdSensePublisher(adsenseConfig.publisherId)||!adsenseConfig.slotId){
+    activeAds=false;
+    adsensePublisherReady=false;
+    adPrivacySettings.hidden=true;
+    adSlotRequested=false;
+    const replacement=document.createElement('ins');
+    replacement.className='adsbygoogle';
+    replacement.setAttribute('aria-label','Anuncio');
+    adContainer.querySelector('.adsbygoogle')?.replaceWith(replacement);
+    return;
+  }
+  adsensePublisherReady=await loadAdSensePublisher(adsenseConfig.publisherId);
+  if(revision!==adRevision||!adsensePublisherReady)return;
+  activeAds=true;
+  adPrivacySettings.hidden=false;
+  if(adSlotRequested)return;
+  const slot=adContainer.querySelector('.adsbygoogle');
+  watchAdStatus(slot,adContainer);
+  adContainer.dataset.pending='true';
+  adContainer.hidden=false;
+  adSlotRequested=requestAdSlot(slot,{...adsenseConfig,enabled:true});
+  if(!adSlotRequested){delete adContainer.dataset.pending;adContainer.hidden=true;}
+}
 document.querySelector('#analytics-consent').hidden=false;
 analyticsPanel.hidden=Boolean(analyticsController.getPreference());
 document.querySelector('#privacy-settings').addEventListener('click',()=>{analyticsPanel.hidden=!analyticsPanel.hidden;});
@@ -41,13 +72,7 @@ document.querySelector('#analytics-reject').addEventListener('click',async()=>{
 void fetch('/config.json').then(response=>response.ok?response.json():null).then(config=>{
   if(config?.firebaseAnalytics&&isProductionAnalyticsHost(window.location.hostname))analyticsController.setConfig(config.firebaseAnalytics);
   adsenseConfig=config?.adsense??{enabled:false};
-  if(adsenseConfig.enabled===true&&validAdSensePublisher(adsenseConfig.publisherId)){
-    void loadAdSensePublisher(adsenseConfig.publisherId).then(loaded=>{
-      adsensePublisherReady=loaded;
-      adPrivacySettings.hidden=!loaded;
-      render();
-    });
-  }
+  if(config?.firebaseAnalytics&&isProductionAnalyticsHost(window.location.hostname)&&validAdSensePublisher(adsenseConfig.publisherId)&&adsenseConfig.slotId)void observeAdsToggle(config.firebaseAnalytics,enabled=>void applyAdsEnabled(enabled));
   if(analyticsController.getPreference()==='accepted')return analyticsController.initializeFromPreference().then(()=>analyticsController.track('page_view'));
   if(!analyticsController.getPreference())analyticsPanel.hidden=false;
   return undefined;
@@ -513,20 +538,6 @@ function visibleCards(results) {
   });
 }
 
-function adUnit() {
-  if(adContainer)return adContainer;
-  adContainer=element('aside',undefined,'ad-unit');
-  adContainer.hidden=true;
-  adContainer.setAttribute('aria-label','Publicidad');
-  adContainer.append(element('span','Publicidad','ad-unit-label'));
-  const slot=document.createElement('ins');
-  slot.className='adsbygoogle';
-  slot.style.display='block';
-  slot.setAttribute('aria-label','Anuncio');
-  adContainer.append(slot);
-  return adContainer;
-}
-
 function render() {
   const geography=activeGeography();
   const results=searchCalls(calls,geography);
@@ -534,11 +545,7 @@ function render() {
   if(geography.origin)results.sort((a,b)=>distanceKm(geography.origin,a.location?.point)-distanceKm(geography.origin,b.location?.point));
   const newResults=results.filter(call=>retention.isNew(call));
   const displayed=newOnly?newResults:results;
-  const insertAt=adInsertionIndex(displayed.length,adsenseConfig);
-  const cards=insertAt!==null&&adsensePublisherReady
-    ? [...visibleCards(displayed.slice(0,insertAt)),adUnit(),...visibleCards(displayed.slice(insertAt))]
-    : visibleCards(displayed);
-  list.replaceChildren(...cards);
+  list.replaceChildren(...visibleCards(displayed));
   renderMobileOfferCarousel(mapResults);
   newSinceButton.hidden=!retention.previousVisitAt()||newResults.length===0;
   newSinceButton.textContent=`Novedades (${newResults.length})`;
@@ -546,12 +553,6 @@ function render() {
   newSinceListButton.hidden=newSinceButton.hidden||newOnly;
   newSinceListButton.textContent=`${newResults.length} ${newResults.length===1?'publicada o detectada':'publicadas o detectadas'} desde mi última visita`;
   document.querySelector('#new-filter-clear').hidden=!newOnly;
-  if(insertAt!==null&&adsensePublisherReady&&!adSlotRequested){
-    const slot=adContainer?.querySelector('.adsbygoogle');
-    watchAdStatus(slot,adContainer);
-    adSlotRequested=true;
-    requestAdSlot(slot,adsenseConfig);
-  }
   const countPresentation=resultCountPresentation(page,{hasBounds:Boolean(searchBounds),radiusKm:geography.radiusKm,radiusCount:mapResults.length});
   document.querySelector('#result-count').textContent=countPresentation.title;
   document.querySelector('#result-scope').textContent=countPresentation.scope;
