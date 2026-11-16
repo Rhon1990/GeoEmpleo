@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the offer highlight release', () => {
+test('stylesheet cache key identifies the mobile novelties release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the offer highlight release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261116-no-pin-label(?:&|$)/,
+    /(?:[?&]v=)20261116-mobile-novelties(?:&|$)/,
   );
 });
 
@@ -362,6 +362,10 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(ruleForSelector(css,'#new-filter-clear,#new-since-list'),/color:var\(--petrol\)/);
   assert.match(ruleForSelector(css,'.mobile-featured-offer'),/display:none/);
   const mobileRules=mediaBlocksForMaxWidth(css,780).join('\n');
+  const noveltyRule=mobileRules.match(/\.mobile-featured-heading #new-since\{[^}]*\}/)?.[0]??'';
+  assert.match(noveltyRule,/background:#e8f0f2/);
+  assert.match(noveltyRule,/border-radius:999px/);
+  assert.match(noveltyRule,/text-decoration:none/);
   assert.match(mobileRules,/\.mobile-featured-offer\{[^}]*display:block/);
   assert.match(mobileRules,/\.mobile-carousel-navigation\{[^}]*display:flex[^}]*align-items:center/);
   assert.match(mobileRules,/\.mobile-offer-carousel\{[^}]*display:block/);
