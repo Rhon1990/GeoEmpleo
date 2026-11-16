@@ -16,9 +16,9 @@
   <meta property="og:image" content="https://geoempleo360.com/geoempleo360-logo.png">
   <meta name="twitter:card" content="summary">
   <script type="application/ld+json" nonce="__CSP_NONCE__">{"@context":"https://schema.org","@type": "WebSite","name":"GeoEmpleo360","url":"https://geoempleo360.com/","inLanguage":"es-ES"}</script>
-  <link rel="stylesheet" href="/styles.css?v=20261116-mobile-novelties" nonce="__CSP_NONCE__"><style nonce="__CSP_NONCE__"></style>
+  <link rel="stylesheet" href="/styles.css?v=20261116-novelties-filter" nonce="__CSP_NONCE__"><style nonce="__CSP_NONCE__"></style>
   <link rel="stylesheet" href="/select-controls.css?v=20261027" nonce="__CSP_NONCE__">
-  <script type="module" src="/app.mjs?v=20261116-mobile-novelties" nonce="__CSP_NONCE__"></script>
+  <script type="module" src="/app.mjs?v=20261116-novelties-filter" nonce="__CSP_NONCE__"></script>
 </head>
 <body>
   <a class="skip-link" href="#results">Saltar a los resultados</a>
@@ -65,10 +65,11 @@
         <div id="google-map" class="dynamic-map"><div id="map-state" class="map-state"><span class="map-state-icon" aria-hidden="true">⌖</span><h3>Un punto para cada oportunidad</h3><p id="map-message">Para ver y seleccionar las ofertas necesitamos conectar tu clave de Google Maps.</p><button type="button" class="primary-button" id="load-map">Reintentar mapa</button><p class="map-state-hint">Tu ubicación se usa una sola vez para centrar el mapa; no se guarda. El área visible se consulta al servidor y se muestra con Google Maps.</p></div></div>
         <div id="map-loading" class="map-loading" data-phase="initial" role="status" aria-live="polite"><span class="material-icon map-loading-icon" aria-hidden="true"></span><span id="map-loading-label">Cargando mapa y ofertas…</span></div>
         <div id="mobile-featured-offer" class="mobile-featured-offer" hidden>
-          <div class="mobile-featured-heading"><strong id="mobile-zone-offers-title">Ofertas en esta zona</strong><div class="mobile-carousel-navigation" aria-label="Navegar por las ofertas de esta zona"><button type="button" id="featured-previous" class="mobile-carousel-arrow" aria-label="Oferta anterior"><span class="material-icon carousel-arrow-icon arrow-back-ios-icon" aria-hidden="true"></span></button><span id="mobile-zone-offers-counter" aria-live="polite"></span><button type="button" id="featured-next" class="mobile-carousel-arrow" aria-label="Oferta siguiente"><span class="material-icon carousel-arrow-icon arrow-forward-ios-icon" aria-hidden="true"></span></button></div><button type="button" id="new-since" hidden>Nuevas desde mi última visita</button></div>
+          <div class="mobile-featured-heading"><strong id="mobile-zone-offers-title">Ofertas en esta zona</strong><div class="mobile-carousel-navigation" aria-label="Navegar por las ofertas de esta zona"><button type="button" id="featured-previous" class="mobile-carousel-arrow" aria-label="Oferta anterior"><span class="material-icon carousel-arrow-icon arrow-back-ios-icon" aria-hidden="true"></span></button><span id="mobile-zone-offers-counter" aria-live="polite"></span><button type="button" id="featured-next" class="mobile-carousel-arrow" aria-label="Oferta siguiente"><span class="material-icon carousel-arrow-icon arrow-forward-ios-icon" aria-hidden="true"></span></button></div></div>
           <div class="mobile-offer-carousel"><div id="featured-card" class="mobile-offer-track" aria-label="Ofertas visibles en el mapa"></div></div>
           <p class="mobile-carousel-hint">Desliza horizontalmente o usa las flechas</p>
         </div>
+        <button type="button" id="new-since" hidden>Nuevas desde mi última visita</button>
         <div class="map-footer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg><div><strong>Ubicaciones municipales aproximadas</strong><p id="map-footnote">Los puntos agrupan ofertas de la misma localidad. Las distancias son aproximadas, en línea recta, y no indican la dirección del puesto.</p></div></div>
       </aside>
     </section>

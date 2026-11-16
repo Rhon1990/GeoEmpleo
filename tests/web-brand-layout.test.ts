@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the mobile novelties release', () => {
+test('stylesheet cache key identifies the novelties filter release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the mobile novelties release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261116-mobile-novelties(?:&|$)/,
+    /(?:[?&]v=)20261116-novelties-filter(?:&|$)/,
   );
 });
 
@@ -362,7 +362,7 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(ruleForSelector(css,'#new-filter-clear,#new-since-list'),/color:var\(--petrol\)/);
   assert.match(ruleForSelector(css,'.mobile-featured-offer'),/display:none/);
   const mobileRules=mediaBlocksForMaxWidth(css,780).join('\n');
-  const noveltyRule=mobileRules.match(/\.mobile-featured-heading #new-since\{[^}]*\}/)?.[0]??'';
+  const noveltyRule=mobileRules.match(/#new-since\{[^}]*\}/)?.[0]??'';
   assert.match(noveltyRule,/background:#e8f0f2/);
   assert.match(noveltyRule,/border-radius:999px/);
   assert.match(noveltyRule,/text-decoration:none/);
@@ -402,6 +402,16 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(app,/featuredNext\.addEventListener\('click'/);
   assert.match(app,/featuredCard\.addEventListener\('scrollend',settleMobileCarousel\)/);
   assert.match(app,/featuredCard\.addEventListener\('scroll'/);
+});
+
+test('mobile novedades remains available when the map has no offer carousel',()=>{
+  const featured=allElements.find(element=>attribute(element,'id')==='mobile-featured-offer')!;
+  const button=allElements.find(element=>attribute(element,'id')==='new-since')!;
+  const footnote=allElements.find(element=>hasClass(element,'map-footer'))!;
+  const siblings=elements(featured.parentNode!);
+  assert.equal(button.parentNode,featured.parentNode);
+  assert.ok(siblings.indexOf(featured)<siblings.indexOf(button));
+  assert.ok(siblings.indexOf(button)<siblings.indexOf(footnote));
 });
 
 test('Material Symbols muestra corazón, compartir, navegación y más opciones sin botones circulares',async()=>{

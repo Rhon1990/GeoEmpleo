@@ -53,3 +53,20 @@ test('el servidor local aplica el filtro de empresa al total nacional y al mapa'
  assert.deepEqual(page.jobs.map(item=>item.id),['direct-company']);
  assert.deepEqual(page.facets.employers.find(item=>item.id==='empresa-distinta'),{id:'empresa-distinta',label:'Empresa distinta'});
 }));
+test('novedades filtra el catálogo completo antes del límite de 300 y actualiza los puntos',()=>fixture(async(_store,path)=>{
+ const old=Array.from({length:300},(_,i)=>({...job(`old-${i}`,[-1,38]),publishedAt:'2026-10-01'}));
+ const fresh=[{...job('fresh-map',[-1,38]),publishedAt:'2026-10-20'},{...job('fresh-list',null),publishedAt:'2026-10-21'}];
+ await writeFile(path,JSON.stringify({checkedAt:'2026-10-22',calls:[...old,...fresh]}));
+ const store=createJobStore(path);
+ const params=new URLSearchParams({since:'2026-10-15T10:00:00.000Z',bounds:'-2,37,0,39'});
+ const all=await store.query(params);
+ assert.equal(all.total,301);assert.equal(all.newTotal,1);assert.equal(all.jobs.length,300);
+ params.set('onlyNew','1');
+ const news=await store.query(params);
+ assert.equal(news.total,1);assert.deepEqual(news.jobs.map(item=>item.id),['fresh-map']);
+ assert.deepEqual(news.mapJobs.map((item:{id:string})=>item.id),['fresh-map']);
+ params.delete('bounds');
+ const national=await store.query(params);
+ assert.equal(national.total,2);assert.deepEqual(national.jobs.map(item=>item.id),['fresh-list','fresh-map']);
+ await assert.rejects(store.query(new URLSearchParams({onlyNew:'1'})),/fecha de visita/i);
+}));

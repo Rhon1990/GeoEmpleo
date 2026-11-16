@@ -9,8 +9,8 @@ import {resolveReferencePlace} from './reference-places.mjs';
 import {beginNewSearch,captureDetailPosition,createJobInteraction,finishDetailInteraction,restoreJobFocus} from './job-interaction.mjs?v=20261116-detail-close-reset';
 import {createWorkspaceView,createDisclosure} from './workspace-view.mjs';
 import {offerIdFromUrl,shareableOfferUrl} from './search-share.mjs?v=20261108-offer-menu-copy';
-import {createRetentionStore} from './retention.mjs';
-import {siteFetch} from './static-data.mjs?v=20261110-mobile-zone-carousel';
+import {createRetentionStore} from './retention.mjs?v=20261116-novelties-filter';
+import {siteFetch} from './static-data.mjs?v=20261116-novelties-filter';
 import {createAnalyticsController,isProductionAnalyticsHost,loadFirebaseAnalytics} from './analytics.mjs';
 import {loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 import {observeAdsToggle} from './ad-toggle.mjs';
@@ -165,11 +165,11 @@ const showNewOffers=()=>{
   newOnly=true;
   void analyticsController.track('new_offers_viewed');
   workspaceView.select('jobs');
-  render();
+  requestSearch({immediate:true,force:true});
 };
 newSinceButton.addEventListener('click',showNewOffers);
 newSinceListButton.addEventListener('click',showNewOffers);
-document.querySelector('#new-filter-clear').addEventListener('click',()=>{beginNewSearch(interaction,document.querySelector('#results'));newOnly=false;render();});
+document.querySelector('#new-filter-clear').addEventListener('click',()=>{beginNewSearch(interaction,document.querySelector('#results'));requestSearch({immediate:true,force:true,resetNewOnly:true});});
 featuredPrevious.addEventListener('click',()=>moveMobileCarousel(-1));
 featuredNext.addEventListener('click',()=>moveMobileCarousel(1));
 function settleMobileCarousel() {
@@ -559,23 +559,24 @@ function render() {
   const geography=activeGeography();
   const results=searchCalls(calls,geography);
   const mapResults=visibleMapJobs(page,geography.origin,geography.radiusKm);
-  if(geography.origin)results.sort((a,b)=>distanceKm(geography.origin,a.location?.point)-distanceKm(geography.origin,b.location?.point));
-  const newResults=results.filter(call=>retention.isNew(call));
-  const displayed=newOnly?newResults:results;
-  list.replaceChildren(...visibleCards(displayed));
+  if(geography.origin&&!newOnly)results.sort((a,b)=>distanceKm(geography.origin,a.location?.point)-distanceKm(geography.origin,b.location?.point));
+  const newResults=newOnly?results:results.filter(call=>retention.isNew(call));
+  list.replaceChildren(...visibleCards(results));
   renderMobileOfferCarousel(mapController?mapResults:[]);
-  newSinceButton.hidden=!retention.previousVisitAt()||newResults.length===0;
-  newSinceButton.textContent=`Novedades (${newResults.length})`;
-  newSinceButton.setAttribute('aria-label',`Ver ${newResults.length} ${newResults.length===1?'oferta publicada o detectada':'ofertas publicadas o detectadas'} desde mi última visita`);
+  const newCount=geography.radiusKm!==null?visibleMapJobs(page,geography.origin,geography.radiusKm).filter(call=>retention.isNew(call)).length:page?.newTotal??newResults.length;
+  newSinceButton.hidden=newOnly||!retention.previousVisitAt()||newCount===0;
+  newSinceButton.textContent=`Novedades (${newCount})`;
+  newSinceButton.setAttribute('aria-label',`Ver ${newCount} ${newCount===1?'oferta publicada o detectada':'ofertas publicadas o detectadas'} desde mi última visita`);
   newSinceListButton.hidden=newSinceButton.hidden||newOnly;
-  newSinceListButton.textContent=`${newResults.length} ${newResults.length===1?'publicada o detectada':'publicadas o detectadas'} desde mi última visita`;
+  newSinceListButton.textContent=`${newCount} ${newCount===1?'publicada o detectada':'publicadas o detectadas'} desde mi última visita`;
   document.querySelector('#new-filter-clear').hidden=!newOnly;
   const countPresentation=resultCountPresentation(page,{hasBounds:Boolean(searchBounds),radiusKm:geography.radiusKm,radiusCount:mapResults.length});
-  document.querySelector('#result-count').textContent=countPresentation.title;
-  document.querySelector('#result-scope').textContent=countPresentation.scope;
+  const newVisibleCount=geography.radiusKm!==null?mapResults.length:page?.total??0;
+  document.querySelector('#result-count').textContent=newOnly?`${newVisibleCount.toLocaleString('es-ES')} ${newVisibleCount===1?'novedad':'novedades'} ${searchBounds?'en esta zona':'en tu búsqueda'}`:countPresentation.title;
+  document.querySelector('#result-scope').textContent=newOnly?'Publicadas o detectadas desde tu visita anterior':countPresentation.scope;
   const summary=resultSummary(results);
-  document.querySelector('#result-summary').textContent=newOnly?`${newResults.length} ${newResults.length===1?'oferta publicada o detectada':'ofertas publicadas o detectadas'} desde tu última visita entre las tarjetas cargadas`:page?.truncated?`Mostrando 300 de ${page.total} tarjetas · El mapa incluye todos los puntos`:summary;
-  document.querySelector('#empty-state').hidden=loadError||displayed.length>0||(!newOnly&&mapResults.length>0);
+  document.querySelector('#result-summary').textContent=newOnly?`Mostrando ${Math.min(newResults.length,300)} de ${newVisibleCount} novedades en tarjetas · El mapa muestra sus puntos`:page?.truncated?`Mostrando 300 de ${page.total} tarjetas · El mapa incluye todos los puntos`:summary;
+  document.querySelector('#empty-state').hidden=loadError||results.length>0||mapResults.length>0;
   const filtersActive=hasActiveSearchFilters({query:query.value,territory:location.value,category,employer,radius:radiusSelect.value,originSource});
   document.querySelector('#clear-filters').hidden=!filtersActive;
   document.querySelector('#mobile-clear-filters').hidden=!filtersActive;
@@ -592,7 +593,7 @@ function render() {
   const formatCount=value=>new Intl.NumberFormat('es-ES',{useGrouping:'always'}).format(value);
   const catalogTotal=page?.catalogTotal??page?.total??0;
   const areaTotal=page?.total??0;
-  document.querySelector('#map-footnote').textContent=`${formatCount(catalogTotal)} en el catálogo · ${formatCount(areaTotal)} en ${searchBounds?'la zona visible':'la búsqueda'} · ${formatCount(mapped)} ofertas en ${municipalities} ${municipalities===1?'punto municipal':'puntos municipales'}. Ubicaciones municipales aproximadas; no direcciones exactas.`;
+  document.querySelector('#map-footnote').textContent=`${newOnly?'Novedades: ':''}${formatCount(catalogTotal)} en el catálogo · ${formatCount(areaTotal)} en ${searchBounds?'la zona visible':'la búsqueda'} · ${formatCount(mapped)} ofertas en ${municipalities} ${municipalities===1?'punto municipal':'puntos municipales'}. Ubicaciones municipales aproximadas; no direcciones exactas.`;
   const params=new URLSearchParams();
   if(query.value)params.set('q',query.value);
   if(location.value)params.set('city',location.value);
@@ -632,7 +633,7 @@ const search=createViewportSearch({
     updateFacets(result.facets);
     document.querySelector('#snapshot-label').textContent=`Catálogo actualizado el ${formatDateTime(result.checkedAt)} · ${result.sources.length} fuentes`;
     list.setAttribute('aria-busy','false');render();mapLoadingState.searchFinished();
-    if(result.total===0)void analyticsController.track('search_no_results');
+    if(result.total===0&&!newOnly)void analyticsController.track('search_no_results');
     document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
     if(territoryFocusPending!==null){
       const territory=territoryFocusPending;territoryFocusPending=null;
@@ -646,9 +647,9 @@ const search=createViewportSearch({
   },
 });
 
-function requestSearch({immediate=false,force=false,allowList=false}={}) {
+function requestSearch({immediate=false,force=false,allowList=false,resetNewOnly=false}={}) {
   if(mapStarting&&!mapController&&!allowList)return;
-  newOnly=false;
+  if(resetNewOnly)newOnly=false;
   searchBounds=resolveSearchBounds(mapController?.bounds(),mapIsVisible(),searchBounds,territoryFocusPending!==null);
   const params=new URLSearchParams();
   if(searchBounds)params.set('bounds',searchBounds.join(','));
@@ -656,6 +657,8 @@ function requestSearch({immediate=false,force=false,allowList=false}={}) {
   if(location.value)params.set('city',location.value);
   if(category)params.set('category',category);
   if(employer)params.set('employer',employer);
+  if(retention.previousVisitAt())params.set('since',new Date(retention.previousVisitAt()).toISOString());
+  if(newOnly)params.set('onlyNew','1');
   search.request(params,{immediate,force});
 }
 
@@ -674,11 +677,12 @@ function clear() {
     origin = null;originSource='none';originInput.value = '';radiusSelect.disabled = true;
     document.querySelector('#origin-status').textContent = 'Elige una localidad o selecciona tu zona en el mapa.';
   }
-  syncCategories(); render(); requestSearch({immediate:true});
+  syncCategories(); requestSearch({immediate:true,resetNewOnly:true});
 }
 
 function setOrigin(point,label,source='manual') {
   beginNewSearch(interaction,document.querySelector('#results'));
+  newOnly=false;
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();originRevision++;
   const next=originSearchTransition(point);
@@ -831,20 +835,20 @@ function syncCategories() {
   }
 }
 
-form.addEventListener('submit',event=>{event.preventDefault();beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true});});
-location.addEventListener('change',()=>{beginNewSearch(interaction,document.querySelector('#results'));territoryFocusPending=location.value;radiusSelect.value='';void analyticsController.track('filter_used',{filter_type:'territory'});requestSearch({immediate:true,force:true});});
+form.addEventListener('submit',event=>{event.preventDefault();beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true,resetNewOnly:true});});
+location.addEventListener('change',()=>{beginNewSearch(interaction,document.querySelector('#results'));territoryFocusPending=location.value;radiusSelect.value='';void analyticsController.track('filter_used',{filter_type:'territory'});requestSearch({immediate:true,force:true,resetNewOnly:true});});
 document.querySelector('#categories').addEventListener('click',event => {
   const button = event.target.closest('[data-category]');
   if (!button) return;
   beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'category'});
-  category = button.dataset.category; syncCategories(); requestSearch({immediate:true});
+  category = button.dataset.category; syncCategories(); requestSearch({immediate:true,resetNewOnly:true});
 });
 document.querySelector('#employer-filter').addEventListener('change',event=>{
   beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'employer'});
   employer=event.currentTarget.value;
-  requestSearch({immediate:true,force:true});
+  requestSearch({immediate:true,force:true,resetNewOnly:true});
 });
 document.querySelector('#clear-filters').addEventListener('click',clear);
 document.querySelector('#mobile-clear-filters').addEventListener('click',clear);

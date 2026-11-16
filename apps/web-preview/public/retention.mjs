@@ -9,6 +9,30 @@ const spainDay=value=>{
   return `${part('year')}-${part('month')}-${part('day')}`;
 };
 
+export function isNewSince(call,previousVisit) {
+  if(!previousVisit||typeof call?.publishedAt!=='string')return false;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(call.publishedAt))return call.publishedAt>spainDay(previousVisit);
+  const published=Date.parse(call.publishedAt);
+  return Number.isFinite(published)&&published>Date.parse(previousVisit);
+}
+
+export function newestOfferFirst(left,right) {
+  const leftDate=Date.parse(left.publishedAt??'');
+  const rightDate=Date.parse(right.publishedAt??'');
+  return (Number.isFinite(rightDate)?rightDate:0)-(Number.isFinite(leftDate)?leftDate:0);
+}
+
+export function readNewOfferFilter(params) {
+  const sinceValues=params.getAll('since');
+  const onlyValues=params.getAll('onlyNew');
+  if(sinceValues.length>1||onlyValues.length>1||onlyValues.length&&onlyValues[0]!=='1')throw new TypeError('Parámetros de novedades inválidos');
+  const since=sinceValues[0]??null;
+  if(since!==null&&(since.length>40||!Number.isFinite(Date.parse(since))))throw new TypeError('Fecha de visita inválida');
+  const onlyNew=onlyValues.length===1;
+  if(onlyNew&&!since)throw new TypeError('Falta la fecha de visita');
+  return {since,onlyNew};
+}
+
 /** Guardados públicos del dispositivo; no almacena GPS ni perfiles.
  * @param {{storage?:Pick<Storage,'getItem'|'setItem'>,now?:()=>Date}} options
  */
@@ -63,12 +87,7 @@ export function createRetentionStore({storage=globalThis.localStorage,now=()=>ne
       state.offers=[{id:call.id,title:safeText(call.title),employer:safeText(call.employer),city:safeText(call.city),province:safeText(call.province),source:safeText(call.source)},...state.offers].slice(0,maxOffers);
       persist();return true;
     },
-    isNew(call) {
-      if(!previousVisit||typeof call?.publishedAt!=='string')return false;
-      if(/^\d{4}-\d{2}-\d{2}$/.test(call.publishedAt))return call.publishedAt>spainDay(previousVisit);
-      const published=Date.parse(call.publishedAt);
-      return Number.isFinite(published)&&published>Date.parse(previousVisit);
-    },
+    isNew:call=>isNewSince(call,previousVisit),
     markVisit() {state.lastVisitAt=new Date(now()).toISOString();persist();},
   };
 }

@@ -95,6 +95,20 @@ test('el total nacional no cambia al activar el mapa y distingue ofertas sin pun
   assert.equal(filtered.catalogTotal,2);
   assert.equal(filtered.catalogMappedTotal,1);
 });
+test('el catálogo estático cuenta y filtra novedades en tarjetas y mapa',async()=>{
+ const data={checkedAt:'2026-10-22',calls:[
+  {...jobs[0],id:'old',publishedAt:'2026-10-01'},
+  {...jobs[0],id:'fresh',publishedAt:'2026-10-20'},
+  {...jobs[0],id:'freshest',publishedAt:'2026-10-21'},
+ ]};
+ const fetchData=createStaticDataFetch({fetchImpl:async()=>new Response(JSON.stringify(data))});
+ const all=await(await fetchData('/api/jobs?since=2026-10-15T10%3A00%3A00.000Z')).json();
+ assert.equal(all.total,3);assert.equal(all.newTotal,2);
+ const news=await(await fetchData('/api/jobs?since=2026-10-15T10%3A00%3A00.000Z&onlyNew=1')).json();
+ assert.equal(news.total,2);assert.deepEqual(news.jobs.map((item:{id:string})=>item.id),['freshest','fresh']);
+ assert.deepEqual(news.mapJobs.map((item:{id:string})=>item.id),['freshest','fresh']);
+ await assert.rejects(fetchData('/api/jobs?onlyNew=1'),/fecha de visita/i);
+});
 
 test('el filtro de empresa agrupa McDonald’s y presenta DIA sin coincidencias de Jandía', async () => {
   const companyCatalog={checkedAt:catalog.checkedAt,calls:[
