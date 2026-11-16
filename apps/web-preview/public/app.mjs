@@ -427,6 +427,7 @@ function renderDetail(call) {
 
 async function showDetail(call,{panMap=false,revealCard=false}={}) {
   void analyticsController.track('offer_detail_opened');
+  if(newOnly&&retention.isNew(call))void analyticsController.track('new_offer_detail_opened');
   detailRequest?.abort();
   if(!detail.open)restoreDetailPosition=captureDetailPosition(document.querySelector('#results'),featuredCard);
   detailReturnJobId=call.id;

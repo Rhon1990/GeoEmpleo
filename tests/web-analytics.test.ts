@@ -119,3 +119,13 @@ test('la salida a la oferta original se mide solo con consentimiento y sin datos
   assert.equal(await controller.track('offer_original_clicked'),true);
   assert.deepEqual(h.calls.filter(([kind])=>kind==='event').map(([, ,name,params])=>[name,params]),[['offer_original_clicked',{}]]);
 });
+
+test('la apertura desde novedades solo emite un evento sin datos de oferta y exige consentimiento',async()=>{
+  const h=createHarness();
+  const controller=createAnalyticsController({config,storage:h.storage as unknown as Storage,loadSdk:async()=>h.sdk,location:{pathname:'/'} as Location});
+  assert.equal(await controller.track('new_offer_detail_opened'),false);
+  await controller.accept();
+  assert.equal(await controller.track('new_offer_detail_opened',{id:'privado'}),false);
+  assert.equal(await controller.track('new_offer_detail_opened'),true);
+  assert.deepEqual(h.calls.filter(([kind])=>kind==='event').map(([, ,name,params])=>[name,params]),[['new_offer_detail_opened',{}]]);
+});
