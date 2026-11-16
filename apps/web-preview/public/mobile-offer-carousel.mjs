@@ -1,3 +1,8 @@
+/** @param {{activeId:string|null}} state */
+export function featuredMapOfferId(state,isMobile,view) {
+  return isMobile&&view==='map'?state.activeId:null;
+}
+
 export function mobileOfferCarouselSlides(offers, state) {
   if (!state.total) return { offers: [], activeSlot: 0 };
   const start = Math.max(0, state.index - 1);

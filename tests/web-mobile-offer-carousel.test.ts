@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createMobileOfferCarousel, mobileOfferCarouselSlides } from '../apps/web-preview/public/mobile-offer-carousel.mjs';
+import { createMobileOfferCarousel, featuredMapOfferId, mobileOfferCarouselSlides } from '../apps/web-preview/public/mobile-offer-carousel.mjs';
 
 const offers = (...ids: string[]) => ids.map(id => ({ id }));
 
@@ -14,6 +14,17 @@ test('starts at the first visible offer and exposes boundaries', () => {
     hasPrevious: false,
     hasNext: true,
   });
+});
+
+test('resalta solo la oferta centrada cuando el mapa móvil está visible', () => {
+  const carousel=createMobileOfferCarousel();
+  let state=carousel.update(offers('a','b'));
+  assert.equal(featuredMapOfferId(state,true,'map'),'a');
+  assert.equal(featuredMapOfferId(state,true,'jobs'),null);
+  assert.equal(featuredMapOfferId(state,false,'map'),null);
+  state=carousel.move(1);
+  assert.equal(featuredMapOfferId(state,true,'map'),'b');
+  assert.equal(featuredMapOfferId(carousel.update([]),true,'map'),null);
 });
 
 test('preserves the active offer while it remains visible and resets otherwise', () => {

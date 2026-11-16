@@ -1,12 +1,12 @@
 import {searchCalls,groupSimilarOffers} from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
-import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261113-map-loader';
+import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261116-map-sdk-retry';
 import {createMapLoadingState} from './map-loading.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261108-filter-state';
 import {requestLocationWithPermission} from './location-permission.mjs';
 import {resolveReferencePlace} from './reference-places.mjs';
-import {clearSelectionBeforeFocusRestore,createJobInteraction,previewJobAfterFocusRestore,restoreJobFocus} from './job-interaction.mjs';
+import {beginNewSearch,captureDetailPosition,createJobInteraction,finishDetailInteraction,restoreJobFocus} from './job-interaction.mjs?v=20261116-detail-close-reset';
 import {createWorkspaceView,createDisclosure} from './workspace-view.mjs';
 import {offerIdFromUrl,shareableOfferUrl} from './search-share.mjs?v=20261108-offer-menu-copy';
 import {createRetentionStore} from './retention.mjs';
@@ -15,7 +15,7 @@ import {createAnalyticsController,isProductionAnalyticsHost,loadFirebaseAnalytic
 import {loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 import {observeAdsToggle} from './ad-toggle.mjs';
 import {selectableTerritories} from './territories.mjs';
-import {createMobileOfferCarousel,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261111-national-carousel-performance';
+import {createMobileOfferCarousel,featuredMapOfferId,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261116-mobile-featured-pin';
 
 const analyticsController=createAnalyticsController({config:null,loadSdk:()=>loadFirebaseAnalytics()});
 const retention=createRetentionStore();
@@ -94,6 +94,7 @@ let page = null;
 let loadError = false;
 let detailRequest = null;
 let detailReturnJobId = null;
+let restoreDetailPosition = null;
 let originRevision = 0;
 let mapStarting = false;
 let locating = false;
@@ -122,10 +123,12 @@ const mapLoadingState = createMapLoadingState(mode => {
 });
 const mapIsVisible = () => mapHost.clientWidth>0&&mapHost.clientHeight>0;
 const workspace = document.querySelector('.workspace');
+const mobileMapMedia=window.matchMedia('(max-width:780px)');
 const viewButtons = document.querySelectorAll('[data-workspace-view]');
 const workspaceView = createWorkspaceView(view=>{
   workspace.dataset.view=view;
   for(const button of viewButtons)button.setAttribute('aria-pressed',String(button.dataset.workspaceView===view));
+  requestAnimationFrame(()=>syncMobileFeaturedPin());
 },'map',()=>requestAnimationFrame(()=>requestSearch({immediate:true,force:true})));
 for(const button of viewButtons)button.addEventListener('click',()=>workspaceView.select(button.dataset.workspaceView));
 for(const link of document.querySelectorAll('a[href="#results"]'))link.addEventListener('click',()=>workspaceView.select('jobs'));
@@ -148,11 +151,17 @@ const featuredCarousel=createMobileOfferCarousel();
 let featuredSyncing=false;
 let featuredActiveSlot=0;
 let featuredOffers=[];
+function syncMobileFeaturedPin(state=featuredCarousel.snapshot(),previousId=null) {
+  if(previousId&&previousId!==state.activeId)interaction.clearPreview(previousId);
+  interaction.setFeatured(featuredMapOfferId(state,mobileMapMedia.matches,workspaceView.snapshot()));
+}
+mobileMapMedia.addEventListener('change',()=>syncMobileFeaturedPin());
 const newSinceButton=document.querySelector('#new-since');
 const newSinceListButton=document.querySelector('#new-since-list');
 favoritesButton.addEventListener('click',()=>{renderSaved();savedDialog.showModal();});
 document.querySelector('#close-saved').addEventListener('click',()=>savedDialog.close());
 const showNewOffers=()=>{
+  beginNewSearch(interaction,document.querySelector('#results'));
   newOnly=true;
   void analyticsController.track('new_offers_viewed');
   workspaceView.select('jobs');
@@ -160,7 +169,7 @@ const showNewOffers=()=>{
 };
 newSinceButton.addEventListener('click',showNewOffers);
 newSinceListButton.addEventListener('click',showNewOffers);
-document.querySelector('#new-filter-clear').addEventListener('click',()=>{newOnly=false;render();});
+document.querySelector('#new-filter-clear').addEventListener('click',()=>{beginNewSearch(interaction,document.querySelector('#results'));newOnly=false;render();});
 featuredPrevious.addEventListener('click',()=>moveMobileCarousel(-1));
 featuredNext.addEventListener('click',()=>moveMobileCarousel(1));
 function settleMobileCarousel() {
@@ -168,9 +177,11 @@ function settleMobileCarousel() {
   const nextSlot=Math.round(featuredCard.scrollLeft/featuredCard.clientWidth);
   const delta=nextSlot-featuredActiveSlot;
   if(!delta)return;
+  const previousId=featuredCarousel.snapshot().activeId;
   const state=featuredCarousel.move(delta);
   updateMobileCarouselControls(state);
   renderMobileCarouselSlides(state);
+  syncMobileFeaturedPin(state,previousId);
 }
 if('onscrollend' in featuredCard)featuredCard.addEventListener('scrollend',settleMobileCarousel);
 else {
@@ -364,7 +375,7 @@ function syncJobInteraction(state) {
   }
   if(state.selectedId)mapController?.select(state.selectedId,{pan:false});
   else mapController?.clearSelection();
-  mapController?.preview(state.previewId);
+  mapController?.preview(state.activeId);
 }
 
 function scrollCardIntoView(id) {
@@ -414,9 +425,10 @@ function renderDetail(call) {
   if(!detail.open) detail.showModal();
 }
 
-async function showDetail(call,{panMap=true,revealCard=false}={}) {
+async function showDetail(call,{panMap=false,revealCard=false}={}) {
   void analyticsController.track('offer_detail_opened');
   detailRequest?.abort();
+  if(!detail.open)restoreDetailPosition=captureDetailPosition(document.querySelector('#results'),featuredCard);
   detailReturnJobId=call.id;
   detail.querySelector('.public-badge').textContent=detailBadge(call);
   interaction.select(call.id);
@@ -496,9 +508,11 @@ function scrollMobileCarouselTo(behavior='auto') {
 }
 
 function moveMobileCarousel(delta) {
+  const previousId=featuredCarousel.snapshot().activeId;
   const state=featuredCarousel.move(delta);
   updateMobileCarouselControls(state);
   renderMobileCarouselSlides(state);
+  syncMobileFeaturedPin(state,previousId);
 }
 
 function renderMobileCarouselSlides(state) {
@@ -519,9 +533,11 @@ function renderMobileCarouselSlides(state) {
 function renderMobileOfferCarousel(offers) {
   const sameOffers=featuredCarousel.matches(offers);
   featuredOffers=offers;
+  const previousId=featuredCarousel.snapshot().activeId;
   const state=featuredCarousel.update(offers);
   featured.hidden=state.total===0;
   updateMobileCarouselControls(state);
+  syncMobileFeaturedPin(state,previousId);
   if(sameOffers)return;
   renderMobileCarouselSlides(state);
 }
@@ -546,7 +562,7 @@ function render() {
   const newResults=results.filter(call=>retention.isNew(call));
   const displayed=newOnly?newResults:results;
   list.replaceChildren(...visibleCards(displayed));
-  renderMobileOfferCarousel(mapResults);
+  renderMobileOfferCarousel(mapController?mapResults:[]);
   newSinceButton.hidden=!retention.previousVisitAt()||newResults.length===0;
   newSinceButton.textContent=`Novedades (${newResults.length})`;
   newSinceButton.setAttribute('aria-label',`Ver ${newResults.length} ${newResults.length===1?'oferta publicada o detectada':'ofertas publicadas o detectadas'} desde mi última visita`);
@@ -564,6 +580,7 @@ function render() {
   document.querySelector('#mobile-clear-filters').hidden=!filtersActive;
   updateMapWithoutLosingJobs(mapController,mapResults,geography.origin,geography.radiusKm,()=>{
     mapController=null;
+    renderMobileOfferCarousel([]);
     mapHost.replaceChildren(mapState);
     mapMessage.textContent='El mapa no está disponible ahora. Puedes seguir consultando las ofertas en la lista.';
     mapLoadingState.fail();
@@ -615,7 +632,6 @@ const search=createViewportSearch({
     document.querySelector('#snapshot-label').textContent=`Catálogo actualizado el ${formatDateTime(result.checkedAt)} · ${result.sources.length} fuentes`;
     list.setAttribute('aria-busy','false');render();mapLoadingState.searchFinished();
     if(result.total===0)void analyticsController.track('search_no_results');
-    document.querySelector('#results').scrollTop=0;
     document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
     if(territoryFocusPending!==null){
       const territory=territoryFocusPending;territoryFocusPending=null;
@@ -645,6 +661,7 @@ function requestSearch({immediate=false,force=false,allowList=false}={}) {
 function locationUrl() { return window.location.pathname; }
 
 function clear() {
+  beginNewSearch(interaction,document.querySelector('#results'));
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();
   territoryFocusPending=null;
@@ -660,6 +677,7 @@ function clear() {
 }
 
 function setOrigin(point,label,source='manual') {
+  beginNewSearch(interaction,document.querySelector('#results'));
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();originRevision++;
   const next=originSearchTransition(point);
@@ -766,7 +784,7 @@ originInput.addEventListener('change',()=>{
   pendingPlace=originInput.value;searchPlaces(true);
 });
 originInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();pendingPlace=originInput.value;searchPlaces(true);}});
-radiusSelect.addEventListener('change',()=>{void analyticsController.track('filter_used',{filter_type:'distance'});render();});
+radiusSelect.addEventListener('change',()=>{beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('filter_used',{filter_type:'distance'});render();});
 document.querySelector('#choose-origin').addEventListener('click',() => {
   void analyticsController.track('map_action',{action:'choose_zone'});
   mapController?.chooseOrigin(); document.querySelector('#origin-status').textContent = 'Haz clic en el mapa para situar tu zona de búsqueda.';
@@ -812,15 +830,17 @@ function syncCategories() {
   }
 }
 
-form.addEventListener('submit',event=>{event.preventDefault();void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true});});
-location.addEventListener('change',()=>{territoryFocusPending=location.value;radiusSelect.value='';void analyticsController.track('filter_used',{filter_type:'territory'});requestSearch({immediate:true,force:true});});
+form.addEventListener('submit',event=>{event.preventDefault();beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true});});
+location.addEventListener('change',()=>{beginNewSearch(interaction,document.querySelector('#results'));territoryFocusPending=location.value;radiusSelect.value='';void analyticsController.track('filter_used',{filter_type:'territory'});requestSearch({immediate:true,force:true});});
 document.querySelector('#categories').addEventListener('click',event => {
   const button = event.target.closest('[data-category]');
   if (!button) return;
+  beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'category'});
   category = button.dataset.category; syncCategories(); requestSearch({immediate:true});
 });
 document.querySelector('#employer-filter').addEventListener('change',event=>{
+  beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'employer'});
   employer=event.currentTarget.value;
   requestSearch({immediate:true,force:true});
@@ -837,15 +857,17 @@ detail.addEventListener('close',()=>{
     history.replaceState(null,'',`${url.pathname}${url.search}`);
   }
   const returnId=detailReturnJobId;detailReturnJobId=null;
-  clearSelectionBeforeFocusRestore(interaction,()=>requestAnimationFrame(()=>{
-    if(window.matchMedia('(max-width:780px)').matches&&workspaceView.snapshot()==='map') {
-      document.querySelector('#map-panel').focus({preventScroll:true});
-      return;
-    }
-    previewJobAfterFocusRestore(interaction,returnId,()=>
-      restoreJobFocus(list,returnId,document.querySelector('#results')),
-    );
-  }));
+  const restorePosition=restoreDetailPosition;restoreDetailPosition=null;
+  requestAnimationFrame(()=>{
+    finishDetailInteraction(interaction,()=>{
+      if(window.matchMedia('(max-width:780px)').matches&&workspaceView.snapshot()==='map') {
+        document.querySelector('#map-panel').focus({preventScroll:true});
+      } else {
+        restoreJobFocus(list,returnId,document.querySelector('#results'));
+      }
+    });
+    restorePosition?.();
+  });
 });
 document.querySelector('#about-button').addEventListener('click',() => about.showModal());
 document.querySelector('#close-about').addEventListener('click',() => about.close());

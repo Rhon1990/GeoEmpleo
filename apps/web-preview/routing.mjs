@@ -22,6 +22,7 @@ const previewAssets = new Map([
   ['/mobile-offer-carousel.mjs', ['mobile-offer-carousel.mjs','text/javascript; charset=utf-8']],
   ['/map-loading.mjs', ['map-loading.mjs','text/javascript; charset=utf-8']],
   ['/adsense.mjs', ['adsense.mjs','text/javascript; charset=utf-8']],
+  ['/ad-toggle.mjs', ['ad-toggle.mjs','text/javascript; charset=utf-8']],
   ['/territories.mjs', ['territories.mjs','text/javascript; charset=utf-8']],
   ['/job-projections.mjs', ['job-projections.mjs','text/javascript; charset=utf-8']],
   ['/presentation.mjs', ['presentation.mjs','text/javascript; charset=utf-8']],
@@ -37,7 +38,7 @@ const previewAssets = new Map([
 ]);
 
 const brandAssets = [
-  'accenture.svg','adecco.svg','alcampo.png','burger-king.svg','capgemini.png','carrefour.svg','clece.png','coviran.png','decathlon.png','deloitte.png','dia.png','disa.png','domusvi.png','el-corte-ingles.svg','eulen.webp','geoempleo-neutral.svg','gi-group.jpg','ilunion.jpg','indra.png','iss.png','jobandtalent.png','kfc.svg','kpmg.png','leroy-merlin.png','lidl.svg','mapfre.png','mcdonalds.svg','melia.svg','plenergy.png','quironsalud.jpg','randstad.svg','skydance.jpg','telepizza.svg','vithas.png',
+  'accenture.svg','acciona.svg','adecco.svg','alcampo.png','burger-king.svg','capgemini.png','carrefour.svg','clece.png','coviran.png','decathlon.png','deloitte.png','dia.png','disa.png','domusvi.png','el-corte-ingles.svg','eulen.webp','geoempleo-neutral.svg','gi-group.jpg','ilunion.jpg','indra.png','iss.png','jobandtalent.png','kfc.svg','kpmg.png','leroy-merlin.png','lidl.svg','mapfre.png','mcdonalds.svg','melia.svg','mercadona.svg','plenergy.png','quironsalud.jpg','randstad.svg','sacyr.png','skydance.jpg','stef.png','telepizza.svg','vithas.png',
 ];
 const materialSymbolAssets = ['arrow-back-ios.svg','arrow-forward-ios.svg','close.svg','favorite-filled.svg','favorite-outline.svg','location-on.svg','more-vert.svg','progress-activity.svg','share.svg'];
 const imageContentType = name => name.endsWith('.svg') ? 'image/svg+xml' : name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg';

@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Posición de lectura y oferta activa en el mapa — 14/11/2026
+
+La rama `codex/offer-scroll-map-highlight` conserva la posición del panel de resultados, la página móvil y el carrusel al cerrar el detalle. Las respuestas debidas al movimiento del mapa ya no llevan la lista automáticamente al inicio; una búsqueda o filtro explícito sí reinicia la lectura. Abrir una tarjeta no centra programáticamente el mapa, por lo que no dispara una nueva búsqueda de zona ni sustituye las tarjetas durante el detalle. Al cerrar el detalle se limpia la selección del clic sin perder la posición de lectura. En ordenador el pin vuelve a su estado normal; en la vista móvil de mapa se mantiene coral el pin de la tarjeta centrada del carrusel, aunque no se toque, y el resaltado sigue a la tarjeta al deslizarla. Los pines normales siguen en petróleo y «Tu zona» en amarillo; al pasar el ratón o enfocar una oferta, su pin o grupo se rellena de coral `#B84A3A`, sin superponer el título ni la empresa sobre el mapa. Las ofertas sin punto verificable siguen sin marcador. La [especificación](superpowers/specs/2026-11-14-offer-scroll-map-highlight-design.md) incorpora las correcciones del usuario del 16/11/2026.
+
 ## Publicidad controlada desde Firebase — 14/11/2026
 
 La rama codex/ads-footer-toggle mueve la unidad manual existente de AdSense a una franja no fija entre el contenido principal y el pie en móvil y ordenador. El parámetro global ads_footer_enabled de Firebase Remote Config la controla sin despliegue; su versión 1 se publicó el 14/11/2026 con valor false y se confirmó mediante lectura de Firebase CLI. El valor local inicial también es false y los errores mantienen los anuncios apagados. El bloque solo se muestra si AdSense lo marca filled, y no modifica el mapa, las ofertas ni sus conteos. El uso técnico de Remote Config emplea un identificador de instalación, descrito en privacy.html, sin activar Firebase Analytics. La activación pública requiere verificar antes el estado Ready del dominio en AdSense, los IDs reales y el mensaje europeo. Véase el diseño aprobado en docs/superpowers/specs/2026-11-14-firebase-ads-footer-design.md.
@@ -16,13 +20,21 @@ El build estático crea `/empleo/{region}/` y `/empleo/sector/{categoria}/` solo
 
 Las cuadrículas de `body` y `main` usan una columna `minmax(0,1fr)`. Así, entre 781 y 1100 px, el contenido intrínseco de la búsqueda y los filtros no ensancha la página ni recorta la mitad derecha del mapa. La distribución móvil bajo 780 px y las dos columnas de ordenador se conservan. Este ajuste es solo de CSS; no cambia mapa, ofertas ni búsqueda.
 
+La revisión a 834 px mostró tarjetas de solo 182 px dentro del panel de resultados de media pantalla. Hasta 1100 px, la lista usa una sola columna: a 834 px la tarjeta mide 377 px, mantiene el mapa a su lado y mejora la lectura sin cambiar las ofertas.
+
 ## Indicador de carga del mapa — 13/11/2026
 
 La vista del mapa muestra desde el HTML inicial «Cargando mapa y ofertas…» con un SVG local de Google Material Symbols. El indicador desaparece cuando Google Maps emite su primer `idle` y la primera consulta de ofertas termina de aplicar los puntos, incluso si la respuesta válida está vacía. Las consultas posteriores muestran solo una señal pequeña sobre el mapa, sin ocultarlo. Los fallos retiran el indicador y conservan el mensaje o la búsqueda en lista existentes; el primer `idle` tiene un límite de 20 segundos. Se respeta `prefers-reduced-motion`. El cambio no modifica el catálogo ni la ingesta. Véase la [especificación aprobada](superpowers/specs/2026-11-13-map-loading-indicator-design.md).
 
+En la revisión previa a integrar `codex/offer-scroll-map-highlight`, se detectó que un fallo de la carga de Google Maps dejaba cacheada la promesa rechazada y hacía ineficaz «Reintentar mapa». El cargador vuelve a permitir un intento nuevo tras cualquier rechazo; una prueba de regresión reproduce fallo y recuperación sin alterar el catálogo.
+
+Si el mapa falla, el carrusel móvil de «ofertas en esta zona» se oculta: sin límites visibles del mapa, ese recuento no representa una zona. La lista de ofertas sigue disponible.
+
 En móvil, la capa inicial usa la altura visible del mapa (`38dvh`, mínimo 290 px), no la altura del panel que incluye otros contenidos. El centro del indicador coincide con el centro del mapa en móvil, tableta y ordenador.
 
 ## Carrusel de ofertas en móvil — 13/11/2026
+
+Los filtros apilan empresa y categorías hasta 780 px, el mismo límite que la vista móvil. Esto mantiene el carril de categorías dentro de la pantalla a 768 px, incluso con los filtros abiertos.
 
 El carrusel bajo el mapa se muestra hasta 780 px. Sus tarjetas tienen una altura mínima compacta que crece si el contenido lo necesita; la lista móvil ajusta la altura de cada tarjeta a su contenido. Por encima de 780 px se mantiene la distribución de lista y mapa. Cada tarjeta del carrusel ocupa el ancho del carril y se ajusta al centro. La selección y el reemplazo de sus tres tarjetas virtuales ocurren al terminar el desplazamiento, con una espera breve como alternativa para navegadores sin `scrollend`; los gestos rápidos y lentos no interrumpen la pista a mitad del movimiento. En el detalle móvil, la etiqueta de procedencia puede ocupar varias líneas sin desplazar el diálogo horizontalmente. Entre 781 y 1100 px, la búsqueda pasa a una segunda fila del encabezado para evitar desbordes. Este cambio es de presentación y no altera las ofertas ni su orden.
 

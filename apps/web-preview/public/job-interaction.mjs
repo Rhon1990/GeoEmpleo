@@ -8,10 +8,17 @@ export function createJobInteraction(onChange=()=>{}) {
   let selectedId=null;
   /** @type {string|null} */
   let previewId=null;
-  const snapshot=()=>({selectedId,previewId,activeId:previewId??selectedId});
+  /** @type {string|null} */
+  let featuredId=null;
+  const snapshot=()=>({selectedId,previewId,activeId:previewId??selectedId??featuredId});
   const notify=()=>onChange(snapshot());
   return {
     snapshot,
+    /** @param {string|null} id */
+    setFeatured(id) {
+      if(featuredId===id)return;
+      featuredId=id;notify();
+    },
     /** @param {string|null} id */
     preview(id) {
       if(previewId===id)return;
@@ -36,21 +43,24 @@ export function createJobInteraction(onChange=()=>{}) {
 
 /**
  * @param {{clearSelection:()=>void}} interaction
- * @param {()=>void} restoreFocus
+ * @param {HTMLElement} results
  */
-export function clearSelectionBeforeFocusRestore(interaction,restoreFocus) {
+export function beginNewSearch(interaction,results) {
+  interaction.setFeatured(null);
   interaction.clearSelection();
-  restoreFocus();
+  results.scrollTop=0;
 }
 
 /**
- * @param {{preview:(id:string)=>void}} interaction
- * @param {string|null} id
- * @param {()=>('card'|'fallback'|'none')} restoreFocus
+ * Restore keyboard focus before clearing its transient preview and the clicked selection.
+ * @template T
+ * @param {{clearSelection:()=>void}} interaction
+ * @param {()=>T} restoreFocus
+ * @returns {T}
  */
-export function previewJobAfterFocusRestore(interaction,id,restoreFocus) {
+export function finishDetailInteraction(interaction,restoreFocus) {
   const target=restoreFocus();
-  if(target==='card'&&id!==null)interaction.preview(id);
+  interaction.clearSelection();
   return target;
 }
 
@@ -65,4 +75,21 @@ export function restoreJobFocus(list,id,fallback=null) {
   const target=cardTarget??fallback;
   target?.focus({preventScroll:true});
   return cardTarget?'card':target?'fallback':'none';
+}
+
+/**
+ * Capture the independent desktop results, mobile carousel and page positions.
+ * @param {HTMLElement} results
+ * @param {HTMLElement} carousel
+ * @param {{scrollY:number,scrollTo:(x:number,y:number)=>void}} [viewport]
+ */
+export function captureDetailPosition(results,carousel,viewport=window) {
+  const top=results.scrollTop;
+  const left=carousel.scrollLeft;
+  const y=viewport.scrollY;
+  return () => {
+    results.scrollTop=top;
+    carousel.scrollLeft=left;
+    viewport.scrollTo(0,y);
+  };
 }

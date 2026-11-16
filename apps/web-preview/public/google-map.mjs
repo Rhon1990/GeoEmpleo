@@ -61,7 +61,7 @@ export const expandedZoom=(current,fitted)=>fitted>current?fitted:current+1;
 
 export function markerVisualState(ids,selectedId,previewId) {
   const selected=selectedId!==null&&ids.includes(selectedId);
-  const previewed=!selected&&previewId!==null&&ids.includes(previewId);
+  const previewed=previewId!==null&&ids.includes(previewId);
   return {selected,previewed,zIndex:selected?100:previewed?50:1};
 }
 
@@ -77,7 +77,7 @@ export function loadSdk(key) {
     script.nonce = document.querySelector('script[nonce]')?.nonce ?? '';
     script.onerror = () => {clearTimeout(timer); reject(new Error('No se pudo cargar Google Maps.'));};
     document.head.append(script);
-  });
+  }).catch(error=>{sdkPromise=undefined;throw error;});
   return sdkPromise;
 }
 

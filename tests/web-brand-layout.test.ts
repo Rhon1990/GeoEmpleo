@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the centered mobile loader release', () => {
+test('stylesheet cache key identifies the offer highlight release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the centered mobile loader release', () =>
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261113-mobile-loader-center(?:&|$)/,
+    /(?:[?&]v=)20261116-no-pin-label(?:&|$)/,
   );
 });
 
@@ -282,11 +282,12 @@ test('muted text token meets WCAG AA contrast on white', () => {
   ]) assert.match(ruleForSelector(css, selector), /color:var\(--muted\)/, selector);
 });
 
-test('map interactions use the approved petroleum and saffron identity', () => {
+test('el mapa distingue los pines normales y la zona amarilla de la oferta coral', () => {
   assert.match(ruleForSelector(css, '.job-pin'), /background:var\(--petrol\)/);
-  assert.match(ruleForSelector(css, '.job-pin.selected'), /background:var\(--saffron\)[^}]*color:#392d0f/);
+  assert.match(lastRuleForSelector(css, '.job-pin.selected'), /background:var\(--offer-active\)[^}]*color:#fff/);
+  assert.match(lastRuleForSelector(css, '.job-pin.previewed:not(.selected)'), /background:var\(--offer-active\)/);
   assert.match(ruleForSelector(css, '.origin-pin'), /background:var\(--saffron\)[^}]*color:#392d0f/);
-  assert.match(ruleForSelector(css, '.job-card.selected'), /border-color:var\(--petrol\)/);
+  assert.match(lastRuleForSelector(css, '.job-card.selected'), /border-color:var\(--offer-active\)/);
   assert.match(googleMap, /strokeColor:'#086071'/);
   assert.match(googleMap, /fillColor:'#f5b944'/);
   assert.doesNotMatch(`${css}\n${googleMap}`, /#254631|#d5ec83|#6f8f47|#4e7950|#6ea967/i);
@@ -295,6 +296,12 @@ test('map interactions use the approved petroleum and saffron identity', () => {
 test('advanced markers use the current Google Maps click event', () => {
   assert.match(googleMap, /marker\.addEventListener\('gmp-click'/);
   assert.doesNotMatch(googleMap, /marker\.addListener\('click'/);
+});
+
+test('la oferta activa cambia a coral sin dibujar texto sobre el mapa', () => {
+  assert.match(css, /\.job-pin\.previewed:not\(\.selected\)\{background:var\(--offer-active\)/);
+  assert.doesNotMatch(css, /\.job-pin\[data-active-offer\]::after/);
+  assert.doesNotMatch(googleMap, /data-active-offer|dataset\.activeOffer/);
 });
 
 test('tablet header wraps its search without hiding controls at 800px', () => {
@@ -378,9 +385,10 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(mobileRules,/#mobile-clear-filters\{[^}]*display:inline-flex/);
   assert.match(mobileRules,/#clear-filters\{[^}]*display:none/);
   assert.match(app,/querySelector\('#mobile-clear-filters'\)\.addEventListener\('click',clear\)/);
-  assert.match(app,/import \{createMobileOfferCarousel,mobileOfferCarouselSlides\} from '\.\/mobile-offer-carousel\.mjs\?v=20261111-national-carousel-performance'/);
+  assert.match(app,/import \{createMobileOfferCarousel,featuredMapOfferId,mobileOfferCarouselSlides\} from '\.\/mobile-offer-carousel\.mjs\?v=[^']+'/);
   assert.match(app,/function renderMobileOfferCarousel\(offers\)/);
-  assert.match(app,/renderMobileOfferCarousel\(mapResults\)/);
+  assert.match(app,/renderMobileOfferCarousel\(mapController\?mapResults:\[\]\)/);
+  assert.match(app,/updateMapWithoutLosingJobs\([\s\S]*?mapController=null;[\s\S]*?renderMobileOfferCarousel\(\[\]\)/);
   assert.match(app,/const sameOffers=featuredCarousel\.matches\(offers\)/);
   assert.match(app,/if\(sameOffers\)return/);
   assert.doesNotMatch(app,/featuredCard\.replaceChildren\(\.\.\.\(results\.length\?\[card\(results\[0\]\)\]/);
@@ -668,6 +676,7 @@ test('tablet layout avoids minimum-column horizontal overflow', () => {
     /\.workspace\{[^}]*(?:grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)|flex-direction:column)/,
   );
   assert.doesNotMatch(tabletRules, /\.workspace\{[^}]*minmax\((?:4[8-9]\d|[5-9]\d\d)px/);
+  assert.match(tabletRules, /\.job-list\{[^}]*grid-template-columns:1fr/);
 });
 
 test('mobile preserves document flow with a single visible workspace panel', () => {
@@ -727,9 +736,9 @@ test('filter controls constrain horizontal scrolling to the category rail', () =
   assert.match(categories, /overscroll-behavior-inline:contain/);
 });
 
-test('mobile category rail keeps its height when filter controls stack vertically', () => {
-  const mobileRules = mediaBlockForViewport(css, 760);
-  assert.ok(mobileRules, 'Expected a responsive rule that applies at 760px');
+test('mobile category rail keeps its height and stays within the viewport at 768px', () => {
+  const mobileRules = mediaBlocksForMaxWidth(css, 780).join('\n');
+  assert.ok(mobileRules, 'Expected responsive rules that apply at 768px');
   assert.match(mobileRules, /\.filter-controls\{[^}]*flex-direction:column/);
   assert.match(mobileRules, /\.categories\{[^}]*flex:0 0 auto/);
   assert.match(mobileRules, /\.categories\{[^}]*min-height:48px/);

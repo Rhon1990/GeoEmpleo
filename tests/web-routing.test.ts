@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readdirSync} from 'node:fs';
 import { previewAsset,resolvePreviewPath } from '../apps/web-preview/routing.mjs';
 
 test('un request target malformado no termina el servidor de vista previa', () => {
@@ -20,10 +21,18 @@ test('sirve todos los módulos importados por la aplicación web',() => {
   assert.deepEqual(previewAsset('/mobile-offer-carousel.mjs'),['mobile-offer-carousel.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/map-loading.mjs'),['map-loading.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/adsense.mjs'),['adsense.mjs','text/javascript; charset=utf-8']);
+  assert.deepEqual(previewAsset('/ad-toggle.mjs'),['ad-toggle.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/territories.mjs'),['territories.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/job-projections.mjs'),['job-projections.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/location-permission.mjs'),['location-permission.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/select-controls.css'),['select-controls.css','text/css; charset=utf-8']);
+});
+
+test('la vista local sirve todos los logotipos disponibles',() => {
+  for(const name of readdirSync(new URL('../apps/web-preview/public/brands/',import.meta.url))) {
+    if(!/\.(svg|png|jpe?g|webp)$/.test(name))continue;
+    assert.ok(previewAsset(`/brands/${name}`),`Falta ruta para ${name}`);
+  }
 });
 
 test('sirve los recursos visuales usados por las tarjetas y el carrusel móvil',() => {

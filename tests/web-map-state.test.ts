@@ -45,7 +45,7 @@ test('el movimiento de cámara se decide fuera de la actualización de marcadore
   assert.deepEqual(cameraPlan([],null),{mode:'none',points:[]});
 });
 
-test('la previsualización resalta el pin sin reemplazar la selección persistente',() => {
+test('la previsualización solo cambia el estado visual del pin, sin texto de oferta',() => {
   assert.deepEqual(markerVisualState(['job-a'],'job-a','job-b'),{
     selected:true,previewed:false,zIndex:100,
   });
@@ -54,5 +54,8 @@ test('la previsualización resalta el pin sin reemplazar la selección persisten
   });
   assert.deepEqual(markerVisualState(['job-c'],'job-a','job-b'),{
     selected:false,previewed:false,zIndex:1,
+  });
+  assert.deepEqual(markerVisualState(['job-a','job-b'],'job-a','job-b'),{
+    selected:true,previewed:true,zIndex:100,
   });
 });
