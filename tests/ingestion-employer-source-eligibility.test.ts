@@ -28,3 +28,10 @@ test('Mercadona, Sacyr, Acciona y STEF están activas tras comprobar su contrato
   assert.equal(sourceRegistry.get('ferrovial-oficial')?.status,'authorization_required');
   assert.equal(sourceRegistry.get('stef-oficial')?.status,'active');
 });
+
+test('Elecnor queda activa como instantánea oficial observada',()=>{
+ const source=sourceRegistry.get('elecnor-oficial');
+ assert.equal(source?.status,'active');
+ assert.equal(source?.kind,'observed_listing');
+ assert.equal(source?.endpoint,'https://elecnor.epreselec.com/Ofertas/Ofertas.aspx');
+});

@@ -1,6 +1,6 @@
 import type {PublicCatalog,PublicJob} from './model.ts';
 import {dateInSpain} from './normalize.ts';
-export interface ReconcilePolicy {missingRetentionDays?:number;retainMissingUntilClosingDate?:boolean;supersededSourceIds?:readonly string[]}
+export interface ReconcilePolicy {missingRetentionDays?:number;retainMissingUntilClosingDate?:boolean;supersededSourceIds?:readonly string[];allowEmptySnapshot?:boolean}
 
 export function expireFailedSource(
   catalog:PublicCatalog,
@@ -30,7 +30,7 @@ function retainMissing(job:PublicJob,today:string,checkedAt:string,policy:Reconc
 }
 /** Missing jobs retain their last observation until explicit expiry; outages never close them. */
 export function reconcileSource(catalog:PublicCatalog,sourceId:string,incoming:PublicJob[],checkedAt:string,policy:ReconcilePolicy={}):PublicCatalog {
-  if(!incoming.length) throw new Error('Captura vacía: se conserva el catálogo anterior');
+  if(!incoming.length&&!policy.allowEmptySnapshot) throw new Error('Captura vacía: se conserva el catálogo anterior');
   const today=dateInSpain(checkedAt);
   const identities=new Set<string>();
   for(const job of incoming) {
@@ -40,7 +40,8 @@ export function reconcileSource(catalog:PublicCatalog,sourceId:string,incoming:P
   const superseded=new Set(policy.supersededSourceIds??[]);
   if(superseded.has(sourceId)||[...superseded].some(id=>!id))throw new TypeError('Fuente sustituida inválida');
   const retained=catalog.calls.filter(job=>!superseded.has(job.sourceId)&&
-    (job.sourceId!==sourceId || (!identities.has(job.id) && retainMissing(job,today,checkedAt,policy))));
+    (job.sourceId!==sourceId || (!identities.has(job.id) &&
+      !(incoming.length===0&&policy.allowEmptySnapshot) && retainMissing(job,today,checkedAt,policy))));
   const previousById=new Map(catalog.calls.filter(job=>job.sourceId===sourceId).map(job=>[job.id,job]));
   const current=incoming.map(job=>{
     const previous=previousById.get(job.id);

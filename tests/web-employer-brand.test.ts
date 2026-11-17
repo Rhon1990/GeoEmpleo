@@ -43,6 +43,7 @@ const publicBrands={
   'stef-oficial':['/brands/stef.png','STEF'],
   'mercadona-oficial':['/brands/mercadona.svg','Mercadona'],
   'acciona-oficial':['/brands/acciona.svg','Acciona'],
+  'elecnor-oficial':['/brands/elecnor.png','Elecnor'],
 };
 
 test('cada portal empresarial verificado muestra un asset local de su marca', () => {
@@ -97,6 +98,11 @@ test('la página atribuye Gi Group a su listado oficial',()=>{
 test('fuentes públicas y anuncios directos muestran la identidad neutra de GeoEmpleo360', () => {
   assert.deepEqual(employerBrand({sourceId:'ecyl-castilla-leon',employer:'McDonald’s'}),neutralBrand);
   assert.deepEqual(employerBrand({sourceId:'direct-employer',employer:'KFC'}),neutralBrand);
+});
+
+test('la página atribuye Elecnor a su portal oficial',()=>{
+ const html=readFileSync(resolve('apps/web-preview/public/index.html'),'utf8');
+ assert.match(html,/href="https:\/\/elecnor\.epreselec\.com\/Ofertas\/Ofertas\.aspx"[^>]*>Elecnor<\/a>/);
 });
 
 test('un error al cargar un logo cambia una sola vez a la marca neutral local',()=>{

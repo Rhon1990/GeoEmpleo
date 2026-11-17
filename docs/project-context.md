@@ -1,5 +1,13 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Elecnor en vista de prueba — 17/11/2026
+
+Las ofertas de `elecnor-oficial` usan el logotipo oficial azul y naranja servido localmente desde `brands/elecnor.png`, mediante el registro compartido de marcas de tarjetas, carrusel y detalle. Se conserva la imagen neutra como alternativa ante errores de carga.
+
+Implementación local pendiente de integración y publicación: `elecnor-oficial` usa una instantánea de 76 fichas verificadas en el portal ePreSelec, con identificadores y fechas de publicación oficiales. El adaptador `elecnor-observed.ts` reutiliza el resolver nacional y las tarjetas existentes, conserva enlaces individuales y no copia descripciones completas. La instantánea caduca el 01/12/2026 si no se revisa; la ingesta no renueva su fecha de comprobación. No es una conexión automática al portal. El catálogo de prueba contiene 2.882 registros en total. La revisión geográfica deja 57 puntos municipales y 19 fichas sin marcador. Las fichas de ámbito nacional, destinos en Angola, itinerantes, varias localidades o datos contradictorios incluyen una nota de ubicación y no reciben punto.
+
+Se corrigió la ruta local `/today-offers.mjs`, cuya ausencia impedía arrancar la interfaz de prueba. La prueba de regresión falla antes del cambio y pasa después. El servidor local se reinició y la vista de Elecnor cargó el mapa, las 76 ofertas y su logotipo oficial en el navegador de prueba. Las 15 pruebas de marcas y rutas pasaron. La fuente forma parte de la lista predeterminada del ejecutor diario. Las pruebas cubren la repetición sin renovar la fecha de revisión y la caducidad sin borrar otras fuentes. Una consulta automatizada al portal el 17/11/2026 recibió HTTP 405; la detección automática de nuevas vacantes sigue pendiente de un canal accesible. La suite Node pasó 563/563, TypeScript y OpenAPI pasaron y el build estático terminó correctamente. La publicación en producción se verificará tras integrar.
+
 ## Ventana de grupos centrada en el mapa — 17/11/2026
 
 Al abrir un grupo de ofertas ubicado en un mismo municipio, la ventana se centra según sus dimensiones reales y el área visible del mapa. El cálculo se aplica por igual en móvil, tableta y ordenador, mantiene la punta anclada al marcador y omite la actualización de zona causada únicamente por este desplazamiento de presentación, para que la ventana no se cierre al centrarse. El contenido, los filtros, los puntos y la agrupación de ofertas no cambian.

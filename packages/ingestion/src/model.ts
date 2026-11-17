@@ -10,7 +10,7 @@ export interface SourceDefinition {
   id: string;
   name: string;
   countryCode: 'ES';
-  kind: 'open_data' | 'partner_api' | 'ats' | 'agreement';
+  kind: 'open_data' | 'partner_api' | 'ats' | 'agreement' | 'observed_listing';
   status: SourceStatus;
   endpoint: string | null;
   licenseUrl: string | null;
