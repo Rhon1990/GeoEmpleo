@@ -9,7 +9,7 @@ function memoryStorage(initial:string|null=null) {
 
 test('guarda búsquedas públicas y ofertas sin coordenadas ni cuenta',()=>{
   const storage=memoryStorage();
-  const retention=createRetentionStore({storage,now:()=>new Date('2026-11-08T10:00:00Z')});
+  const retention=createRetentionStore({storage});
   assert.equal(retention.saveSearch('https://geoempleo360.com/?q=panadero&city=Madrid&lat=40.4&token=privado'),true);
   assert.deepEqual(retention.savedSearches(),[{href:'/?q=panadero&city=Madrid',label:'panadero · Madrid'}]);
   assert.equal(retention.toggleOffer({id:'job-1',title:'Panadero/a',employer:'Empresa',city:'Madrid',province:'Madrid',source:'Portal',sourceUrl:'https://example.com/1',location:{point:[-3.7,40.4]}}),true);
@@ -19,21 +19,19 @@ test('guarda búsquedas públicas y ofertas sin coordenadas ni cuenta',()=>{
   assert.deepEqual(retention.savedOffers(),[]);
 });
 
-test('nuevas desde la visita previa usa publicación o detección, no comprobación diaria',()=>{
+test('los favoritos anteriores se conservan sin guardar la última visita',()=>{
   const storage=memoryStorage(JSON.stringify({lastVisitAt:'2026-11-06T09:00:00Z',searches:[],offers:[]}));
-  const retention=createRetentionStore({storage,now:()=>new Date('2026-11-08T10:00:00Z')});
-  assert.equal(retention.isNew({publishedAt:'2026-11-07',checkedAt:'2026-11-08T08:00:00Z'}),true);
-  assert.equal(retention.isNew({publishedAt:'2026-10-01',checkedAt:'2026-11-08T08:00:00Z'}),false);
-  retention.markVisit();
-  assert.equal(retention.previousVisitAt(),'2026-11-06T09:00:00Z');
-  assert.match(storage.snapshot()??'',/2026-11-08T10:00:00\.000Z/);
+  const retention=createRetentionStore({storage});
+  assert.equal(retention.toggleOffer({id:'job-1',title:'Panadero/a',employer:'Empresa',city:'Madrid',province:'Madrid',source:'Portal'}),true);
+  assert.equal(retention.savedOffers()[0].id,'job-1');
+  assert.doesNotMatch(storage.snapshot()??'',/lastVisitAt/);
 });
 
 test('estado local inválido se ignora y guardar búsquedas vacías no crea entradas',()=>{
-  const retention=createRetentionStore({storage:memoryStorage('{mal'),now:()=>new Date('2026-11-08T10:00:00Z')});
+  const retention=createRetentionStore({storage:memoryStorage('{mal')});
   assert.equal(retention.saveSearch('https://geoempleo360.com/?lat=40.4'),false);
   assert.deepEqual(retention.savedSearches(),[]);
-  assert.equal(retention.previousVisitAt(),null);
+  assert.equal('previousVisitAt' in retention,false);
 });
 
 test('recupera únicamente metadatos públicos permitidos de guardados previos',()=>{

@@ -112,7 +112,8 @@ dialog{max-width:calc(100vw - 32px)}
 .search-actions .mobile-filter-toggle{display:none}
 #mobile-clear-filters{display:none}
 .mobile-featured-offer{display:none}
-#new-since{display:none}
+#today-offers[hidden]{display:none}
+#today-offers[aria-pressed="true"]{background:var(--saffron);border-color:var(--saffron);color:#392d0f}
 .job-card{display:flex;flex-direction:column;height:350px}
 .card-open{display:flex;flex:1;flex-direction:column;align-items:stretch;min-height:0;overflow:hidden}
 .job-visual-frame{flex:none}
@@ -151,7 +152,6 @@ dialog{max-width:calc(100vw - 32px)}
 .card-footer a{min-width:0;overflow-wrap:anywhere}
 .card-footer>span{overflow-wrap:anywhere}
 .offer-age-warning{margin:8px 0 0;color:#825315;font-size:11px;font-weight:650;line-height:1.4}
-#new-filter-clear,#new-since-list{margin-top:8px;padding:4px 0;border:0;background:none;color:var(--petrol);font-size:11px;font-weight:650;text-decoration:underline;cursor:pointer}
 .favorite-search-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
 .favorite-search-actions button{min-height:38px;padding:7px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--petrol);font-size:12px;font-weight:650}
 .favorite-search-actions button:disabled{opacity:.55;cursor:default}
@@ -238,7 +238,6 @@ dialog{max-width:calc(100vw - 32px)}
   .dialog-toolbar .public-badge{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.3}
   .dialog-toolbar .close-button{flex:none}
   .mobile-featured-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 8px}
-  #new-since{display:inline-flex;align-items:center;min-height:34px;margin:8px 14px 0;padding:6px 11px;border:1px solid #b8d0d5;border-radius:999px;background:#e8f0f2;color:var(--petrol);font-size:11px;font-weight:700;text-decoration:none;cursor:pointer}
   #mobile-zone-offers-counter{color:var(--muted);font-size:11px;font-weight:700}
   .mobile-carousel-navigation{display:flex;align-items:center;justify-content:flex-end;gap:0}
   .mobile-offer-carousel{display:block}

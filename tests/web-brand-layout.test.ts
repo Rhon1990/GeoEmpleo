@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the map panel release', () => {
+test('stylesheet cache key identifies the daily offers release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the map panel release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261117-map-panel(?:&|$)/,
+    /(?:[?&]v=)20261117-today-offers(?:&|$)/,
   );
 });
 
@@ -323,7 +323,7 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   const map=allElements.find(element=>attribute(element,'id')==='google-map');
   assert.ok(featured&&map);
   assert.ok(elements(featured.parentNode!).indexOf(map)<elements(featured.parentNode!).indexOf(featured));
-  for(const id of ['show-saved','new-since','new-since-list','mobile-zone-offers-title','mobile-zone-offers-counter','featured-previous','featured-card','featured-next'])assert.ok(allElements.some(element=>attribute(element,'id')===id));
+  for(const id of ['show-saved','today-offers','mobile-zone-offers-title','mobile-zone-offers-counter','featured-previous','featured-card','featured-next'])assert.ok(allElements.some(element=>attribute(element,'id')===id));
   assert.equal(attribute(allElements.find(element=>attribute(element,'id')==='featured-previous')!,'aria-label'),'Oferta anterior');
   assert.equal(attribute(allElements.find(element=>attribute(element,'id')==='featured-next')!,'aria-label'),'Oferta siguiente');
   const previous=allElements.find(element=>attribute(element,'id')==='featured-previous')!;
@@ -343,8 +343,12 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   );
   const actions=allElements.find(element=>hasClass(element,'search-actions'));
   assert.ok(actions);
-  assert.deepEqual(elements(actions).filter(element=>element.tagName==='button').map(element=>attribute(element,'id')),['mobile-filter-toggle','show-saved','mobile-clear-filters']);
+  assert.deepEqual(elements(actions).filter(element=>element.tagName==='button').map(element=>attribute(element,'id')),['mobile-filter-toggle','show-saved','today-offers','mobile-clear-filters']);
   assert.equal(textContent(elements(actions).find(element=>attribute(element,'id')==='show-saved')!), '(0) Favoritos');
+  const today=elements(actions).find(element=>attribute(element,'id')==='today-offers')!;
+  assert.equal(textContent(today),'Ofertas del día');
+  assert.equal(attribute(today,'hidden'),'');
+  assert.equal(attribute(today,'aria-pressed'),'false');
   assert.match(textContent(elements(actions).find(element=>attribute(element,'id')==='mobile-clear-filters')!),/Limpiar filtros/);
   assert.equal(attribute(elements(actions).find(element=>attribute(element,'id')==='mobile-clear-filters')!,'hidden'),'');
   const favorites=allElements.find(element=>attribute(element,'id')==='saved-dialog');
@@ -357,13 +361,10 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(app,/const count=retention\.savedOffers\(\)\.length/);
   assert.doesNotMatch(app,/const count=retention\.savedOffers\(\)\.length\+retention\.savedSearches\(\)\.length/);
   assert.match(css,/\.search-actions\{display:flex/);
-  assert.match(ruleForSelector(css,'#new-filter-clear,#new-since-list'),/color:var\(--petrol\)/);
+  assert.match(ruleForSelector(css,'#today-offers[hidden]'),/display:none/);
   assert.match(ruleForSelector(css,'.mobile-featured-offer'),/display:none/);
   const mobileRules=mediaBlocksForMaxWidth(css,780).join('\n');
-  const noveltyRule=mobileRules.match(/#new-since\{[^}]*\}/)?.[0]??'';
-  assert.match(noveltyRule,/background:#e8f0f2/);
-  assert.match(noveltyRule,/border-radius:999px/);
-  assert.match(noveltyRule,/text-decoration:none/);
+  assert.doesNotMatch(css,/#new-since|#new-since-list|#new-filter-clear/);
   assert.match(mobileRules,/\.mobile-featured-offer\{[^}]*display:block/);
   assert.match(mobileRules,/\.mobile-carousel-navigation\{[^}]*display:flex[^}]*align-items:center/);
   assert.match(mobileRules,/\.mobile-offer-carousel\{[^}]*display:block/);
@@ -402,12 +403,10 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(app,/featuredCard\.addEventListener\('scroll'/);
 });
 
-test('mobile novedades remains available when the map has no offer carousel',()=>{
-  const featured=allElements.find(element=>attribute(element,'id')==='mobile-featured-offer')!;
-  const button=allElements.find(element=>attribute(element,'id')==='new-since')!;
-  const siblings=elements(featured.parentNode!);
-  assert.equal(button.parentNode,featured.parentNode);
-  assert.ok(siblings.indexOf(featured)<siblings.indexOf(button));
+test('el mapa no contiene controles antiguos de última visita',()=>{
+  const map=allElements.find(element=>attribute(element,'id')==='map-panel')!;
+  assert.equal(elements(map).some(element=>attribute(element,'id')==='new-since'),false);
+  assert.doesNotMatch(textContent(map),/Nuevas desde mi última visita/);
 });
 
 test('map does not cover offers with an information panel on desktop or mobile',()=>{

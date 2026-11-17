@@ -1,10 +1,10 @@
 import {readFile,stat} from 'node:fs/promises';
 import {employerFacet,searchCalls} from './public/catalog.mjs';
 import {summaryFields,projectFields,mapSummaries,countMappedJobs} from './public/job-projections.mjs';
-import {isNewSince,newestOfferFirst,readNewOfferFilter} from './public/retention.mjs';
+import {isOfferOnDay,newestOfferFirst,readTodayFilter} from './public/today-offers.mjs';
 function parseFilters(params) {
   const filters={};
-  Object.assign(filters,readNewOfferFilter(params));
+  Object.assign(filters,readTodayFilter(params));
   for(const [name,max] of [['q',200],['city',120],['category',80],['employer',120]]) {
     if(params.getAll(name).length>1 || (params.get(name)?.length??0)>max) throw new TypeError('Parámetros de búsqueda inválidos');
     filters[name]=params.get(name)??'';
@@ -44,11 +44,11 @@ export function createJobStore(path,publicJobs=()=>[]) {
       const facets={categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))};
       const nationalMatches=searchCalls(calls,{...filters,bounds:undefined});
       const matches=filters.bounds?searchCalls(nationalMatches,{bounds:filters.bounds}):nationalMatches;
-      const newNational=filters.since?nationalMatches.filter(job=>isNewSince(job,filters.since)):[];
-      const newMatches=filters.since?matches.filter(job=>isNewSince(job,filters.since)):[];
-      const selected=filters.onlyNew?newMatches.sort(newestOfferFirst):matches;
-      const selectedNational=filters.onlyNew?newNational:nationalMatches;
-      return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,catalogTotal:selectedNational.length,catalogMappedTotal:countMappedJobs(selectedNational),newTotal:newMatches.length,total:selected.length,truncated:selected.length>300,jobs:selected.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(selected)};
+      const todayNational=filters.day?nationalMatches.filter(job=>isOfferOnDay(job,filters.day)):[];
+      const todayMatches=filters.day?matches.filter(job=>isOfferOnDay(job,filters.day)):[];
+      const selected=filters.onlyToday?todayMatches.sort(newestOfferFirst):matches;
+      const selectedNational=filters.onlyToday?todayNational:nationalMatches;
+      return {checkedAt:catalog.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets,catalogTotal:selectedNational.length,catalogMappedTotal:countMappedJobs(selectedNational),todayTotal:todayMatches.length,total:selected.length,truncated:selected.length>300,jobs:selected.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(selected)};
     },
     async detail(id) {
       if(typeof id!=='string' || !id || id.length>120) throw new TypeError('Parámetros de detalle inválidos');
