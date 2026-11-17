@@ -588,12 +588,6 @@ function render() {
     mapLoadingState.fail();
   });
   syncJobInteraction(interaction.snapshot());
-  const mapped=mapResults.length;
-  const municipalities=markerGroups(mapResults).length;
-  const formatCount=value=>new Intl.NumberFormat('es-ES',{useGrouping:'always'}).format(value);
-  const catalogTotal=page?.catalogTotal??page?.total??0;
-  const areaTotal=page?.total??0;
-  document.querySelector('#map-footnote').textContent=`${newOnly?'Novedades: ':''}${formatCount(catalogTotal)} en el catálogo · ${formatCount(areaTotal)} en ${searchBounds?'la zona visible':'la búsqueda'} · ${formatCount(mapped)} ofertas en ${municipalities} ${municipalities===1?'punto municipal':'puntos municipales'}. Ubicaciones municipales aproximadas; no direcciones exactas.`;
   const params=new URLSearchParams();
   if(query.value)params.set('q',query.value);
   if(location.value)params.set('city',location.value);

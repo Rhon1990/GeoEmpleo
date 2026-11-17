@@ -130,6 +130,7 @@ La web pública del MVP ya está implementada en `apps/web-preview`: una búsque
 | `packages/country-es/src/compensation.ts` | Anualización EUR/bruto con pagas u horas/semanas explícitas, sin inventar mínimos |
 | `tests/compensation.test.ts`, `tests/country-policy.test.ts`, `tests/publication.test.ts` | Reglas del dominio con fixtures propios |
 | `apps/web-preview/public/` | Web local, filtrado, proximidad, estado de selección y adaptador Google Maps aislado |
+| `apps/web-preview/public/index.html`, `styles.css`, `app.mjs` | El mapa muestra marcadores y controles sin el panel informativo superpuesto, tanto en escritorio como en móvil; las cifras siguen en resultados |
 | `apps/web-preview/public/workspace-view.mjs` | Estado de vista Ofertas/Mapa en móvil (hasta 780 px), conservando el mismo mapa; escritorio muestra ambos paneles |
 | `apps/web-preview/public/data/calls.json` | Proyección real SEF/ECYL/Lanbide y selección BOE, texto publicado por cada fuente, procedencia y puntos municipales |
 | `apps/web-preview/public/data/places.json` | 737 referencias originales y complemento Coto de San Isidro; usado también por resolver de ingesta |
