@@ -165,7 +165,6 @@ todayButton.addEventListener('click',()=>{
   beginNewSearch(interaction,document.querySelector('#results'));
   todayOnly=!todayOnly;
   todayButton.setAttribute('aria-pressed',String(todayOnly));
-  workspaceView.select('jobs');
   requestSearch({immediate:true,force:true});
 });
 featuredPrevious.addEventListener('click',()=>moveMobileCarousel(-1));
