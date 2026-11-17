@@ -180,7 +180,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the novelties filter release', () => {
+test('stylesheet cache key identifies the map panel release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -190,7 +190,7 @@ test('stylesheet cache key identifies the novelties filter release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261116-novelties-filter(?:&|$)/,
+    /(?:[?&]v=)20261117-map-panel(?:&|$)/,
   );
 });
 
@@ -321,10 +321,8 @@ test('mobile cards use a single-column results grid', () => {
 test('mobile map exposes an accessible visible-zone carousel and one favorites entry point',()=>{
   const featured=allElements.find(element=>attribute(element,'id')==='mobile-featured-offer');
   const map=allElements.find(element=>attribute(element,'id')==='google-map');
-  const footnote=allElements.find(element=>hasClass(element,'map-footer'));
-  assert.ok(featured&&map&&footnote);
+  assert.ok(featured&&map);
   assert.ok(elements(featured.parentNode!).indexOf(map)<elements(featured.parentNode!).indexOf(featured));
-  assert.ok(elements(featured.parentNode!).indexOf(featured)<elements(featured.parentNode!).indexOf(footnote));
   for(const id of ['show-saved','new-since','new-since-list','mobile-zone-offers-title','mobile-zone-offers-counter','featured-previous','featured-card','featured-next'])assert.ok(allElements.some(element=>attribute(element,'id')===id));
   assert.equal(attribute(allElements.find(element=>attribute(element,'id')==='featured-previous')!,'aria-label'),'Oferta anterior');
   assert.equal(attribute(allElements.find(element=>attribute(element,'id')==='featured-next')!,'aria-label'),'Oferta siguiente');
@@ -407,11 +405,14 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
 test('mobile novedades remains available when the map has no offer carousel',()=>{
   const featured=allElements.find(element=>attribute(element,'id')==='mobile-featured-offer')!;
   const button=allElements.find(element=>attribute(element,'id')==='new-since')!;
-  const footnote=allElements.find(element=>hasClass(element,'map-footer'))!;
   const siblings=elements(featured.parentNode!);
   assert.equal(button.parentNode,featured.parentNode);
   assert.ok(siblings.indexOf(featured)<siblings.indexOf(button));
-  assert.ok(siblings.indexOf(button)<siblings.indexOf(footnote));
+});
+
+test('map does not cover offers with an information panel on desktop or mobile',()=>{
+  assert.ok(!allElements.some(element=>hasClass(element,'map-footer')));
+  assert.doesNotMatch(app, /#map-footnote/);
 });
 
 test('Material Symbols muestra corazón, compartir, navegación y más opciones sin botones circulares',async()=>{
@@ -534,7 +535,7 @@ test('workspace composes results and map as its only visual columns', () => {
   assert.ok(hasClass(columns[1], 'map-panel'));
 });
 
-test('map controls overlay the single map and keep approved labels and legend', () => {
+test('map controls overlay the single map and keep approved labels', () => {
   const mapPanel = allElements.find(element => hasClass(element, 'map-panel'));
   const mapOverlay = allElements.find(element => hasClass(element, 'map-overlay'));
   const googleMaps = allElements.filter(element => attribute(element, 'id') === 'google-map');
@@ -563,12 +564,6 @@ test('map controls overlay the single map and keep approved labels and legend', 
     assert.ok(action, `Expected #${id} inside the map overlay`);
     assert.equal(textContent(action).trim(), label);
   }
-
-  const legendLead = elements(mapPanel).find(
-    element => element.tagName === 'strong'
-      && textContent(element).trim() === 'Ubicaciones municipales aproximadas',
-  );
-  assert.ok(legendLead);
 });
 
 test('map toolbar has one location action and keeps the geolocation control', () => {
@@ -679,7 +674,7 @@ test('desktop shell gives the workspace the actual remaining viewport height', (
     /\.map-overlay\{[^}]*width:calc\(100% - 24px\)[^}]*justify-content:center[^}]*overflow:visible/,
   );
   assert.match(css, /\.map-actions\{[^}]*flex-wrap:nowrap[^}]*justify-content:center/);
-  assert.match(css, /\.map-footer\{[^}]*bottom:36px/);
+  assert.doesNotMatch(css, /\.map-footer(?:\{|\s|:)/);
 });
 
 test('tablet layout avoids minimum-column horizontal overflow', () => {
