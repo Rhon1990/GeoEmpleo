@@ -1,6 +1,6 @@
 import {searchCalls,groupSimilarOffers} from './catalog.mjs';
 import {distanceKm} from './geography.mjs';
-import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261116-map-sdk-retry';
+import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261117-centered-popup';
 import {createMapLoadingState} from './map-loading.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261108-filter-state';

@@ -194,6 +194,13 @@ test('stylesheet cache key identifies the daily offers release', () => {
   );
 });
 
+test('map module cache key identifies the centered popup release', () => {
+  assert.match(
+    app,
+    /from '\.\/google-map\.mjs\?v=20261117-centered-popup'/,
+  );
+});
+
 test('header uses the Ruta G mark and split wordmark', () => {
   const brandMarks = allElements.filter(element => hasClass(element, 'brand-mark'));
   assert.equal(brandMarks.length, 1);
