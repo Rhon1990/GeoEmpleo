@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Ventana de grupos centrada en el mapa — 17/11/2026
+
+Al abrir un grupo de ofertas ubicado en un mismo municipio, la ventana se centra según sus dimensiones reales y el área visible del mapa. El cálculo se aplica por igual en móvil, tableta y ordenador, mantiene la punta anclada al marcador y omite la actualización de zona causada únicamente por este desplazamiento de presentación, para que la ventana no se cierre al centrarse. El contenido, los filtros, los puntos y la agrupación de ofertas no cambian.
+
 ## Ofertas del día — 17/11/2026
 
 «Ofertas del día» se sitúa junto a Favoritos en ordenador, tableta y móvil. Consulta las ofertas publicadas o detectadas hoy en horario de España dentro de la búsqueda y zona actuales. Se oculta si el recuento es cero; al activarlo, lista y mapa muestran solo esas ofertas, con el límite de 300 tarjetas aplicado después del filtro. En móvil conserva la vista actual: desde «Mapa» filtra los puntos y al pasar a «Ofertas» muestra la misma selección. Volver a pulsarlo restaura la vista general. Si un cambio de zona deja cero ofertas de hoy, el filtro se desactiva y vuelve la vista general. La comprobación diaria no convierte ofertas antiguas en ofertas de hoy. Se eliminan los controles, almacenamiento y eventos analíticos de «nuevas desde la última visita»; favoritos y enlaces originales permanecen. El catálogo almacenado y la ingesta no cambian.

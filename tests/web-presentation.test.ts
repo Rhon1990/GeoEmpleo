@@ -7,7 +7,7 @@ test('una fecha de publicación antigua avisa aunque la fuente se comprobara aye
  assert.match(offerAgeWarning({publishedAt:'2023-09-12',checkedAt:'2026-11-07T08:00:00Z'},now)??'',/Publicación antigua/);
  assert.equal(offerAgeWarning({publishedAt:'2026-11-06',checkedAt:'2026-11-07T08:00:00Z'},now),null);
 });
-import {markerGroups,expandedZoom} from '../apps/web-preview/public/google-map.mjs';
+import {markerGroups,expandedZoom,popupPanDelta} from '../apps/web-preview/public/google-map.mjs';
 test('presenta desconocidos y fuentes sin atribuir ofertas privadas al BOE',()=>{
  assert.equal(placesLabel({places:null}),'Plazas no publicadas');
  assert.equal(placesLabel({places:1}),'1 plaza');
@@ -105,4 +105,15 @@ test('agrupa un mapa nacional sin recorrer cada punto contra todos los anteriore
 
 test('un grupo siempre permite ampliar aunque el encuadre automático mantenga el zoom',()=>{
  assert.equal(expandedZoom(8,8),9);assert.equal(expandedZoom(8,7),9);assert.equal(expandedZoom(8,11),11);
+});
+
+test('centra la ventana de ofertas dentro del mapa en cualquier tamaño de pantalla',()=>{
+ assert.deepEqual(popupPanDelta(
+  {left:0,top:0,width:390,height:420},
+  {left:25,top:38,width:340,height:300},
+ ),{x:0,y:-22});
+ assert.deepEqual(popupPanDelta(
+  {left:520,top:160,width:900,height:720},
+  {left:610,top:210,width:420,height:330},
+ ),{x:-150,y:-145});
 });

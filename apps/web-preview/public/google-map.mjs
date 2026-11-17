@@ -59,6 +59,12 @@ export function markerGroups(calls,zoom=20) {
 
 export const expandedZoom=(current,fitted)=>fitted>current?fitted:current+1;
 
+export function popupPanDelta(mapRect,popupRect) {
+  const mapCenter={x:mapRect.left+mapRect.width/2,y:mapRect.top+mapRect.height/2};
+  const popupCenter={x:popupRect.left+popupRect.width/2,y:popupRect.top+popupRect.height/2};
+  return {x:Math.round(popupCenter.x-mapCenter.x),y:Math.round(popupCenter.y-mapCenter.y)};
+}
+
 export function markerVisualState(ids,selectedId,previewId) {
   const selected=selectedId!==null&&ids.includes(selectedId);
   const previewed=previewId!==null&&ids.includes(previewId);
@@ -93,7 +99,16 @@ export async function createGoogleMap(host,config,events,initial={}) {
   let selectedId = null;
   let previewId = null;
   let knownCalls = [];
+  let ignoreNextViewport=false;
   const infoWindow=new google.maps.InfoWindow({disableAutoPan:true});
+  infoWindow.addListener('domready',()=>requestAnimationFrame(()=>{
+    const popup=host.querySelector('.gm-style-iw');
+    if(!popup)return;
+    const delta=popupPanDelta(host.getBoundingClientRect(),popup.getBoundingClientRect());
+    if(Math.abs(delta.x)<2&&Math.abs(delta.y)<2)return;
+    ignoreNextViewport=true;
+    map.panBy(delta.x,delta.y);
+  }));
   map.addListener('click',event => {
     if (!event.latLng) return;
     originSelection.capture([event.latLng.lng(),event.latLng.lat()]);
@@ -152,7 +167,10 @@ export async function createGoogleMap(host,config,events,initial={}) {
     updateMarkerVisuals();
   }
   map.addListener('zoom_changed',renderMarkers);
-  map.addListener('idle',()=>events.onViewport?.());
+  map.addListener('idle',()=>{
+    if(ignoreNextViewport){ignoreNextViewport=false;return;}
+    events.onViewport?.();
+  });
   await new Promise((resolve,reject)=>{
     const timer=setTimeout(()=>{listener.remove();reject(new Error('El mapa tardó demasiado en iniciar.'));},20000);
     const listener=map.addListener('idle',()=>{clearTimeout(timer);listener.remove();events.onReady?.();resolve();});
