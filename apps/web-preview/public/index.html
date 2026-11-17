@@ -16,9 +16,9 @@
   <meta property="og:image" content="https://geoempleo360.com/geoempleo360-logo.png">
   <meta name="twitter:card" content="summary">
   <script type="application/ld+json" nonce="__CSP_NONCE__">{"@context":"https://schema.org","@type": "WebSite","name":"GeoEmpleo360","url":"https://geoempleo360.com/","inLanguage":"es-ES"}</script>
-  <link rel="stylesheet" href="/styles.css?v=20261117-map-panel" nonce="__CSP_NONCE__"><style nonce="__CSP_NONCE__"></style>
+  <link rel="stylesheet" href="/styles.css?v=20261117-today-offers" nonce="__CSP_NONCE__"><style nonce="__CSP_NONCE__"></style>
   <link rel="stylesheet" href="/select-controls.css?v=20261027" nonce="__CSP_NONCE__">
-  <script type="module" src="/app.mjs?v=20261117-map-panel" nonce="__CSP_NONCE__"></script>
+  <script type="module" src="/app.mjs?v=20261117-today-offers" nonce="__CSP_NONCE__"></script>
 </head>
 <body>
   <a class="skip-link" href="#results">Saltar a los resultados</a>
@@ -42,7 +42,7 @@
   </header>
   <main>
     <section class="search-section" aria-label="Filtros de oportunidades">
-      <div class="search-actions"><button type="button" id="mobile-filter-toggle" class="mobile-filter-toggle" aria-expanded="false" aria-controls="advanced-filters">Filtros <span aria-hidden="true">⌄</span></button><button type="button" id="show-saved">(0) Favoritos</button><button type="button" class="text-button" id="mobile-clear-filters" hidden><span aria-hidden="true">×</span>Limpiar filtros</button></div>
+      <div class="search-actions"><button type="button" id="mobile-filter-toggle" class="mobile-filter-toggle" aria-expanded="false" aria-controls="advanced-filters">Filtros <span aria-hidden="true">⌄</span></button><button type="button" id="show-saved">(0) Favoritos</button><button type="button" id="today-offers" aria-pressed="false" aria-controls="results" hidden>Ofertas del día</button><button type="button" class="text-button" id="mobile-clear-filters" hidden><span aria-hidden="true">×</span>Limpiar filtros</button></div>
       <div id="advanced-filters" class="advanced-filters" data-expanded="false">
       <div class="filter-bar"><div class="filter-controls"><label class="employer-filter-label" for="employer-filter">Empresa<select id="employer-filter"><option value="">Todas las empresas</option></select></label><div id="categories" class="categories" aria-label="Filtrar por área"><button type="button" class="filter-chip active" data-category="" aria-pressed="true">Todas las áreas</button><button type="button" class="filter-chip" data-category="tecnologia" aria-pressed="false">Tecnología</button><button type="button" class="filter-chip" data-category="administracion" aria-pressed="false">Administración</button><button type="button" class="filter-chip" data-category="cultura" aria-pressed="false">Cultura</button><button type="button" class="filter-chip" data-category="tecnico" aria-pressed="false">Oficios técnicos</button></div></div><button type="button" class="text-button" id="clear-filters" hidden><span aria-hidden="true">×</span>Limpiar filtros</button></div>
       <div class="proximity-bar"><label>Tu localidad de referencia<input id="origin-city" list="places" maxlength="120" placeholder="Localidad o código postal; elige una sugerencia" autocomplete="off"><datalist id="places"></datalist></label><label>Distancia máxima<select id="radius" disabled><option value="">Sin límite</option><option value="5">5 km</option><option value="10">10 km</option><option value="25">25 km</option><option value="50">50 km</option><option value="100">100 km</option></select></label><span id="origin-status">Elige una localidad o selecciona tu zona en el mapa.</span></div>
@@ -54,7 +54,7 @@
     </div>
     <section class="workspace" data-view="map" aria-label="Oportunidades y mapa">
       <div class="results-panel" id="results" tabindex="-1">
-        <div class="results-heading"><div><h2 id="result-count" aria-live="polite">Cargando oportunidades…</h2><p id="result-scope"></p><p id="result-summary">Consultando el catálogo local</p><button type="button" id="new-since-list" hidden>Nuevas desde mi última visita</button><button type="button" id="new-filter-clear" hidden>Ver todas las ofertas</button></div><span class="public-badge">Ofertas reales</span></div>
+        <div class="results-heading"><div><h2 id="result-count" aria-live="polite">Cargando oportunidades…</h2><p id="result-scope"></p><p id="result-summary">Consultando el catálogo local</p></div><span class="public-badge">Ofertas reales</span></div>
         <p id="search-status" role="status" aria-live="polite">Buscando tu zona…</p><div class="data-note"><span class="status-dot"></span><span id="snapshot-label">Datos reales, con enlace al origen</span></div>
         <div id="job-list" class="job-list" aria-label="Ofertas de empleo"></div>
         <div id="empty-state" class="empty-state" hidden><span aria-hidden="true">↗</span><h3>No encontramos coincidencias</h3><p>Amplía o mueve el mapa, elige otra localidad o cambia la búsqueda. Prueba otra búsqueda o zona para encontrar más oportunidades.</p><button id="empty-clear" class="primary-button" type="button">Limpiar filtros</button></div>
@@ -69,7 +69,6 @@
           <div class="mobile-offer-carousel"><div id="featured-card" class="mobile-offer-track" aria-label="Ofertas visibles en el mapa"></div></div>
           <p class="mobile-carousel-hint">Desliza horizontalmente o usa las flechas</p>
         </div>
-        <button type="button" id="new-since" hidden>Nuevas desde mi última visita</button>
       </aside>
     </section>
   </main>

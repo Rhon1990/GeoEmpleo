@@ -1,6 +1,6 @@
 import {employerFacet,searchCalls} from './catalog.mjs';
 import {summaryFields,projectFields,mapSummaries,countMappedJobs} from './job-projections.mjs?v=20261110-mobile-zone-carousel';
-import {isNewSince,newestOfferFirst,readNewOfferFilter} from './retention.mjs';
+import {isOfferOnDay,newestOfferFirst,readTodayFilter} from './today-offers.mjs';
 
 const normalize=value=>value.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('es').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 
@@ -26,7 +26,7 @@ function json(body,status=200) {
 
 function filtersFrom(params) {
   const filters={};
-  Object.assign(filters,readNewOfferFilter(params));
+  Object.assign(filters,readTodayFilter(params));
   for(const [name,max] of [['q',200],['city',120],['category',80],['employer',120]]) {
     if(params.getAll(name).length>1||(params.get(name)?.length??0)>max)throw new TypeError('Parámetros inválidos');
     filters[name]=params.get(name)??'';
@@ -72,14 +72,14 @@ export function createStaticDataFetch({fetchImpl=fetch}={}) {
       const filters=filtersFrom(params);
       const nationalMatches=searchCalls(calls,{...filters,bounds:undefined});
       const matches=filters.bounds?searchCalls(nationalMatches,{bounds:filters.bounds}):nationalMatches;
-      const newNational=filters.since?nationalMatches.filter(job=>isNewSince(job,filters.since)):[];
-      const newMatches=filters.since?matches.filter(job=>isNewSince(job,filters.since)):[];
-      const selected=filters.onlyNew?newMatches.sort(newestOfferFirst):matches;
-      const selectedNational=filters.onlyNew?newNational:nationalMatches;
+      const todayNational=filters.day?nationalMatches.filter(job=>isOfferOnDay(job,filters.day)):[];
+      const todayMatches=filters.day?matches.filter(job=>isOfferOnDay(job,filters.day)):[];
+      const selected=filters.onlyToday?todayMatches.sort(newestOfferFirst):matches;
+      const selectedNational=filters.onlyToday?todayNational:nationalMatches;
       const categories=new Map(calls.map(job=>[job.category,job.categoryLabel]));
       const employers=new Map();
       for(const call of calls)if(call.employer){const facet=employerFacet(call.employer,call.sourceId);if(!employers.has(facet.id))employers.set(facet.id,facet.label);}
-      return json({checkedAt:data.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))},catalogTotal:selectedNational.length,catalogMappedTotal:countMappedJobs(selectedNational),newTotal:newMatches.length,total:selected.length,truncated:selected.length>300,jobs:selected.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(selected)});
+      return json({checkedAt:data.checkedAt,sources:[...new Set(calls.map(job=>job.source))],facets:{categories:[...categories].map(([id,label])=>({id,label})),regions:[...new Set(calls.map(job=>job.region))].sort((a,b)=>a.localeCompare(b,'es')),employers:[...employers].map(([id,label])=>({id,label})).sort((a,b)=>a.label.localeCompare(b.label,'es'))},catalogTotal:selectedNational.length,catalogMappedTotal:countMappedJobs(selectedNational),todayTotal:todayMatches.length,total:selected.length,truncated:selected.length>300,jobs:selected.slice(0,300).map(job=>projectFields(job,summaryFields)),mapJobs:mapSummaries(selected)});
     }
     if(parsed.pathname==='/api/job') {
       if(params.getAll('id').length!==1||!params.get('id')||params.get('id').length>120)throw new TypeError('ID inválido');
