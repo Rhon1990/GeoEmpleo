@@ -294,6 +294,7 @@ test('Bizneo reconcilia páginas solapadas sin duplicar una oferta real',async()
 
 test('tablones SuccessFactors oficiales tienen identidad, categoría y URL propias',()=>{
   assert.deepEqual(successFactorsBoards.map(item=>item.sourceId),[
+    'successfactors-ey',
     'successfactors-vithas','successfactors-mapfre','successfactors-capgemini','successfactors-melia','successfactors-kpmg',
     'successfactors-deloitte','successfactors-ilunion','stef-oficial',
   ]);

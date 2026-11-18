@@ -31,6 +31,7 @@ import {fetchSacyrOffers} from './connectors/sacyr.ts';
 import {fetchMercadonaOffers} from './connectors/mercadona.ts';
 import {fetchAccionaOffers} from './connectors/acciona.ts';
 import {loadElecnorObservedOffers} from './connectors/elecnor-observed.ts';
+import {fetchRepsolOffers,fetchPwcOffers} from './connectors/workday-official.ts';
 import {successFactorsBoards} from './connectors/successfactors-boards.ts';
 import {expireFailedSource,reconcileSource} from './catalog.ts';
 import {createPlaceResolver,type PlaceResolver} from './geography.ts';
@@ -40,7 +41,7 @@ import {sourceRegistry} from './registry.ts';
 import {writeJsonAtomic} from './storage.ts';
 import type {PublicCatalog,PublicJob} from './model.ts';
 
-const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','teamtailor-leroy','talentforjobs-alcampo','talentclue-decathlon','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture','elcorteingles-oficial','adecco-oficial','gigroup-oficial','sacyr-oficial','mercadona-oficial','acciona-oficial','elecnor-oficial'] as const;
+const implementedSourceIds=['sef-murcia','ecyl-castilla-leon','lanbide-euskadi','andalucia-entidades',...leverBoards.map(board=>board.sourceId),...bizneoBoards.map(board=>board.sourceId),...successFactorsBoards.map(board=>board.sourceId),'talentclue-mcdonalds','amrest-kfc','disa-empleo','teamtailor-dia','teamtailor-leroy','talentforjobs-alcampo','talentclue-decathlon','carrefour-talentforjobs','lidl-search-api','talentclue-quironsalud','taleo-eulen','randstad-oficial','successfactors-clece','bizneo-domusvi','successfactors-indra','workday-accenture','elcorteingles-oficial','adecco-oficial','gigroup-oficial','sacyr-oficial','mercadona-oficial','acciona-oficial','elecnor-oficial','workday-repsol','pwc-campus'] as const;
 type ImplementedSourceId=string;
 export interface SourceRunReport {sourceId:string;status:'success'|'failed';received:number;mapped:number;reason:string|null}
 export interface RunReportSummary {status:'success'|'partial'|'failed';published:number;sources:readonly SourceRunReport[]}
@@ -130,6 +131,10 @@ export async function runDaily(options:RunOptions) {
         const national=nationalResolver.status==='fulfilled'?nationalResolver.value:null;
         const jobs=board
           ? await fetchBizneoOffers(board,checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+          : sourceId==='workday-repsol'
+            ? await fetchRepsolOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
+          : sourceId==='pwc-campus'
+            ? await fetchPwcOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
           : sourceId==='successfactors-capgemini'
             ? await fetchCapgeminiOffers(checkedAt,national?.resolveCity??(()=>null),options.fetchImpl)
           : successFactorsBoard

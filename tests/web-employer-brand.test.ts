@@ -5,6 +5,9 @@ import {resolve} from 'node:path';
 import {employerBrand,neutralBrand,setBrandImageFallback} from '../apps/web-preview/public/presentation.mjs';
 
 const publicBrands={
+  'workday-repsol':['/brands/repsol.jpg','Repsol'],
+  'successfactors-ey':['/brands/ey.png','EY'],
+  'pwc-campus':['/brands/pwc.svg','PwC'],
   'talentclue-mcdonalds':['/brands/mcdonalds.svg','McDonald’s'],
   'bizneo-burger-king':['/brands/burger-king.svg','Burger King'],
   'amrest-kfc':['/brands/kfc.svg','KFC'],

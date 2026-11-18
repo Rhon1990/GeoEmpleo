@@ -4,6 +4,12 @@ const jobPathPattern=/^\/job\/[^/]+\/\d+\/$/;
 
 export const successFactorsBoards: readonly SuccessFactorsBoard[] = [
   {
+    sourceId:'successfactors-ey',hostname:'careers.ey.com',employer:'EY',
+    listingPath:'/ey/search/?optionsFacetsDD_country=ES',jobPathPattern:/^\/ey\/job\/[^/]+\/\d+\/$/,
+    category:'tecnologia',categoryLabel:'Tecnología y consultoría',sourceLabel:'EY · empleo oficial',
+    pageSize:25,maxPages:80,paginationOffsetParam:'startrow',retryTransientErrors:true,remoteFromDescription:false,
+  },
+  {
     sourceId:'successfactors-vithas',hostname:'empleo.vithas.es',employer:'Vithas',
     listingPath:'/search/?createNewAlert=false&q=&locationsearch=',jobPathPattern,
     category:'sanidad',categoryLabel:'Sanidad y salud',sourceLabel:'Vithas · empleo oficial',
