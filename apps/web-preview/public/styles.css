@@ -105,7 +105,7 @@ dialog{max-width:calc(100vw - 32px)}
   .map-actions{max-width:100%;gap:4px;padding:5px}
 }
 
-/* El mapa es la vista de entrada móvil; los filtros secundarios no ocupan la primera pantalla. */
+/* El mapa gana espacio al plegar los filtros secundarios en ventanas compactas. */
 .search-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:8px}
 .search-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--petrol);font-size:11px;font-weight:650}
 .search-actions button:disabled{opacity:.55;cursor:default}
@@ -160,16 +160,18 @@ dialog{max-width:calc(100vw - 32px)}
 .saved-row>a,.saved-row>button:first-child{min-width:0;overflow-wrap:anywhere;text-align:left;color:var(--petrol);font-weight:650}
 .saved-row button{border:0;background:none;color:var(--petrol);cursor:pointer}
 .saved-row button:last-child{flex:none;color:var(--muted)}
-@media(max-width:780px){
+@media(max-width:1100px),(max-height:800px){
   .search-section{padding-block:8px}
   .search-actions{padding-bottom:0}
-  .search-actions button{min-height:40px;padding:8px 10px}
   .search-actions .mobile-filter-toggle{display:inline-flex;gap:8px}
   #mobile-clear-filters{display:inline-flex;gap:6px;margin-left:auto;border-color:#e8b64c;border-radius:999px;background:#fff7e4;font-weight:700}
   #clear-filters{display:none}
   .mobile-filter-toggle[aria-expanded="true"] span{transform:rotate(180deg)}
   .advanced-filters[data-expanded="false"]{display:none}
   .advanced-filters[data-expanded="true"]{padding-top:10px}
+}
+@media(max-width:780px){
+  .search-actions button{min-height:40px;padding:8px 10px}
   .dynamic-map{height:38dvh;min-height:290px}
   .job-visual-frame{height:54px}
   .job-visual img{width:38px;height:38px}
