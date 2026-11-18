@@ -119,6 +119,8 @@ const definitions: readonly SourceDefinition[] = [
   })),
   {id:'teamtailor-dia',name:'DIA · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
     endpoint:diaListingUrl,licenseUrl:null},
+  {id:'teamtailor-alsea',name:'Alsea · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:'https://alseaespana.teamtailor.com/jobs',licenseUrl:null},
   {id:'workday-repsol',name:'Repsol · portal oficial',countryCode:'ES',kind:'ats',status:'active',endpoint:repsolListingUrl,licenseUrl:null},
   {id:'pwc-campus',name:'PwC · Campus España',countryCode:'ES',kind:'ats',status:'active',endpoint:pwcListingUrl,licenseUrl:null},
   {id:'radancy-primark',name:'Primark · portal oficial',countryCode:'ES',kind:'ats',status:'active',endpoint:primarkListingUrl,licenseUrl:null},
