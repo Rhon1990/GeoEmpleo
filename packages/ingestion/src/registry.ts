@@ -25,6 +25,7 @@ import {giGroupListingUrl} from './connectors/gi-group.ts';
 import {mercadonaListingUrl} from './connectors/mercadona.ts';
 import {accionaListingUrl} from './connectors/acciona.ts';
 import {capgeminiListingUrl} from './connectors/capgemini.ts';
+import {elecnorListingUrl} from './connectors/elecnor-observed.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -162,6 +163,8 @@ const definitions: readonly SourceDefinition[] = [
     endpoint:'https://sacyrpeople.sacyr.com/jobs?country=Spain&query=&split_view=true',licenseUrl:null},
   {id:'acciona-oficial',name:'Acciona · portal oficial',countryCode:'ES',kind:'ats',status:'active',
     endpoint:accionaListingUrl,licenseUrl:null},
+  {id:'elecnor-oficial',name:'Elecnor · portal oficial',countryCode:'ES',kind:'observed_listing',status:'active',
+    endpoint:elecnorListingUrl,licenseUrl:null},
   {id:'ferrovial-oficial',name:'Ferrovial · portal oficial',countryCode:'ES',kind:'ats',status:'authorization_required',
     endpoint:'https://www.ferrovial.com/es-es/empleo/ofertas/',licenseUrl:'https://www.ferrovial.com/es/aviso-legal/'},
 ];

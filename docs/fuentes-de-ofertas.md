@@ -95,7 +95,7 @@ fichas de Grupo DISA pueden corresponder a estaciones de esa marca.
 | Inditex | El [portal oficial](https://www.inditexpeople.com/es/es/joinus/offers) bloquea la captura automatizada con HTTP 403 | Conseguir un canal público autorizado y estable |
 | SEUR | Sin conector oficial verificable | Conseguir un canal público autorizado y estable |
 | NTT DATA | El [portal oficial](https://careers.emeal.nttdata.com/s/?language=es) muestra 32 resultados al filtrar España en navegador; su página es dinámica y aún no hay un canal de captura diario verificado | Validar un endpoint público estable y fichas con localidad española |
-| Elecnor | Los enlaces aportados son búsquedas por palabra clave en InfoJobs | Encontrar el portal oficial y validar ubicación laboral |
+| Elecnor | [Portal oficial ePreSelec](https://elecnor.epreselec.com/Ofertas/Ofertas.aspx) | 76 fichas observadas el 17/11/2026; fuente incluida en el ejecutor diario. Captura automática bloqueada (HTTP 405); revisión manual antes del 01/12/2026 |
 | Manpower | El [listado público](https://www.manpower.es/es/all-jobs) aparece en el navegador, pero el HTML básico no trae las filas y el [robots.txt](https://www.manpower.es/robots.txt) indica `Disallow: /` para `User-agent: *` | Solicitar un feed o permiso de acceso autorizado antes de activar una captura automática |
 | Triangle Solutions | El [portal Viterbit](https://trianglerrhh.viterbit.site/) muestra ofertas en navegador, pero la captura programada recibe HTTP 403 | Conseguir un feed o acceso oficial estable; no publicar fichas ni puntos no verificados |
 
@@ -138,7 +138,7 @@ referencia de descubrimiento, pero no se extraen ni se republican.
 | Grupo Eulen | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Grupo%20Eulen&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
 | ISS | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=ISS&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial Bizneo |
 | Clece | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Clece&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Activa mediante portal oficial |
-| Elecnor | [Búsqueda en InfoJobs](https://www.infojobs.net/ofertas-trabajo/bp?keyword=Elecnor&referer=search-filtered&page=1&sortBy=RELEVANCE&onlyForeignCountry=false&sinceDate=ANY) | Pendiente de conector oficial estable |
+| Elecnor | [Portal oficial ePreSelec](https://elecnor.epreselec.com/Ofertas/Ofertas.aspx) | Instantánea revisada manualmente de 76 fichas con URL individual; no descubre nuevas vacantes automáticamente. La ingesta diaria conserva la fecha de revisión y retira las fichas al caducar |
 
 ## Cómo actualizar y comprobar
 

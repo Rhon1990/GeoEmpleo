@@ -1,0 +1,551 @@
+{
+  "observedAt": "2026-11-17T18:00:00.000Z",
+  "expiresAt": "2026-12-01T18:00:00.000Z",
+  "offers": [
+    {
+      "id": "3381057",
+      "title": "Oficial Sistemas de Protección contra Incendios - Córdoba (h/m)",
+      "city": "Córdoba",
+      "province": "Córdoba",
+      "publishedAt": "2026-11-17"
+    },
+    {
+      "id": "3380910",
+      "title": "Almacenero material eléctrico (h/m) - Santiago de Compostela",
+      "city": "Santiago de Compostela",
+      "province": "A Coruña",
+      "publishedAt": "2026-11-17"
+    },
+    {
+      "id": "3363414",
+      "title": "Oficial de Climatización - Huelva (h/m)",
+      "city": "Huelva",
+      "province": "Huelva",
+      "publishedAt": "2026-11-16"
+    },
+    {
+      "id": "3356847",
+      "title": "Oficiales Albañiles para trabajos de obra civil en Subestaciones (h/m) Huelva/Córdoba",
+      "city": "Córdoba",
+      "province": "Huelva",
+      "publishedAt": "2026-11-16",
+      "locationNote": "El título menciona Huelva y Córdoba. No hay un único municipio de trabajo verificado."
+    },
+    {
+      "id": "3360671",
+      "title": "Jefe/a de Obra – Mantenimiento de Instalaciones AENA (H/M)",
+      "city": "Aena",
+      "province": "Madrid",
+      "publishedAt": "2026-11-16"
+    },
+    {
+      "id": "3361336",
+      "title": "Oficiales Albañiles para trabajos de obra civil en Subestaciones (h/m) - Sevilla",
+      "city": "Sevilla",
+      "province": "Sevilla",
+      "publishedAt": "2026-11-16"
+    },
+    {
+      "id": "3372827",
+      "title": "Oficial Electromecánico Estación de Tratamiento de Agua (h/m) - Tarancón (Cuenca)",
+      "city": "Tarancón",
+      "province": "Cuenca",
+      "publishedAt": "2026-11-16"
+    },
+    {
+      "id": "3380514",
+      "title": "Oficial Mantenimiento Protección contra incendios (PCI) (Cádiz) - (h/m)",
+      "city": "Cádiz",
+      "province": "Cádiz",
+      "publishedAt": "2026-11-16"
+    },
+    {
+      "id": "3380067",
+      "title": "Abogado (h/m) - Sevilla",
+      "city": "Sevilla",
+      "province": "Sevilla",
+      "publishedAt": "2026-11-13"
+    },
+    {
+      "id": "3380163",
+      "title": "Operario de Mantenimiento Instrumentista (A. Coruña) (h/m)",
+      "city": "Coruña",
+      "province": "A Coruña",
+      "publishedAt": "2026-11-13"
+    },
+    {
+      "id": "3380168",
+      "title": "Oficial 1ª Mantenimiento Electromecánico - O Ferrol (h/m)",
+      "city": "Ferrol",
+      "province": "A Coruña",
+      "publishedAt": "2026-11-13"
+    },
+    {
+      "id": "3379639",
+      "title": "Oficial 1ª Mantenimiento Polivalente - Ourense (h/m)",
+      "city": "Ourense",
+      "province": "Ourense",
+      "publishedAt": "2026-11-12"
+    },
+    {
+      "id": "3379629",
+      "title": "Oficial 1º Electricista Mantenimiento Industrial - Asturias (h/m)",
+      "city": "Oviedo",
+      "province": "Asturias",
+      "publishedAt": "2026-11-12"
+    },
+    {
+      "id": "3379625",
+      "title": "Oficial 1º Electricista Mantenimiento Industrial (Oviedo) (h/m)",
+      "city": "Oviedo",
+      "province": "Asturias",
+      "publishedAt": "2026-11-12"
+    },
+    {
+      "id": "3377337",
+      "title": "Oficial 1º Electricista Mantenimiento Industrial (Cantabria) (h/m)",
+      "city": "Santander",
+      "province": "Cantabria",
+      "publishedAt": "2026-11-12"
+    },
+    {
+      "id": "3379739",
+      "title": "Oficial 1ª Recurso Preventivo - Energías Renovables (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-12"
+    },
+    {
+      "id": "3379618",
+      "title": "Oficial Mantenimiento Frigorista - Climatizador Asturias (h/m)",
+      "city": "Oviedo",
+      "province": "Asturias",
+      "publishedAt": "2026-11-12"
+    },
+    {
+      "id": "3379460",
+      "title": "Despachador de Incidencias Telefónicas - Valladolid (h/m)",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-11-11"
+    },
+    {
+      "id": "3379234",
+      "title": "Oficial Mantenimiento ETAP (h/m) - Navalcán, Toledo",
+      "city": "Navalcán",
+      "province": "Toledo",
+      "publishedAt": "2026-11-11"
+    },
+    {
+      "id": "3300972",
+      "title": "Técnico/a oficina técnica construcción (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-10"
+    },
+    {
+      "id": "3372877",
+      "title": "Oficiales Albañilería y peones (h/m) - Jaén",
+      "city": "Jaén",
+      "province": "Jaén",
+      "publishedAt": "2026-11-10"
+    },
+    {
+      "id": "3379030",
+      "title": "Oficial Electricista (h/m) - Costa del Sol, Málaga",
+      "city": "Estepona",
+      "province": "Málaga",
+      "publishedAt": "2026-11-10"
+    },
+    {
+      "id": "3379000",
+      "title": "Oficial Electromecánico Estación de Tratamiento de Agua (h/m) - Deifontes (Granada)",
+      "city": "Deifontes",
+      "province": "Granada",
+      "publishedAt": "2026-11-10"
+    },
+    {
+      "id": "3342567",
+      "title": "Fontanero - Estepona/Marbella (h/m)",
+      "city": "Estepona",
+      "province": "Málaga",
+      "publishedAt": "2026-11-09",
+      "locationNote": "El puesto abarca Estepona y Marbella. No hay un único municipio de trabajo verificado."
+    },
+    {
+      "id": "3378054",
+      "title": "Jefe/a obra Mantenimiento - Baja tensión (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-06"
+    },
+    {
+      "id": "3378050",
+      "title": "Jefe/a de Proyecto Instalaciones Madrid (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-06"
+    },
+    {
+      "id": "3378159",
+      "title": "Oficial 1ª Electricista Itinerante - Madrid (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-06",
+      "locationNote": "Puesto itinerante en Madrid; no se ha verificado una sede municipal única."
+    },
+    {
+      "id": "3378150",
+      "title": "Oficial 1º Frigorista / Climatizador Edificio - Tres cantos (Madrid) (h/m)",
+      "city": "Tres Cantos",
+      "province": "Madrid",
+      "publishedAt": "2026-11-06"
+    },
+    {
+      "id": "3378140",
+      "title": "Oficial 1ª Atención de Urgencias Gas - Asturias (h/m)",
+      "city": "Cantabria",
+      "province": "Cantabria",
+      "publishedAt": "2026-11-06",
+      "locationNote": "El título indica Asturias y la ficha indica Cantabria. La ubicación laboral requiere confirmación en el origen."
+    },
+    {
+      "id": "3377559",
+      "title": "Oficial 2ª Electricista – Carbajosa de la Sagrada, Salamanca (h/m)",
+      "city": "Carbajosa de la Sagrada",
+      "province": "Salamanca",
+      "publishedAt": "2026-11-05"
+    },
+    {
+      "id": "3363455",
+      "title": "Jefe de obra Distribución eléctrica - Valladolid (h/m)",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-11-05"
+    },
+    {
+      "id": "3375005",
+      "title": "Oficial 1º Eléctrico / Mecánico Industrial - Ciudad Real (h/m)",
+      "city": "Alcázar de San Juan",
+      "province": "Ciudad Real",
+      "publishedAt": "2026-11-05"
+    },
+    {
+      "id": "3377754",
+      "title": "Oficial Mantenimiento Eléctrico - Alcalá de Henares (Madrid) (h/m)",
+      "city": "Alcalá de Henares",
+      "province": "Madrid",
+      "publishedAt": "2026-11-05"
+    },
+    {
+      "id": "3377770",
+      "title": "Ingeniero Oficina técnica Distribución eléctrica - Madrid",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-05"
+    },
+    {
+      "id": "3377274",
+      "title": "Técnico Instalador FTTH Fibra óptica (h/m) Soria",
+      "city": "Soria",
+      "province": "Soria",
+      "publishedAt": "2026-11-04"
+    },
+    {
+      "id": "3274820",
+      "title": "Jefe de obra mantenimiento industrial (h/m)",
+      "city": "Guipúzcoa",
+      "province": "Guipúzcoa",
+      "publishedAt": "2026-11-04"
+    },
+    {
+      "id": "3377340",
+      "title": "Técnico de climatización - Cantabria - (h/m)",
+      "city": "Cantabria",
+      "province": "Cantabria",
+      "publishedAt": "2026-11-04"
+    },
+    {
+      "id": "3377170",
+      "title": "Técnico PRL - Prevención de riesgos laborales h/m (Asturias)",
+      "city": "Oviedo",
+      "province": "Asturias",
+      "publishedAt": "2026-11-04"
+    },
+    {
+      "id": "3360640",
+      "title": "Jefe de obra mantenimiento - Asturias (h/m)",
+      "city": "Oviedo",
+      "province": "Asturias",
+      "publishedAt": "2026-11-04"
+    },
+    {
+      "id": "3352635",
+      "title": "Técnico PRL La Rioja (h/m)",
+      "city": "Logroño",
+      "province": "La Rioja",
+      "publishedAt": "2026-11-04"
+    },
+    {
+      "id": "3357402",
+      "title": "Jefe/a de Obra Eléctrica - Distribución Asturias (h/m)",
+      "city": "Asturias",
+      "province": "Asturias",
+      "publishedAt": "2026-11-04"
+    },
+    {
+      "id": "3376505",
+      "title": "Auxiliar Administrativo A Coruña (H/M)",
+      "city": "A Coruña",
+      "province": "A Coruña",
+      "publishedAt": "2026-11-03"
+    },
+    {
+      "id": "3376819",
+      "title": "Oficial Mantenimiento PCI - Granada (h/m)",
+      "city": "Granada",
+      "province": "Granada",
+      "publishedAt": "2026-11-03"
+    },
+    {
+      "id": "3376445",
+      "title": "Ingeniero de Proyecto (h/m) - Redes Hidráulicas",
+      "city": "Valencia",
+      "province": "Málaga",
+      "publishedAt": "2026-11-03",
+      "locationNote": "La ficha combina Valencia y Málaga. La ubicación laboral requiere confirmación en el origen."
+    },
+    {
+      "id": "3376443",
+      "title": "Ingeniero de Proyecto (h/m) - Redes Hidráulicas",
+      "city": "Valencia",
+      "province": "Valencia",
+      "publishedAt": "2026-11-03"
+    },
+    {
+      "id": "3376429",
+      "title": "Jefe de Obra Nacional (h/m) - Líneas de Transmisión",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-03",
+      "locationNote": "Puesto de ámbito nacional. Madrid es la localidad publicada de referencia, no un destino único verificado."
+    },
+    {
+      "id": "3309308",
+      "title": "Ayudante Jefe de Obra rehabilitaciones (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-11-03"
+    },
+    {
+      "id": "3376428",
+      "title": "Jefe de Obra Nacional (h/m) - Líneas de Transmisión",
+      "city": "Bilbao",
+      "province": "Vizcaya",
+      "publishedAt": "2026-11-03",
+      "locationNote": "Puesto de ámbito nacional. Bilbao es la localidad publicada de referencia, no un destino único verificado."
+    },
+    {
+      "id": "3376270",
+      "title": "Ingeniero/a - Inspección y Seguridad TET (Alta Tensión)",
+      "city": "Bilbao",
+      "province": "Vizcaya",
+      "publishedAt": "2026-11-02"
+    },
+    {
+      "id": "3375773",
+      "title": "Encargado eléctrico - Pontevedra (h/m)",
+      "city": "Pontevedra",
+      "province": "Pontevedra",
+      "publishedAt": "2026-10-30"
+    },
+    {
+      "id": "3310669",
+      "title": "Jefe/a obra rehabilitaciones (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-10-30"
+    },
+    {
+      "id": "3249522",
+      "title": "Jefe/a obra mantenimiento / Facility Manager (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-10-29"
+    },
+    {
+      "id": "3375599",
+      "title": "Delineante BIM - Instalaciones (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-10-29"
+    },
+    {
+      "id": "3375063",
+      "title": "Despachador de Incidencias Telefónicas - Valladolid (h/m)",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3375021",
+      "title": "Oficial 1º Mantenimiento de Polideportivo - Éibar (h/m)",
+      "city": "Éibar",
+      "province": "Guipúzcoa",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3375270",
+      "title": "Oficial 1º Distribución Eléctrica - Valladolid (h/m)",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3375204",
+      "title": "Oficial 1ª Mantenimiento Eléctrico - Madrid (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3375052",
+      "title": "Oficial 1ª Frigorista / Climatizador - Gipuzkoa (h/m)",
+      "city": "San Sebastián",
+      "province": "Guipúzcoa",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3375042",
+      "title": "Oficial 1ª Albañil / Obra Civil (h/m) - Valladolid",
+      "city": "Vizcaya",
+      "province": "Vizcaya",
+      "publishedAt": "2026-10-28",
+      "locationNote": "El título indica Valladolid y la ficha indica Vizcaya. La ubicación laboral requiere confirmación en el origen."
+    },
+    {
+      "id": "3374983",
+      "title": "Oficial 1º Frigorista / Climatizador - Madrid (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3374998",
+      "title": "Oficial 1ª Electromecánico / Electricista Industrial - Olaberria (h/m)",
+      "city": "Olaberria",
+      "province": "Guipúzcoa",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3374999",
+      "title": "Oficial 1ª Recurso Preventivo de Estructuras de Hormigón (h/m) - Valladolid",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3375013",
+      "title": "Oficial 1º Mantenimiento Eléctrico - Planta Fotovoltaica -Toledo (h/m)",
+      "city": "Toledo",
+      "province": "Toledo",
+      "publishedAt": "2026-10-28"
+    },
+    {
+      "id": "3374607",
+      "title": "Oficial 1ª Multioficios Instalaciones Bilbao (h/m)",
+      "city": "Bilbao",
+      "province": "Vizcaya",
+      "publishedAt": "2026-10-27"
+    },
+    {
+      "id": "3374882",
+      "title": "Oficial 1ª Frigorista / Clima - Vizcaya (h/m)",
+      "city": "Bilbao",
+      "province": "Vizcaya",
+      "publishedAt": "2026-10-27"
+    },
+    {
+      "id": "3374365",
+      "title": "Oficial 1ª Electromecánico - Ferrol (h/m)",
+      "city": "Ferrol",
+      "province": "A Coruña",
+      "publishedAt": "2026-10-26"
+    },
+    {
+      "id": "3346386",
+      "title": "Encargado canalización / obra civil BURGOS (h/m)",
+      "city": "Burgos",
+      "province": "Burgos",
+      "publishedAt": "2026-10-19"
+    },
+    {
+      "id": "3371311",
+      "title": "Administrativo/a CAE (h/m)",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-10-16"
+    },
+    {
+      "id": "3371195",
+      "title": "Técnico ingeniero apoyo montajes prefabricados - Valladolid-Bilbao Adhorna (h/m)",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-10-15",
+      "locationNote": "El título menciona Valladolid y Bilbao. No hay un único municipio de trabajo verificado."
+    },
+    {
+      "id": "3370946",
+      "title": "Mecánico/a de Maquinaria Pesada y Obra Civil – Angola",
+      "city": "Madrid",
+      "province": "Madrid",
+      "publishedAt": "2026-10-15",
+      "locationNote": "Destino del puesto: Angola. Madrid es la localidad publicada de referencia; no se representa como empleo local en Madrid."
+    },
+    {
+      "id": "3370957",
+      "title": "Mecánico/a de Maquinaria Pesada y Obra Civil – Angola",
+      "city": "Málaga",
+      "province": "Málaga",
+      "publishedAt": "2026-10-15",
+      "locationNote": "Destino del puesto: Angola. Málaga es la localidad publicada de referencia; no se representa como empleo local en Málaga."
+    },
+    {
+      "id": "3352077",
+      "title": "Técnico /a de Mantenimiento de Calderas y Climatización",
+      "city": "Cantabria",
+      "province": "Cantabria",
+      "publishedAt": "2026-10-06"
+    },
+    {
+      "id": "3367407",
+      "title": "Asistente a Jefe de Obra – Rol Itinerante Nacional",
+      "city": "Pamplona",
+      "province": "Navarra",
+      "publishedAt": "2026-10-05",
+      "locationNote": "Puesto itinerante de ámbito nacional. Pamplona es la localidad publicada de referencia, no un destino único verificado."
+    },
+    {
+      "id": "3367628",
+      "title": "Técnico ingeniero apoyo montajes prefabricados - Valladolid-Bilbao Adhorna (h/m)",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-10-05",
+      "locationNote": "El título menciona Valladolid y Bilbao. No hay un único municipio de trabajo verificado."
+    },
+    {
+      "id": "3367635",
+      "title": "Comercial de Reformas y CCVV - Valladolid (h/m)",
+      "city": "Valladolid",
+      "province": "Valladolid",
+      "publishedAt": "2026-10-05"
+    },
+    {
+      "id": "3359341",
+      "title": "Prácticas y/o Recién Graduados en Ingeniería",
+      "city": "Bilbao",
+      "province": "Vizcaya",
+      "publishedAt": "2026-09-11"
+    }
+  ]
+}

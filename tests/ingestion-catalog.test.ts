@@ -22,6 +22,12 @@ test('rechaza captura vacía, IDs duplicados o fuente cruzada sin alterar el cat
  for(const incoming of [[],[job('X'),job('X')],[job('X','boe')]]) assert.throws(()=>reconcileSource(catalog,'sef-murcia',incoming,at));
  assert.equal(catalog.checkedAt,'old');
 });
+test('una fuente observada puede retirar una instantánea caducada solo con permiso explícito',()=>{
+ const base={...catalog,calls:[job('ELECNOR-OLD','elecnor-oficial',null),job('OTHER','boe',null)]} as PublicCatalog;
+ assert.throws(()=>reconcileSource(base,'elecnor-oficial',[],at));
+ const next=reconcileSource(base,'elecnor-oficial',[],at,{allowEmptySnapshot:true,missingRetentionDays:0});
+ assert.deepEqual(next.calls.map(item=>item.id),['OTHER']);
+});
 test('retiene una oferta ausente sin cierre durante siete días exactos',()=>{
  const missing=job('ECYL-MISSING','ecyl-castilla-leon',null);
  const base={...catalog,calls:[missing]} as PublicCatalog;
