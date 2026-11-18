@@ -37,6 +37,9 @@ test('la vista local sirve todos los logotipos disponibles',() => {
 });
 
 test('sirve los recursos visuales usados por las tarjetas y el carrusel móvil',() => {
+  assert.deepEqual(previewAsset('/brands/primark.svg'),['brands/primark.svg','image/svg+xml']);
+  assert.deepEqual(previewAsset('/brands/santander.png'),['brands/santander.png','image/png']);
+  assert.deepEqual(previewAsset('/brands/iberdrola.jpg'),['brands/iberdrola.jpg','image/jpeg']);
   assert.deepEqual(previewAsset('/brands/adecco.svg'),['brands/adecco.svg','image/svg+xml']);
   assert.deepEqual(previewAsset('/brands/jobandtalent.png'),['brands/jobandtalent.png','image/png']);
   assert.deepEqual(previewAsset('/icons/material-symbols/arrow-back-ios.svg'),['icons/material-symbols/arrow-back-ios.svg','image/svg+xml']);

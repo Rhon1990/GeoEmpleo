@@ -1,5 +1,11 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Primark, Santander, Iberdrola y recuperación de Repsol/PwC — 18/11/2026
+
+`radancy-primark` lee las páginas HTML oficiales de Primark y contrasta número de páginas, total e IDs. `workday-santander` y `workday-iberdrola` reutilizan la paginación Workday con filtro `locationCountry` España. Los anuncios de varias localidades consultan los nombres del detalle público y crean una ficha por municipio con ID estable, todas con el enlace original. Si no se puede obtener el detalle, queda una ficha sin marcador. Las fichas sin fecha absoluta usan primera detección, conservada por reconciliación. Los tres logos oficiales se sirven localmente.
+
+El despliegue anterior `44313383791` terminó con EY (213 ofertas), pero Repsol y PwC fallaron y no aparecieron en la web. Repsol responde HTTP 429; una instantánea completa de 18 ofertas, observada el 18/11/2026 a las 13:02 UTC, se usa solo ante ese código y caduca el 25/11/2026 a las 13:02 UTC. PwC permanece en captura directa. En la comprobación local posterior, Primark devolvió 109 anuncios, Iberdrola 20 anuncios en 47 localidades, PwC 118 y Repsol la instantánea de 18. Santander devolvió HTTP 429 en esa comprobación; su publicación aún no está confirmada. La captura en el runner de publicación y el catálogo HTTPS determinan el resultado final.
+
 ## Repsol, EY y PwC — 18/11/2026
 
 La rama `codex/repsol-ey-pwc` registra tres fuentes diarias y sus logos oficiales locales. EY (`successfactors-ey`) reutiliza SuccessFactors con rutas `/ey/job/` y filtro ES. PwC (`pwc-campus`) lee los metadatos JSON públicos de la página Campus España aportada, conserva fechas originales y excluye los dos anuncios de Andorra etiquetados erróneamente como ESP. Repsol (`workday-repsol`) pagina el listado Workday con filtro Country España y contrasta su total con la faceta española. Repsol y PwC muestran un resumen de metadatos y el enlace original, sin copiar descripciones completas ni consultar detalles Workday que han devuelto verificación antibot. Repsol usa primera detección, conservada por la reconciliación diaria. Las ubicaciones múltiples o ambiguas no reciben punto.

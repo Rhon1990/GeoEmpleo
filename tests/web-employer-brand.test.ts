@@ -5,6 +5,9 @@ import {resolve} from 'node:path';
 import {employerBrand,neutralBrand,setBrandImageFallback} from '../apps/web-preview/public/presentation.mjs';
 
 const publicBrands={
+  'radancy-primark':['/brands/primark.svg','Primark'],
+  'workday-santander':['/brands/santander.png','Banco Santander'],
+  'workday-iberdrola':['/brands/iberdrola.jpg','Iberdrola'],
   'workday-repsol':['/brands/repsol.jpg','Repsol'],
   'successfactors-ey':['/brands/ey.png','EY'],
   'pwc-campus':['/brands/pwc.svg','PwC'],
@@ -106,6 +109,12 @@ test('fuentes públicas y anuncios directos muestran la identidad neutra de GeoE
 test('la página atribuye Elecnor a su portal oficial',()=>{
  const html=readFileSync(resolve('apps/web-preview/public/index.html'),'utf8');
  assert.match(html,/href="https:\/\/elecnor\.epreselec\.com\/Ofertas\/Ofertas\.aspx"[^>]*>Elecnor<\/a>/);
+});
+test('la página atribuye Primark, Santander e Iberdrola a sus portales oficiales',()=>{
+ const html=readFileSync(resolve('apps/web-preview/public/index.html'),'utf8');
+ assert.match(html,/href="https:\/\/careers\.primark\.com\/es\/buscar-trabajo\/Espa/);
+ assert.match(html,/href="https:\/\/santander\.wd3\.myworkdayjobs\.com\/es\/SantanderCareers\/jobs/);
+ assert.match(html,/href="https:\/\/iberdrola\.wd3\.myworkdayjobs\.com\/es\/Iberdrola\/jobs/);
 });
 
 test('un error al cargar un logo cambia una sola vez a la marca neutral local',()=>{
