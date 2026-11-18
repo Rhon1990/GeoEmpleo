@@ -16,6 +16,7 @@ import {createAnalyticsController,isProductionAnalyticsHost,loadFirebaseAnalytic
 import {loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 import {observeAdsToggle} from './ad-toggle.mjs';
 import {selectableTerritories} from './territories.mjs';
+import {enhanceSearchableSelect} from './searchable-select.mjs';
 import {createMobileOfferCarousel,featuredMapOfferId,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261116-mobile-featured-pin';
 
 const analyticsController=createAnalyticsController({config:null,loadSdk:()=>loadFirebaseAnalytics()});
@@ -82,6 +83,9 @@ void fetch('/config.json').then(response=>response.ok?response.json():null).then
 const form = document.querySelector('#search-form');
 const query = document.querySelector('#query');
 const location = document.querySelector('#location');
+const employerFilter=document.querySelector('#employer-filter');
+const searchableTerritory=enhanceSearchableSelect(location,{label:'Buscar comunidad o provincia',searchPlaceholder:'Buscar comunidad o provincia…'});
+const searchableEmployer=enhanceSearchableSelect(employerFilter,{label:'Buscar empresa',searchPlaceholder:'Buscar empresa…'});
 const list = document.querySelector('#job-list');
 const detail = document.querySelector('#job-detail');
 const about = document.querySelector('#about-dialog');
@@ -602,11 +606,11 @@ function updateFacets(facets) {
   location.firstChild.value='';
   for(const region of selectableTerritories(facets.regions)){const option=element('option',region);option.value=region;location.append(option);}
   location.value=territory;
-  const employerFilter=document.querySelector('#employer-filter');
   employerFilter.replaceChildren(element('option','Todas las empresas'));
   employerFilter.firstChild.value='';
   for(const item of facets.employers??[]){const option=element('option',item.label);option.value=item.id;employerFilter.append(option);}
   employerFilter.value=employer;
+  searchableTerritory.refresh();searchableEmployer.refresh();
   const categories=document.querySelector('#categories');categories.replaceChildren();
   for(const {id,label} of [{id:'',label:'Todas las áreas'},...facets.categories]) {
     const button=element('button',label,'filter-chip');button.type='button';button.dataset.category=id;categories.append(button);
@@ -665,7 +669,7 @@ function clear() {
   mapController?.cancelOriginSelection();
   territoryFocusPending=null;
   query.value = ''; location.value = ''; category = ''; employer = '';
-  document.querySelector('#employer-filter').value='';
+  employerFilter.value='';searchableTerritory.refresh();searchableEmployer.refresh();
   originRevision++;radiusSelect.value = '';
   if(originSource==='device')mapController?.focus(origin);
   else {
@@ -682,7 +686,7 @@ function setOrigin(point,label,source='manual') {
   mapController?.cancelOriginSelection();originRevision++;
   const next=originSearchTransition(point);
   searchBounds=next.bounds;territoryFocusPending=next.pendingTerritory;
-  location.value=next.territory;origin=next.origin;originSource=source;radiusSelect.value='';radiusSelect.disabled=false;
+  location.value=next.territory;searchableTerritory.refresh();origin=next.origin;originSource=source;radiusSelect.value='';radiusSelect.disabled=false;
   document.querySelector('#origin-status').textContent=`${label} · Ubicación aproximada; el mapa filtra la zona visible`;
   mapController?.focus(point);
   render();
@@ -877,7 +881,7 @@ query.value=initialParams.get('q')??'';
 employer=initialParams.get('employer')??'';
 category=initialParams.get('category')??'';
 const initialTerritory=initialParams.get('city');
-if(initialTerritory&&selectableTerritories([initialTerritory]).length){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;territoryFocusPending=initialTerritory;}
+if(initialTerritory&&selectableTerritories([initialTerritory]).length){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;searchableTerritory.refresh();territoryFocusPending=initialTerritory;}
 
 window.matchMedia('(max-width:780px)').addEventListener('change',render);
 window.addEventListener('pagehide',()=>{search.cancel();placeSearch.cancel();detailRequest?.abort();});

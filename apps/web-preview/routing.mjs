@@ -13,6 +13,7 @@ const previewAssets = new Map([
   ['/styles.css', ['styles.css','text/css; charset=utf-8']],
   ['/select-controls.css', ['select-controls.css','text/css; charset=utf-8']],
   ['/app.mjs', ['app.mjs','text/javascript; charset=utf-8']],
+  ['/searchable-select.mjs', ['searchable-select.mjs','text/javascript; charset=utf-8']],
   ['/job-interaction.mjs', ['job-interaction.mjs','text/javascript; charset=utf-8']],
   ['/workspace-view.mjs', ['workspace-view.mjs','text/javascript; charset=utf-8']],
   ['/analytics.mjs', ['analytics.mjs','text/javascript; charset=utf-8']],
