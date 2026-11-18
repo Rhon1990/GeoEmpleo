@@ -70,6 +70,8 @@ test('PwC lee JSON sin ejecutar scripts y limita al portal Campus España',()=>{
  assert.equal(pwcBoard.site,'Global_Campus_Careers');
  assert.equal(parsePwcListing(html([{...row,location:'Andorra',region:'Andorra'}])).length,0);
  assert.equal(parsePwcListing(html([{...row,otherlocations:'Barcelona'}]))[0]?.multiple,true);
+ assert.equal(parsePwcListing(html([row,{...row,jobreqid:'741464WD',title:'',iso:'',date:'',apply:''}])).length,1);
+ assert.throws(()=>parsePwcListing(html([{...row,title:'',date:'',apply:row.apply}])),/inválida/);
 });
 test('Repsol exige captura completa y mantiene filtro España en cada página',async()=>{
  let requests=0;

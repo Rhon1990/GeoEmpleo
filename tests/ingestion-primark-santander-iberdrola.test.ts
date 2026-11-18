@@ -74,6 +74,14 @@ test('Workday rechaza una captura paginada incompleta',async()=>{
   return new Response(JSON.stringify({total:21,jobPostings:rows}),{headers:{'content-type':'application/json'}});
  }),/incompleta/);
 });
+test('Workday reintenta una respuesta 429 transitoria antes de descartar la fuente',async()=>{
+ let requests=0;
+ const jobs=await fetchWorkdayOffers(santanderBoard,checkedAt,resolveCity,async()=>{
+  requests++;
+  return requests===1?new Response('',{status:429}):new Response(JSON.stringify({total:1,jobPostings:[{title:'Analista',externalPath:'/job/Madrid/Analista_Req1635224',bulletFields:['Req1635224'],locationsText:'Madrid'}]}),{headers:{'content-type':'application/json'}});
+ });
+ assert.equal(requests,2);assert.equal(jobs.length,1);
+});
 
 test('runner actualiza las tres fuentes y conserva su primera detección',async()=>{
  const sourceIds=['radancy-primark','workday-santander','workday-iberdrola'];
