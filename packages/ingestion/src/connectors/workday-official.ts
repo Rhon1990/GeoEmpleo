@@ -58,6 +58,7 @@ export function parsePwcListing(html:string):ListedOffer[] {
  const seen=new Set<string>();
  return rows.flatMap(value=>{
   const row=record(value);
+  if((row.title==null||row.title==='')&&row.apply===''&&row.date===''&&row.iso==='') return [];
   if(row.iso!=='ESP'||row.jobsite!==pwcBoard.site) throw new TypeError('Oferta PwC fuera de España o Campus');
   if(typeof row.apply!=='string') throw new TypeError('URL PwC ausente');
   const url=new URL(row.apply);
@@ -94,8 +95,11 @@ export async function fetchWorkdayOffers(board:WorkdayBoard,checkedAt:string,res
  const found=new Map<string,ListedOffer>();let expected:number|null=null;
  for(let offset=0;offset<(expected??20);offset+=20){
   if(offset&&fetchImpl===fetch) await new Promise(resolve=>setTimeout(resolve,1000));
-  const response=await fetchImpl('https://'+board.host+'/wday/cxs/'+board.tenant+'/'+board.site+'/jobs',{method:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify({appliedFacets:{[board.facetParameter]:[workdaySpainId]},limit:20,offset,searchText:''}),redirect:'error',signal:AbortSignal.timeout(40_000)});
-  if(!response.ok) throw new Error('HTTP '+response.status);
+  const response=await retryTransient(async()=>{
+   const result=await fetchImpl('https://'+board.host+'/wday/cxs/'+board.tenant+'/'+board.site+'/jobs',{method:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify({appliedFacets:{[board.facetParameter]:[workdaySpainId]},limit:20,offset,searchText:''}),redirect:'error',signal:AbortSignal.timeout(40_000)});
+   if(!result.ok) throw new Error('HTTP '+result.status);
+   return result;
+  });
   if(!response.headers.get('content-type')?.includes('json')) throw new TypeError('Workday no devolvió JSON');
   const text=await response.text();if(text.length>8_000_000) throw new TypeError('Respuesta Workday demasiado grande');
   const data=record(JSON.parse(text));
