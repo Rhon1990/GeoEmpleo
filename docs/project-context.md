@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Filtros plegables en ventanas compactas — 18/11/2026
+
+La rama `codex/compact-desktop-filters` amplía el botón «Filtros» existente a ventanas de hasta 1100 px de ancho o 800 px de alto. Empresa, categorías, localidad y distancia comienzan plegadas; el mismo control permite abrirlas y cerrarlas, conserva sus valores y refleja el estado mediante `aria-expanded`. Favoritos, «Ofertas del día» cuando corresponde y «Limpiar filtros» si hay filtros activos permanecen accesibles. En escritorio amplio y alto el panel sigue visible. Se reutilizan el estado y los controles actuales; la distribución de lista/mapa y el catálogo no cambian. Validación local: 45 pruebas de interfaz y estado, TypeScript y build estático correctos; apertura/cierre comprobados en Chromium a 1366 × 768. La conexión con el proveedor de navegador se interrumpió antes de completar la revisión visual en tableta y móvil. Pendiente de publicación.
+
 ## Elecnor en vista de prueba — 17/11/2026
 
 Las ofertas de `elecnor-oficial` usan el logotipo oficial azul y naranja servido localmente desde `brands/elecnor.png`, mediante el registro compartido de marcas de tarjetas, carrusel y detalle. Se conserva la imagen neutra como alternativa ante errores de carga.

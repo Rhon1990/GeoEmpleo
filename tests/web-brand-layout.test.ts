@@ -392,8 +392,6 @@ test('mobile map exposes an accessible visible-zone carousel and one favorites e
   assert.match(mobileRules,/\.mobile-featured-offer \.job-visual\.logo-brand img\{[^}]*width:auto[^}]*height:auto[^}]*max-width:calc\(100% - 28px\)[^}]*max-height:40px/);
   assert.doesNotMatch(mobileRules,/\.mobile-featured-offer \.job-visual img\{[^}]*width:42px[^}]*height:42px/);
   assert.match(mobileRules,/\.dynamic-map\{[^}]*height:38dvh/);
-  assert.match(mobileRules,/#mobile-clear-filters\{[^}]*display:inline-flex/);
-  assert.match(mobileRules,/#clear-filters\{[^}]*display:none/);
   assert.match(app,/querySelector\('#mobile-clear-filters'\)\.addEventListener\('click',clear\)/);
   assert.match(app,/import \{createMobileOfferCarousel,featuredMapOfferId,mobileOfferCarouselSlides\} from '\.\/mobile-offer-carousel\.mjs\?v=[^']+'/);
   assert.match(app,/function renderMobileOfferCarousel\(offers\)/);
@@ -714,16 +712,20 @@ test('mobile preserves document flow with a single visible workspace panel', () 
   assert.equal(workspace&&attribute(workspace,'data-view'),'map');
 });
 
-test('mobile secondary filters start collapsed while desktop keeps them visible',()=>{
+test('secondary filters collapse on narrow or short windows and stay visible on roomy desktops',()=>{
   const toggle=allElements.find(node=>attribute(node,'id')==='mobile-filter-toggle');
   const filters=allElements.find(node=>attribute(node,'id')==='advanced-filters');
   assert.ok(toggle&&filters);
   assert.equal(attribute(toggle,'aria-expanded'),'false');
   assert.equal(attribute(toggle,'aria-controls'),'advanced-filters');
   assert.match(ruleForSelector(css,'.search-actions .mobile-filter-toggle'),/display:none/);
-  const mobile=mediaBlocksForMaxWidth(css,780).join('\n');
-  assert.match(mobile,/\.search-actions \.mobile-filter-toggle\{[^}]*display:inline-flex/);
-  assert.match(mobile,/\.advanced-filters\[data-expanded="false"\]\{[^}]*display:none/);
+  const compact=css.match(/@media\(max-width:1100px\),\(max-height:800px\)\{([\s\S]*?)\n\}/)?.[1];
+  assert.ok(compact,'Both narrow tablets and wide, short laptops need the filter disclosure');
+  assert.match(compact,/\.search-actions \.mobile-filter-toggle\{[^}]*display:inline-flex/);
+  assert.match(compact,/\.advanced-filters\[data-expanded="false"\]\{[^}]*display:none/);
+  assert.match(compact,/#mobile-clear-filters\{[^}]*display:inline-flex/);
+  assert.match(compact,/#clear-filters\{[^}]*display:none/);
+  assert.doesNotMatch(compact,/\.workspace|\.mobile-view-switch|#show-saved|#today-offers/);
 });
 
 test('mobile map overlay stays compact and centered above the map', () => {
