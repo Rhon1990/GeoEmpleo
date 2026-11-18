@@ -59,6 +59,7 @@ que sigan abiertas.
 | `stef-oficial` | [STEF](https://apply.stef.jobs/search/?createNewAlert=false&q=&locationsearch=) | SuccessFactors; listado global paginado y fichas completas; conserva solo `ES` | Publicada el 12/11/2026: 43 fichas españolas, 18 con municipio verificado |
 | `mercadona-oficial` | [Mercadona](https://mercadona.avature.net/es_ES/Careers/SearchJobs/?2307=243&2307_format=2105&listFilterMode=1&jobRecordsPerPage=6) | Avature; listado oficial paginado con filtro España, ID, municipio, descripción y enlace de solicitud | Publicada el 12/11/2026: 337 fichas españolas, 216 con municipio verificado |
 | `acciona-oficial` | [Acciona](https://www.acciona.com/es/nuestro-proposito/trabaja-con-nosotros/ofertas-empleo) | Listado oficial con todos los empleos incrustados; filtra país `ESP`, valida ID, fecha, texto y enlace de detalle | Publicada el 12/11/2026: 242 fichas españolas, 211 con municipio verificado |
+| `teamtailor-alsea` | [Alsea Europa](https://alseaespana.teamtailor.com/jobs) | Teamtailor; ficha oficial JobPosting, ID, fecha y localidades; IDs separados por municipio | Captura validada el 18/11/2026: 11 ofertas y 11 municipios resueltos; logotipo servido por el portal oficial |
 
 El conector de El Corte Inglés envía `country: ["ES"]` al listado paginado. La
 ficha Workday sirve una aplicación sin `JobPosting` legible, así que el listado

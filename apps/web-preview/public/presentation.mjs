@@ -36,6 +36,7 @@ const employerBrands={
   'successfactors-deloitte':{src:'/brands/deloitte.png',alt:'Deloitte'},
   'successfactors-ilunion':{src:'/brands/ilunion.jpg',alt:'ILUNION'},
   'teamtailor-dia':{src:'/brands/dia.png',alt:'DIA'},
+  'teamtailor-alsea':{src:'/brands/alsea.png',alt:'Alsea'},
   'teamtailor-leroy':{src:'/brands/leroy-merlin.png',alt:'Leroy Merlin'},
   'talentforjobs-alcampo':{src:'/brands/alcampo.png',alt:'Alcampo'},
   'talentclue-decathlon':{src:'/brands/decathlon.png',alt:'Decathlon'},

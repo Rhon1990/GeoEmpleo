@@ -40,7 +40,7 @@ const previewAssets = new Map([
 
 const brandAssets = [
   'primark.svg','santander.png','iberdrola.jpg','repsol.jpg','ey.png','pwc.svg',
-  'accenture.svg','acciona.svg','adecco.svg','alcampo.png','burger-king.svg','capgemini.png','carrefour.svg','clece.png','coviran.png','decathlon.png','deloitte.png','dia.png','disa.png','domusvi.png','el-corte-ingles.svg','elecnor.png','eulen.webp','geoempleo-neutral.svg','gi-group.jpg','ilunion.jpg','indra.png','iss.png','jobandtalent.png','kfc.svg','kpmg.png','leroy-merlin.png','lidl.svg','mapfre.png','mcdonalds.svg','melia.svg','mercadona.svg','plenergy.png','quironsalud.jpg','randstad.svg','sacyr.png','skydance.jpg','stef.png','telepizza.svg','vithas.png',
+  'accenture.svg','acciona.svg','adecco.svg','alsea.png','alcampo.png','burger-king.svg','capgemini.png','carrefour.svg','clece.png','coviran.png','decathlon.png','deloitte.png','dia.png','disa.png','domusvi.png','el-corte-ingles.svg','elecnor.png','eulen.webp','geoempleo-neutral.svg','gi-group.jpg','ilunion.jpg','indra.png','iss.png','jobandtalent.png','kfc.svg','kpmg.png','leroy-merlin.png','lidl.svg','mapfre.png','mcdonalds.svg','melia.svg','mercadona.svg','plenergy.png','quironsalud.jpg','randstad.svg','sacyr.png','skydance.jpg','stef.png','telepizza.svg','vithas.png',
 ];
 const materialSymbolAssets = ['arrow-back-ios.svg','arrow-forward-ios.svg','close.svg','favorite-filled.svg','favorite-outline.svg','location-on.svg','more-vert.svg','progress-activity.svg','share.svg'];
 const imageContentType = name => name.endsWith('.svg') ? 'image/svg+xml' : name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg';
