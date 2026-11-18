@@ -15,6 +15,9 @@ export function offerAgeWarning(call,now=new Date()) {
  return `${call.dateKind==='observed'?'Detección':'Publicación'} antigua · comprueba la vigencia en el origen`;
 }
 const employerBrands={
+  'radancy-primark':{src:'/brands/primark.svg',alt:'Primark'},
+  'workday-santander':{src:'/brands/santander.png',alt:'Banco Santander'},
+  'workday-iberdrola':{src:'/brands/iberdrola.jpg',alt:'Iberdrola'},
   'workday-repsol':{src:'/brands/repsol.jpg',alt:'Repsol'},
   'successfactors-ey':{src:'/brands/ey.png',alt:'EY'},
   'pwc-campus':{src:'/brands/pwc.svg',alt:'PwC'},

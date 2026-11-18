@@ -19,6 +19,9 @@ test('Repsol valida enlaces y duplicados del listado',()=>{
  assert.equal(parseWorkdayListing({total:1,jobPostings:[row]}).offers[0]?.id,offer.id);
  assert.throws(()=>parseWorkdayListing({total:2,jobPostings:[row,row]}),/duplicad/);
  assert.throws(()=>parseWorkdayListing({total:1,jobPostings:[{...row,externalPath:'https://evil.test/job/123'}]}),/Ruta/);
+ for(const [id,path] of [['Req1635224','/job/Madrid/Analista_Req1635224'],['R-01328','/job/Spain-Bilbao/Programa-R-01328_R-01328']]) {
+  assert.equal(parseWorkdayListing({total:1,jobPostings:[{...row,bulletFields:[id],externalPath:path}]}).offers[0]?.id,id);
+ }
 });
 test('runner incorpora las tres fuentes y conserva primera detección y otras empresas',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'geo-three-test-'));
@@ -46,7 +49,7 @@ test('runner incorpora las tres fuentes y conserva primera detección y otras em
   const catalog=JSON.parse(await readFile(catalogPath,'utf8'));
   assert.equal(catalog.calls.find((x:{sourceId:string})=>x.sourceId==='workday-repsol').publishedAt,'2026-11-18');
   assert.deepEqual(catalog.calls.find((x:{id:string})=>x.id==='OTHER'),other);
-  await assert.rejects(runDaily({...options,fetchImpl:async()=>new Response('',{status:429}),checkedAt:'2026-11-19T12:05:00Z'}),/Todas las fuentes/);
+  await assert.rejects(runDaily({...options,fetchImpl:async()=>new Response('',{status:429}),checkedAt:'2026-11-26T12:05:00Z'}),/Todas las fuentes/);
   assert.equal(JSON.parse(await readFile(catalogPath,'utf8')).calls.length,4);
  } finally {await rm(dir,{recursive:true,force:true});}
 });
@@ -76,6 +79,13 @@ test('Repsol exige captura completa y mantiene filtro España en cada página',a
   return new Response(JSON.stringify({total:21,facets:[{facetParameter:'Country',values:[{id:'bd34c524a6a04ae6915f5d96fa086199',count:21}]}],jobPostings:requests===1?[{title:offer.title,externalPath:offer.path,bulletFields:[offer.id],locationsText:offer.city}]:[]}),{headers:{'content-type':'application/json'}});
  };
  await assert.rejects(fetchRepsolOffers(checkedAt,resolveCity,fetchImpl),/incompleta/);
+});
+test('Repsol usa una instantánea de arranque solo ante HTTP 429 y antes de caducar',async()=>{
+ const blocked:typeof fetch=async()=>new Response('',{status:429,headers:{'content-type':'text/html'}});
+ const jobs=await fetchRepsolOffers('2026-11-18T14:00:00Z',resolveCity,blocked);
+ assert.equal(jobs.length,18);assert.ok(jobs.every(job=>job.sourceId==='workday-repsol'));
+ assert.equal(jobs[0]?.checkedAt,'2026-11-18T13:02:28.612Z');
+ await assert.rejects(fetchRepsolOffers('2026-11-26T12:00:00Z',resolveCity,blocked),/caducada/);
 });
 test('EY conserva ruta propia y país al reutilizar SuccessFactors; fuentes activas',()=>{
  const board=successFactorsBoards.find(x=>x.sourceId==='successfactors-ey')!;assert.ok(board);

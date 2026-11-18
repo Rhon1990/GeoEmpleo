@@ -45,5 +45,8 @@ Estos archivos se sirven desde GeoEmpleo360 para evitar peticiones de imagen a t
 | `repsol.jpg` | Repsol | [Logo del portal oficial Workday](https://repsol.wd3.myworkdayjobs.com/es/Repsol/assets/logo) |
 | `ey.png` | EY | [Logo del pie del portal oficial](https://rmkcdn.successfactors.com/bcfdbc8a/0a1dfed5-03a4-4716-957c-0.png) |
 | `pwc.svg` | PwC | [Logo de la web corporativa](https://www.pwc.es/content/pwc/script/network/parallax/PwC-logo.svg) |
+| `primark.svg` | Primark | [Logo del portal oficial de empleo](https://tbcdn.talentbrew.com/company/8171/v3_0/img/icons/primark-logo-black.svg) |
+| `santander.png` | Banco Santander | [Logo del portal oficial Workday](https://santander.wd3.myworkdayjobs.com/es/SantanderCareers/assets/logo) |
+| `iberdrola.jpg` | Iberdrola | [Logo del portal oficial Workday](https://iberdrola.wd3.myworkdayjobs.com/es/Iberdrola/assets/logo) |
 
 La atribución de imagen se cubre mediante pruebas en `tests/web-employer-brand.test.ts`. Las ofertas públicas, directas y de fuentes sin empleador empresarial identificable usan `geoempleo-neutral.svg`.
