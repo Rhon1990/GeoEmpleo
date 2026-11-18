@@ -1,6 +1,6 @@
 # Fuentes de ofertas de GeoEmpleo
 
-Inventario operativo revisado el **12/11/2026**. El registro ejecutable es
+Inventario operativo revisado el **18/11/2026**. El registro ejecutable es
 [`packages/ingestion/src/registry.ts`](../packages/ingestion/src/registry.ts) y la
 lista que recorre la ingesta diaria está en
 [`packages/ingestion/src/runner.ts`](../packages/ingestion/src/runner.ts).
@@ -8,7 +8,7 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene 41 identificadores marcados como `active`, con adaptador
+El registro tiene 45 identificadores marcados como `active`, con adaptador
 en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
@@ -103,8 +103,18 @@ Otros portales y empresas solicitados se documentan en la
 [auditoría nacional](planning/2026-10-19-ampliacion-nacional-fuentes.md) y el
 [diseño de portales empresariales](superpowers/specs/2026-10-26-portales-empresariales-oficiales-design.md).
 Que una empresa tenga sedes o un portal público no crea una oferta en GeoEmpleo.
-Repsol, Moeve, BP, Galp, InfoJobs y LinkedIn siguen sin conector
+Moeve, BP, Galp, InfoJobs y LinkedIn siguen sin conector
 activo verificado.
+
+### Repsol, EY y PwC (18/11/2026)
+
+| Fuente | Alcance | Captura local |
+|---|---|---|
+| `workday-repsol` | Workday Repsol, filtro Country España; metadatos y enlace; fecha de primera detección | Primera respuesta: 18 anuncios. La actualización posterior recibe HTTP 429/verificación antibot; pendiente de captura automática completa |
+| `successfactors-ey` | SuccessFactors EY, país ES, paginación y fichas oficiales | 213 ofertas españolas, 171 con punto municipal |
+| `pwc-campus` | Página corporativa Campus España aportada; metadatos y fecha original | 120 anuncios del listado menos 2 de Andorra: 118 ofertas, 97 puntos |
+
+Destinos múltiples o ambiguos quedan sin punto. Los detalles Workday no se consultan ni se elude su verificación antibot. Ante fallos se conserva el catálogo anterior sin renovar su fecha de comprobación. Los logos proceden de los propios portales; su procedencia no supone licencia abierta de marca.
 
 La ejecución de GitHub Actions [`40658043000`](https://github.com/Rhon1990/GeoEmpleo/actions/runs/40658043000),
 terminada el 28/10/2026, actualizó las 28 fuentes con estado `success` y publicó

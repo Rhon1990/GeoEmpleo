@@ -42,4 +42,8 @@ Estos archivos se sirven desde GeoEmpleo360 para evitar peticiones de imagen a t
 | `acciona.svg` | Acciona | [Logotipo servido por la web oficial](https://www.acciona.com/es/nuestro-proposito/trabaja-con-nosotros/ofertas-empleo) |
 | `elecnor.png` | Elecnor | [Logotipo oficial de la web corporativa](https://www.elecnor.com/storage/media/files/shares/elecnor-logo2.png) |
 
+| `repsol.jpg` | Repsol | [Logo del portal oficial Workday](https://repsol.wd3.myworkdayjobs.com/es/Repsol/assets/logo) |
+| `ey.png` | EY | [Logo del pie del portal oficial](https://rmkcdn.successfactors.com/bcfdbc8a/0a1dfed5-03a4-4716-957c-0.png) |
+| `pwc.svg` | PwC | [Logo de la web corporativa](https://www.pwc.es/content/pwc/script/network/parallax/PwC-logo.svg) |
+
 La atribución de imagen se cubre mediante pruebas en `tests/web-employer-brand.test.ts`. Las ofertas públicas, directas y de fuentes sin empleador empresarial identificable usan `geoempleo-neutral.svg`.

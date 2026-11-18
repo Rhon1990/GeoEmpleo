@@ -1,5 +1,11 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Repsol, EY y PwC — 18/11/2026
+
+La rama `codex/repsol-ey-pwc` registra tres fuentes diarias y sus logos oficiales locales. EY (`successfactors-ey`) reutiliza SuccessFactors con rutas `/ey/job/` y filtro ES. PwC (`pwc-campus`) lee los metadatos JSON públicos de la página Campus España aportada, conserva fechas originales y excluye los dos anuncios de Andorra etiquetados erróneamente como ESP. Repsol (`workday-repsol`) pagina el listado Workday con filtro Country España y contrasta su total con la faceta española. Repsol y PwC muestran un resumen de metadatos y el enlace original, sin copiar descripciones completas ni consultar detalles Workday que han devuelto verificación antibot. Repsol usa primera detección, conservada por la reconciliación diaria. Las ubicaciones múltiples o ambiguas no reciben punto.
+
+Captura local sobre copia del catálogo público: PwC 118 ofertas / 97 puntos; EY 213 / 171. Repsol devolvió inicialmente 18 anuncios, pero la captura posterior recibió HTTP 429; todavía no hay actualización automática verificada de esa fuente. El fallo conserva el catálogo previo mediante el mecanismo existente. Los logos se registran en `presentation.mjs`, las rutas de prueba en `routing.mjs` y la procedencia en `brands/README.md`. El registro y el ejecutor, no esta nota, determinan la ejecución diaria.
+
 ## Filtros plegables en ventanas compactas — 18/11/2026
 
 La rama `codex/compact-desktop-filters` amplía el botón «Filtros» existente a ventanas de hasta 1100 px de ancho o 800 px de alto. Empresa, categorías, localidad y distancia comienzan plegadas; el mismo control permite abrirlas y cerrarlas, conserva sus valores y refleja el estado mediante `aria-expanded`. Favoritos, «Ofertas del día» cuando corresponde y «Limpiar filtros» si hay filtros activos permanecen accesibles. En escritorio amplio y alto el panel sigue visible. Se reutilizan el estado y los controles actuales; la distribución de lista/mapa y el catálogo no cambian. Validación local: 45 pruebas de interfaz y estado, TypeScript y build estático correctos; apertura/cierre comprobados en Chromium a 1366 × 768. La conexión con el proveedor de navegador se interrumpió antes de completar la revisión visual en tableta y móvil.

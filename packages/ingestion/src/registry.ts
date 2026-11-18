@@ -26,6 +26,7 @@ import {mercadonaListingUrl} from './connectors/mercadona.ts';
 import {accionaListingUrl} from './connectors/acciona.ts';
 import {capgeminiListingUrl} from './connectors/capgemini.ts';
 import {elecnorListingUrl} from './connectors/elecnor-observed.ts';
+import {repsolListingUrl,pwcListingUrl} from './connectors/workday-official.ts';
 
 const definitions: readonly SourceDefinition[] = [
   {
@@ -117,6 +118,8 @@ const definitions: readonly SourceDefinition[] = [
   })),
   {id:'teamtailor-dia',name:'DIA · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
     endpoint:diaListingUrl,licenseUrl:null},
+  {id:'workday-repsol',name:'Repsol · portal oficial',countryCode:'ES',kind:'ats',status:'active',endpoint:repsolListingUrl,licenseUrl:null},
+  {id:'pwc-campus',name:'PwC · Campus España',countryCode:'ES',kind:'ats',status:'active',endpoint:pwcListingUrl,licenseUrl:null},
   {id:'teamtailor-leroy',name:'Leroy Merlin · Teamtailor',countryCode:'ES',kind:'ats',status:'active',
     endpoint:leroyMerlinListingUrl,licenseUrl:null},
   {id:'talentforjobs-alcampo',name:'Alcampo · TalentForJobs',countryCode:'ES',kind:'ats',status:'active',

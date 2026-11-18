@@ -15,6 +15,9 @@ export function offerAgeWarning(call,now=new Date()) {
  return `${call.dateKind==='observed'?'Detección':'Publicación'} antigua · comprueba la vigencia en el origen`;
 }
 const employerBrands={
+  'workday-repsol':{src:'/brands/repsol.jpg',alt:'Repsol'},
+  'successfactors-ey':{src:'/brands/ey.png',alt:'EY'},
+  'pwc-campus':{src:'/brands/pwc.svg',alt:'PwC'},
   'talentclue-mcdonalds':{src:'/brands/mcdonalds.svg',alt:'McDonald’s'},
   'bizneo-burger-king':{src:'/brands/burger-king.svg',alt:'Burger King'},
   'amrest-kfc':{src:'/brands/kfc.svg',alt:'KFC'},
