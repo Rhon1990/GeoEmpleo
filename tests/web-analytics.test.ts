@@ -110,6 +110,34 @@ test('solo permite eventos y valores categóricos definidos, nunca texto libre',
   ]);
 });
 
+test('las selecciones jerárquicas de zona se miden sin nombres ni coordenadas',async()=>{
+  const h=createHarness();
+  const controller=createAnalyticsController({config,storage:h.storage as unknown as Storage,loadSdk:async()=>h.sdk,location:{pathname:'/'} as Location});
+  await controller.accept();
+  for(const filter_type of ['community','province','locality'])assert.equal(await controller.track('filter_used',{filter_type}),true);
+  assert.equal(await controller.track('filter_used',{filter_type:'locality',place:'Madrid'}),false);
+  assert.deepEqual(h.calls.filter(([kind])=>kind==='event').map(([, ,name,params])=>[name,params]),[
+    ['filter_used',{filter_type:'community'}],
+    ['filter_used',{filter_type:'province'}],
+    ['filter_used',{filter_type:'locality'}],
+  ]);
+});
+
+test('los controles nuevos emiten solo acciones permitidas y con consentimiento',async()=>{
+  const h=createHarness();
+  const controller=createAnalyticsController({config,storage:h.storage as unknown as Storage,loadSdk:async()=>h.sdk,location:{pathname:'/'} as Location});
+  assert.equal(await controller.track('ui_action',{action:'open_location_filter'}),false);
+  await controller.accept();
+  for(const action of ['open_location_filter','open_distance_filter','open_mobile_filters','open_favorites','show_today_offers','hide_today_offers','clear_filters','show_map_view','show_offers_view']){
+    assert.equal(await controller.track('ui_action',{action}),true);
+  }
+  assert.equal(await controller.track('ui_action',{action:'open_location_filter',place:'Madrid'}),false);
+  assert.equal(await controller.track('ui_action',{action:'unknown'}),false);
+  assert.equal(h.calls.filter(([kind,,name])=>kind==='event'&&name==='ui_action').length,9);
+  await controller.reject();
+  assert.equal(await controller.track('ui_action',{action:'clear_filters'}),false);
+});
+
 test('la salida a la oferta original se mide solo con consentimiento y sin datos de la oferta',async()=>{
   const h=createHarness();
   const controller=createAnalyticsController({config,storage:h.storage as unknown as Storage,loadSdk:async()=>h.sdk,location:{pathname:'/'} as Location});

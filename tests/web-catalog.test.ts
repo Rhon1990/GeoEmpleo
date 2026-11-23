@@ -68,6 +68,15 @@ test('combina texto, territorio y categoría sin resultados ajenos', () => {
   assert.equal(searchCalls(searchFixture, { city: 'Comunidad de Madrid', category: 'cultura' }).length, 0);
 });
 
+test('un filtro provincial incluye las variantes oficiales del nombre',()=>{
+  const calls=[
+    {...searchFixture[0],id:'balears',city:'Palma',province:'Baleares',region:'Islas Baleares'},
+    {...searchFixture[0],id:'alava',city:'Vitoria',province:'Araba/Álava',region:'País Vasco'},
+  ];
+  assert.deepEqual(searchCalls(calls,{city:'Illes Balears'}).map(call=>call.id),['balears']);
+  assert.deepEqual(searchCalls(calls,{city:'Álava'}).map(call=>call.id),['alava']);
+});
+
 test('limpiar consulta recupera los anuncios y preserva datos originales', () => {
   const original = structuredClone(catalog.calls);
   assert.equal(searchCalls(catalog.calls, { q: '  ' }).length, catalog.calls.length);

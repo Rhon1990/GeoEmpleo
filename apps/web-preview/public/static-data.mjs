@@ -1,17 +1,16 @@
-import {employerFacet,searchCalls} from './catalog.mjs';
+import {employerFacet,searchCalls} from './catalog.mjs?v=20261118-optional-territories';
+import {formatPlaceSuggestion,mergeEquivalentPlaces,normalizePlaceSearchText,placeSearchText,rankPlaceSuggestions,samePlaceProvince} from './place-suggestions.mjs?v=20261118-place-hierarchy';
 import {summaryFields,projectFields,mapSummaries,countMappedJobs} from './job-projections.mjs?v=20261110-mobile-zone-carousel';
 import {isOfferOnDay,newestOfferFirst,readTodayFilter} from './today-offers.mjs';
 
-const normalize=value=>value.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('es').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
-
 export function placeShardKey(input) {
-  return normalize(input).split(' ')[0]?.slice(0,2)??'';
+  return normalizePlaceSearchText(input).split(' ')[0]?.slice(0,2)??'';
 }
 
 export function shardPlaces(places) {
   const shards=new Map();
-  for(const place of places) {
-    const words=normalize([place.name,place.label,...(place.aliases??[]),...(place.postalCodes??[])].join(' ')).split(' ');
+  for(const place of mergeEquivalentPlaces(places)) {
+    const words=normalizePlaceSearchText(placeSearchText(place)).split(' ');
     for(const key of new Set(words.filter(word=>word.length>=2).map(word=>word.slice(0,2)))) {
       if(!shards.has(key))shards.set(key,[]);
       shards.get(key).push(place);
@@ -88,18 +87,16 @@ export function createStaticDataFetch({fetchImpl=fetch}={}) {
     }
     if(parsed.pathname==='/api/places') {
       if(params.getAll('q').length>1||(params.get('q')?.length??0)>120)throw new TypeError('Consulta inválida');
+      if(params.getAll('province').length>1||(params.get('province')?.length??0)>80)throw new TypeError('Provincia inválida');
       const input=params.get('q')??'';
-      const value=normalize(input);
+      const value=normalizePlaceSearchText(input);
       if(value.length<2)return json({query:input,places:[],truncated:false});
       const key=placeShardKey(input);
       const tokens=value.split(' ');
-      const candidates=(await placeShard(key)).filter(place=>tokens.every(token=>normalize([place.label,...(place.aliases??[]),...(place.postalCodes??[])].join(' ')).includes(token)));
-      const score=place=>{
-        const names=[place.name,...(place.aliases??[])].map(normalize);
-        return names.includes(value)?0:place.postalCodes?.includes(value)?1:names.some(name=>name.startsWith(value))?2:3;
-      };
-      candidates.sort((a,b)=>score(a)-score(b)||a.label.localeCompare(b.label,'es'));
-      return json({query:input,places:candidates.slice(0,20),truncated:candidates.length>20});
+      const province=params.get('province');
+      const candidates=(await placeShard(key)).filter(place=>(!province||samePlaceProvince(place.province,province))&&tokens.every(token=>normalizePlaceSearchText(placeSearchText(place)).includes(token)));
+      const ranked=rankPlaceSuggestions(candidates,value);
+      return json({query:input,places:ranked.slice(0,20).map(place=>({...place,label:formatPlaceSuggestion(place)})),truncated:candidates.length>20});
     }
     return fetchImpl(url);
   };

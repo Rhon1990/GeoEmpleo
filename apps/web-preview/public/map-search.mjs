@@ -6,17 +6,22 @@ export function visibleMapJobs(page,origin,radiusKm) {
 
 export function searchGeography(origin,radiusValue,hasTerritory=false) {
   if(hasTerritory)return {origin:null,radiusKm:null};
-  const radiusKm=origin&&radiusValue?Number(radiusValue):null;
-  return {origin,radiusKm:Number.isFinite(radiusKm)?radiusKm:null};
+  const distance=Number(radiusValue);
+  return {origin,radiusKm:origin&&Number.isFinite(distance)&&distance>0?distance:null};
 }
 
-export function hasActiveSearchFilters({query='',territory='',category='',employer='',radius='',originSource='none'}={}) {
-  return Boolean(query||territory||category||employer||radius||originSource==='manual');
+export function hasActiveSearchFilters({query='',territory='',category='',employer='',radius='',originSource='none',todayOnly=false}={}) {
+  return Boolean(query||territory||category||employer||(radius&&radius!=='0')||originSource==='manual'||todayOnly);
 }
 
 export function originSearchTransition(point) {
   if(!isPoint(point))throw new TypeError('El origen debe ser un punto válido.');
   return {origin:[...point],territory:'',bounds:null,pendingTerritory:null};
+}
+
+export function clearOriginTransition(origin,originSource) {
+  if(originSource==='device')return {origin:origin?[...origin]:null,originSource:'device',resetMap:false};
+  return {origin:null,originSource:'none',resetMap:originSource==='manual'};
 }
 
 export function updateMapWithoutLosingJobs(controller,jobs,origin,radiusKm,onFailure=()=>{}) {

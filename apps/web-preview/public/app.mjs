@@ -1,22 +1,25 @@
-import {searchCalls,groupSimilarOffers} from './catalog.mjs';
+import {searchCalls,groupSimilarOffers} from './catalog.mjs?v=20261118-optional-territories';
 import {distanceKm} from './geography.mjs';
-import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261117-centered-popup';
+import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261118-territory-views';
 import {createMapLoadingState} from './map-loading.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
-import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261108-filter-state';
-import {requestLocationWithPermission} from './location-permission.mjs';
-import {resolveReferencePlace} from './reference-places.mjs';
+import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,clearOriginTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261119-clear-filters';
+import {requestLocationWithPermission,locationFeedbackMessage} from './location-permission.mjs?v=20261123-location-feedback';
+import {referencePlaceZoom} from './reference-places.mjs?v=20261118-locality-search-ux';
 import {beginNewSearch,captureDetailPosition,createJobInteraction,finishDetailInteraction,restoreJobFocus} from './job-interaction.mjs?v=20261116-detail-close-reset';
 import {createWorkspaceView,createDisclosure} from './workspace-view.mjs';
 import {offerIdFromUrl,shareableOfferUrl} from './search-share.mjs?v=20261108-offer-menu-copy';
 import {createRetentionStore} from './retention.mjs?v=20261117-today-offers';
 import {dayInSpain,isOfferOnDay} from './today-offers.mjs';
-import {siteFetch} from './static-data.mjs?v=20261117-today-offers';
+import {siteFetch} from './static-data.mjs?v=20261118-optional-territories';
 import {createAnalyticsController,isProductionAnalyticsHost,loadFirebaseAnalytics} from './analytics.mjs';
 import {loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 import {observeAdsToggle} from './ad-toggle.mjs';
-import {selectableTerritories} from './territories.mjs';
+import {selectableTerritories,territorySelection} from './territories.mjs?v=20261118-territory-views';
+import {placeCommunities,placeProvinces} from './place-suggestions.mjs?v=20261118-place-hierarchy';
+import {territoryBounds} from './territory-views.mjs';
 import {enhanceSearchableSelect} from './searchable-select.mjs';
+import {createPlaceHierarchy} from './place-hierarchy.mjs?v=20261119-location-panel';
 import {createMobileOfferCarousel,featuredMapOfferId,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261116-mobile-featured-pin';
 
 const analyticsController=createAnalyticsController({config:null,loadSdk:()=>loadFirebaseAnalytics()});
@@ -83,8 +86,11 @@ void fetch('/config.json').then(response=>response.ok?response.json():null).then
 const form = document.querySelector('#search-form');
 const query = document.querySelector('#query');
 const location = document.querySelector('#location');
+const locationTrigger=document.querySelector('#location-trigger');
+const locationSummary=document.querySelector('#location-summary');
+const locationPanel=document.querySelector('#location-panel');
+const locationBackdrop=document.querySelector('#location-backdrop');
 const employerFilter=document.querySelector('#employer-filter');
-const searchableTerritory=enhanceSearchableSelect(location,{label:'Buscar comunidad o provincia',searchPlaceholder:'Buscar comunidad o provincia…'});
 const searchableEmployer=enhanceSearchableSelect(employerFilter,{label:'Buscar empresa',searchPlaceholder:'Buscar empresa…'});
 const list = document.querySelector('#job-list');
 const detail = document.querySelector('#job-detail');
@@ -94,6 +100,7 @@ let category = '';
 let employer = '';
 let origin = null;
 let originSource = 'none';
+let originZoom=10;
 let sharedOfferId=offerIdFromUrl(window.location.href);
 let page = null;
 let loadError = false;
@@ -104,16 +111,47 @@ let originRevision = 0;
 let mapStarting = false;
 let locating = false;
 let facetSignature = null;
-let places = [];
-let pendingPlace = null;
 let mapController = null;
 let searchBounds = null;
 let territoryFocusPending = null;
+let selectedTerritoryBounds = null;
 let todayOnly=false;
 let activeDay=dayInSpain();
 const interaction=createJobInteraction(syncJobInteraction);
 const originInput = document.querySelector('#origin-city');
-const radiusSelect = document.querySelector('#radius');
+const radiusInput=document.querySelector('#radius');
+const radiusNumber=document.querySelector('#radius-number');
+const radiusValue=document.querySelector('#radius-value');
+const radiusRow=document.querySelector('.distance-filter-row');
+const radiusTrigger=document.querySelector('#radius-trigger');
+const radiusSummary=document.querySelector('#radius-summary');
+const radiusDisclosure=createDisclosure(expanded=>{
+  radiusRow.dataset.open=String(expanded);
+  radiusTrigger.setAttribute('aria-expanded',String(expanded));
+});
+function closeRadiusPanel({restoreFocus=false}={}){
+  if(!radiusDisclosure.snapshot())return;
+  radiusDisclosure.toggle();
+  if(restoreFocus)radiusTrigger.focus();
+}
+radiusTrigger.addEventListener('click',()=>{
+  if(!radiusDisclosure.snapshot())closeLocationPanel();
+  radiusDisclosure.toggle();
+  if(radiusDisclosure.snapshot())void analyticsController.track('ui_action',{action:'open_distance_filter'});
+  if(radiusDisclosure.snapshot()&&!radiusInput.disabled)radiusInput.focus();
+});
+document.addEventListener('click',event=>{if(radiusDisclosure.snapshot()&&!radiusRow.contains(event.target))closeRadiusPanel();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&radiusDisclosure.snapshot()){event.preventDefault();closeRadiusPanel({restoreFocus:true});}});
+function syncRadiusControls(){
+  const distance=Number(radiusInput.value);
+  radiusNumber.value=distance?String(distance):'';
+  radiusNumber.disabled=radiusInput.disabled;
+  radiusValue.textContent=distance?`${distance.toLocaleString('es-ES')} km`:'Sin límite';
+  radiusSummary.textContent=radiusValue.textContent;
+  radiusInput.style.setProperty('--radius-progress',`${distance/Number(radiusInput.max)*100}%`);
+  if(radiusInput.disabled)closeRadiusPanel();
+  radiusRow.hidden=radiusInput.disabled;
+}
 const mapHost = document.querySelector('#google-map');
 const mapState = document.querySelector('#map-state');
 const mapMessage = document.querySelector('#map-message');
@@ -136,7 +174,10 @@ const workspaceView = createWorkspaceView(view=>{
   for(const button of viewButtons)button.setAttribute('aria-pressed',String(button.dataset.workspaceView===view));
   requestAnimationFrame(()=>syncMobileFeaturedPin());
 },'map',()=>requestAnimationFrame(()=>requestSearch({immediate:true,force:true})));
-for(const button of viewButtons)button.addEventListener('click',()=>workspaceView.select(button.dataset.workspaceView));
+for(const button of viewButtons)button.addEventListener('click',()=>{
+  workspaceView.select(button.dataset.workspaceView);
+  void analyticsController.track('ui_action',{action:button.dataset.workspaceView==='map'?'show_map_view':'show_offers_view'});
+});
 for(const link of document.querySelectorAll('a[href="#results"]'))link.addEventListener('click',()=>workspaceView.select('jobs'));
 const filterToggle=document.querySelector('#mobile-filter-toggle');
 const advancedFilters=document.querySelector('#advanced-filters');
@@ -144,7 +185,11 @@ const filtersDisclosure=createDisclosure(expanded=>{
   filterToggle.setAttribute('aria-expanded',String(expanded));
   advancedFilters.dataset.expanded=String(expanded);
 });
-filterToggle.addEventListener('click',()=>filtersDisclosure.toggle());
+filterToggle.addEventListener('click',()=>{
+  filtersDisclosure.toggle();
+  if(filtersDisclosure.snapshot())void analyticsController.track('ui_action',{action:'open_mobile_filters'});
+  else closeRadiusPanel();
+});
 const savedDialog=document.querySelector('#saved-dialog');
 const favoritesButton=document.querySelector('#show-saved');
 const todayButton=document.querySelector('#today-offers');
@@ -163,11 +208,12 @@ function syncMobileFeaturedPin(state=featuredCarousel.snapshot(),previousId=null
   interaction.setFeatured(featuredMapOfferId(state,mobileMapMedia.matches,workspaceView.snapshot()));
 }
 mobileMapMedia.addEventListener('change',()=>syncMobileFeaturedPin());
-favoritesButton.addEventListener('click',()=>{renderSaved();savedDialog.showModal();});
+favoritesButton.addEventListener('click',()=>{renderSaved();savedDialog.showModal();void analyticsController.track('ui_action',{action:'open_favorites'});});
 document.querySelector('#close-saved').addEventListener('click',()=>savedDialog.close());
 todayButton.addEventListener('click',()=>{
   beginNewSearch(interaction,document.querySelector('#results'));
   todayOnly=!todayOnly;
+  void analyticsController.track('ui_action',{action:todayOnly?'show_today_offers':'hide_today_offers'});
   todayButton.setAttribute('aria-pressed',String(todayOnly));
   requestSearch({immediate:true,force:true});
 });
@@ -192,7 +238,7 @@ else {
     scrollTimer=setTimeout(settleMobileCarousel,180);
   });
 }
-const activeGeography = () => searchGeography(origin,radiusSelect.value,Boolean(location.value));
+const activeGeography = () => searchGeography(origin,radiusInput.value,Boolean(location.value));
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -576,8 +622,9 @@ function render() {
   document.querySelector('#result-scope').textContent=todayOnly?'Publicadas o detectadas hoy':countPresentation.scope;
   const summary=resultSummary(results);
   document.querySelector('#result-summary').textContent=todayOnly?`Mostrando ${Math.min(results.length,300)} de ${todayVisibleCount} ofertas de hoy en tarjetas · El mapa muestra sus puntos`:page?.truncated?`Mostrando 300 de ${page.total} tarjetas · El mapa incluye todos los puntos`:summary;
-  document.querySelector('#empty-state').hidden=loadError||results.length>0||mapResults.length>0;
-  const filtersActive=hasActiveSearchFilters({query:query.value,territory:location.value,category,employer,radius:radiusSelect.value,originSource});
+  const filtersActive=hasActiveSearchFilters({query:query.value,territory:location.value,category,employer,radius:radiusInput.value,originSource,todayOnly});
+  document.querySelector('#empty-state').hidden=loadError||list.getAttribute('aria-busy')==='true'||results.length>0||mapResults.length>0;
+  document.querySelector('#empty-clear').hidden=!filtersActive;
   document.querySelector('#clear-filters').hidden=!filtersActive;
   document.querySelector('#mobile-clear-filters').hidden=!filtersActive;
   updateMapWithoutLosingJobs(mapController,mapResults,geography.origin,geography.radiusKm,()=>{
@@ -604,13 +651,14 @@ function updateFacets(facets) {
   const territory=location.value;
   location.replaceChildren(element('option','Toda España'));
   location.firstChild.value='';
-  for(const region of selectableTerritories(facets.regions)){const option=element('option',region);option.value=region;location.append(option);}
+  const territories=new Set([...selectableTerritories(facets.regions),...placeCommunities(),...placeCommunities().flatMap(placeProvinces)]);
+  for(const region of territories){const option=element('option',region);option.value=region;location.append(option);}
   location.value=territory;
   employerFilter.replaceChildren(element('option','Todas las empresas'));
   employerFilter.firstChild.value='';
   for(const item of facets.employers??[]){const option=element('option',item.label);option.value=item.id;employerFilter.append(option);}
   employerFilter.value=employer;
-  searchableTerritory.refresh();searchableEmployer.refresh();
+  syncLocationSummary();searchableEmployer.refresh();
   const categories=document.querySelector('#categories');categories.replaceChildren();
   for(const {id,label} of [{id:'',label:'Todas las áreas'},...facets.categories]) {
     const button=element('button',label,'filter-chip');button.type='button';button.dataset.category=id;categories.append(button);
@@ -636,7 +684,10 @@ const search=createViewportSearch({
     document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
     if(territoryFocusPending!==null){
       const territory=territoryFocusPending;territoryFocusPending=null;
-      if(territory===location.value&&mapController&&result.mapJobs.length)mapController.fit(result.mapJobs,null);
+      if(territory===location.value&&mapController){
+        if(selectedTerritoryBounds)mapController.fitArea(selectedTerritoryBounds);
+        else if(result.mapJobs.length)mapController.fit(result.mapJobs,null);
+      }
     }
   },
   onError(){
@@ -646,10 +697,10 @@ const search=createViewportSearch({
   },
 });
 
-function requestSearch({immediate=false,force=false,allowList=false}={}) {
+function requestSearch({immediate=false,force=false,allowList=false,skipMapBounds=false}={}) {
   if(mapStarting&&!mapController&&!allowList)return;
   activeDay=dayInSpain();
-  searchBounds=resolveSearchBounds(mapController?.bounds(),mapIsVisible(),searchBounds,territoryFocusPending!==null);
+  if(!skipMapBounds)searchBounds=resolveSearchBounds(mapController?.bounds(),mapIsVisible(),searchBounds,territoryFocusPending!==null);
   const params=new URLSearchParams();
   if(searchBounds)params.set('bounds',searchBounds.join(','));
   if(query.value)params.set('q',query.value);
@@ -663,37 +714,76 @@ function requestSearch({immediate=false,force=false,allowList=false}={}) {
 
 function locationUrl() { return window.location.pathname; }
 
+function syncLocationSummary(){
+  locationSummary.textContent=originInput.value||location.value||(originSource==='device'?'Cerca de mí':origin?'Zona del mapa':'Toda España');
+}
+function closeLocationPanel({restoreFocus=false}={}){
+  locationPanel.hidden=true;locationBackdrop.hidden=true;locationTrigger.setAttribute('aria-expanded','false');
+  placeHierarchy.close();
+  if(restoreFocus)locationTrigger.focus();
+}
+locationTrigger.addEventListener('click',()=>{
+  if(!locationPanel.hidden){closeLocationPanel();return;}
+  locationPanel.hidden=false;locationBackdrop.hidden=false;locationTrigger.setAttribute('aria-expanded','true');
+  void analyticsController.track('ui_action',{action:'open_location_filter'});
+  locationPanel.querySelector('.place-hierarchy-trigger').focus();
+});
+document.querySelector('#location-close').addEventListener('click',()=>closeLocationPanel({restoreFocus:true}));
+document.querySelector('#location-done').addEventListener('click',()=>{closeLocationPanel({restoreFocus:true});workspaceView.select('map');});
+locationBackdrop.addEventListener('click',()=>closeLocationPanel({restoreFocus:true}));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!locationPanel.hidden){event.preventDefault();closeLocationPanel({restoreFocus:true});}});
+document.addEventListener('click',event=>{if(!locationPanel.hidden&&!event.composedPath().includes(locationPanel)&&!event.composedPath().includes(locationTrigger))closeLocationPanel();});
+
 function clear() {
+  void analyticsController.track('ui_action',{action:'clear_filters'});
   beginNewSearch(interaction,document.querySelector('#results'));
-  cancelPlaceSearch();
+  cancelPlaceSearch();placeHierarchy.reset();
   mapController?.cancelOriginSelection();
-  territoryFocusPending=null;
+  territoryFocusPending=null;selectedTerritoryBounds=null;
   query.value = ''; location.value = ''; category = ''; employer = '';
-  employerFilter.value='';searchableTerritory.refresh();searchableEmployer.refresh();
-  originRevision++;radiusSelect.value = '';
-  if(originSource==='device')mapController?.focus(origin);
+  employerFilter.value='';searchableEmployer.refresh();
+  originRevision++;radiusInput.value='0';
+  const clearedOrigin=clearOriginTransition(origin,originSource);
+  origin=clearedOrigin.origin;originSource=clearedOrigin.originSource;
+  if(clearedOrigin.resetMap){
+    searchBounds=null;originZoom=10;mapController?.overview();
+  }
+  if(originSource==='device')mapController?.focus(origin,originZoom);
   else {
-    origin = null;originSource='none';originInput.value = '';radiusSelect.disabled = true;
+    originInput.value='';radiusInput.disabled=true;
     document.querySelector('#origin-status').textContent = 'Elige una localidad o selecciona tu zona en el mapa.';
   }
+  syncRadiusControls();syncLocationSummary();closeLocationPanel();closeRadiusPanel();
   todayOnly=false;
-  syncCategories(); requestSearch({immediate:true});
+  syncCategories();
+  requestSearch({immediate:true,force:true,skipMapBounds:clearedOrigin.resetMap});
+  render();
 }
 
-function setOrigin(point,label,source='manual') {
+function setOrigin(point,label,source='manual',zoom=10) {
   beginNewSearch(interaction,document.querySelector('#results'));
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();originRevision++;
   const next=originSearchTransition(point);
-  searchBounds=next.bounds;territoryFocusPending=next.pendingTerritory;
-  location.value=next.territory;searchableTerritory.refresh();origin=next.origin;originSource=source;radiusSelect.value='';radiusSelect.disabled=false;
+  searchBounds=next.bounds;territoryFocusPending=next.pendingTerritory;selectedTerritoryBounds=null;
+  location.value=next.territory;origin=next.origin;originSource=source;originZoom=zoom;radiusInput.value='0';radiusInput.disabled=false;
+  syncRadiusControls();
+  syncLocationSummary();
   document.querySelector('#origin-status').textContent=`${label} · Ubicación aproximada; el mapa filtra la zona visible`;
-  mapController?.focus(point);
+  mapController?.focus(point,zoom);
   render();
   if(!mapController&&!mapStarting)requestSearch({immediate:true});
 }
 
 const locationPermissionDialog=document.querySelector('#location-permission-dialog');
+const mapLocationFeedback=document.querySelector('#map-location-feedback');
+let locationFeedbackTimer;
+function showMapLocationFeedback(message,{persist=false}={}) {
+  clearTimeout(locationFeedbackTimer);
+  mapLocationFeedback.hidden=!message;
+  mapLocationFeedback.textContent=message||'';
+  if(message&&!persist)locationFeedbackTimer=setTimeout(()=>{mapLocationFeedback.hidden=true;},6500);
+}
 function showLocationPermission(mode) {
   const title=document.querySelector('#location-permission-title');
   const message=document.querySelector('#location-permission-message');
@@ -722,80 +812,77 @@ document.querySelector('#location-permission-close').addEventListener('click',()
 
 async function useMyLocation({interactive=false}={}) {
   if(locating)return;
-  cancelPlaceSearch();originRevision++;
+  cancelPlaceSearch();placeHierarchy.reset();originRevision++;
   locating=true;
   const revision=originRevision;
   document.querySelector('#use-location').disabled=true;
   document.querySelector('#origin-status').textContent='Esperando permiso de ubicación del navegador…';
+  if(interactive)showMapLocationFeedback('Buscando tu ubicación…',{persist:true});
   try {
     const position=interactive?await requestLocationWithPermission({
       permission:async()=>navigator.permissions?(await navigator.permissions.query({name:'geolocation'})).state:'prompt',
       confirm:()=>showLocationPermission('prompt'),locate:()=>locateOnce(),denied:()=>{void showLocationPermission('denied');},
     }):await locateOnce();
-    if(originRevision!==revision)return;
-    if(position.status==='cancelled'){document.querySelector('#origin-status').textContent='Puedes elegir una localidad o usar el mapa.';return position;}
+    if(originRevision!==revision){if(interactive)showMapLocationFeedback('');return;}
+    if(position.status==='cancelled'){document.querySelector('#origin-status').textContent='Puedes elegir una localidad o usar el mapa.';if(interactive)showMapLocationFeedback('');return position;}
     if(position.status==='located') {
       originInput.value='';
-      setOrigin(position.point,'Ubicación aproximada del dispositivo','device');
-      mapController?.focus(position.point,position.zoom);
+      setOrigin(position.point,'Ubicación aproximada del dispositivo','device',position.zoom);
     } else {
       document.querySelector('#origin-status').textContent=position.status==='denied'?'Este navegador ha rechazado el permiso de ubicación. Actívalo para GeoEmpleo360 en los ajustes del sitio y vuelve a pulsar «Usar mi ubicación», o elige una localidad.':'No pudimos localizarte. Elige una localidad o mueve el mapa.';
     }
+    if(interactive)showMapLocationFeedback(locationFeedbackMessage(position.status));
     return position;
   }finally{locating=false;document.querySelector('#use-location').disabled=false;}
 }
 
-function applyReferencePlace() {
-  const selected = resolveReferencePlace(places,originInput.value);
-  if (!selected) {
-    origin=null;originSource='none';radiusSelect.disabled=true;radiusSelect.value='';
-    document.querySelector('#origin-status').textContent=/^\d{5}$/.test(originInput.value.trim())?'El código postal puede abarcar varias localidades. Elige una sugerencia con su nombre.':originInput.value ? 'Localidad no reconocida: el filtro de distancia está desactivado. Elige una opción o usa el mapa.' : 'Elige una localidad o selecciona tu zona en el mapa.';
-    render();return;
-  }
-  originInput.value=selected.label;
-  workspaceView.select('map');
-  setOrigin([selected.longitude,selected.latitude],`Zona elegida manualmente: ${selected.label}`);
-}
-
-const placeSearch=createViewportSearch({
-  endpoint:'/api/places',
-  fetchImpl:siteFetch,
-  onLoading(){originInput.setAttribute('aria-busy','true');},
-  onResult(result){
-    originInput.setAttribute('aria-busy','false');
-    if(result.query!==originInput.value||!Array.isArray(result.places))return;
-    places=result.places;
-    const options=places.map(place=>{const option=element('option');option.value=place.label;return option;});
-    document.querySelector('#places').replaceChildren(...options);
-    if(pendingPlace===originInput.value){pendingPlace=null;applyReferencePlace();}
-    else document.querySelector('#origin-status').textContent=places.length?'Elige una localidad de las sugerencias para centrar el mapa.':'Sin coincidencias. Prueba el municipio, la provincia o el código postal.';
-  },
-  onError(){originInput.setAttribute('aria-busy','false');pendingPlace=null;document.querySelector('#origin-status').textContent='No se pudieron consultar las localidades. Reintenta o elige tu zona en el mapa.';},
-});
-function cancelPlaceSearch() {
-  placeSearch.cancel();pendingPlace=null;originInput.setAttribute('aria-busy','false');
-}
-function searchPlaces(immediate=false) {
-  if(originInput.value.trim().length<2){placeSearch.cancel();places=[];document.querySelector('#places').replaceChildren();return;}
-  placeSearch.request(new URLSearchParams({q:originInput.value}),{immediate,force:immediate});
-}
-originInput.addEventListener('input',()=>{originRevision++;pendingPlace=null;searchPlaces();});
-originInput.addEventListener('change',()=>{
+function selectReferencePlace(place){
   mapController?.cancelOriginSelection();originRevision++;
-  if(!originInput.value.trim()){places=[];applyReferencePlace();return;}
-  const selected=resolveReferencePlace(places,originInput.value);
-  if(selected){placeSearch.cancel();pendingPlace=null;applyReferencePlace();return;}
-  pendingPlace=originInput.value;searchPlaces(true);
+  originInput.value=`${place.name} · ${place.province}`;
+  workspaceView.select('map');
+  setOrigin([place.longitude,place.latitude],`Zona elegida manualmente: ${place.label}`,'manual',referencePlaceZoom(place));
+  void analyticsController.track('filter_used',{filter_type:'locality'});
+}
+function selectReferenceTerritory({community,province}){
+  const selected=territorySelection(community,province);
+  void analyticsController.track('filter_used',{filter_type:province?'province':'community'});
+  beginNewSearch(interaction,document.querySelector('#results'));
+  mapController?.cancelOriginSelection();originRevision++;
+  origin=null;originSource='manual';originInput.value='';radiusInput.value='0';radiusInput.disabled=true;syncRadiusControls();
+  if(![...location.options].some(option=>option.value===selected.name)){
+    const option=element('option',selected.name);option.value=selected.name;location.append(option);
+  }
+  location.value=selected.name;syncLocationSummary();
+  searchBounds=null;territoryFocusPending=selected.name;selectedTerritoryBounds=selected.bounds;
+  document.querySelector('#origin-status').textContent=`Mostrando ${province?`la provincia de ${province}`:community} en el mapa`;
+  workspaceView.select('map');mapController?.fitArea(selected.bounds);
+  requestSearch({immediate:true,force:true});
+}
+const placeHierarchy=createPlaceHierarchy({
+  panel:document.querySelector('#place-hierarchy'),
+  fetchImpl:siteFetch,onSelect:selectReferencePlace,onSelectTerritory:selectReferenceTerritory,
 });
-originInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();pendingPlace=originInput.value;searchPlaces(true);}});
-radiusSelect.addEventListener('change',()=>{beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('filter_used',{filter_type:'distance'});render();});
+function cancelPlaceSearch(){placeHierarchy.cancel();}
+function commitRadius(){
+  beginNewSearch(interaction,document.querySelector('#results'));
+  void analyticsController.track('filter_used',{filter_type:'distance'});
+  render();
+}
+radiusInput.addEventListener('input',()=>syncRadiusControls());
+radiusInput.addEventListener('change',commitRadius);
+radiusNumber.addEventListener('input',()=>{
+  radiusInput.value=String(Math.min(Number(radiusInput.max),Math.max(0,Math.round(Number(radiusNumber.value)||0))));
+  syncRadiusControls();render();
+});
+radiusNumber.addEventListener('change',()=>{syncRadiusControls();commitRadius();});
+syncRadiusControls();
 document.querySelector('#choose-origin').addEventListener('click',() => {
   void analyticsController.track('map_action',{action:'choose_zone'});
   mapController?.chooseOrigin(); document.querySelector('#origin-status').textContent = 'Haz clic en el mapa para situar tu zona de búsqueda.';
 });
 document.querySelector('#search-area').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'search_visible_area'});requestSearch({immediate:true,force:true});});
 document.querySelector('#show-all-map').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'show_spain'});mapController?.overview();});
-document.querySelector('#use-location').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'use_my_location'});if(mapController)void useMyLocation({interactive:true});else void startMap({interactive:true});});
+document.querySelector('#use-location').addEventListener('click',()=>{void analyticsController.track('map_action',{action:'use_my_location'});if(mapController||mapStarting)void useMyLocation({interactive:true});else void startMap({interactive:true});});
 
 async function startMap({interactive=false}={}) {
   if(mapStarting||mapController)return;
@@ -813,11 +900,12 @@ async function startMap({interactive=false}={}) {
     const mapRevision=originRevision;
     mapController=await createGoogleMap(mapHost,config,{
       onSelect(id){const call=calls.find(item=>item.id===id)??page?.mapJobs.find(item=>item.id===id);if(call)void showDetail(call,{panMap:false,revealCard:true});},
-      onOrigin(point){originInput.value='';setOrigin(point,'Zona elegida en el mapa');},
+      onOrigin(point){originInput.value='';placeHierarchy.reset();setOrigin(point,'Zona elegida en el mapa');},
       onViewport(){if(mapController&&mapIsVisible())requestSearch();},
       onReady(){mapLoadingState.mapReady();},
-    },{point:origin,zoom:origin?(position?.zoom??10):6});
-    if(originRevision!==mapRevision){if(origin)mapController.focus(origin);else mapController.overview();}
+    },{point:origin,zoom:origin?(position?.zoom??originZoom):6});
+    if(selectedTerritoryBounds)mapController.fitArea(selectedTerritoryBounds);
+    else if(originRevision!==mapRevision){if(origin)mapController.focus(origin,originZoom);else mapController.overview();}
     for(const id of ['choose-origin','search-area','show-all-map'])document.getElementById(id).disabled=false;
     render();requestSearch();
   }catch(error){
@@ -835,7 +923,14 @@ function syncCategories() {
 }
 
 form.addEventListener('submit',event=>{event.preventDefault();beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true});});
-location.addEventListener('change',()=>{beginNewSearch(interaction,document.querySelector('#results'));territoryFocusPending=location.value;radiusSelect.value='';void analyticsController.track('filter_used',{filter_type:'territory'});requestSearch({immediate:true,force:true});});
+location.addEventListener('change',()=>{
+  beginNewSearch(interaction,document.querySelector('#results'));
+  placeHierarchy.setTerritory(location.value);syncLocationSummary();selectedTerritoryBounds=territoryBounds(location.value);
+  territoryFocusPending=location.value;radiusInput.value='0';radiusInput.disabled=true;syncRadiusControls();
+  void analyticsController.track('filter_used',{filter_type:'territory'});
+  if(selectedTerritoryBounds)mapController?.fitArea(selectedTerritoryBounds);
+  requestSearch({immediate:true,force:true});
+});
 document.querySelector('#categories').addEventListener('click',event => {
   const button = event.target.closest('[data-category]');
   if (!button) return;
@@ -881,10 +976,11 @@ query.value=initialParams.get('q')??'';
 employer=initialParams.get('employer')??'';
 category=initialParams.get('category')??'';
 const initialTerritory=initialParams.get('city');
-if(initialTerritory&&selectableTerritories([initialTerritory]).length){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;searchableTerritory.refresh();territoryFocusPending=initialTerritory;}
+if(initialTerritory&&selectableTerritories([initialTerritory]).length){const option=element('option',initialTerritory);option.value=initialTerritory;location.append(option);location.value=initialTerritory;placeHierarchy.setTerritory(initialTerritory);syncLocationSummary();territoryFocusPending=initialTerritory;}
+syncLocationSummary();
 
 window.matchMedia('(max-width:780px)').addEventListener('change',render);
-window.addEventListener('pagehide',()=>{search.cancel();placeSearch.cancel();detailRequest?.abort();});
+window.addEventListener('pagehide',()=>{search.cancel();placeHierarchy.cancel();detailRequest?.abort();});
 syncFavoritesCount();
 void startMap();
 if(sharedOfferId)void showDetail({id:sharedOfferId,title:'Oferta compartida',source:'GeoEmpleo360'},{panMap:false});

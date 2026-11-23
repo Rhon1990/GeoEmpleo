@@ -5,14 +5,24 @@ import * as mapSearch from '../apps/web-preview/public/map-search.mjs';
 import {searchCalls} from '../apps/web-preview/public/catalog.mjs';
 
 test('la ubicación del dispositivo no activa Limpiar filtros, pero los criterios elegidos sí',()=>{
- const hasActive=(mapSearch as typeof mapSearch & {hasActiveSearchFilters?:(filters:Record<string,string>)=>boolean}).hasActiveSearchFilters;
+ const hasActive=(mapSearch as typeof mapSearch & {hasActiveSearchFilters?:(filters:Record<string,string|boolean>)=>boolean}).hasActiveSearchFilters;
  assert.equal(typeof hasActive,'function');
  assert.equal(hasActive!({originSource:'device'}),false);
  assert.equal(hasActive!({originSource:'manual'}),true);
  for(const filter of [{query:'peón'},{territory:'Madrid'},{category:'servicios'},{employer:'Empresa'},{radius:'25'}]){
   assert.equal(hasActive!(filter),true);
  }
+ assert.equal(hasActive!({radius:'0',originSource:'device'}),false);
+ assert.equal(hasActive!({todayOnly:true}),true);
  assert.equal(hasActive!({}),false);
+});
+
+test('limpiar un origen manual restablece el mapa y conserva la ubicación del dispositivo',()=>{
+ const clear=(mapSearch as typeof mapSearch & {clearOriginTransition?:(origin:number[]|null,originSource:string)=>{origin:number[]|null;originSource:string;resetMap:boolean}}).clearOriginTransition;
+ assert.equal(typeof clear,'function');
+ assert.deepEqual(clear!([-3.56,40.42],'manual'),{origin:null,originSource:'none',resetMap:true});
+ assert.deepEqual(clear!([-3.7,40.4],'device'),{origin:[-3.7,40.4],originSource:'device',resetMap:false});
+ assert.deepEqual(clear!(null,'none'),{origin:null,originSource:'none',resetMap:false});
 });
 
 test('el mapa conserva puntos fuera de las primeras 300 tarjetas y respeta el radio',()=>{
@@ -57,6 +67,13 @@ test('un territorio nuevo no conserva el radio ni ordena respecto al origen ante
  assert.deepEqual(visibleMapJobs({mapJobs:[canarias]},region.origin,region.radiusKm),[canarias]);
 });
 
+test('la barra de distancia permite kilómetros exactos y cero significa sin límite',()=>{
+ const home:[number,number]=[-3.7,40.4];
+ assert.deepEqual(searchGeography(home,'0',false),{origin:home,radiusKm:null});
+ assert.deepEqual(searchGeography(home,'173',false),{origin:home,radiusKm:173});
+ assert.deepEqual(searchGeography(home,'100',false),{origin:home,radiusKm:100});
+});
+
 test('elegir GPS, localidad o punto del mapa sustituye el territorio anterior',()=>{
  const next=originSearchTransition([-4.1,40.8]);
  assert.deepEqual(next,{origin:[-4.1,40.8],territory:'',bounds:null,pendingTerritory:null});
@@ -83,6 +100,15 @@ test('agrupa movimientos y solo ejecuta el último viewport',async()=>{
  controller.request(new URLSearchParams({bounds:'-4,39,-3,40'}));controller.request(new URLSearchParams({bounds:'-2,37,-1,38'}));assert.equal(requests.length,0);
  timer.flush();await tick();assert.equal(requests.length,1);assert.match(requests[0],/-2%2C37%2C-1%2C38/);assert.equal(results.length,1);
  controller.request(new URLSearchParams({bounds:'-2,37,-1,38'}));timer.flush();await tick();assert.equal(requests.length,1);
+ controller.cancel();
+});
+test('limpiar filtros puede forzar una consulta aunque el ámbito coincida',async()=>{
+ let requests=0;
+ const controller=createViewportSearch({fetchImpl:async()=>{requests++;return Response.json({jobs:[]});}});
+ const params=new URLSearchParams({day:'2026-11-23'});
+ controller.request(params,{immediate:true});await tick();
+ controller.request(params,{immediate:true,force:true});await tick();
+ assert.equal(requests,2);
  controller.cancel();
 });
 test('aborta consulta activa e ignora respuestas fuera de orden aunque fetch ignore abort',async()=>{

@@ -1,4 +1,5 @@
 import {matchesGeography} from './geography.mjs';
+import {samePlaceProvince} from './place-suggestions.mjs?v=20261118-place-hierarchy';
 
 /**
  * @typedef {object} Call
@@ -31,7 +32,7 @@ export function searchCalls(calls, filters = {}) {
   return calls.filter(call => {
     const text = normalize([call.title, call.employer, call.city, call.province, call.region].join(' '));
     return terms.every(term => text.includes(term))
-      && (!territory || [call.city, call.province, call.region].some(value => normalize(value) === territory))
+      && (!territory || [call.city, call.province, call.region].some(value => normalize(value) === territory) || samePlaceProvince(call.province,filters.city))
       && (!employer || employerFacet(call.employer,call.sourceId).id === employerFacet(employer).id)
       && (!filters.category || call.category === filters.category)
       && matchesGeography(call,filters);

@@ -8,6 +8,7 @@ type Element = DefaultTreeAdapterTypes.Element;
 
 const html = await readFile(new URL('../apps/web-preview/public/index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../apps/web-preview/public/styles.css', import.meta.url), 'utf8');
+const selectCss = await readFile(new URL('../apps/web-preview/public/select-controls.css', import.meta.url), 'utf8');
 const submissionCss = await readFile(new URL('../apps/web-preview/public/submission.css', import.meta.url), 'utf8');
 const publishHtml = await readFile(new URL('../apps/web-preview/public/publish.html', import.meta.url), 'utf8');
 const manageHtml = await readFile(new URL('../apps/web-preview/public/manage.html', import.meta.url), 'utf8');
@@ -190,14 +191,14 @@ test('stylesheet cache key identifies the compact filters release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261118-compact-filters(?:&|$)/,
+    /(?:[?&]v=)20261123-location-fixes(?:&|$)/,
   );
 });
 
-test('map module cache key identifies the centered popup release', () => {
+test('map module cache key identifies the territory views release', () => {
   assert.match(
     app,
-    /from '\.\/google-map\.mjs\?v=20261117-centered-popup'/,
+    /from '\.\/google-map\.mjs\?v=20261118-territory-views'/,
   );
 });
 
@@ -783,6 +784,11 @@ test('narrow mobile stacks flexible fields without shrinking touch controls', ()
   assert.match(narrowRules, /\.map-actions\{[^}]*max-width:100%/);
   assert.doesNotMatch(narrowRules, /\.map-overlay\{[^}]*position:static/);
   assert.match(lastRuleForSelector(css, '.map-actions button'), /width:44px[^}]*height:44px/);
+});
+
+test('el buscador desplegable cabe en el ancho del filtro en móviles estrechos', () => {
+  const mobileRules = mediaBlocksForMaxWidth(selectCss, 780).join('\n');
+  assert.match(mobileRules, /\.searchable-select-panel\{[^}]*width:100%[^}]*max-width:100%/);
 });
 
 test('map offer groups stay within the visible viewport', () => {

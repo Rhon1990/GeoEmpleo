@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createPlacesStore} from '../apps/web-preview/places-store.mjs';
+import {formatPlaceSuggestion,placeCommunities,placeProvinces,placeRegion,samePlaceProvince} from '../apps/web-preview/public/place-suggestions.mjs';
+import {listSpanishProvinces} from '../packages/ingestion/src/national-geography.ts';
 
 const store=createPlacesStore(new URL('../apps/web-preview/data/spain-places.json.gz',import.meta.url));
 test('busca pueblos españoles y conserva provincia, punto y procedencia',async()=>{
@@ -27,4 +29,50 @@ test('normaliza tildes, acota consultas y diferencia homónimos',async()=>{
  assert.ok((await store.query(new URLSearchParams({q:'Avila'}))).places.some(place=>place.name==='Ávila'));
  await assert.rejects(()=>store.query(new URLSearchParams('q=a&q=b')),TypeError);
  await assert.rejects(()=>store.query(new URLSearchParams({q:'x'.repeat(121)})),TypeError);
+});
+
+test('prioriza la ciudad de Ávila al buscar su nombre con o sin tilde',async()=>{
+ for(const q of ['avila','Ávila']){
+  const result=await store.query(new URLSearchParams({q}));
+  assert.equal(result.places[0]?.municipality,'Ávila');
+  assert.equal(result.places[0]?.precision,'locality');
+  assert.equal(result.places[0]?.label,'Ávila — Castilla y León / CP 05001, 05002, 05003, 05004, 05005, 05070, 05071, 05080');
+ }
+});
+
+test('acota las localidades a la provincia elegida antes de limitar sugerencias',async()=>{
+ const result=await store.query(new URLSearchParams({q:'san',province:'Segovia'}));
+ assert.ok(result.places.length>0);
+ assert.ok(result.places.every(place=>place.province==='Segovia'));
+ assert.ok(!result.places.some(place=>place.name==='Ávila'));
+});
+
+test('muestra localidad, provincia, comunidad y códigos postales en ese orden',async()=>{
+ const result=await store.query(new URLSearchParams({q:'Ituero y Lama'}));
+ assert.equal(result.places[0]?.label,'Ituero y Lama — Segovia — Castilla y León / CP 40151');
+});
+
+test('resume los códigos postales extensos sin perderlos para la búsqueda',()=>{
+ const place={name:'Madrid',municipality:'Madrid',province:'Madrid',postalCodes:['28001','28002','28003','28004','28005','28006','28007','28008','28009']};
+ assert.equal(formatPlaceSuggestion(place),'Madrid — Comunidad de Madrid / CP 28001, 28002, 28003 y 6 más');
+ assert.equal(place.postalCodes.length,9);
+});
+
+test('asigna la comunidad autónoma correcta a todas las provincias españolas',()=>{
+ for(const province of listSpanishProvinces()){
+  assert.equal(placeRegion({province:province.name}),province.region,province.name);
+  assert.ok(placeProvinces(province.region).includes(province.name),province.name);
+ }
+ assert.equal(placeCommunities().length,19);
+ assert.ok(samePlaceProvince('Alicante/Alacant','Alicante'));
+});
+
+test('ofrece Coslada una vez y une sus referencias postales al buscar nombre o código',async()=>{
+ const byName=await store.query(new URLSearchParams({q:'Coslada'}));
+ assert.equal(byName.places.filter(place=>place.name==='Coslada').length,1);
+ assert.deepEqual(byName.places.find(place=>place.name==='Coslada')?.postalCodes,['28820','28821','28822','28823']);
+ const byPostal=await store.query(new URLSearchParams({q:'28820'}));
+ assert.equal(byPostal.places.length,1);
+ assert.equal(byPostal.places[0].precision,'locality');
+ assert.deepEqual(byPostal.places[0].postalCodes,['28820','28821','28822','28823']);
 });

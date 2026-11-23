@@ -2,6 +2,13 @@ import {isPoint} from './geography.mjs';
 
 const normalize=value=>value.trim().normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('es').replace(/\s+/g,' ');
 
+export function referencePlaceZoom(place) {
+  if(place?.precision==='postal_locality')return 14;
+  if(place?.municipality&&normalize(place.name??'')!==normalize(place.municipality))return 14;
+  if(place?.precision==='locality')return 12;
+  return 10;
+}
+
 // A postal code alone does not identify a unique locality or a device position.
 export function resolveReferencePlace(places,input) {
   const value=normalize(input);

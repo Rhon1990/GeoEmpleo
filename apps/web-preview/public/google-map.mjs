@@ -180,6 +180,7 @@ export async function createGoogleMap(host,config,events,initial={}) {
     preview,
     clearSelection() {selectedId=null;previewId=null;updateMarkerVisuals();},
     focus(point,zoom=10) {if(!isPoint(point))return;map.setCenter({lng:point[0],lat:point[1]});map.setZoom(zoom);},
+    fitArea([west,south,east,north]) {map.fitBounds({west,south,east,north},60);},
     overview() {map.setCenter({lat:39.7,lng:-3.5});map.setZoom(6);},
     chooseOrigin() {originSelection.arm();map.setOptions({draggableCursor:'crosshair'});},
     cancelOriginSelection() {originSelection.cancel();map.setOptions({draggableCursor:null});},

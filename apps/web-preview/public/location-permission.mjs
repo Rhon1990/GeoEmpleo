@@ -7,3 +7,12 @@ export async function requestLocationWithPermission({permission,confirm,locate,d
   if(result.status==='denied') denied();
   return result;
 }
+
+export function locationFeedbackMessage(status) {
+  switch(status) {
+    case 'located': return 'Mapa centrado en tu ubicación aproximada.';
+    case 'timeout': return 'La ubicación tardó demasiado. Inténtalo de nuevo o elige tu zona en el mapa.';
+    case 'denied': return 'El permiso de ubicación está bloqueado. Revísalo en los ajustes del navegador.';
+    default: return 'No pudimos obtener tu ubicación. Elige una localidad o una zona en el mapa.';
+  }
+}

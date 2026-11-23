@@ -27,6 +27,41 @@ test('el índice estático incluye pueblos por nombre, palabra interior y códig
   assert.equal(shards.get('40')?.[0]?.name,'Coto de San Isidro');
 });
 
+test('la búsqueda estática acota localidades a la provincia seleccionada',async()=>{
+ const candidates=[
+  {name:'San Isidro',label:'San Isidro · Segovia',province:'Segovia',longitude:-4.3,latitude:40.8},
+  {name:'San Isidro',label:'San Isidro · Madrid',province:'Madrid',longitude:-3.7,latitude:40.4},
+ ];
+ const shards=shardPlaces(candidates);
+ const fetchData=createStaticDataFetch({fetchImpl:async(url:string|URL|Request)=>url==='/data/place-shards/sa.json'?new Response(JSON.stringify(shards.get('sa'))):new Response('',{status:404})});
+ const result=await(await fetchData('/api/places?q=san&province=Segovia')).json();
+ assert.equal(result.places.length,1);
+ assert.equal(result.places[0].province,'Segovia');
+});
+
+test('la búsqueda estática combina duplicados postales sin ocultar otros lugares',async()=>{
+ const coslada={id:'city-coslada',name:'Coslada',label:'Coslada · Madrid (28821, 28822, 28823)',province:'Madrid',municipality:'Coslada',postalCodes:['28821','28822','28823'],latitude:40.42378,longitude:-3.56129,precision:'locality',sourceUrl:'https://www.geonames.org/3124408'};
+ const postal={id:'postal-coslada',name:'Coslada',label:'Coslada · Madrid (28820)',province:'Madrid',municipality:'',postalCodes:['28820'],latitude:40.4238,longitude:-3.5613,precision:'postal_locality',sourceUrl:'https://example.test/postal-coslada'};
+ const neighborhood={id:'coslada-norte',name:'Coslada Norte',label:'Coslada Norte · Madrid (28823)',province:'Madrid',municipality:'Coslada',postalCodes:['28823'],latitude:40.43,longitude:-3.56,precision:'locality',sourceUrl:'https://example.test/coslada-norte'};
+ const shards=shardPlaces([coslada,postal,neighborhood]);
+ const fetchData=createStaticDataFetch({fetchImpl:async(url:string|URL|Request)=>url==='/data/place-shards/co.json'?new Response(JSON.stringify(shards.get('co'))):new Response('',{status:404})});
+ const result=await(await fetchData('/api/places?q=Coslada')).json();
+ const cosladaOptions=result.places.filter((place:{name:string})=>place.name.startsWith('Coslada'));
+ assert.equal(cosladaOptions.length,2);
+ assert.deepEqual(cosladaOptions.find((place:{id:string})=>place.id==='city-coslada')?.postalCodes,['28820','28821','28822','28823']);
+ assert.ok(cosladaOptions.some((place:{id:string})=>place.id==='coslada-norte'));
+});
+
+test('la búsqueda estática prioriza la ciudad de Ávila y presenta su ubicación completa',async()=>{
+ const postal={id:'postal-avila-mediana',name:'Avila',label:'Avila · Mediana de Voltoya, Ávila (05194)',province:'Ávila',municipality:'Mediana de Voltoya',postalCodes:['05194'],latitude:40.69,longitude:-4.60,precision:'postal_locality'};
+ const city={id:'city-avila',name:'Ávila',label:'Ávila (05001)',province:'Ávila',municipality:'Ávila',postalCodes:['05001'],latitude:40.65,longitude:-4.69,precision:'locality'};
+ const shards=shardPlaces([postal,city]);
+ const fetchData=createStaticDataFetch({fetchImpl:async(url:string|URL|Request)=>url==='/data/place-shards/av.json'?new Response(JSON.stringify(shards.get('av'))):new Response('',{status:404})});
+ const result=await(await fetchData('/api/places?q=avila')).json();
+ assert.equal(result.places[0]?.id,'city-avila');
+ assert.equal(result.places[0]?.label,'Ávila — Castilla y León / CP 05001');
+});
+
 test('el catálogo estático devuelve solo ofertas del área y conserva el detalle original', async () => {
   let catalogLoads=0;
   const fetchImpl=async (url:string|URL|Request) => {

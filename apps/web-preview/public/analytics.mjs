@@ -1,7 +1,8 @@
 const consentKey='geoempleo-analytics-consent';
-const eventNames=new Set(['page_view','search_submitted','search_no_results','filter_used','offer_detail_opened','offer_original_clicked','map_action','saved_search_opened','saved_offer_opened']);
-const filterTypes=new Set(['category','employer','territory','distance']);
+const eventNames=new Set(['page_view','search_submitted','search_no_results','filter_used','offer_detail_opened','offer_original_clicked','map_action','saved_search_opened','saved_offer_opened','ui_action']);
+const filterTypes=new Set(['category','employer','territory','community','province','locality','distance']);
 const mapActions=new Set(['show_map','search_visible_area','use_my_location','show_spain','choose_zone']);
+const uiActions=new Set(['open_location_filter','open_distance_filter','open_mobile_filters','open_favorites','show_today_offers','hide_today_offers','clear_filters','show_map_view','show_offers_view']);
 const routes=new Set(['/','/publicar']);
 
 export const isProductionAnalyticsHost=host=>['geoempleo360.com','www.geoempleo360.com','geoempleo-49978.web.app'].includes(host);
@@ -95,6 +96,9 @@ export function createAnalyticsController({config,storage=globalThis.localStorag
       safeParams={filter_type:params.filter_type};
     }else if(name==='map_action'){
       if(Object.keys(params).some(key=>key!=='action')||!mapActions.has(params.action))return false;
+      safeParams={action:params.action};
+    }else if(name==='ui_action'){
+      if(Object.keys(params).some(key=>key!=='action')||!uiActions.has(params.action))return false;
       safeParams={action:params.action};
     }else if(Object.keys(params).length)return false;
     try{

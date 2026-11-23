@@ -2,6 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {resolveReferencePlace} from '../apps/web-preview/public/reference-places.mjs';
+import * as referencePlaces from '../apps/web-preview/public/reference-places.mjs';
+
+test('acerca el mapa según la precisión de la localidad elegida',()=>{
+ const zoom=(referencePlaces as typeof referencePlaces & {referencePlaceZoom?:(place:{precision:string;name?:string;municipality?:string})=>number}).referencePlaceZoom;
+ assert.equal(typeof zoom,'function');
+ assert.equal(zoom!({precision:'locality',name:'Coslada',municipality:'Coslada'}),12);
+ assert.equal(zoom!({precision:'locality',name:'Coslada Norte',municipality:'Coslada'}),14);
+ assert.equal(zoom!({precision:'postal_locality',name:'Coslada'}),14);
+ assert.equal(zoom!({precision:'unknown'}),10);
+});
 
 test('resuelve nombres y alias sin depender de mayúsculas o tildes',()=>{
  const place={id:'a',name:'Urbanización rural',label:'Urbanización rural · Segovia (40151)',aliases:['Coto de San Isidro'],latitude:40.77,longitude:-4.36};
