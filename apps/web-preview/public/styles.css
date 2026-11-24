@@ -273,3 +273,7 @@ dialog{max-width:calc(100vw - 32px)}
 .job-card.selected{border-color:var(--offer-active);box-shadow:0 0 0 2px #b84a3a55,0 8px 22px #064b581a}
 .job-pin.selected{background:var(--offer-active);color:#fff}
 .job-pin.previewed:not(.selected){background:var(--offer-active);color:#fff;border-color:#fff;box-shadow:0 0 0 3px #b84a3a66}
+
+/* Touch taps can leave hover active; the location status takes priority over tooltips. */
+@media(hover:none){.map-actions button:hover::after{opacity:0;visibility:hidden}}
+.map-overlay:has(.map-location-feedback:not([hidden])) .map-actions button::after{opacity:0;visibility:hidden}

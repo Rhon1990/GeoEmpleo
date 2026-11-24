@@ -181,7 +181,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the mobile clear action release', () => {
+test('stylesheet cache key identifies the location feedback update', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -191,7 +191,7 @@ test('stylesheet cache key identifies the mobile clear action release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261124-mobile-clear-action(?:&|$)/,
+    /(?:[?&]v=)20261124-location-feedback(?:&|$)/,
   );
 });
 
