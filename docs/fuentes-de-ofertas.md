@@ -1,6 +1,6 @@
 # Fuentes de ofertas de GeoEmpleo
 
-Inventario operativo revisado el **18/11/2026**. El registro ejecutable es
+Inventario operativo revisado el **24/11/2026**. El registro ejecutable es
 [`packages/ingestion/src/registry.ts`](../packages/ingestion/src/registry.ts) y la
 lista que recorre la ingesta diaria está en
 [`packages/ingestion/src/runner.ts`](../packages/ingestion/src/runner.ts).
@@ -8,7 +8,7 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 
 ## Conectores diarios activos
 
-El registro tiene 45 identificadores marcados como `active`, con adaptador
+El registro tiene 48 identificadores marcados como `active`, con adaptador
 en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
 columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
@@ -52,9 +52,9 @@ que sigan abiertas.
 | `bizneo-coviran` | [Covirán](https://jobs.coviran.com/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 6 vacantes concretas, 6 con punto; autocandidaturas excluidas |
 | `bizneo-iss` | [ISS Facility Services](https://jobs.iss.es/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 13 vacantes, 9 con punto |
 | `bizneo-iman` | [IMAN](https://empleo.imancorp.es/jobs) | Tablón Bizneo; paginación hasta 274 páginas, excluye una tarjeta de prueba | En pausa: la captura completa de fichas recibió HTTP 429. Reducir frecuencia/volumen o conseguir un feed autorizado antes de activarla |
-| `bizneo-faster` | [Faster Empleo](https://jobs.faster.es/jobs) | Tablón Bizneo; pagina y contrasta el total anunciado | Captura aislada 24/11/2026: 211 ofertas, 186 con municipio verificado |
-| `synergie-oficial` | [Synergie](https://www.synergie.es/busco-trabajo/) | Listado público oficial con fecha, localidad, descripción y enlace; excluye ofertas caducadas y autocandidaturas | Captura aislada 24/11/2026: 1.104 ofertas vigentes, 993 con municipio verificado |
-| `teamtailor-temporing` | [Temporing](https://empleo.temporing.es/jobs) | Teamtailor; fichas `JobPosting`; separa localidades y valida municipios del título o del campo de ubicación | Captura aislada 24/11/2026: 440 fichas, 510 ofertas tras separar localidades, 333 con punto verificado |
+| `bizneo-faster` | [Faster Empleo](https://jobs.faster.es/jobs) | Tablón Bizneo; pagina y contrasta el total anunciado | Captura aislada previa: 211 ofertas, 186 con municipio verificado. En la actualización diaria 24/11/2026 falló la obtención o validación; se conservó la instantánea anterior |
+| `synergie-oficial` | [Synergie](https://www.synergie.es/busco-trabajo/) | Listado público oficial con fecha, localidad, descripción y enlace; excluye ofertas caducadas y autocandidaturas | Actualización diaria 24/11/2026: 1.104 ofertas vigentes, 993 con municipio verificado ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
+| `teamtailor-temporing` | [Temporing](https://empleo.temporing.es/jobs) | Teamtailor; fichas `JobPosting`; separa localidades y valida municipios del título o del campo de ubicación | Actualización diaria 24/11/2026: 440 fichas, 510 ofertas tras separar localidades, 333 con punto verificado ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
 | `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Publicación 28/10/2026: 274 fichas españolas, 131 con punto; país validado por ficha |
 | `elcorteingles-oficial` | [El Corte Inglés](https://empleo.elcorteingles.es/ep/ofertas) | Listado paginado del frontend oficial, filtro `ES` | Captura aislada 04/11/2026: 365 ofertas y 291 puntos; pendiente de publicación |
 | `adecco-oficial` | [Adecco](https://www.adecco.com/es-es/ofertas-trabajo) | Endpoint del buscador oficial; filtro de cierre y país; ficha pública individual por `jobId`; retira ausentes tras captura completa | Captura 05/11/2026 12:19 UTC: 3.775 ofertas con ID único y 3.584 con municipio verificado; se publica solo título, localidad, fecha, enlace y datos factuales mínimos |
