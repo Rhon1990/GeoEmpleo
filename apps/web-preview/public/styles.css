@@ -112,6 +112,7 @@ dialog{max-width:calc(100vw - 32px)}
 .search-actions button:disabled{opacity:.55;cursor:default}
 .search-actions .mobile-filter-toggle{display:none}
 #mobile-clear-filters{display:none}
+#mobile-clear-filters .mobile-clear-label{font-size:inherit;line-height:inherit}
 .mobile-featured-offer{display:none}
 #today-offers[hidden]{display:none}
 #today-offers[aria-pressed="true"]{background:var(--saffron);border-color:var(--saffron);color:#392d0f}
@@ -170,6 +171,15 @@ dialog{max-width:calc(100vw - 32px)}
   .mobile-filter-toggle[aria-expanded="true"] span{transform:rotate(180deg)}
   .advanced-filters[data-expanded="false"]{display:none}
   .advanced-filters[data-expanded="true"]{padding-top:10px}
+}
+@media(max-width:780px){
+  .search-actions:has(#today-offers:not([hidden]) + #mobile-clear-filters:not([hidden])){gap:4px}
+  #today-offers:not([hidden]) + #mobile-clear-filters:not([hidden]){width:40px;min-width:40px;padding-inline:0}
+  #today-offers:not([hidden]) + #mobile-clear-filters .mobile-clear-label{display:none}
+}
+@media(max-width:370px){
+  .search-actions:has(#today-offers:not([hidden]) + #mobile-clear-filters:not([hidden])){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px}
+  .search-actions:has(#today-offers:not([hidden]) + #mobile-clear-filters:not([hidden])) > button{min-width:0}
 }
 @media(max-width:780px){
   .search-actions button{min-height:40px;padding:8px 10px}

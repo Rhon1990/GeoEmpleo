@@ -181,7 +181,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the compact filters release', () => {
+test('stylesheet cache key identifies the mobile clear action release', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -191,7 +191,7 @@ test('stylesheet cache key identifies the compact filters release', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261123-location-fixes(?:&|$)/,
+    /(?:[?&]v=)20261124-mobile-clear-action(?:&|$)/,
   );
 });
 
@@ -767,7 +767,7 @@ test('mobile category rail keeps its height and stays within the viewport at 768
   );
 });
 
-test('mobile clear filters stays compact on its own row', () => {
+test('desktop clear filters stays compact in the secondary filters row', () => {
   const mobileRules = mediaBlocksForMaxWidth(css, 780).join('\n');
   assert.match(mobileRules, /\.filter-controls\{[^}]*flex:1 0 100%/);
   assert.match(
