@@ -9,8 +9,14 @@ Esta página explica esas fuentes; por sí sola no activa ningún portal.
 ## Conectores diarios activos
 
 El registro tiene 48 identificadores marcados como `active`, con adaptador
-en el runner. KPMG, Deloitte, ILUNION, Leroy Merlin, Alcampo y Decathlon se publicaron en los dos dominios el 05/11/2026; El Corte Inglés también figura en el catálogo público. Covirán, ISS y Accenture están publicados. La
-columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
+en el runner. La tercera ejecución del 24/11/2026 actualizó por HTTPS el catálogo
+público a 24.178 ofertas; la comprobación pública posterior mostró el mismo total
+y el sello 21:25 h. Sus resultados por fuente están en el artifact del
+[run 45470777688](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688).
+Fallaron Lanbide, Burger King, Faster, Accenture (HTTP 429), Gi Group, PwC,
+Santander e Iberdrola; se conservan los datos anteriores cuando aplica y el
+reporte no especifica la causa de los fallos genéricos. Randstad sí se actualizó
+en este intento. La columna de ejecución de las demás fuentes recoge capturas históricas. «Actualizada»
 y «fallida» describen solo la ejecución indicada, no el estado permanente del portal. Ante un
 fallo se conservan las publicaciones anteriores de esa fuente, sin certificar
 que sigan abiertas.
@@ -19,11 +25,11 @@ que sigan abiertas.
 |---|---|---|---|
 | `sef-murcia` | [SEF Murcia](https://sefapps.carm.es/sefApps/rest/ofertas/ofertas) | Datos públicos | Fallida; catálogo anterior conservado |
 | `ecyl-castilla-leon` | [ECYL Castilla y León](https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/ofertas-de-empleo/exports/json) | Datos públicos; valida fichas canónicas y páginas 404 servidas con HTTP 200 | Captura aislada 06/11/2026: 402 ofertas vigentes, 378 con punto |
-| `lanbide-euskadi` | [Lanbide](https://apps.lanbide.euskadi.net/apps/OF_OFERTAS_ODE_JSON) | Datos públicos; retira ausentes tras captura completa | Captura aislada 06/11/2026: 618 ofertas vigentes, 595 con punto |
+| `lanbide-euskadi` | [Lanbide](https://apps.lanbide.euskadi.net/apps/OF_OFERTAS_ODE_JSON) | Datos públicos; retira ausentes tras captura completa | Falló en el run 45470777688; la captura aislada 06/11/2026 (618 ofertas, 595 con punto) es histórica, no acredita el estado actual |
 | `andalucia-entidades` | [Junta de Andalucía, entidades instrumentales](https://datos.juntadeandalucia.es/api/v0/job-offering-public-sector/search?announcement_status=En%20curso&job_official_degree_requirements=-&announcement_type=-&provinces=-&job_agreement=-&order_by=id&mode=DESC&format=json&size=0) | Datos públicos | Actualizada |
 | `lever-jobandtalent` | [Job&Talent](https://api.lever.co/v0/postings/jobandtalent?mode=json) | Lever | Actualizada |
 | `lever-skydance` | [Skydance Animation Madrid](https://api.lever.co/v0/postings/skydance?mode=json) | Lever | Actualizada |
-| `bizneo-burger-king` | [Burger King España](https://empleo.bkspain.es/jobs) | Tablón Bizneo | Portal 404 el 06/11/2026; la instantánea fallida caduca a las 72 horas |
+| `bizneo-burger-king` | [Burger King España](https://empleo.bkspain.es/jobs) | Tablón Bizneo | Portal 404 el 06/11/2026; también falló el run 45470777688 y la instantánea fallida caduca a las 72 horas |
 | `bizneo-plenergy` | [Plenergy](https://empleo.plenergy.es/jobs) | Tablón Bizneo | Actualizada |
 | `bizneo-telepizza` | [Telepizza](https://ofertas.fooddeliverybrands.com/jobs) | Tablón Bizneo | Actualizada |
 | `successfactors-vithas` | [Vithas](https://empleo.vithas.es/search/?createNewAlert=false&q=&locationsearch=) | SuccessFactors | Actualizada |
@@ -45,20 +51,20 @@ que sigan abiertas.
 | `talentclue-quironsalud` | [Quirónsalud](https://empleo.quironsalud.es/) | TalentClue | Captura directa: 263 publicaciones, 260 con punto |
 | `selectminds-eulen` | [Grupo Eulen](https://eulen.referrals.selectminds.com/grupoeulenespana/latest-jobs) | SelectMinds | Retirada: espejo parcial sustituido por Taleo; sus filas se eliminan solo después de una captura válida de la fuente sucesora |
 | `taleo-eulen` | [Grupo Eulen](https://eulen.taleo.net/careersection/eul_career_site/jobsearch.ftl?lang=es) | Taleo oficial | Captura aislada 03/11/2026: 493 vacantes únicas y 455 con punto municipal; el contador de 1.395 corresponde a resultados expandidos por ubicación, no a 1.395 requisiciones distintas |
-| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | API pública del portal oficial | La captura recorre y valida todas las páginas anunciadas; publica fichas con provincia española y ubicación municipal solo si se resuelve |
+| `randstad-oficial` | [Randstad](https://www.randstad.es/candidatos/ofertas-empleo/) | API pública del portal oficial | Run 45470777688: 7.117 ofertas recibidas, 6.597 con municipio resuelto; captura paginada completa |
 | `successfactors-clece` | [Clece](https://canaldeempleo.es/CLECE) | SuccessFactors | Captura directa: 355 publicaciones, 335 con punto |
 | `bizneo-domusvi` | [DomusVi](https://empleo.domusvi.es/jobs) | Tablón Bizneo | Captura directa: 340 publicaciones, 280 con punto |
 | `successfactors-indra` | [Indra](https://careers.indragroup.com/) | SuccessFactors | Publicación 27/10/2026: 562 publicaciones, 437 con punto |
 | `bizneo-coviran` | [Covirán](https://jobs.coviran.com/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 6 vacantes concretas, 6 con punto; autocandidaturas excluidas |
 | `bizneo-iss` | [ISS Facility Services](https://jobs.iss.es/jobs) | Tablón Bizneo | Captura directa 28/10/2026: 13 vacantes, 9 con punto |
 | `bizneo-iman` | [IMAN](https://empleo.imancorp.es/jobs) | Tablón Bizneo; paginación hasta 274 páginas, excluye una tarjeta de prueba | En pausa: la captura completa de fichas recibió HTTP 429. Reducir frecuencia/volumen o conseguir un feed autorizado antes de activarla |
-| `bizneo-faster` | [Faster Empleo](https://jobs.faster.es/jobs) | Tablón Bizneo; pagina y contrasta el total anunciado | La captura aislada previa de 211 ofertas (186 con municipio) nunca se publicó. Falló la actualización diaria del 24/11/2026 y Faster no aparece en el catálogo público ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
+| `bizneo-faster` | [Faster Empleo](https://jobs.faster.es/jobs) | Tablón Bizneo; pagina y contrasta el total anunciado | La captura aislada previa de 211 ofertas (186 con municipio) nunca se publicó. Volvió a fallar el run 45470777688; Faster no aparece en el catálogo público ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
 | `synergie-oficial` | [Synergie](https://www.synergie.es/busco-trabajo/) | Listado público oficial con fecha, localidad, descripción y enlace; excluye ofertas caducadas y autocandidaturas | Actualización diaria 24/11/2026: 1.104 ofertas vigentes, 993 con municipio verificado ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
 | `teamtailor-temporing` | [Temporing](https://empleo.temporing.es/jobs) | Teamtailor; fichas `JobPosting`; separa localidades y valida municipios del título o del campo de ubicación | Actualización diaria 24/11/2026: 440 fichas, 510 ofertas tras separar localidades, 333 con punto verificado ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
-| `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Publicación 28/10/2026: 274 fichas españolas, 131 con punto; país validado por ficha |
+| `workday-accenture` | [Accenture](https://www.accenture.com/es-es/careers/jobsearch) | Workday oficial | Run 45470777688: HTTP 429; se conserva el catálogo anterior. Captura del 28/10/2026: 274 fichas españolas, 131 con punto |
 | `elcorteingles-oficial` | [El Corte Inglés](https://empleo.elcorteingles.es/ep/ofertas) | Listado paginado del frontend oficial, filtro `ES` | Actualización diaria 24/11/2026: 350 ofertas, 283 con municipio verificado ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
 | `adecco-oficial` | [Adecco](https://www.adecco.com/es-es/ofertas-trabajo) | Endpoint del buscador oficial; filtro de cierre y país; ficha pública individual por `jobId`; retira ausentes tras captura completa | Captura 05/11/2026 12:19 UTC: 3.775 ofertas con ID único y 3.584 con municipio verificado; se publica solo título, localidad, fecha, enlace y datos factuales mínimos |
-| `gigroup-oficial` | [Gi Group](https://es.gigroup.com/ofertas-de-trabajo/) | Listado y fichas `JobPosting` del portal oficial | La actualización diaria del 24/11/2026 falló al obtener o validar la fuente; el runner conserva la instantánea publicada anterior. La captura aislada de 427 fichas (415 con municipio) del 05/11/2026 no representa el conteo vigente ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
+| `gigroup-oficial` | [Gi Group](https://es.gigroup.com/ofertas-de-trabajo/) | Listado y fichas `JobPosting` del portal oficial | Falló al obtener o validar la fuente en el run 45470777688; el runner conserva la instantánea publicada anterior. La captura aislada de 427 fichas (415 con municipio) del 05/11/2026 no representa el conteo vigente ([run](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45470777688)) |
 | `sacyr-oficial` | [Sacyr](https://sacyrpeople.sacyr.com/jobs?country=Spain&query=&split_view=true) | Teamtailor; listado con filtro España y fichas `JobPosting` | Publicada el 12/11/2026: 97 fichas, 63 con municipio verificado |
 | `stef-oficial` | [STEF](https://apply.stef.jobs/search/?createNewAlert=false&q=&locationsearch=) | SuccessFactors; listado global paginado y fichas completas; conserva solo `ES` | Publicada el 12/11/2026: 43 fichas españolas, 18 con municipio verificado |
 | `mercadona-oficial` | [Mercadona](https://mercadona.avature.net/es_ES/Careers/SearchJobs/?2307=243&2307_format=2105&listFilterMode=1&jobRecordsPerPage=6) | Avature; listado oficial paginado con filtro España, ID, municipio, descripción y enlace de solicitud | Publicada el 12/11/2026: 337 fichas españolas, 216 con municipio verificado |
@@ -118,7 +124,7 @@ activo verificado.
 |---|---|---|
 | `workday-repsol` | Workday Repsol, filtro Country España; metadatos y enlace; fecha de primera detección | Primera respuesta: 18 anuncios. La actualización posterior recibe HTTP 429/verificación antibot; pendiente de captura automática completa |
 | `successfactors-ey` | SuccessFactors EY, país ES, paginación y fichas oficiales | 213 ofertas españolas, 171 con punto municipal |
-| `pwc-campus` | Página corporativa Campus España aportada; metadatos y fecha original | 120 anuncios del listado menos 2 de Andorra: 118 ofertas, 97 puntos |
+| `pwc-campus` | Página corporativa Campus España aportada; metadatos y fecha original | Falló en el run 45470777688; la captura anterior de 118 ofertas (97 puntos) es histórica y se conserva el catálogo anterior |
 
 Destinos múltiples o ambiguos quedan sin punto. Los detalles Workday no se consultan ni se elude su verificación antibot. Ante fallos se conserva el catálogo anterior sin renovar su fecha de comprobación. Los logos proceden de los propios portales; su procedencia no supone licencia abierta de marca.
 
