@@ -10,6 +10,11 @@ export interface BizneoBoard {
   readonly category:string;
   readonly categoryLabel:string;
   readonly excludedTitlePattern?:RegExp;
+  readonly maxPages?:number;
+  readonly maxJobs?:number;
+  readonly detailConcurrency?:number;
+  readonly verifyListedTotal?:boolean;
+  readonly status?:'active'|'paused';
 }
 
 export interface ResolvedCity {
@@ -27,16 +32,18 @@ export const bizneoBoards:readonly BizneoBoard[]=[
   {sourceId:'bizneo-telepizza',hostname:'ofertas.fooddeliverybrands.com',employer:'Telepizza',category:'hosteleria',categoryLabel:'Turismo y hostelería'},
   {sourceId:'bizneo-coviran',hostname:'jobs.coviran.com',employer:'Covirán',category:'servicios',categoryLabel:'Servicios y comercio',excludedTitlePattern:/^autocandidatura\b/i},
   {sourceId:'bizneo-iss',hostname:'jobs.iss.es',employer:'ISS Facility Services',category:'oficios',categoryLabel:'Oficios técnicos'},
+  {sourceId:'bizneo-iman',hostname:'empleo.imancorp.es',employer:'IMAN',category:'otros',categoryLabel:'Otros sectores',maxPages:300,maxJobs:5_000,detailConcurrency:8,verifyListedTotal:true,status:'paused',excludedTitlePattern:/^(?:no_postular|test push)\b/i},
+  {sourceId:'bizneo-faster',hostname:'jobs.faster.es',employer:'Faster Empleo',category:'otros',categoryLabel:'Otros sectores',maxPages:50,maxJobs:500,verifyListedTotal:true},
 ];
 
 function validatedJobUrl(raw:string,board:BizneoBoard):string {
   const url=new URL(raw,`https://${board.hostname}`);
   if(url.protocol!=='https:'||url.hostname!==board.hostname||url.port||url.username||url.password||
-    !/^\/jobs\/[a-z0-9][a-z0-9-]*$/i.test(url.pathname)||url.search||url.hash) throw new TypeError('URL Bizneo no autorizada');
+    !/^\/jobs\/[a-z0-9][a-z0-9_-]*$/i.test(url.pathname)||url.search||url.hash) throw new TypeError('URL Bizneo no autorizada');
   return url.href;
 }
 
-export function parseBizneoListing(html:string,board:BizneoBoard):{offers:BizneoListedOffer[];nextPage:number|null} {
+export function parseBizneoListing(html:string,board:BizneoBoard):{offers:BizneoListedOffer[];nextPage:number|null;listedTotal:number|null;excludedCount:number} {
   const document=documentOf(html);
   const boardNode=descendants(document,element=>attribute(element,'id')==='job-board')[0];
   if(!boardNode) throw new TypeError('Tablón Bizneo no encontrado');
@@ -58,8 +65,12 @@ export function parseBizneoListing(html:string,board:BizneoBoard):{offers:Bizneo
   const nextUrl=next?attribute(next,'href'):null;
   const page=nextUrl?new URL(nextUrl,`https://${board.hostname}`).searchParams.get('page'):null;
   const nextPage=page&&/^\d+$/.test(page)?Number(page):null;
-  if(nextPage!==null&&(!Number.isSafeInteger(nextPage)||nextPage<2||nextPage>20)) throw new TypeError('Paginación Bizneo inválida');
-  return {offers,nextPage};
+  if(nextPage!==null&&(!Number.isSafeInteger(nextPage)||nextPage<2||nextPage>(board.maxPages??20))) throw new TypeError('Paginación Bizneo inválida');
+  const header=descendants(document,element=>attribute(element,'id')==='jobs-header')[0];
+  const listedTotal=header?Number(/\b([\d.]+) ofertas?\b/i.exec(textOf(header))?.[1]?.replace(/\./g,'')):null;
+  if(board.verifyListedTotal&&(!Number.isSafeInteger(listedTotal)||!listedTotal||listedTotal>(board.maxJobs??300)))
+    throw new TypeError('Total Bizneo ausente o inesperado');
+  return {offers,nextPage,listedTotal:listedTotal&&Number.isSafeInteger(listedTotal)?listedTotal:null,excludedCount:cards.length-offers.length};
 }
 
 export function adaptBizneoDetail(offer:BizneoListedOffer,html:string,checkedAt:string,resolveCity:CityResolver,board:BizneoBoard):PublicJob {
@@ -88,10 +99,14 @@ export function adaptBizneoDetail(offer:BizneoListedOffer,html:string,checkedAt:
 export async function fetchBizneoOffers(board:BizneoBoard,checkedAt:string,resolveCity:CityResolver,fetchImpl:typeof fetch=fetch):Promise<PublicJob[]> {
   const found=new Map<string,BizneoListedOffer>();
   let page=1;
+  let listedTotal:number|null=null;
+  let excludedCount=0;
   while(true){
     const url=new URL(`https://${board.hostname}/jobs`);
     if(page>1) url.searchParams.set('page',String(page));
     const parsed=parseBizneoListing(await fetchHtml(url.href,{fetchImpl}),board);
+    if(page===1) listedTotal=parsed.listedTotal;
+    excludedCount+=parsed.excludedCount;
     let added=0;
     for(const offer of parsed.offers){if(found.has(offer.url))continue;found.set(offer.url,offer);added++;}
     if(!added) throw new TypeError('Paginación Bizneo repetida');
@@ -99,11 +114,13 @@ export async function fetchBizneoOffers(board:BizneoBoard,checkedAt:string,resol
     if(parsed.nextPage!==page+1) throw new TypeError('Salto de página Bizneo inválido');
     page=parsed.nextPage;
   }
-  if(found.size===0||found.size>300) throw new TypeError('Volumen Bizneo inesperado');
+  if(found.size===0||found.size>(board.maxJobs??300)||
+    (board.verifyListedTotal&&found.size+excludedCount!==listedTotal)) throw new TypeError('Volumen Bizneo inesperado');
   const offers=[...found.values()];
   const jobs:PublicJob[]=[];
-  for(let index=0;index<offers.length;index+=4){
-    jobs.push(...await Promise.all(offers.slice(index,index+4).map(async offer=>
+  const concurrency=board.detailConcurrency??4;
+  for(let index=0;index<offers.length;index+=concurrency){
+    jobs.push(...await Promise.all(offers.slice(index,index+concurrency).map(async offer=>
       adaptBizneoDetail(offer,await fetchHtml(offer.url,{fetchImpl}),checkedAt,resolveCity,board))));
   }
   return jobs;

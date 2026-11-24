@@ -6,6 +6,8 @@ import { kfcListingUrl } from './connectors/kfc.ts';
 import { disaEndpoint } from './connectors/disa.ts';
 import { successFactorsBoards } from './connectors/successfactors-boards.ts';
 import { diaListingUrl } from './connectors/teamtailor.ts';
+import {synergieListingUrl} from './connectors/synergie.ts';
+import {temporingListingUrl} from './connectors/temporing.ts';
 import {leroyMerlinListingUrl} from './connectors/leroy-merlin.ts';
 import {alcampoListingUrl} from './connectors/alcampo.ts';
 import {decathlonListingUrl} from './connectors/decathlon.ts';
@@ -109,8 +111,14 @@ const definitions: readonly SourceDefinition[] = [
   })),
   ...bizneoBoards.map(board=>({
     id:board.sourceId,name:`${board.employer} · portal de empleo`,countryCode:'ES' as const,
-    kind:'ats' as const,status:'active' as const,endpoint:`https://${board.hostname}/jobs`,licenseUrl:null,
+    kind:'ats' as const,status:board.status??'active' as const,endpoint:`https://${board.hostname}/jobs`,licenseUrl:null,
   })),
+  {id:'synergie-oficial',name:'Synergie · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:synergieListingUrl,licenseUrl:null},
+  {id:'teamtailor-temporing',name:'Temporing · portal oficial',countryCode:'ES',kind:'ats',status:'active',
+    endpoint:temporingListingUrl,licenseUrl:null},
+  {id:'nortempo-oficial',name:'Nortempo · portal oficial',countryCode:'ES',kind:'ats',status:'credentials_required',
+    endpoint:'https://empleo.nortempo.com/search_offers/0/',licenseUrl:null},
   ...successFactorsBoards.map(board=>({
     id:board.sourceId,name:board.sourceLabel,countryCode:'ES' as const,
     kind:'ats' as const,status:'active' as const,

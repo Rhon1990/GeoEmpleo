@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseBizneoListing, adaptBizneoDetail, fetchBizneoOffers } from '../packages/ingestion/src/connectors/bizneo.ts';
+import { parseBizneoListing, adaptBizneoDetail, fetchBizneoOffers, bizneoBoards } from '../packages/ingestion/src/connectors/bizneo.ts';
 import { adaptTalentClueListing } from '../packages/ingestion/src/connectors/talentclue.ts';
 import { createNationalCityResolver } from '../packages/ingestion/src/national-geography.ts';
 import { parseKfcListing, adaptKfcDetail } from '../packages/ingestion/src/connectors/kfc.ts';
@@ -290,6 +290,31 @@ test('Bizneo reconcilia páginas solapadas sin duplicar una oferta real',async()
   }) as typeof fetch;
   const jobs=await fetchBizneoOffers(domusvi,checkedAt,()=>null,fetchImpl);
   assert.deepEqual(jobs.map(job=>job.title),['Oferta vigo','Oferta madrid']);
+});
+
+test('IMAN y Faster usan sus tablones completos y verifican el total anunciado',async()=>{
+  const iman=bizneoBoards.find(item=>item.sourceId==='bizneo-iman');
+  const faster=bizneoBoards.find(item=>item.sourceId==='bizneo-faster');
+  assert.equal(iman?.hostname,'empleo.imancorp.es');
+  assert.equal(faster?.hostname,'jobs.faster.es');
+  assert.equal(iman?.maxPages,300);
+  assert.equal(faster?.maxPages,50);
+  for(const configured of [iman,faster]) {
+    assert.ok(configured);
+    const card=(slug:string)=>`<a class="job-card" href="/jobs/${slug}"><div class="title">Oferta ${slug}</div><div class="details"><span>Madrid</span></div></a>`;
+    const fetchImpl=(async(input:string|URL|Request)=>{
+      const url=new URL(input instanceof Request?input.url:String(input));
+      if(url.pathname.startsWith('/jobs/'))return new Response(`<h1>Oferta ${url.pathname.slice(6)}</h1><div class="general-content"><p>Trabajo en Madrid.</p></div>`,{headers:{'content-type':'text/html'}});
+      const second=url.searchParams.has('page');
+      return new Response(`<div id="jobs-header">Tenemos <span>2 ofertas</span> para ti</div><div id="job-board">${card(second?'dos':'uno')}</div>${second?'':'<a class="next" href="/jobs?page=2">Siguiente</a>'}`,{headers:{'content-type':'text/html'}});
+    }) as typeof fetch;
+    assert.equal((await fetchBizneoOffers(configured,checkedAt,()=>null,fetchImpl)).length,2);
+    const incomplete=(async(input:string|URL|Request)=>{
+      const url=new URL(input instanceof Request?input.url:String(input));
+      return new Response(`<div id="jobs-header">Tenemos <span>2 ofertas</span> para ti</div><div id="job-board">${card('uno')}</div>`,{headers:{'content-type':'text/html'}});
+    }) as typeof fetch;
+    await assert.rejects(()=>fetchBizneoOffers(configured,checkedAt,()=>null,incomplete),/Volumen Bizneo/);
+  }
 });
 
 test('tablones SuccessFactors oficiales tienen identidad, categoría y URL propias',()=>{
