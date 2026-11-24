@@ -1,13 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {requestLocationWithPermission,locationFeedbackMessage} from '../apps/web-preview/public/location-permission.mjs';
-
-test('explica de forma visible el resultado de usar mi ubicación',()=>{
- assert.match(locationFeedbackMessage('located'),/mapa.*ubicación/i);
- assert.match(locationFeedbackMessage('timeout'),/tardó.*inténtalo/i);
- assert.match(locationFeedbackMessage('unavailable'),/ubicación.*elige/i);
- assert.match(locationFeedbackMessage('denied'),/permiso.*ajustes/i);
-});
+import {requestLocationWithPermission} from '../apps/web-preview/public/location-permission.mjs';
 
 test('solicita confirmación antes del permiso pendiente y respeta la cancelación',async()=>{
  let locations=0, prompts=0;

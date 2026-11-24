@@ -181,7 +181,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the location feedback update', () => {
+test('stylesheet cache key identifies the mobile clear label update', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -191,8 +191,12 @@ test('stylesheet cache key identifies the location feedback update', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261124-location-feedback(?:&|$)/,
+    /(?:[?&]v=)20261124-mobile-clear-label(?:&|$)/,
   );
+});
+
+test('about dialog identifies the released web interface version', () => {
+  assert.match(html, /Versión web 1\.0\.3/);
 });
 
 test('map module cache key identifies the territory views release', () => {
@@ -629,6 +633,8 @@ test('map action toolbar keeps compact targets and CSS-only tooltips', () => {
   );
   assert.match(ruleForSelector(css, '.map-actions button:first-child::after'), /left:0/);
   assert.match(ruleForSelector(css, '.map-actions button:last-child::after'), /right:0/);
+  assert.match(ruleForSelector(css, '.map-actions button.touch-hint::after'), /opacity:1[^}]*visibility:visible/);
+  assert.equal(allElements.some(element => attribute(element, 'id') === 'map-location-feedback'), false);
 });
 
 test('desktop shell gives the workspace the actual remaining viewport height', () => {
@@ -727,6 +733,13 @@ test('secondary filters collapse on narrow or short windows and stay visible on 
   assert.match(compact,/#mobile-clear-filters\{[^}]*display:inline-flex/);
   assert.match(compact,/#clear-filters\{[^}]*display:none/);
   assert.doesNotMatch(compact,/\.workspace|\.mobile-view-switch|#show-saved|#today-offers/);
+});
+
+test('daily offers and clear filters keep their full labels on narrow phones', () => {
+  const mobileRules = mediaBlocksForMaxWidth(css, 780).join('\n');
+  assert.match(mobileRules, /\.search-actions:has\(#today-offers:not\(\[hidden\]\) \+ #mobile-clear-filters:not\(\[hidden\]\)\)\{[^}]*display:grid[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.doesNotMatch(mobileRules, /#today-offers:not\(\[hidden\]\) \+ #mobile-clear-filters \.mobile-clear-label\{display:none\}/);
+  assert.doesNotMatch(mobileRules, /#today-offers:not\(\[hidden\]\) \+ #mobile-clear-filters:not\(\[hidden\]\)\{width:40px/);
 });
 
 test('mobile map overlay stays compact and centered above the map', () => {

@@ -4,7 +4,8 @@ import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261118-territor
 import {createMapLoadingState} from './map-loading.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,clearOriginTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261119-clear-filters';
-import {requestLocationWithPermission,locationFeedbackMessage} from './location-permission.mjs?v=20261123-location-feedback';
+import {requestLocationWithPermission} from './location-permission.mjs?v=20261123-location-feedback';
+import {installMapActionHints} from './map-action-hints.mjs?v=20261124-long-press-hints';
 import {referencePlaceZoom} from './reference-places.mjs?v=20261118-locality-search-ux';
 import {beginNewSearch,captureDetailPosition,createJobInteraction,finishDetailInteraction,restoreJobFocus} from './job-interaction.mjs?v=20261116-detail-close-reset';
 import {createWorkspaceView,createDisclosure} from './workspace-view.mjs';
@@ -776,14 +777,6 @@ function setOrigin(point,label,source='manual',zoom=10) {
 }
 
 const locationPermissionDialog=document.querySelector('#location-permission-dialog');
-const mapLocationFeedback=document.querySelector('#map-location-feedback');
-let locationFeedbackTimer;
-function showMapLocationFeedback(message,{persist=false}={}) {
-  clearTimeout(locationFeedbackTimer);
-  mapLocationFeedback.hidden=!message;
-  mapLocationFeedback.textContent=message||'';
-  if(message&&!persist)locationFeedbackTimer=setTimeout(()=>{mapLocationFeedback.hidden=true;},6500);
-}
 function showLocationPermission(mode) {
   const title=document.querySelector('#location-permission-title');
   const message=document.querySelector('#location-permission-message');
@@ -817,21 +810,19 @@ async function useMyLocation({interactive=false}={}) {
   const revision=originRevision;
   document.querySelector('#use-location').disabled=true;
   document.querySelector('#origin-status').textContent='Esperando permiso de ubicación del navegador…';
-  if(interactive)showMapLocationFeedback('Buscando tu ubicación…',{persist:true});
   try {
     const position=interactive?await requestLocationWithPermission({
       permission:async()=>navigator.permissions?(await navigator.permissions.query({name:'geolocation'})).state:'prompt',
       confirm:()=>showLocationPermission('prompt'),locate:()=>locateOnce(),denied:()=>{void showLocationPermission('denied');},
     }):await locateOnce();
-    if(originRevision!==revision){if(interactive)showMapLocationFeedback('');return;}
-    if(position.status==='cancelled'){document.querySelector('#origin-status').textContent='Puedes elegir una localidad o usar el mapa.';if(interactive)showMapLocationFeedback('');return position;}
+    if(originRevision!==revision)return;
+    if(position.status==='cancelled'){document.querySelector('#origin-status').textContent='Puedes elegir una localidad o usar el mapa.';return position;}
     if(position.status==='located') {
       originInput.value='';
       setOrigin(position.point,'Ubicación aproximada del dispositivo','device',position.zoom);
     } else {
       document.querySelector('#origin-status').textContent=position.status==='denied'?'Este navegador ha rechazado el permiso de ubicación. Actívalo para GeoEmpleo360 en los ajustes del sitio y vuelve a pulsar «Usar mi ubicación», o elige una localidad.':'No pudimos localizarte. Elige una localidad o mueve el mapa.';
     }
-    if(interactive)showMapLocationFeedback(locationFeedbackMessage(position.status));
     return position;
   }finally{locating=false;document.querySelector('#use-location').disabled=false;}
 }
@@ -876,6 +867,7 @@ radiusNumber.addEventListener('input',()=>{
 });
 radiusNumber.addEventListener('change',()=>{syncRadiusControls();commitRadius();});
 syncRadiusControls();
+installMapActionHints(document.querySelectorAll('.map-actions button'));
 document.querySelector('#choose-origin').addEventListener('click',() => {
   void analyticsController.track('map_action',{action:'choose_zone'});
   mapController?.chooseOrigin(); document.querySelector('#origin-status').textContent = 'Haz clic en el mapa para situar tu zona de búsqueda.';
