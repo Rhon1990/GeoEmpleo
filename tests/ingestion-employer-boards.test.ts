@@ -694,3 +694,27 @@ test('DISA valida identidad y solo mapea el municipio indicado en su detalle',()
   assert.equal(job.dateKind,'observed');
   assert.equal(job.sourceUrl,`https://empleo.disagrupo.es/offer/detail/${id}`);
 });
+
+test('IMAN usa el listado completo sin descargar miles de fichas',async()=>{
+  const iman=bizneoBoards.find(item=>item.sourceId==='bizneo-iman'); assert.ok(iman);
+  const paths:string[]=[];
+  const fetchImpl=(async(input:string|URL|Request)=>{
+    const url=new URL(input instanceof Request?input.url:String(input));paths.push(url.pathname);
+    const second=url.searchParams.has('page');
+    const slug=second?'dos':'uno';
+    return new Response(`<div id="jobs-header">Tenemos <span>2 ofertas</span> para ti</div><div id="job-board"><a class="job-card" href="/jobs/${slug}"><div class="title">Oferta ${slug}</div><div class="details"><span>Madrid</span></div></a></div>${second?'':'<a class="next" href="/jobs?page=2">Siguiente</a>'}`,{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  const jobs=await fetchBizneoOffers(iman,checkedAt,()=>null,fetchImpl);
+  assert.equal(jobs.length,2);assert.deepEqual(paths,['/jobs','/jobs']);
+  assert.equal(jobs[0]!.dateKind,'observed');
+});
+
+test('IMAN detiene la captura ante un límite HTTP 429 sin publicar resultados parciales',async()=>{
+  const iman=bizneoBoards.find(item=>item.sourceId==='bizneo-iman'); assert.ok(iman);
+  let count=0;
+  const fetchImpl=(async()=>{count++; if(count===2)return new Response('',{status:429,headers:{'retry-after':'120'}});
+    return new Response('<div id="jobs-header">2 ofertas</div><div id="job-board"><a class="job-card" href="/jobs/uno"><div class="title">Oferta</div><div class="details"><span>Madrid</span></div></a></div><a class="next" href="/jobs?page=2">Siguiente</a>',{headers:{'content-type':'text/html'}});
+  }) as typeof fetch;
+  await assert.rejects(()=>fetchBizneoOffers(iman,checkedAt,()=>null,fetchImpl),/HTTP 429/);
+  assert.equal(count,2);
+});

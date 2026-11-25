@@ -32,7 +32,7 @@ export const bizneoBoards:readonly BizneoBoard[]=[
   {sourceId:'bizneo-telepizza',hostname:'ofertas.fooddeliverybrands.com',employer:'Telepizza',category:'hosteleria',categoryLabel:'Turismo y hostelería'},
   {sourceId:'bizneo-coviran',hostname:'jobs.coviran.com',employer:'Covirán',category:'servicios',categoryLabel:'Servicios y comercio',excludedTitlePattern:/^autocandidatura\b/i},
   {sourceId:'bizneo-iss',hostname:'jobs.iss.es',employer:'ISS Facility Services',category:'oficios',categoryLabel:'Oficios técnicos'},
-  {sourceId:'bizneo-iman',hostname:'empleo.imancorp.es',employer:'IMAN',category:'otros',categoryLabel:'Otros sectores',maxPages:300,maxJobs:5_000,detailConcurrency:8,verifyListedTotal:true,status:'paused',excludedTitlePattern:/^(?:no_postular|test push)\b/i},
+  {sourceId:'bizneo-iman',hostname:'empleo.imancorp.es',employer:'IMAN',category:'otros',categoryLabel:'Otros sectores',maxPages:300,maxJobs:5_000,verifyListedTotal:true,excludedTitlePattern:/^(?:no_postular|test push)\b/i},
   {sourceId:'bizneo-faster',hostname:'jobs.faster.es',employer:'Faster Empleo',category:'otros',categoryLabel:'Otros sectores',maxPages:50,maxJobs:500,verifyListedTotal:true},
 ];
 
@@ -102,6 +102,7 @@ export async function fetchBizneoOffers(board:BizneoBoard,checkedAt:string,resol
   let listedTotal:number|null=null;
   let excludedCount=0;
   while(true){
+    if(board.sourceId==='bizneo-iman'&&page>1&&fetchImpl===fetch) await new Promise(resolve=>setTimeout(resolve,1500));
     const url=new URL(`https://${board.hostname}/jobs`);
     if(page>1) url.searchParams.set('page',String(page));
     const parsed=parseBizneoListing(await fetchHtml(url.href,{fetchImpl}),board);
@@ -117,6 +118,18 @@ export async function fetchBizneoOffers(board:BizneoBoard,checkedAt:string,resol
   if(found.size===0||found.size>(board.maxJobs??300)||
     (board.verifyListedTotal&&found.size+excludedCount!==listedTotal)) throw new TypeError('Volumen Bizneo inesperado');
   const offers=[...found.values()];
+  if(board.sourceId==='bizneo-iman') return offers.map(offer=>{
+    const place=resolveCity(offer.city);
+    const slug=new URL(offer.url).pathname.slice('/jobs/'.length);
+    return {kind:'job',sourceId:board.sourceId,source:`${board.employer} · portal de empleo`,
+      id:`BIZNEO-${board.sourceId.toUpperCase()}-${slug}`,title:offer.title,employer:board.employer,
+      city:offer.city,province:place?.province??'Sin verificar',region:place?.region??'España',
+      category:board.category,categoryLabel:board.categoryLabel,regime:offer.remote?'Remoto':'Oferta de empleo',
+      places:null,paragraphs:['Consulta la descripción y las condiciones en la oferta original de IMAN.'],
+      sourceUrl:offer.url,publishedAt:dateInSpain(checkedAt),dateKind:'observed',checkedAt,
+      closingDate:null,salary:null,applicationRegistration:'external_required',selection:null,
+      location:offer.remote?null:place?.location??null};
+  });
   const jobs:PublicJob[]=[];
   const concurrency=board.detailConcurrency??4;
   for(let index=0;index<offers.length;index+=concurrency){
