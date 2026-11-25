@@ -2,7 +2,7 @@
 
 ## Listas buscables en móvil — 25/11/2026
 
-En esta rama, abrir una lista con buscador en pantallas de hasta 780 px mantiene el foco en su botón y no despliega el teclado; al tocar el campo de búsqueda, se enfoca normalmente. En escritorio se conserva el foco automático al abrir. El selector de empresa y las tres listas de comunidad, provincia y localidad comparten esta regla.
+La versión web **1.0.7** se publicó en producción mediante el [workflow 45669724994](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45669724994), que verificó `geoempleo360.com` y `geoempleo-49978.web.app` por HTTPS sin modificar el catálogo. Abrir una lista con buscador en pantallas de hasta 780 px mantiene el foco en su botón y no despliega el teclado; al tocar el campo de búsqueda, se enfoca normalmente. En escritorio se conserva el foco automático al abrir. La regla compartida cubre el selector de empresa y las listas de comunidad, provincia y localidad.
 
 ## Encuadre por distancia y transición de cámara — 25/11/2026
 
