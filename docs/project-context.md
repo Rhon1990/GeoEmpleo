@@ -2,7 +2,7 @@
 
 ## Ubicación del dispositivo — 25/11/2026
 
-La versión web de prueba sube a **1.0.5**. «Usar mi ubicación» centra el mapa y reutiliza el marcador existente «Tu zona». El selector visible «¿Dónde?» muestra «Buscando…» mientras espera; si no se obtiene una posición, muestra «Sin ubicación» y abre el modal existente fuera del mapa. Ante posición no disponible o espera agotada, el modal sugiere activar Wi‑Fi, reintentar o elegir una localidad manualmente. El aviso de estado accesible permanece fuera del mapa y se actualiza al reintentar, elegir zona o limpiar filtros.
+La versión web **1.0.5** se publicó en producción el 25/11/2026 mediante el [workflow 45655995612](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45655995612); terminó correctamente y verificó por HTTPS la interfaz y que el catálogo no cambiara. «Usar mi ubicación» centra el mapa y reutiliza el marcador existente «Tu zona». El selector visible «¿Dónde?» muestra «Buscando…» mientras espera; si no se obtiene una posición, muestra «Sin ubicación» y abre el modal existente fuera del mapa. Ante posición no disponible o espera agotada, el modal sugiere activar Wi‑Fi, reintentar o elegir una localidad manualmente. El aviso de estado accesible permanece fuera del mapa y se actualiza al reintentar, elegir zona o limpiar filtros.
 
 ## Agencias de empleo añadidas — 24/11/2026
 
