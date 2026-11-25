@@ -24,3 +24,21 @@ test('el enlace de una oferta abre solo su detalle sin compartir ubicación ni f
   assert.equal(offerIdFromUrl!('https://geoempleo360.com/?oferta='),null);
   assert.equal(shareableOfferUrl!('https://geoempleo360.com/','x'.repeat(121)),null);
 });
+
+test('el mensaje de una oferta incluye título, ubicación y enlace sin repetir la provincia',()=>{
+  const message=sharing.offerShareMessage({title:'Operario/a',city:'Ávila',province:'Ávila'});
+  assert.equal(message,'Creemos que esta oferta te puede interesar:\n\nOperario/a\nUbicación: Ávila');
+  assert.equal(sharing.offerShareMessage({title:'Técnico',city:'Coslada',province:'Madrid'}),'Creemos que esta oferta te puede interesar:\n\nTécnico\nUbicación: Coslada, Madrid');
+  assert.equal(sharing.offerShareMessage({title:'Técnico'}),'Creemos que esta oferta te puede interesar:\n\nTécnico');
+});
+
+test('comparte el mensaje y enlace por el selector nativo o el portapapeles',async()=>{
+  const offer={title:'Técnico',city:'Coslada',province:'Madrid'};
+  const url='https://geoempleo360.com/?oferta=123';
+  let native:unknown;
+  await sharing.shareOffer(offer,url,{share:async (data:unknown)=>{native=data;}});
+  assert.deepEqual(native,{title:'Técnico',text:sharing.offerShareMessage(offer),url});
+  let copied='';
+  await sharing.shareOffer(offer,url,{clipboard:{writeText:async (text:string)=>{copied=text;}}});
+  assert.equal(copied,`${sharing.offerShareMessage(offer)}\n${url}`);
+});

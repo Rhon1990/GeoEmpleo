@@ -28,3 +28,16 @@ export function offerIdFromUrl(currentUrl) {
     return ids.length===1?validOfferId(ids[0]):null;
   }catch{return null;}
 }
+
+export function offerShareMessage(offer) {
+  const city=offer.city?.trim()||'';
+  const province=offer.province?.trim()||'';
+  const location=[city,province.toLocaleLowerCase('es')===city.toLocaleLowerCase('es')?'':province].filter(Boolean).join(', ');
+  return ['Creemos que esta oferta te puede interesar:','',offer.title,location?`Ubicación: ${location}`:''].filter((line,index)=>line||index===1).join('\n');
+}
+
+export async function shareOffer(offer,url,device) {
+  const text=offerShareMessage(offer);
+  if(device.share){await device.share({title:offer.title,text,url});return;}
+  await device.clipboard.writeText(`${text}\n${url}`);
+}

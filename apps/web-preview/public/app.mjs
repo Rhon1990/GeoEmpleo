@@ -9,7 +9,7 @@ import {installMapActionHints} from './map-action-hints.mjs?v=20261124-long-pres
 import {referencePlaceZoom} from './reference-places.mjs?v=20261118-locality-search-ux';
 import {beginNewSearch,captureDetailPosition,createJobInteraction,finishDetailInteraction,restoreJobFocus} from './job-interaction.mjs?v=20261116-detail-close-reset';
 import {createWorkspaceView,createDisclosure} from './workspace-view.mjs';
-import {offerIdFromUrl,shareableOfferUrl} from './search-share.mjs?v=20261108-offer-menu-copy';
+import {offerIdFromUrl,shareableOfferUrl,offerShareMessage,shareOffer} from './search-share.mjs?v=20261125-share-message';
 import {createRetentionStore} from './retention.mjs?v=20261117-today-offers';
 import {dayInSpain,isOfferOnDay} from './today-offers.mjs';
 import {siteFetch} from './static-data.mjs?v=20261118-optional-territories';
@@ -325,8 +325,8 @@ function offerMapLink(call,{className='',compact=false}={}) {
 function shareFeedback(className='offer-share-feedback') {
   const feedback=element('div',undefined,className);
   const status=element('span',undefined,'offer-share-status');status.setAttribute('role','status');
-  const link=element('input',undefined,'offer-share-link');link.type='text';link.readOnly=true;
-  link.setAttribute('aria-label','Enlace de la oferta');link.hidden=true;
+  const link=element('textarea',undefined,'offer-share-link');link.readOnly=true;
+  link.setAttribute('aria-label','Mensaje para compartir la oferta');link.hidden=true;
   feedback.append(status,link);
   return {feedback,status,link};
 }
@@ -341,14 +341,14 @@ function shareOfferButton(call,{label='Compartir oferta',status,link,onShared,cl
     if(!url){if(status)status.textContent='No se pudo crear el enlace.';return;}
     if(status)status.textContent='';if(link)link.hidden=true;
     try {
-      if(navigator.share){await navigator.share({title:call.title,url});onShared?.();return;}
-      await navigator.clipboard.writeText(url);
-      if(status)status.textContent='Enlace de la oferta copiado';
+      const nativeShare=!!navigator.share;
+      await shareOffer(call,url,navigator);
+      if(status&&!nativeShare)status.textContent='Mensaje de la oferta copiado';
       onShared?.();
     }catch(error){
       if(error?.name==='AbortError')return;
-      if(link){link.value=url;link.hidden=false;link.focus();link.select();}
-      if(status)status.textContent=link?'Selecciona y copia este enlace':'No se pudo copiar el enlace.';
+      if(link){link.value=`${offerShareMessage(call)}\n${url}`;link.hidden=false;link.focus();link.select();}
+      if(status)status.textContent=link?'Selecciona y copia este mensaje':'No se pudo copiar el mensaje.';
     }
   });
   return button;
