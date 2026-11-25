@@ -1,4 +1,10 @@
 /** Adds an accessible in-list search while keeping a native select as the value source. */
+export function focusSearchOnOpen(search,{matchMedia=globalThis.matchMedia}={}) {
+  if(typeof matchMedia==='function'&&matchMedia('(max-width:780px)').matches)return false;
+  search.focus();
+  return true;
+}
+
 export function enhanceSearchableSelect(select,{label,searchPlaceholder='Buscarâ€¦'}={}) {
   if(!select||!label)throw new TypeError('Selector y etiqueta requeridos');
   const wrapper=document.createElement('div');wrapper.className='searchable-select';
@@ -23,7 +29,7 @@ export function enhanceSearchableSelect(select,{label,searchPlaceholder='Buscarâ
     }
     if(!options.length){const empty=document.createElement('p');empty.className='searchable-select-empty';empty.textContent='No hay resultados';list.append(empty);}
   }
-  function open(){render();panel.hidden=false;trigger.setAttribute('aria-expanded','true');search.value='';render();search.focus();}
+  function open(){render();panel.hidden=false;trigger.setAttribute('aria-expanded','true');search.value='';render();focusSearchOnOpen(search);}
   function close(){panel.hidden=true;trigger.setAttribute('aria-expanded','false');}
   trigger.addEventListener('click',()=>panel.hidden?open():close());
   search.addEventListener('input',render);

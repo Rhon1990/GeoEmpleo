@@ -19,7 +19,7 @@ import {observeAdsToggle} from './ad-toggle.mjs';
 import {selectableTerritories,territorySelection} from './territories.mjs?v=20261118-territory-views';
 import {placeCommunities,placeProvinces} from './place-suggestions.mjs?v=20261118-place-hierarchy';
 import {territoryBounds} from './territory-views.mjs';
-import {enhanceSearchableSelect} from './searchable-select.mjs';
+import {enhanceSearchableSelect} from './searchable-select.mjs?v=20261125-mobile-search-focus';
 import {createPlaceHierarchy} from './place-hierarchy.mjs?v=20261119-location-panel';
 import {createMobileOfferCarousel,featuredMapOfferId,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261116-mobile-featured-pin';
 import {createCameraPreview} from './camera-preview.mjs?v=20261125-camera-preview';

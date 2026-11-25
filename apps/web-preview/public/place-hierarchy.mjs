@@ -1,4 +1,5 @@
 import {normalizePlaceSearchText,placeCommunities,placeProvinces} from './place-suggestions.mjs?v=20261118-place-hierarchy';
+import {focusSearchOnOpen} from './searchable-select.mjs?v=20261125-mobile-search-focus';
 
 export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fetchImpl=fetch,documentRef=globalThis.document}) {
   let community='';
@@ -36,7 +37,7 @@ export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fe
   function toggleMenu(level){
     if(openLevel===level){closeMenus();return;}
     closeMenus();openLevel=level;
-    const {trigger,menu,search}=columns[level];menu.hidden=false;trigger.setAttribute('aria-expanded','true');search.focus();
+    const {trigger,menu,search}=columns[level];menu.hidden=false;trigger.setAttribute('aria-expanded','true');focusSearchOnOpen(search);
     if(level==='locality'&&search.value.trim().length>=2)void searchLocalities();
   }
   function updateTriggers(){

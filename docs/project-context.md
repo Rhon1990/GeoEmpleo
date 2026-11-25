@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Listas buscables en móvil — 25/11/2026
+
+En esta rama, abrir una lista con buscador en pantallas de hasta 780 px mantiene el foco en su botón y no despliega el teclado; al tocar el campo de búsqueda, se enfoca normalmente. En escritorio se conserva el foco automático al abrir. El selector de empresa y las tres listas de comunidad, provincia y localidad comparten esta regla.
+
 ## Encuadre por distancia y transición de cámara — 25/11/2026
 
 La versión web **1.0.6** se publicó en producción el 25/11/2026 mediante el [workflow 45666783756](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45666783756). El workflow construyó y verificó por HTTPS `geoempleo360.com` y `geoempleo-49978.web.app`; el catálogo de ofertas no cambió. Los cambios de cámara iniciados por la aplicación (origen, territorio, resultados, grupos y vista general) usan una transición común de 420 ms; la selección más reciente reemplaza la anterior y `prefers-reduced-motion` aplica el destino sin animación. Los gestos directos de la persona usuaria conservan el comportamiento de Google Maps. Al elegir una distancia positiva, el mapa encuadra el círculo manteniendo el origen en el centro; «Sin límite» elimina el círculo y conserva el encuadre actual. La demo local `http://127.0.0.1:4310/?cameraPreview=1` usa Madrid como origen sintético, no consulta la ubicación real y muestra su aviso fuera del mapa. La demo solo se habilita en `localhost`, `127.0.0.1` o `::1`; no forma parte de la publicación. La comprobación visual confirmó que el mapa carga en el puerto 4310; el 4311 no está autorizado por la configuración local de Google Maps.
