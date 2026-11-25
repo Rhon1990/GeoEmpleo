@@ -10,6 +10,8 @@ export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fe
   let revision=0;
   let timer;
   let controller;
+  let resizeFrame=0;
+  const windowRef=documentRef.defaultView;
   const columns={};
   for(const [level,title,placeholder] of [
     ['community','Comunidad','Buscar comunidad'],
@@ -30,14 +32,34 @@ export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fe
   }
 
   function cancelSearch(){revision++;clearTimeout(timer);controller?.abort();controller=null;}
+  function syncOpenMenuHeight(level=openLevel){
+    if(!level||level!==openLevel)return;
+    const menu=columns[level]?.menu;
+    const sheet=panel.parentElement;
+    if(!menu||menu.hidden){sheet?.style.removeProperty('--place-menu-height');return;}
+    sheet?.style.setProperty('--place-menu-height',`${Math.ceil(menu.getBoundingClientRect().height)}px`);
+  }
+  function scheduleOpenMenuHeightSync(){
+    if(!openLevel||resizeFrame)return;
+    const requestFrame=windowRef?.requestAnimationFrame;
+    if(typeof requestFrame!=='function'){syncOpenMenuHeight();return;}
+    resizeFrame=requestFrame.call(windowRef,()=>{
+      resizeFrame=0;
+      const sheet=panel.parentElement;
+      if(windowRef.matchMedia?.('(max-height:560px)').matches)sheet.scrollTop=0;
+      syncOpenMenuHeight();
+    });
+  }
   function closeMenus(){
     openLevel='';cancelSearch();
     for(const {trigger,menu} of Object.values(columns)){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}
+    panel.parentElement?.style.removeProperty('--place-menu-height');
   }
   function toggleMenu(level){
     if(openLevel===level){closeMenus();return;}
     closeMenus();openLevel=level;
     const {trigger,menu,search}=columns[level];menu.hidden=false;trigger.setAttribute('aria-expanded','true');focusSearchOnOpen(search);
+    syncOpenMenuHeight(level);
     if(level==='locality'&&search.value.trim().length>=2)void searchLocalities();
   }
   function updateTriggers(){
@@ -51,6 +73,7 @@ export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fe
   function message(level,value){
     const note=documentRef.createElement('p');note.className='place-hierarchy-empty';note.textContent=value;
     columns[level].options.replaceChildren(note);
+    syncOpenMenuHeight(level);
   }
   function renderButtons(level,items,action){
     const options=columns[level].options;options.replaceChildren();
@@ -60,6 +83,7 @@ export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fe
       if(level!=='locality')button.setAttribute('aria-pressed',String(item===(level==='community'?community:province)));
       button.textContent=item;button.addEventListener('click',()=>action(item));options.append(button);
     }
+    syncOpenMenuHeight(level);
   }
   const filtered=(items,query)=>items.filter(item=>normalizePlaceSearchText(item).includes(normalizePlaceSearchText(query)));
   function renderCommunities(){renderButtons('community',filtered(placeCommunities(),columns.community.search.value),selectCommunity);}
@@ -92,6 +116,7 @@ export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fe
           updateTriggers();closeMenus();onSelect(place);
         });options.append(button);
       }
+      syncOpenMenuHeight('locality');
     }catch(error){if(current===revision&&error.name!=='AbortError')message('locality','No se pudieron consultar las localidades. Reintenta.');}
   }
   function selectCommunity(value){
@@ -108,6 +133,7 @@ export function createPlaceHierarchy({panel,onSelect,onSelectTerritory=()=>{},fe
   columns.province.search.addEventListener('input',renderProvinces);
   columns.locality.search.addEventListener('input',()=>{cancelSearch();timer=setTimeout(()=>void searchLocalities(),220);});
   documentRef.addEventListener('click',event=>{if(!event.composedPath().includes(panel))closeMenus();});
+  windowRef?.addEventListener('resize',scheduleOpenMenuHeightSync);
   panel.addEventListener('keydown',event=>{
     if(event.key==='Enter'&&event.target.matches('input[type="search"]')){
       event.preventDefault();columns[openLevel]?.options.querySelector('button')?.click();
