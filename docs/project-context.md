@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Encuadre por distancia y transición de cámara — 25/11/2026
+
+En esta rama de prueba, los cambios de cámara iniciados por la aplicación (origen, territorio, resultados, grupos y vista general) usan una transición común de 420 ms; la selección más reciente reemplaza la anterior y `prefers-reduced-motion` aplica el destino sin animación. Los gestos directos de la persona usuaria conservan el comportamiento de Google Maps. Al elegir una distancia positiva, el mapa encuadra el círculo manteniendo el origen en el centro; «Sin límite» elimina el círculo y conserva el encuadre actual. La demo local `http://127.0.0.1:4310/?cameraPreview=1` usa Madrid como origen sintético, no consulta la ubicación real y muestra su aviso fuera del mapa. La demo solo se habilita en `localhost`, `127.0.0.1` o `::1`; no forma parte de la publicación. La comprobación visual de esta rama confirmó que el mapa carga en el puerto 4310; el 4311 no está autorizado por la configuración local de Google Maps.
+
 ## Ubicación del dispositivo — 25/11/2026
 
 La versión web **1.0.5** se publicó en producción el 25/11/2026 mediante el [workflow 45655995612](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45655995612); terminó correctamente y verificó por HTTPS la interfaz y que el catálogo no cambiara. «Usar mi ubicación» centra el mapa y reutiliza el marcador existente «Tu zona». El selector visible «¿Dónde?» muestra «Buscando…» mientras espera; si no se obtiene una posición, muestra «Sin ubicación» y abre el modal existente fuera del mapa. Ante posición no disponible o espera agotada, el modal sugiere activar Wi‑Fi, reintentar o elegir una localidad manualmente. El aviso de estado accesible permanece fuera del mapa y se actualiza al reintentar, elegir zona o limpiar filtros.

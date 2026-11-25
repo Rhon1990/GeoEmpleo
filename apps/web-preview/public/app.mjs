@@ -1,6 +1,6 @@
 import {searchCalls,groupSimilarOffers} from './catalog.mjs?v=20261118-optional-territories';
 import {distanceKm} from './geography.mjs';
-import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261118-territory-views';
+import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261125-radius-camera';
 import {createMapLoadingState} from './map-loading.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
 import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,clearOriginTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261119-clear-filters';
@@ -22,6 +22,9 @@ import {territoryBounds} from './territory-views.mjs';
 import {enhanceSearchableSelect} from './searchable-select.mjs';
 import {createPlaceHierarchy} from './place-hierarchy.mjs?v=20261119-location-panel';
 import {createMobileOfferCarousel,featuredMapOfferId,mobileOfferCarouselSlides} from './mobile-offer-carousel.mjs?v=20261116-mobile-featured-pin';
+import {createCameraPreview} from './camera-preview.mjs?v=20261125-camera-preview';
+
+const cameraPreview=createCameraPreview(window.location.hostname,window.location.search);
 
 const analyticsController=createAnalyticsController({config:null,loadSdk:()=>loadFirebaseAnalytics()});
 const retention=createRetentionStore();
@@ -101,8 +104,8 @@ const about = document.querySelector('#about-dialog');
 let calls = [];
 let category = '';
 let employer = '';
-let origin = null;
-let originSource = 'none';
+let origin = cameraPreview?.origin??null;
+let originSource = cameraPreview?'manual':'none';
 let locationAttemptFailed=false;
 let originZoom=10;
 let sharedOfferId=offerIdFromUrl(window.location.href);
@@ -129,6 +132,13 @@ const radiusValue=document.querySelector('#radius-value');
 const radiusRow=document.querySelector('.distance-filter-row');
 const radiusTrigger=document.querySelector('#radius-trigger');
 const radiusSummary=document.querySelector('#radius-summary');
+if(cameraPreview){
+  radiusInput.value=String(cameraPreview.radiusKm);
+  radiusInput.disabled=false;
+  document.querySelector('#camera-preview-note').hidden=false;
+  document.querySelector('#use-location').disabled=true;
+  document.querySelector('#origin-city').value='Madrid (origen simulado)';
+}
 const radiusDisclosure=createDisclosure(expanded=>{
   radiusRow.dataset.open=String(expanded);
   radiusTrigger.setAttribute('aria-expanded',String(expanded));
@@ -646,6 +656,7 @@ function render() {
   if(employer)params.set('employer',employer);
   if(sharedOfferId)params.set('oferta',sharedOfferId);
   if(previewLocationUnavailable)params.set('locationPreview','unavailable');
+  if(cameraPreview)params.set('cameraPreview','1');
   history.replaceState(null,'',`${locationUrl()}${params.size?`?${params}`:''}`);
 }
 
@@ -780,6 +791,7 @@ function setOrigin(point,label,source='manual',zoom=10) {
   syncRadiusControls();
   syncLocationSummary();
   setOriginStatus(`${label} · Ubicación aproximada; el mapa filtra la zona visible`);
+  if(cameraPreview)document.querySelector('#camera-preview-note').textContent='Vista de prueba activa · origen elegido manualmente';
   mapController?.focus(point,zoom);
   render();
   if(!mapController&&!mapStarting)requestSearch({immediate:true});
@@ -909,6 +921,7 @@ function commitRadius(){
   beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'distance'});
   render();
+  if(origin&&Number(radiusInput.value)>0)mapController?.fitRadius(origin,Number(radiusInput.value));
 }
 radiusInput.addEventListener('input',()=>syncRadiusControls());
 radiusInput.addEventListener('change',commitRadius);
@@ -938,7 +951,7 @@ async function startMap({interactive=false}={}) {
     const config=await response.json();
     if(!config.googleMapsApiKey){mapMessage.textContent='Falta la configuración del mapa. Puedes buscar en la lista o elegir una localidad.';mapLoadingState.fail();requestSearch({immediate:true,allowList:true});return;}
     mapMessage.textContent='Permite tu ubicación para empezar cerca de ti; también puedes elegir una localidad.';
-    const position=originRevision===revision&&(interactive||!location.value)?await useMyLocation({interactive}):null;
+    const position=cameraPreview?null:originRevision===revision&&(interactive||!location.value)?await useMyLocation({interactive}):null;
     mapMessage.textContent='Cargando el mapa y las ofertas de tu zona…';
     const mapRevision=originRevision;
     mapController=await createGoogleMap(mapHost,config,{
@@ -946,11 +959,13 @@ async function startMap({interactive=false}={}) {
       onOrigin(point){originInput.value='';placeHierarchy.reset();setOrigin(point,'Zona elegida en el mapa');},
       onViewport(){if(mapController&&mapIsVisible())requestSearch();},
       onReady(){mapLoadingState.mapReady();},
-    },{point:origin,zoom:origin?(position?.zoom??originZoom):6});
+    },{point:origin,zoom:cameraPreview?6:origin?(position?.zoom??originZoom):6});
     if(selectedTerritoryBounds)mapController.fitArea(selectedTerritoryBounds);
     else if(originRevision!==mapRevision){if(origin)mapController.focus(origin,originZoom);else mapController.overview();}
     for(const id of ['choose-origin','search-area','show-all-map'])document.getElementById(id).disabled=false;
-    render();requestSearch();
+    render();
+    if(cameraPreview&&origin)mapController.fitRadius(origin,Number(radiusInput.value));
+    requestSearch();
   }catch(error){
     mapMessage.textContent=`${error.message} La búsqueda en lista sigue disponible.`;
     mapHost.replaceChildren(mapState);mapLoadingState.fail();requestSearch({immediate:true,allowList:true});

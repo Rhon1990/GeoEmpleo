@@ -22,6 +22,7 @@ dialog{border:1px solid #d5ddcd;padding:0;border-radius:18px;width:min(680px,cal
 /* La marca solo acompaña al origen empresarial verificado; el resto usa una ficha neutra. */
 .job-visual{display:grid;place-items:center;background:#f6f8f8}
 .job-visual::before,.job-visual::after{display:none}
+.camera-preview-note{margin:8px 0 0;padding:7px 12px;border:1px solid #d8e5e5;border-radius:8px;background:#f4f8f7;color:var(--petrol-dark);font-size:11px;line-height:1.4}
 .job-visual.logo-generic{background:#e8ebec}
 .job-visual img{width:58px;height:58px;object-fit:contain}
 .job-visual.logo-generic img{width:44px;height:44px}

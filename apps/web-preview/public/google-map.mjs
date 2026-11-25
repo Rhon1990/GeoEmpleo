@@ -1,5 +1,6 @@
 import {isPoint} from './geography.mjs';
 import {createOriginSelection} from './map-state.mjs';
+import {boundsCameraTarget,createCameraTransition,radiusBounds} from './map-camera.mjs?v=20261125-radius-camera';
 
 let sdkPromise;
 
@@ -92,6 +93,26 @@ export async function createGoogleMap(host,config,events,initial={}) {
   const google = await loadSdk(config.googleMapsApiKey);
   const [{Map:GoogleMap},{AdvancedMarkerElement}] = await Promise.all([google.maps.importLibrary('maps'),google.maps.importLibrary('marker')]);
   const map = new GoogleMap(host,{center:isPoint(initial.point)?{lat:initial.point[1],lng:initial.point[0]}:{lat:39.7,lng:-3.5},zoom:initial.zoom??6,mapId:config.googleMapsMapId || 'DEMO_MAP_ID',streetViewControl:false,mapTypeControl:false,fullscreenControl:true,gestureHandling:'greedy'});
+  const currentCamera=()=>{
+    const center=map.getCenter();
+    return {center:center?[center.lng(),center.lat()]:[-3.5,39.7],zoom:map.getZoom()??6};
+  };
+  const transition=createCameraTransition({
+    getCurrent:currentCamera,
+    apply:camera=>map.moveCamera({center:{lng:camera.center[0],lat:camera.center[1]},zoom:camera.zoom}),
+    reducedMotion:()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  });
+  const cameraForBounds=(bounds,padding=60,centerOverride=null)=>{
+    if(!Array.isArray(bounds)||bounds.length!==4||!bounds.every(Number.isFinite))return null;
+    const {width,height}=map.getDiv().getBoundingClientRect();
+    return boundsCameraTarget(bounds,{width,height},padding,centerOverride);
+  };
+  const animateToBounds=(bounds,padding=60,centerOverride=null)=>{
+    const target=cameraForBounds(bounds,padding,centerOverride);
+    if(!target)return null;
+    transition.animate(target);
+    return target;
+  };
   const markers = new window.Map();
   let originMarker;
   let radiusCircle;
@@ -126,7 +147,7 @@ export async function createGoogleMap(host,config,events,initial={}) {
     previewId = null;
     updateMarkerVisuals();
     const call = knownCalls.find(item => item.id === id);
-    if (pan&&call&&isPoint(call.location?.point)) map.panTo({lat:call.location.point[1],lng:call.location.point[0]});
+    if (pan&&call&&isPoint(call.location?.point)) transition.animate({center:[...call.location.point],zoom:map.getZoom()??10});
   }
   function preview(id) {previewId=id;updateMarkerVisuals();}
   function renderMarkers() {
@@ -142,16 +163,10 @@ export async function createGoogleMap(host,config,events,initial={}) {
         marker.append(pin);
         marker.addEventListener('gmp-click',()=>{
           if(severalLocations){
-            const bounds=new google.maps.LatLngBounds();
-            for(const call of group.calls) bounds.extend({lng:call.location.point[0],lat:call.location.point[1]});
-            const previousZoom=map.getZoom()??6;
-            const listener=map.addListener('idle',()=>{
-              listener.remove();
-              const fitted=map.getZoom()??previousZoom;
-              const next=expandedZoom(previousZoom,fitted);
-              if(next!==fitted) map.setZoom(next);
-            });
-            map.fitBounds(bounds,40);return;
+            const points=group.calls.map(call=>call.location.point);
+            const target=cameraForBounds([Math.min(...points.map(point=>point[0])),Math.min(...points.map(point=>point[1])),Math.max(...points.map(point=>point[0])),Math.max(...points.map(point=>point[1]))],40);
+            if(target)transition.animate({...target,zoom:expandedZoom(map.getZoom()??6,target.zoom)});
+            return;
           }
           if(group.calls.length===1){select(group.calls[0].id,{pan:false});events.onSelect(group.calls[0].id);return;}
           const panel=document.createElement('div');panel.className='map-job-group';
@@ -166,8 +181,10 @@ export async function createGoogleMap(host,config,events,initial={}) {
       }
     updateMarkerVisuals();
   }
-  map.addListener('zoom_changed',renderMarkers);
   map.addListener('idle',()=>{
+    // Camera animations can emit many zoom_changed events. Rebuilding AdvancedMarkerElement
+    // instances on every frame races Google's marker internals and can leave the map blank.
+    renderMarkers();
     if(ignoreNextViewport){ignoreNextViewport=false;return;}
     events.onViewport?.();
   });
@@ -179,9 +196,10 @@ export async function createGoogleMap(host,config,events,initial={}) {
     select,
     preview,
     clearSelection() {selectedId=null;previewId=null;updateMarkerVisuals();},
-    focus(point,zoom=10) {if(!isPoint(point))return;map.setCenter({lng:point[0],lat:point[1]});map.setZoom(zoom);},
-    fitArea([west,south,east,north]) {map.fitBounds({west,south,east,north},60);},
-    overview() {map.setCenter({lat:39.7,lng:-3.5});map.setZoom(6);},
+    focus(point,zoom=10) {if(!isPoint(point))return;transition.animate({center:[...point],zoom});},
+    fitArea(bounds) {animateToBounds(bounds,60);},
+    fitRadius(origin,radiusKm) {if(!isPoint(origin)||!Number.isFinite(radiusKm)||radiusKm<=0)return;animateToBounds(radiusBounds(origin,radiusKm),60,origin);},
+    overview() {transition.animate({center:[-3.5,39.7],zoom:6});},
     chooseOrigin() {originSelection.arm();map.setOptions({draggableCursor:'crosshair'});},
     cancelOriginSelection() {originSelection.cancel();map.setOptions({draggableCursor:null});},
     bounds() {const bounds = map.getBounds(); if (!bounds) return null; return [bounds.getSouthWest().lng(),bounds.getSouthWest().lat(),bounds.getNorthEast().lng(),bounds.getNorthEast().lat()];},
@@ -203,13 +221,10 @@ export async function createGoogleMap(host,config,events,initial={}) {
       const plan = cameraPlan(calls,origin);
       if (plan.mode === 'none') return;
       if (plan.mode === 'focus') {
-        map.panTo({lat:plan.points[0][1],lng:plan.points[0][0]});
-        map.setZoom(10);
+        transition.animate({center:[...plan.points[0]],zoom:10});
         return;
       }
-      const bounds = new google.maps.LatLngBounds();
-      for (const point of plan.points) bounds.extend({lat:point[1],lng:point[0]});
-      map.fitBounds(bounds,60);
+      animateToBounds([Math.min(...plan.points.map(point=>point[0])),Math.min(...plan.points.map(point=>point[1])),Math.max(...plan.points.map(point=>point[0])),Math.max(...plan.points.map(point=>point[1]))],60);
     },
   };
 }

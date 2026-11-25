@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {createOriginSelection} from '../apps/web-preview/public/map-state.mjs';
 import {cameraPlan,markerVisualState,viewportPoints} from '../apps/web-preview/public/google-map.mjs';
 
@@ -58,4 +59,14 @@ test('la previsualización solo cambia el estado visual del pin, sin texto de of
   assert.deepEqual(markerVisualState(['job-a','job-b'],'job-a','job-b'),{
     selected:true,previewed:true,zIndex:100,
   });
+});
+
+test('las acciones de cámara del controlador pasan por la transición común e incluyen el radio',()=>{
+ const source=readFileSync(new URL('../apps/web-preview/public/google-map.mjs',import.meta.url),'utf8');
+ assert.match(source,/focus\(point,zoom=10\)\s*\{[^}]*transition\.animate/);
+ assert.match(source,/fitArea\(bounds\)\s*\{\s*animateToBounds/);
+ assert.match(source,/overview\(\)\s*\{\s*transition\.animate/);
+ assert.match(source,/fit\(calls,origin\)\s*\{[\s\S]*?animateToBounds/);
+ assert.match(source,/fitRadius\(origin,radiusKm\)\s*\{[\s\S]*?animateToBounds/);
+ assert.doesNotMatch(source,/map\.(?:setCenter|setZoom|fitBounds|panTo)\(/);
 });

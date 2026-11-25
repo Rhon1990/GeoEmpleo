@@ -62,4 +62,6 @@ const server = createServer(async (request,response) => {
   } catch {response.writeHead(500); response.end('Vista no disponible');}
 });
 server.on('error',error => {console.error(`No se pudo iniciar la vista local: ${error.message}`); process.exitCode = 1;});
-server.listen(4310,'127.0.0.1',() => console.log('GeoEmpleo local: http://127.0.0.1:4310'));
+const requestedPort=Number.parseInt(process.env.GEOEMPLEO_PREVIEW_PORT??'4310',10);
+const port=Number.isInteger(requestedPort)&&requestedPort>0&&requestedPort<=65535?requestedPort:4310;
+server.listen(port,'127.0.0.1',() => console.log(`GeoEmpleo local: http://127.0.0.1:${port}`));

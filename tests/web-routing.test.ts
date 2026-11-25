@@ -30,6 +30,8 @@ test('sirve todos los módulos importados por la aplicación web',() => {
   assert.deepEqual(previewAsset('/job-projections.mjs'),['job-projections.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/location-permission.mjs'),['location-permission.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/map-action-hints.mjs'),['map-action-hints.mjs','text/javascript; charset=utf-8']);
+  assert.deepEqual(previewAsset('/camera-preview.mjs'),['camera-preview.mjs','text/javascript; charset=utf-8']);
+  assert.deepEqual(previewAsset('/map-camera.mjs'),['map-camera.mjs','text/javascript; charset=utf-8']);
   assert.deepEqual(previewAsset('/select-controls.css'),['select-controls.css','text/css; charset=utf-8']);
 });
 
