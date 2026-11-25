@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Altura del panel de listas móviles — 25/11/2026
+
+La versión web 1.0.8 ajusta el panel inferior de comunidad, provincia y localidad según la altura medida del menú abierto y actualiza esa reserva al filtrar resultados o cambiar el viewport. En ventanas de poca altura también conserva el panel inferior en horizontal aunque el ancho supere el breakpoint de móvil; el encabezado queda fijo visible y las opciones se desplazan dentro del panel. Las listas cortas dejan de mantener el panel en una altura mínima fija; el límite de altura y el desplazamiento interno siguen protegiendo las listas largas. Verificación local: 637 pruebas, TypeScript y compilación estática correctos; revisión visual en Chrome emulando iPhone SE en vertical y horizontal.
+
 ## Listas buscables en móvil — 25/11/2026
 
 La versión web **1.0.7** se publicó en producción mediante el [workflow 45669724994](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45669724994), que verificó `geoempleo360.com` y `geoempleo-49978.web.app` por HTTPS sin modificar el catálogo. Abrir una lista con buscador en pantallas de hasta 780 px mantiene el foco en su botón y no despliega el teclado; al tocar el campo de búsqueda, se enfoca normalmente. En escritorio se conserva el foco automático al abrir. La regla compartida cubre el selector de empresa y las listas de comunidad, provincia y localidad.

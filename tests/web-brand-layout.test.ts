@@ -193,11 +193,11 @@ test('stylesheet cache key identifies the location status update', () => {
     attribute(stylesheet, 'href')!,
     /(?:[?&]v=)20261125-radius-camera(?:&|$)/,
   );
-  assert.match(html, /app\.mjs\?v=20261125-mobile-search-focus/);
+  assert.match(html, /app\.mjs\?v=20261125-short-viewport-menu/);
 });
 
 test('about dialog identifies the released web interface version', () => {
-  assert.match(html, /Versión web 1\.0\.7/);
+  assert.match(html, /Versión web 1\.0\.8/);
 });
 
 test('map module cache key identifies the territory views release', () => {

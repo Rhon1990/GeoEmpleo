@@ -35,6 +35,28 @@ test('las tres pestañas permanecen recogidas y abren su lista con buscador',()=
  assert.match(styles,/\.place-hierarchy-option:hover,[^}]*background:#edf4f2/);
 });
 
+test('el panel móvil reserva altura según el contenido real del menú abierto',()=>{
+ assert.match(html,/select-controls\.css\?v=20261125-short-viewport-menu/);
+ assert.match(app,/from '\.\/place-hierarchy\.mjs\?v=20261125-short-viewport-menu'/);
+ assert.match(styles,/\.location-panel:has\(\.place-hierarchy-menu:not\(\[hidden\]\)\)\{[^}]*min-height:min\(calc\(240px \+ var\(--place-menu-height,0px\)\),82dvh\)/);
+ assert.doesNotMatch(styles,/\.location-panel:has\(\.place-hierarchy-menu:not\(\[hidden\]\)\)\{[^}]*min-height:min\(560px/);
+ assert.match(hierarchy,/function syncOpenMenuHeight\(/);
+ assert.match(hierarchy,/setProperty\('--place-menu-height'/);
+ assert.match(hierarchy,/removeProperty\('--place-menu-height'\)/);
+});
+
+test('el selector conserva el panel móvil en horizontal y recalcula el menú al girar',()=>{
+ const shortLandscape=styles.slice(styles.indexOf('@media(max-height:560px)'));
+ assert.match(shortLandscape,/\.location-panel\{[^}]*position:fixed/);
+ assert.match(shortLandscape,/\.location-panel:has\(\.place-hierarchy-menu:not\(\[hidden\]\)\)\{[^}]*max-height:calc\(100dvh - 16px\)[^}]*overflow-y:auto/);
+ assert.match(shortLandscape,/\.place-hierarchy-column\{display:contents\}/);
+ assert.match(shortLandscape,/\.location-panel-heading\{[^}]*position:sticky[^}]*top:0[^}]*flex:0 0 auto/);
+ assert.match(shortLandscape,/\.place-hierarchy-menu\{[^}]*position:static[^}]*max-height:min\(148px,38dvh\)/);
+ assert.match(hierarchy,/addEventListener\('resize',scheduleOpenMenuHeightSync\)/);
+ assert.match(hierarchy,/matchMedia\?\.\('\(max-height:560px\)'\)/);
+ assert.match(hierarchy,/sheet\.scrollTop=0/);
+});
+
 test('distancia máxima queda fuera del panel de ubicación y junto a los filtros',()=>{
  const locationPanel=html.slice(html.indexOf('id="location-panel"'),html.indexOf('</form>'));
  const filters=html.slice(html.indexOf('id="advanced-filters"'),html.indexOf('</section>'));

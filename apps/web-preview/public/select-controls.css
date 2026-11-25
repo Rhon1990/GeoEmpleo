@@ -94,7 +94,7 @@ select {
   .distance-filter-panel{position:static;display:block;width:100%;padding:0;border:0;border-radius:0;box-shadow:none}
   .location-backdrop{position:fixed;z-index:40;inset:0;display:block;background:#102d3770}
   .location-panel{position:fixed;z-index:50;top:auto;right:0;bottom:0;left:0;width:100%;max-height:min(82dvh,620px);padding:18px 16px max(18px,env(safe-area-inset-bottom));overflow-y:auto;border-radius:18px 18px 0 0;box-shadow:0 -12px 36px #17394330}
-  .location-panel:has(.place-hierarchy-menu:not([hidden])){display:flex;flex-direction:column;min-height:min(560px,82dvh)}
+  .location-panel:has(.place-hierarchy-menu:not([hidden])){display:flex;flex-direction:column;min-height:min(calc(240px + var(--place-menu-height,0px)),82dvh)}
   .place-hierarchy{gap:5px}
   .location-panel:has(.place-hierarchy-menu:not([hidden])) .place-hierarchy{margin-top:auto}
   .place-hierarchy-column{position:static}
@@ -102,4 +102,18 @@ select {
   .place-hierarchy-trigger span{font-size:10px}
   .place-hierarchy-trigger strong{font-size:11px}
   .place-hierarchy-menu,.place-hierarchy-column:last-child .place-hierarchy-menu{top:auto;right:0;bottom:calc(100% + 6px);left:0;width:auto;max-height:min(290px,42dvh)}
+}
+
+@media(max-height:560px){
+  .location-backdrop{position:fixed;z-index:40;inset:0;display:block;background:#102d3770}
+  .location-panel{position:fixed;z-index:50;top:auto;right:0;bottom:0;left:0;width:100%;max-height:min(82dvh,620px);padding:18px 16px max(18px,env(safe-area-inset-bottom));overflow-y:auto;border-radius:18px 18px 0 0;box-shadow:0 -12px 36px #17394330}
+  .location-panel:has(.place-hierarchy-menu:not([hidden])){display:flex;flex-direction:column;min-height:0;max-height:calc(100dvh - 16px);overflow-y:auto}
+  .location-panel-heading{position:sticky;top:0;z-index:3;flex:0 0 auto;background:#fff}
+  .location-panel:has(.place-hierarchy-menu:not([hidden])) .place-hierarchy{margin-top:0}
+  .place-hierarchy{position:static;display:flex;flex-wrap:wrap;gap:5px}
+  .place-hierarchy-column{display:contents}
+  .place-hierarchy-trigger{width:auto;min-height:44px;flex:1 1 calc((100% - 10px)/3);padding:6px 18px 6px 7px;background-position:right 3px center;background-size:12px 12px}
+  .place-hierarchy-trigger span{font-size:10px}
+  .place-hierarchy-trigger strong{font-size:11px}
+  .place-hierarchy-menu,.place-hierarchy-column:last-child .place-hierarchy-menu{position:static;top:auto;right:auto;bottom:auto;left:auto;order:2;flex:0 0 100%;width:100%;max-height:min(148px,38dvh)}
 }
