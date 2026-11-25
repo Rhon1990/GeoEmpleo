@@ -16,9 +16,9 @@
   <meta property="og:image" content="https://geoempleo360.com/geoempleo360-logo.png">
   <meta name="twitter:card" content="summary">
   <script type="application/ld+json" nonce="__CSP_NONCE__">{"@context":"https://schema.org","@type": "WebSite","name":"GeoEmpleo360","url":"https://geoempleo360.com/","inLanguage":"es-ES"}</script>
-  <link rel="stylesheet" href="/styles.css?v=20261124-mobile-clear-label" nonce="__CSP_NONCE__"><style nonce="__CSP_NONCE__"></style>
+  <link rel="stylesheet" href="/styles.css?v=20261125-location-modal" nonce="__CSP_NONCE__"><style nonce="__CSP_NONCE__"></style>
   <link rel="stylesheet" href="/select-controls.css?v=20261123-mobile-select-fit" nonce="__CSP_NONCE__">
-  <script type="module" src="/app.mjs?v=20261125-share-message" nonce="__CSP_NONCE__"></script>
+  <script type="module" src="/app.mjs?v=20261125-location-modal-preview" nonce="__CSP_NONCE__"></script>
 </head>
 <body>
   <a class="skip-link" href="#results">Saltar a los resultados</a>
@@ -34,8 +34,8 @@
     </a>
     <form id="search-form" class="search-bar" role="search">
       <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><span><span class="field-label">¿QUÉ ESTÁS BUSCANDO?</span><input id="query" name="q" type="search" placeholder="Puesto, organismo o palabra clave" autocomplete="off"></span></label>
-      <div class="location-field"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg><button id="location-trigger" class="location-trigger" type="button" aria-expanded="false" aria-controls="location-panel"><span class="field-label">¿DÓNDE?</span><span id="location-summary">Toda España</span></button><select id="location" name="city" aria-label="Territorio seleccionado" hidden><option value="">Toda España</option></select>
-        <div id="location-backdrop" class="location-backdrop" hidden></div><div id="location-panel" class="location-panel" role="region" aria-labelledby="place-hierarchy-title" hidden><div class="location-panel-heading"><span id="place-hierarchy-title" class="locality-heading">Tu localidad de referencia</span><button id="location-close" type="button" aria-label="Cerrar selección de zona">×</button></div><input id="origin-city" type="hidden"><div id="place-hierarchy" class="place-hierarchy" aria-labelledby="place-hierarchy-title"></div><div class="location-panel-footer"><button id="location-done" class="primary-button" type="button">Ver mapa</button></div><span id="origin-status" class="visually-hidden" role="status" aria-live="polite">Elige una localidad o selecciona tu zona en el mapa.</span></div>
+      <div class="location-field"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg><button id="location-trigger" class="location-trigger" type="button" aria-expanded="false" aria-controls="location-panel" aria-describedby="origin-status"><span class="field-label">¿DÓNDE?</span><span id="location-summary">Toda España</span></button><select id="location" name="city" aria-label="Territorio seleccionado" hidden><option value="">Toda España</option></select>
+        <div id="location-backdrop" class="location-backdrop" hidden></div><div id="location-panel" class="location-panel" role="region" aria-labelledby="place-hierarchy-title" hidden><div class="location-panel-heading"><span id="place-hierarchy-title" class="locality-heading">Tu localidad de referencia</span><button id="location-close" type="button" aria-label="Cerrar selección de zona">×</button></div><input id="origin-city" type="hidden"><div id="place-hierarchy" class="place-hierarchy" aria-labelledby="place-hierarchy-title"></div><div class="location-panel-footer"><button id="location-done" class="primary-button" type="button">Ver mapa</button></div></div><span id="origin-status" class="visually-hidden" role="status" aria-live="polite">Elige una localidad o selecciona tu zona en el mapa.</span>
       </div>
       <button class="primary-button search-button" type="submit">Buscar oportunidades <span aria-hidden="true">↗</span></button>
     </form>
@@ -99,7 +99,7 @@
     <p>Puedes buscar por puesto o palabra, filtrar por empresa y área, y ver «Ofertas del día» cuando haya anuncios publicados o detectados hoy. Los favoritos se guardan en este navegador. Buscar no requiere registro; algunos portales de origen sí pueden pedirlo para presentar la candidatura. La analítica de uso es opcional y puedes controlarla desde «Privacidad».</p>
     <h3>Creador y contacto</h3>
     <p>Creado por <strong>Rhonal Alonso Delgado Padilla</strong>. Para consultas, correcciones o avisos sobre enlaces caducados, escribe a <a href="mailto:rhonal.delgado@gmail.com">rhonal.delgado@gmail.com</a>. Las candidaturas se presentan en el portal de origen de cada oferta.</p>
-    <p><strong>Versión web 1.0.4</strong></p>
+    <p><strong>Versión web 1.0.5</strong></p>
   </div></dialog>
   <noscript><p class="noscript-notice">Activa JavaScript para filtrar y ver los detalles. Puedes consultar las convocatorias en <a href="https://www.boe.es/boe/dias/2026/10/09/">el BOE del 9 de octubre de 2026</a>.</p></noscript>
 </body>

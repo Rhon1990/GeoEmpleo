@@ -1,6 +1,20 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {requestLocationWithPermission} from '../apps/web-preview/public/location-permission.mjs';
+import {locationFeedbackMessage,requestLocationWithPermission,shouldSimulateLocationUnavailable} from '../apps/web-preview/public/location-permission.mjs';
+
+test('location feedback tells the user when the device position is unavailable', () => {
+ assert.match(locationFeedbackMessage('denied'),/ubicación.*Chrome/i);
+ assert.match(locationFeedbackMessage('timeout'),/Wi.?Fi/i);
+ assert.match(locationFeedbackMessage('unavailable'),/Wi.?Fi/i);
+ assert.match(locationFeedbackMessage('unavailable'),/localidad manualmente/i);
+ assert.equal(locationFeedbackMessage('located'),'Ubicación aproximada marcada en el mapa.');
+});
+
+test('solo simula ubicación no disponible en localhost con el parámetro de vista previa',()=>{
+ assert.equal(shouldSimulateLocationUnavailable('127.0.0.1','?locationPreview=unavailable'),true);
+ assert.equal(shouldSimulateLocationUnavailable('geoempleo360.com','?locationPreview=unavailable'),false);
+ assert.equal(shouldSimulateLocationUnavailable('localhost',''),false);
+});
 
 test('solicita confirmación antes del permiso pendiente y respeta la cancelación',async()=>{
  let locations=0, prompts=0;

@@ -272,3 +272,5 @@ dialog{max-width:calc(100vw - 32px)}
 /* Touch taps can leave hover active; show a hint only during a deliberate hold. */
 @media(hover:none){.map-actions button:hover::after{opacity:0;visibility:hidden}}
 .map-actions button.touch-hint::after{opacity:1;visibility:visible}
+.location-trigger[data-location-state="pending"] #location-summary{color:var(--petrol);font-weight:650}
+.location-trigger[data-location-state="error"] #location-summary{color:#a34334;font-weight:650}

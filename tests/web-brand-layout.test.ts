@@ -181,7 +181,7 @@ test('brands all entry points as GeoEmpleo360 with petrol, saffron, petrol wordm
   assert.match(submissionCss, /\.brand \.brand-360[^}]*var\(--petroleum\)/);
 });
 
-test('stylesheet cache key identifies the mobile clear label update', () => {
+test('stylesheet cache key identifies the location status update', () => {
   const stylesheet = allElements.find(element =>
     element.tagName === 'link'
     && attribute(element, 'rel') === 'stylesheet'
@@ -191,12 +191,13 @@ test('stylesheet cache key identifies the mobile clear label update', () => {
   assert.ok(stylesheet, 'Expected the page stylesheet link');
   assert.match(
     attribute(stylesheet, 'href')!,
-    /(?:[?&]v=)20261124-mobile-clear-label(?:&|$)/,
+    /(?:[?&]v=)20261125-location-modal(?:&|$)/,
   );
+  assert.match(html, /app\.mjs\?v=20261125-location-modal-preview/);
 });
 
 test('about dialog identifies the released web interface version', () => {
-  assert.match(html, /Versión web 1\.0\.3/);
+  assert.match(html, /Versión web 1\.0\.5/);
 });
 
 test('map module cache key identifies the territory views release', () => {
@@ -580,6 +581,28 @@ test('map toolbar has one location action and keeps the geolocation control', ()
   assert.ok(allElements.some(element => attribute(element, 'id') === 'use-location'));
   assert.match(app, /querySelector\('#use-location'\)\.addEventListener/);
   assert.doesNotMatch(app, /return-origin|return_origin/);
+});
+
+test('location failure feedback uses the existing modal outside the map and location dropdown', () => {
+  const status = allElements.find(element => attribute(element, 'id') === 'origin-status');
+  const mapPanel = allElements.find(element => attribute(element, 'id') === 'map-panel');
+  const locationPanel = allElements.find(element => attribute(element, 'id') === 'location-panel');
+  const permissionDialog = allElements.find(element => attribute(element, 'id') === 'location-permission-dialog');
+  const locationField = allElements.find(element => hasClass(element, 'location-field'));
+  const locationSummary = allElements.find(element => attribute(element, 'id') === 'location-summary');
+  assert.ok(status);
+  assert.ok(mapPanel);
+  assert.ok(locationPanel);
+  assert.ok(permissionDialog);
+  assert.ok(locationField);
+  assert.ok(locationSummary);
+  assert.equal(hasClass(status, 'visually-hidden'), true);
+  assert.equal(attribute(permissionDialog, 'aria-labelledby'), 'location-permission-title');
+  assert.match(app, /showLocationFailure\(position\.status\)/);
+  assert.equal(status.parentNode, locationField);
+  assert.notEqual(status.parentNode, locationPanel);
+  assert.notEqual(status.parentNode, mapPanel);
+  assert.notEqual(permissionDialog.parentNode, mapPanel);
 });
 
 test('map controls expose matching accessible names and hidden labels', () => {
