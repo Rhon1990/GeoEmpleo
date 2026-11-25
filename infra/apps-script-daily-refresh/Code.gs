@@ -9,6 +9,13 @@ var GEOEMPLEO_CONFIG={
 };
 
 function parseCatalogResponse(response,now){
+  if(response.status===206){
+    var match=/^\s*\{\s*"checkedAt"\s*:\s*"([^"]+)"\s*,/.exec(response.body);
+    if(!match)throw new Error('Cabecera de catálogo inválida');
+    var partialCheckedAt=Date.parse(match[1]);
+    if(!Number.isFinite(partialCheckedAt)||partialCheckedAt>now+5*60*1000)throw new Error('checkedAt inválido');
+    return {checkedAt:partialCheckedAt,count:null};
+  }
   if(response.status!==200)throw new Error('Catálogo HTTP '+response.status);
   var catalog=JSON.parse(response.body);
   var checkedAt=Date.parse(catalog.checkedAt);
@@ -62,7 +69,7 @@ function checkAndDispatch(){
     fetchCatalog:function(){
       var response=UrlFetchApp.fetch(GEOEMPLEO_CONFIG.catalogUrl+'?appsScriptCheck='+now,{
         muteHttpExceptions:true,
-        headers:{'Cache-Control':'no-cache'},
+        headers:{'Cache-Control':'no-cache','Range':'bytes=0-1023','Accept-Encoding':'identity'},
       });
       return {status:response.getResponseCode(),body:response.getContentText()};
     },

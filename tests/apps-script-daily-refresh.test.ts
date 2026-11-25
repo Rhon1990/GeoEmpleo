@@ -21,6 +21,13 @@ async function loadController(){
   return (context.__exports as {runRefreshCheck:(deps:RefreshDependencies)=>RefreshResult}).runRefreshCheck;
 }
 
+test('dispatches from a verified partial catalog header',async()=>{
+  const run=await loadController();
+  const deps=dependencies({fetchCatalog:()=>({status:206,body:'{\n  "checkedAt": "2026-10-28T06:00:00Z",\n  "publishedAt": "2026-10-28",\n  "calls": ['})});
+  assert.equal(run(deps.value).status,'dispatched');
+  assert.equal(deps.dispatches(),1);
+});
+
 test('does not dispatch when the public catalog belongs to today in Madrid',async()=>{
   const run=await loadController();
   let dispatches=0;

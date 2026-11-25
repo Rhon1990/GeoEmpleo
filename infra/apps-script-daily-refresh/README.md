@@ -5,8 +5,7 @@ depender de Codex ni de un ordenador encendido. El disparador ejecuta
 `checkAndDispatch` cada 15 minutos, pero la función solo actúa entre las 05:00 y
 las 12:00 de `Europe/Madrid`.
 
-- Si `geoempleo360.com/data/calls.json` ya tiene un `checkedAt` del día, no hace
-  nada.
+- Solicita los primeros 1024 bytes del catálogo mediante HTTP Range y lee su `checkedAt`; si es del día, no hace nada. Si el servidor entrega el archivo completo se valida como antes. La validación íntegra del catálogo ocurre en GitHub antes de publicar.
 - Si el catálogo está desactualizado, ejecuta por `workflow_dispatch` el
   workflow `daily-offers.yml` de la rama `main`.
 - Un enfriamiento de 60 minutos evita ejecuciones repetidas mientras GitHub
