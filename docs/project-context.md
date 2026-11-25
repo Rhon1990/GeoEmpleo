@@ -6,7 +6,7 @@ La versión web se incrementa a **1.0.4** para esta actualización. La rama `cod
 
 ## Vigilancia diaria — 25/11/2026
 
-El vigilante de las 05:00 falló al recibir un catálogo JSON incompleto de 58 MB. Se modificó Apps Script para solicitar los primeros 1024 bytes y leer el `checkedAt` inicial; GitHub mantiene la validación completa del catálogo antes de publicar. El servidor respondió HTTP 206 a esa petición. Una ejecución manual del vigilante lanzó el workflow 94 a las 07:26; la publicación estaba en curso al documentar el cambio.
+El vigilante de las 05:00 falló al recibir un catálogo JSON incompleto de 58 MB. Se modificó Apps Script para solicitar los primeros 1024 bytes y leer el `checkedAt` inicial; GitHub mantiene la validación completa del catálogo antes de publicar. El servidor respondió HTTP 206 a esa petición. El 25/11/2026 el vigilante se ejecutó manualmente a las 07:26 y lanzó [el workflow 94](https://github.com/Rhon1990/GeoEmpleo/actions/runs/45560649596), que publicó 24.066 ofertas y verificó ambos dominios por HTTPS. La captura fue parcial: fallaron Lanbide, Burger King, Faster, Accenture, Gi Group, PwC, Santander e Iberdrola. El activador recurrente a las 07:30 y un activador puntual a las 07:32 terminaron sin error mientras el workflow seguía en marcha; este último quedó inhabilitado tras ejecutarse. No demuestran un lanzamiento automático con catálogo desactualizado, protegido entonces por el enfriamiento. La ventana recurrente conserva el inicio a las 05:00 de Madrid.
 
 ## Acerca de y versión web — 23/11/2026
 
