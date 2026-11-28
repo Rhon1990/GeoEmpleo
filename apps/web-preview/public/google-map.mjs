@@ -182,10 +182,11 @@ export async function createGoogleMap(host,config,events,initial={}) {
     updateMarkerVisuals();
   }
   map.addListener('idle',()=>{
+    // Centering a popup must preserve both its content and its marker anchor.
+    if(ignoreNextViewport){ignoreNextViewport=false;return;}
     // Camera animations can emit many zoom_changed events. Rebuilding AdvancedMarkerElement
     // instances on every frame races Google's marker internals and can leave the map blank.
     renderMarkers();
-    if(ignoreNextViewport){ignoreNextViewport=false;return;}
     events.onViewport?.();
   });
   await new Promise((resolve,reject)=>{
