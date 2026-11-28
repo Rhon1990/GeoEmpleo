@@ -24,6 +24,18 @@ export function clearOriginTransition(origin,originSource) {
   return {origin:null,originSource:'none',resetMap:originSource==='manual'};
 }
 
+export function createSearchIntentTracker() {
+  let manualPending=false;
+  return {
+    markManual(){manualPending=true;},
+    forRequest(intent='map'){
+      if(intent==='manual')manualPending=true;
+      return manualPending?'manual':'map';
+    },
+    finish(){manualPending=false;},
+  };
+}
+
 export function updateMapWithoutLosingJobs(controller,jobs,origin,radiusKm,onFailure=()=>{}) {
   if(!controller)return true;
   try {controller.update(jobs,origin,radiusKm);return true;}

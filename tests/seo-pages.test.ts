@@ -33,5 +33,9 @@ test('el build publica páginas útiles y un sitemap solo para grupos con oferta
   assert.doesNotMatch(sitemap,/comunidad-de-madrid|\/cultura\//);
   assert.doesNotMatch(home,/Explora empleo por zona y sector|href="\/empleo\/sector\/industria\/"/);
   assert.doesNotMatch(home,/href="\/empleo\/comunidad-de-madrid\/"/);
-  assert.equal(await readFile(join(output,'data','calls.json'),'utf8'),catalog);
+  const index=JSON.parse(await readFile(join(output,'data','calls.json'),'utf8'));
+  assert.equal(index.calls.length,calls.length);
+  assert.equal(index.calls[0].paragraphs,undefined);
+  assert.equal(index.detailShardSize,100);
+  assert.deepEqual(JSON.parse(await readFile(join(output,'data','job-details','0.json'),'utf8')),calls);
 });

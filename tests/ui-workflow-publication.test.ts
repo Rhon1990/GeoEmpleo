@@ -14,10 +14,11 @@ test('la publicación manual de interfaz conserva el catálogo vigente en ambos 
   const deploy=workflow.indexOf('FirebaseExtended/action-hosting-deploy@v0');
   assert.ok(prepare>=0&&prepare<build&&build<deploy);
   assert.match(workflow,/--catalog apps\/web-preview\/public\/data\/calls\.json/);
-  assert.match(workflow,/--catalog var\/public-site\/data\/calls\.json/);
+  assert.match(workflow,/--catalog var\/public-site\/data\/calls-full\.json/);
   assert.match(workflow,/--matches-url/);
   assert.match(workflow,/for origin in https:\/\/geoempleo360\.com https:\/\/geoempleo-49978\.web\.app;/);
-  assert.match(workflow,/\$origin\/data\/calls\.json/);
+  assert.match(workflow,/\$origin\/data\/calls-full\.json/);
+  assert.match(workflow,/cmp apps\/web-preview\/public\/data\/calls\.json var\/public-site\/data\/calls-full\.json/);
   assert.match(workflow,/channelId: live/);
   assert.match(workflow,/cmp -s var\/public-site\/index\.html/);
 });
@@ -30,4 +31,6 @@ test('el despliegue de interfaz no reemplaza la actualización diaria de futuras
   assert.match(daily,/group: daily-offers-production/);
   assert.match(ui,/group: daily-offers-production/);
   assert.doesNotMatch(ui,/schedule:|npm run ingest:daily/);
+  assert.match(daily,/--catalog var\/public-site\/data\/calls-full\.json/);
+  assert.match(daily,/\$origin\/data\/calls-full\.json/);
 });

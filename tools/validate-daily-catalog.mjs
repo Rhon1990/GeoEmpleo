@@ -15,6 +15,21 @@ export function validateCatalog(catalog,expectedCheckedAt) {
   return catalog;
 }
 
+export async function fetchPublishedFullCatalog(url,fetchImpl=fetch) {
+  const request={headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(30_000)};
+  let response=await fetchImpl(url,request);
+  if(response.status===404){
+    const legacy=new URL(url);
+    if(!legacy.pathname.endsWith('/data/calls-full.json'))throw new Error('No se encontró el catálogo público completo');
+    legacy.pathname=legacy.pathname.replace(/calls-full\.json$/,'calls.json');
+    response=await fetchImpl(legacy.href,request);
+  }
+  if(!response.ok)throw new Error(`No se pudo recuperar el catálogo publicado: HTTP ${response.status}`);
+  const catalog=validateCatalog(await response.json());
+  if(catalog.detailShardSize||catalog.calls.some(call=>!Array.isArray(call.paragraphs)))throw new TypeError('El catálogo público no está completo');
+  return catalog;
+}
+
 export function validateCatalogParity(candidate,publicCatalog) {
   validateCatalog(candidate);
   validateCatalog(publicCatalog);
@@ -47,9 +62,12 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href) {
     if(matchesUrl) {
       if(!catalogPath)throw new TypeError('Falta --catalog');
       const candidate=JSON.parse(await readFile(catalogPath,'utf8'));
-      const response=await fetch(matchesUrl,{headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(30_000)});
-      if(!response.ok)throw new Error(`HTTPS devolvió ${response.status}`);
-      const result=validateCatalogParity(candidate,await response.json());
+      const publicCatalog=matchesUrl.includes('/data/calls-full.json')?await fetchPublishedFullCatalog(matchesUrl):await (async()=>{
+        const response=await fetch(matchesUrl,{headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(30_000)});
+        if(!response.ok)throw new Error(`HTTPS devolvió ${response.status}`);
+        return response.json();
+      })();
+      const result=validateCatalogParity(candidate,publicCatalog);
       console.log(`Catálogo preservado: ${result.offers} ofertas idénticas; ${result.checkedAt}.`);
     } else if(remoteUrl) {
       const response=await fetch(remoteUrl,{headers:{'cache-control':'no-cache'}});

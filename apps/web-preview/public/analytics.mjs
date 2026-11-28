@@ -1,11 +1,14 @@
 const consentKey='geoempleo-analytics-consent';
-const eventNames=new Set(['page_view','search_submitted','search_no_results','filter_used','offer_detail_opened','offer_original_clicked','map_action','saved_search_opened','saved_offer_opened','ui_action']);
+const eventNames=new Set(['page_view','search_submitted','search_no_results','map_no_results','filter_used','offer_detail_opened','offer_original_clicked','map_action','saved_search_opened','saved_offer_opened','ui_action']);
 const filterTypes=new Set(['category','employer','territory','community','province','locality','distance']);
 const mapActions=new Set(['show_map','search_visible_area','use_my_location','show_spain','choose_zone']);
 const uiActions=new Set(['open_location_filter','open_distance_filter','open_mobile_filters','open_favorites','show_today_offers','hide_today_offers','clear_filters','show_map_view','show_offers_view']);
 const routes=new Set(['/','/publicar']);
 
-export const isProductionAnalyticsHost=host=>['geoempleo360.com','www.geoempleo360.com','geoempleo-49978.web.app'].includes(host);
+export const isProductionAnalyticsHost=host=>['geoempleo360.com','www.geoempleo360.com'].includes(host);
+export function isAdministrativeReferrer(referrer) {
+  try{return ['console.firebase.google.com','firebase.google.com'].includes(new URL(referrer).hostname);}catch{return false;}
+}
 
 function validConfig(config) {
   return ['apiKey','appId','projectId','measurementId'].every(key=>typeof config?.[key]==='string'&&config[key].trim());

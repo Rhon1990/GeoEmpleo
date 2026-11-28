@@ -1,14 +1,12 @@
 import {appendFile,rename,writeFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
-import {validateCatalog} from './validate-daily-catalog.mjs';
+import {fetchPublishedFullCatalog} from './validate-daily-catalog.mjs';
 
-const catalogUrl='https://geoempleo-49978.web.app/data/calls.json';
+const catalogUrl='https://geoempleo-49978.web.app/data/calls-full.json';
 const madridDate=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'});
 
 export async function prepareDailyRefresh({catalogPath,now=Date.now(),force=false,fetchImpl=fetch}) {
-  const response=await fetchImpl(`${catalogUrl}?refreshCheck=${now}`,{headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(30_000)});
-  if(!response.ok)throw new Error(`No se pudo recuperar el catálogo publicado: HTTP ${response.status}`);
-  const catalog=validateCatalog(await response.json());
+  const catalog=await fetchPublishedFullCatalog(`${catalogUrl}?refreshCheck=${now}`,fetchImpl);
   const checkedAt=Date.parse(catalog.checkedAt);
   if(!Number.isFinite(checkedAt)||checkedAt>now+300_000)throw new TypeError('Fecha del catálogo publicado inválida');
   if(!catalog.calls.length)throw new TypeError('El catálogo publicado está vacío');

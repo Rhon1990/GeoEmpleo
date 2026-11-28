@@ -1,4 +1,4 @@
-import {cp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
+import {cp,mkdir,readFile,rename,rm,writeFile} from 'node:fs/promises';
 import {gunzipSync} from 'node:zlib';
 import {basename,dirname,join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -6,6 +6,7 @@ import {parseEnv} from 'node:util';
 import {shardPlaces} from '../apps/web-preview/public/static-data.mjs';
 import {publicAdSenseConfig,publicMapConfig} from '../apps/web-preview/config.mjs';
 import {seoPages} from './seo-pages.mjs';
+import {summaryFields,projectFields} from '../apps/web-preview/public/job-projections.mjs';
 
 const projectRoot=fileURLToPath(new URL('../',import.meta.url));
 const excluded=new Set(['publish.html','publish.mjs','manage.html','manage.mjs','submission.css']);
@@ -22,6 +23,14 @@ export async function buildStaticSite({sourceDir,placesGzipPath,outputDir,config
   try{analyticsConfig=JSON.parse(await readFile(analyticsConfigPath,'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
   await rm(outputDir,{recursive:true,force:true});
   await cp(sourceDir,outputDir,{recursive:true,filter:path=>!excluded.has(basename(path))});
+  await rename(join(outputDir,'data','calls.json'),join(outputDir,'data','calls-full.json'));
+  const detailShardSize=100;
+  const detailsDir=join(outputDir,'data','job-details');
+  await mkdir(detailsDir,{recursive:true});
+  for(let start=0;start<catalog.calls.length;start+=detailShardSize){
+    await writeFile(join(detailsDir,`${start/detailShardSize}.json`),JSON.stringify(catalog.calls.slice(start,start+detailShardSize)));
+  }
+  await writeFile(join(outputDir,'data','calls.json'),JSON.stringify({checkedAt:catalog.checkedAt,detailShardSize,calls:catalog.calls.map(job=>projectFields(job,summaryFields))}));
   const indexPath=join(outputDir,'index.html');
   const index=await readFile(indexPath,'utf8');
   if(!index.includes('<html lang="es">'))throw new TypeError('Estructura de la página no reconocida');

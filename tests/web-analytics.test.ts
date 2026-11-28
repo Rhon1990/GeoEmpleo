@@ -1,12 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createAnalyticsController,isProductionAnalyticsHost } from '../apps/web-preview/public/analytics.mjs';
+import { createAnalyticsController,isAdministrativeReferrer,isProductionAnalyticsHost } from '../apps/web-preview/public/analytics.mjs';
 
 test('la analítica de producción no se habilita en localhost ni en vistas de prueba',()=>{
   assert.equal(isProductionAnalyticsHost('geoempleo360.com'),true);
-  assert.equal(isProductionAnalyticsHost('geoempleo-49978.web.app'),true);
+  assert.equal(isProductionAnalyticsHost('geoempleo-49978.web.app'),false);
   assert.equal(isProductionAnalyticsHost('localhost'),false);
   assert.equal(isProductionAnalyticsHost('127.0.0.1'),false);
+  assert.equal(isAdministrativeReferrer('https://console.firebase.google.com/project/geoempleo'),true);
+  assert.equal(isAdministrativeReferrer('https://www.google.com/search?q=geoempleo'),false);
 });
 
 function createHarness(initial='') {
@@ -146,6 +148,16 @@ test('la salida a la oferta original se mide solo con consentimiento y sin datos
   assert.equal(await controller.track('offer_original_clicked',{url:'https://origen.example/oferta'}),false);
   assert.equal(await controller.track('offer_original_clicked'),true);
   assert.deepEqual(h.calls.filter(([kind])=>kind==='event').map(([, ,name,params])=>[name,params]),[['offer_original_clicked',{}]]);
+});
+
+test('distingue resultados vacíos manuales y del mapa sin enviar la búsqueda',async()=>{
+  const h=createHarness();
+  const controller=createAnalyticsController({config,storage:h.storage as unknown as Storage,loadSdk:async()=>h.sdk,location:{pathname:'/'} as Location});
+  await controller.accept();
+  assert.equal(await controller.track('search_no_results'),true);
+  assert.equal(await controller.track('map_no_results'),true);
+  assert.equal(await controller.track('map_no_results',{query:'Madrid'}),false);
+  assert.deepEqual(h.calls.filter(([kind])=>kind==='event').map(([, ,name])=>name),['search_no_results','map_no_results']);
 });
 
 test('los eventos de novedades desde la última visita ya no se emiten',async()=>{

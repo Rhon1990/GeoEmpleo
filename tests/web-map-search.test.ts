@@ -1,6 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {locateOnce,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,visibleMapJobs} from '../apps/web-preview/public/map-search.mjs';
+import {locateOnce,createSearchIntentTracker,createViewportSearch,originSearchTransition,resolveSearchBounds,searchGeography,visibleMapJobs} from '../apps/web-preview/public/map-search.mjs';
+
+test('una selección manual conserva su intención cuando el mapa cambia de área',()=>{
+ const intent=createSearchIntentTracker();
+ intent.markManual();
+ assert.equal(intent.forRequest('map'),'manual');
+ intent.finish();
+ assert.equal(intent.forRequest('map'),'map');
+ intent.forRequest('manual');
+ assert.equal(intent.forRequest('map'),'manual');
+ intent.finish();
+ assert.equal(intent.forRequest('map'),'map');
+});
 import * as mapSearch from '../apps/web-preview/public/map-search.mjs';
 import {searchCalls} from '../apps/web-preview/public/catalog.mjs';
 
