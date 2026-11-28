@@ -1,5 +1,9 @@
 # GeoEmpleo360 — Contexto del proyecto
 
+## Corrección del cierre de grupos al centrarse — 28/11/2026
+
+La rama `codex/fix-map-group-popup` prepara la versión web 1.0.9. El evento `idle` causado por centrar la ventana de ofertas se omite antes de reconstruir los marcadores; así se conservan la ventana abierta y su anclaje. Los movimientos posteriores del mapa mantienen la actualización habitual de zona y agrupación. Se actualizan las versiones de caché de la aplicación y el módulo de mapa. Una prueba del controlador con el límite del SDK simulado reproduce el cierre antes del cambio y verifica después que se puede elegir una oferta, que un movimiento posterior actualiza la zona y que un punto individual sigue seleccionándose. Validación local: 638 pruebas, TypeScript, build estático y revisión de diff correctos. La comprobación visual local con Google Maps real confirmó que la lista de seis ofertas de Móstoles permanece abierta después de centrarse. Publicación pendiente; no se ha desplegado esta corrección ni actualizado el catálogo.
+
 ## Altura del panel de listas móviles — 25/11/2026
 
 La versión web 1.0.8 ajusta el panel inferior de comunidad, provincia y localidad según la altura medida del menú abierto y actualiza esa reserva al filtrar resultados o cambiar el viewport. En ventanas de poca altura también conserva el panel inferior en horizontal aunque el ancho supere el breakpoint de móvil; el encabezado queda fijo visible y las opciones se desplazan dentro del panel. Las listas cortas dejan de mantener el panel en una altura mínima fija; el límite de altura y el desplazamiento interno siguen protegiendo las listas largas. Verificación local: 637 pruebas, TypeScript y compilación estática correctos; revisión visual en Chrome emulando iPhone SE en vertical y horizontal.

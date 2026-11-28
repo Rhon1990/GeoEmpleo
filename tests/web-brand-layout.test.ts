@@ -193,17 +193,17 @@ test('stylesheet cache key identifies the location status update', () => {
     attribute(stylesheet, 'href')!,
     /(?:[?&]v=)20261125-radius-camera(?:&|$)/,
   );
-  assert.match(html, /app\.mjs\?v=20261125-short-viewport-menu/);
+  assert.match(html, /app\.mjs\?v=20261128-group-popup/);
 });
 
 test('about dialog identifies the released web interface version', () => {
-  assert.match(html, /Versión web 1\.0\.8/);
+  assert.match(html, /Versión web 1\.0\.9/);
 });
 
 test('map module cache key identifies the territory views release', () => {
   assert.match(
     app,
-    /from '\.\/google-map\.mjs\?v=20261125-radius-camera'/,
+    /from '\.\/google-map\.mjs\?v=20261128-group-popup'/,
   );
 });
 
