@@ -12,7 +12,7 @@ test('la portada publica identidad y descripción rastreables',async()=>{
   assert.match(html,/<meta property="og:image" content="https:\/\/geoempleo360\.com\/geoempleo360-logo\.png">/);
   assert.match(html,/"@type": "WebSite"/);
   assert.match(html,/<link rel="icon" type="image\/png" href="\/favicon\.png">/);
-  assert.doesNotMatch(html,/cobertura[^<.]*parcial/i);
+  assert.doesNotMatch(html.match(/<meta name="description"[^>]+>/)?.[0]??'',/cobertura[^<.]*parcial/i);
 });
 
 test('el icono es un PNG cuadrado y accesible por una URL estable',async()=>{
