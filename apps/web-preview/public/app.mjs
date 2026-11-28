@@ -65,18 +65,24 @@ async function applyAdsEnabled(enabled) {
   if(!adSlotRequested){delete adContainer.dataset.pending;adContainer.hidden=true;}
 }
 document.querySelector('#analytics-consent').hidden=false;
-analyticsPanel.hidden=Boolean(analyticsController.getPreference());
-document.querySelector('#privacy-settings').addEventListener('click',()=>{analyticsPanel.hidden=!analyticsPanel.hidden;});
+function setPrivacyOpen(open) {
+  if(open){analyticsPanel.hidden=false;if(!analyticsPanel.open)analyticsPanel.showModal();}
+  else {analyticsPanel.close();analyticsPanel.hidden=true;}
+}
+analyticsPanel.addEventListener('close',()=>{analyticsPanel.hidden=true;});
+document.querySelector('#analytics-close').addEventListener('click',()=>setPrivacyOpen(false));
+setPrivacyOpen(!analyticsController.getPreference());
+document.querySelector('#privacy-settings').addEventListener('click',()=>{setPrivacyOpen(!analyticsPanel.open);});
 adPrivacySettings.addEventListener('click',()=>{
   const googlefc=window.googlefc;
   if(typeof googlefc?.showRevocationMessage==='function'&&googlefc.callbackQueue?.push)googlefc.callbackQueue.push(googlefc.showRevocationMessage);
 });
 document.querySelector('#analytics-accept').addEventListener('click',async()=>{
-  await analyticsController.accept();analyticsPanel.hidden=true;
+  await analyticsController.accept();setPrivacyOpen(false);
   void analyticsController.track('page_view');
 });
 document.querySelector('#analytics-reject').addEventListener('click',async()=>{
-  await analyticsController.reject();analyticsPanel.hidden=true;
+  await analyticsController.reject();setPrivacyOpen(false);
 });
 void fetch('/config.json').then(response=>response.ok?response.json():null).then(config=>{
   if(config?.firebaseAnalytics&&isProductionAnalyticsHost(window.location.hostname))analyticsController.setConfig(config.firebaseAnalytics);

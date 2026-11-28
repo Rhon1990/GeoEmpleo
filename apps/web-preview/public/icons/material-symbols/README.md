@@ -1,1 +1,3 @@
 Los SVG proceden de [Google Material Symbols](https://fonts.google.com/icons), variante Outlined de 24 px: `favorite` (contorno y relleno), `share`, `more_vert`, `location_on`, `close`, las flechas iOS y `progress_activity`. Se descargaron del [repositorio oficial de Google](https://github.com/google/material-design-icons/tree/master/symbols/web) sin modificar el dibujo. Licencia: [Apache 2.0](https://github.com/google/material-design-icons/blob/master/LICENSE).
+
+`menu.svg`: Google Material Symbols Outlined, 24 px, descargado del repositorio oficial de Google (Apache 2.0): https://github.com/google/material-design-icons/blob/master/symbols/web/menu/materialsymbolsoutlined/menu_24px.svg

@@ -200,13 +200,14 @@ test('si falla una descarga no se guarda un catálogo vacío como éxito', async
   assert.equal(attempts,2);
 });
 
-test('el despliegue estático publica búsqueda y localidades, sin ofrecer un formulario inoperante', async () => {
+for(const includePublishLink of [true,false])test(`el despliegue estático publica búsqueda y localidades, sin ofrecer un formulario inoperante (enlace publicar ${includePublishLink?'presente':'ausente'})`, async () => {
   const root=await mkdtemp(join(tmpdir(),'geoempleo-static-'));
   const source=join(root,'public');
   await mkdir(join(source,'data'),{recursive:true});
-  await writeFile(join(source,'index.html'),'<html lang="es"><script nonce="__CSP_NONCE__" src="/app.mjs"></script><a href="/publicar">Publicar oferta</a></html>');
+  await writeFile(join(source,'index.html'),`<html lang="es"><script nonce="__CSP_NONCE__" src="/app.mjs"></script>${includePublishLink?'<a href="/publicar">Publicar oferta</a>':''}</html>`);
   await writeFile(join(source,'privacy.html'),'<html lang="es">Política de privacidad</html>');
   await writeFile(join(source,'publish.html'),'No se debe publicar');
+  await writeFile(join(source,'manage.html'),'No se debe publicar');
   await writeFile(join(source,'app.mjs'),'export {};');
   await writeFile(join(source,'data','calls.json'),JSON.stringify(catalog));
   const placesPath=join(root,'places.json.gz');
@@ -217,7 +218,8 @@ test('el despliegue estático publica búsqueda y localidades, sin ofrecer un fo
   assert.match(html,/data-delivery="static"/);
   assert.doesNotMatch(html,/href="\/publicar"|__CSP_NONCE__/);
   assert.doesNotMatch(html,/Publicación próximamente|Publicación directa próximamente/);
-  assert.rejects(readFile(join(output,'publish.html')));
+  await assert.rejects(readFile(join(output,'publish.html')));
+  await assert.rejects(readFile(join(output,'manage.html')));
   assert.equal(await readFile(join(output,'privacy.html'),'utf8'),'<html lang="es">Política de privacidad</html>');
   assert.equal(JSON.parse(await readFile(join(output,'data','place-shards','sa.json'),'utf8'))[0].name,'Coto de San Isidro');
   const publicConfig=JSON.parse(await readFile(join(output,'config.json'),'utf8'));
