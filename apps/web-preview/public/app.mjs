@@ -3,7 +3,7 @@ import {distanceKm} from './geography.mjs';
 import {createGoogleMap,markerGroups} from './google-map.mjs?v=20261128-group-popup';
 import {createMapLoadingState} from './map-loading.mjs';
 import {cardVisualTheme,detailBadge,employerBrand,formatDate as date,formatDateTime,offerAgeWarning,offerDates,placesLabel,jobPresentation,resultCountPresentation,resultSummary,setBrandImageFallback} from './presentation.mjs';
-import {locateOnce,createViewportSearch,hasActiveSearchFilters,originSearchTransition,clearOriginTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261119-clear-filters';
+import {locateOnce,createSearchIntentTracker,createViewportSearch,hasActiveSearchFilters,originSearchTransition,clearOriginTransition,resolveSearchBounds,searchGeography,updateMapWithoutLosingJobs,visibleMapJobs} from './map-search.mjs?v=20261128-search-intent';
 import {requestLocationWithPermission,locationFeedbackMessage,shouldSimulateLocationUnavailable} from './location-permission.mjs?v=20261125-location-modal';
 import {installMapActionHints} from './map-action-hints.mjs?v=20261124-long-press-hints';
 import {referencePlaceZoom} from './reference-places.mjs?v=20261118-locality-search-ux';
@@ -13,7 +13,7 @@ import {offerIdFromUrl,shareableOfferUrl,offerShareMessage,shareOffer} from './s
 import {createRetentionStore} from './retention.mjs?v=20261117-today-offers';
 import {dayInSpain,isOfferOnDay} from './today-offers.mjs';
 import {siteFetch} from './static-data.mjs?v=20261118-optional-territories';
-import {createAnalyticsController,isProductionAnalyticsHost,loadFirebaseAnalytics} from './analytics.mjs';
+import {createAnalyticsController,isAdministrativeReferrer,isProductionAnalyticsHost,loadFirebaseAnalytics} from './analytics.mjs';
 import {loadAdSensePublisher,requestAdSlot,validAdSensePublisher,watchAdStatus} from './adsense.mjs';
 import {observeAdsToggle} from './ad-toggle.mjs';
 import {selectableTerritories,territorySelection} from './territories.mjs?v=20261118-territory-views';
@@ -85,7 +85,7 @@ document.querySelector('#analytics-reject').addEventListener('click',async()=>{
   await analyticsController.reject();setPrivacyOpen(false);
 });
 void fetch('/config.json').then(response=>response.ok?response.json():null).then(config=>{
-  if(config?.firebaseAnalytics&&isProductionAnalyticsHost(window.location.hostname))analyticsController.setConfig(config.firebaseAnalytics);
+  if(config?.firebaseAnalytics&&isProductionAnalyticsHost(window.location.hostname)&&!isAdministrativeReferrer(document.referrer))analyticsController.setConfig(config.firebaseAnalytics);
   adsenseConfig=config?.adsense??{enabled:false};
   if(config?.firebaseAnalytics&&isProductionAnalyticsHost(window.location.hostname)&&validAdSensePublisher(adsenseConfig.publisherId)&&adsenseConfig.slotId)void observeAdsToggle(config.firebaseAnalytics,enabled=>void applyAdsEnabled(enabled));
   if(analyticsController.getPreference()==='accepted')return analyticsController.initializeFromPreference().then(()=>analyticsController.track('page_view'));
@@ -688,6 +688,8 @@ function updateFacets(facets) {
   syncCategories();
 }
 
+let searchIntent='map';
+const searchIntentTracker=createSearchIntentTracker();
 const search=createViewportSearch({
   fetchImpl:siteFetch,
   onLoading(){list.setAttribute('aria-busy','true');document.querySelector('#search-status').textContent='Actualizando ofertas de la zona…';mapLoadingState.searchStarted();},
@@ -702,7 +704,8 @@ const search=createViewportSearch({
     updateFacets(result.facets);
     document.querySelector('#snapshot-label').textContent=`Catálogo actualizado el ${formatDateTime(result.checkedAt)} · ${result.sources.length} fuentes`;
     list.setAttribute('aria-busy','false');render();mapLoadingState.searchFinished();
-    if(result.total===0&&!todayOnly)void analyticsController.track('search_no_results');
+    if(result.total===0&&!todayOnly)void analyticsController.track(searchIntent==='manual'?'search_no_results':'map_no_results');
+    searchIntentTracker.finish();
     document.querySelector('#search-status').textContent=searchBounds?'Ofertas de la zona visible del mapa.':mapController?'Búsqueda sin área de mapa, limitada a 300 ofertas. Abre el mapa para acotar la zona.':'Mapa no disponible; búsqueda en lista con transferencia limitada.';
     if(territoryFocusPending!==null){
       const territory=territoryFocusPending;territoryFocusPending=null;
@@ -713,13 +716,15 @@ const search=createViewportSearch({
     }
   },
   onError(){
+    searchIntentTracker.finish();
     calls=[];page=null;loadError=true;list.setAttribute('aria-busy','false');render();mapLoadingState.searchFinished();
     document.querySelector('#result-count').textContent='No se pudo actualizar esta zona';
     document.querySelector('#search-status').textContent='Comprueba la conexión y pulsa Buscar oportunidades para reintentar.';
   },
 });
 
-function requestSearch({immediate=false,force=false,allowList=false,skipMapBounds=false}={}) {
+function requestSearch({immediate=false,force=false,allowList=false,skipMapBounds=false,intent='map'}={}) {
+  if(intent==='manual')searchIntentTracker.markManual();
   if(mapStarting&&!mapController&&!allowList)return;
   activeDay=dayInSpain();
   if(!skipMapBounds)searchBounds=resolveSearchBounds(mapController?.bounds(),mapIsVisible(),searchBounds,territoryFocusPending!==null);
@@ -731,6 +736,7 @@ function requestSearch({immediate=false,force=false,allowList=false,skipMapBound
   if(employer)params.set('employer',employer);
   params.set('day',activeDay);
   if(todayOnly)params.set('onlyToday','1');
+  searchIntent=searchIntentTracker.forRequest(intent);
   search.request(params,{immediate,force});
 }
 
@@ -783,11 +789,12 @@ function clear() {
   syncRadiusControls();syncLocationSummary();closeLocationPanel();closeRadiusPanel();
   todayOnly=false;
   syncCategories();
-  requestSearch({immediate:true,force:true,skipMapBounds:clearedOrigin.resetMap});
+  requestSearch({immediate:true,force:true,skipMapBounds:clearedOrigin.resetMap,intent:'manual'});
   render();
 }
 
 function setOrigin(point,label,source='manual',zoom=10) {
+  if(source==='manual')searchIntentTracker.markManual();
   beginNewSearch(interaction,document.querySelector('#results'));
   cancelPlaceSearch();
   mapController?.cancelOriginSelection();originRevision++;
@@ -800,7 +807,7 @@ function setOrigin(point,label,source='manual',zoom=10) {
   if(cameraPreview)document.querySelector('#camera-preview-note').textContent='Vista de prueba activa · origen elegido manualmente';
   mapController?.focus(point,zoom);
   render();
-  if(!mapController&&!mapStarting)requestSearch({immediate:true});
+  if(!mapController&&!mapStarting)requestSearch({immediate:true,intent:source==='manual'?'manual':'map'});
 }
 
 const locationPermissionDialog=document.querySelector('#location-permission-dialog');
@@ -916,7 +923,7 @@ function selectReferenceTerritory({community,province}){
   searchBounds=null;territoryFocusPending=selected.name;selectedTerritoryBounds=selected.bounds;
   setOriginStatus(`Mostrando ${province?`la provincia de ${province}`:community} en el mapa`);
   workspaceView.select('map');mapController?.fitArea(selected.bounds);
-  requestSearch({immediate:true,force:true});
+  requestSearch({immediate:true,force:true,intent:'manual'});
 }
 const placeHierarchy=createPlaceHierarchy({
   panel:document.querySelector('#place-hierarchy'),
@@ -924,10 +931,13 @@ const placeHierarchy=createPlaceHierarchy({
 });
 function cancelPlaceSearch(){placeHierarchy.cancel();}
 function commitRadius(){
+  searchIntentTracker.markManual();
   beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'distance'});
   render();
+  const cameraWillSearch=Boolean(origin&&Number(radiusInput.value)>0&&mapController&&mapIsVisible());
   if(origin&&Number(radiusInput.value)>0)mapController?.fitRadius(origin,Number(radiusInput.value));
+  if(!cameraWillSearch)requestSearch({immediate:true,force:true,intent:'manual'});
 }
 radiusInput.addEventListener('input',()=>syncRadiusControls());
 radiusInput.addEventListener('change',commitRadius);
@@ -986,27 +996,27 @@ function syncCategories() {
   }
 }
 
-form.addEventListener('submit',event=>{event.preventDefault();beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true});});
+form.addEventListener('submit',event=>{event.preventDefault();beginNewSearch(interaction,document.querySelector('#results'));void analyticsController.track('search_submitted');requestSearch({immediate:true,force:true,intent:'manual'});});
 location.addEventListener('change',()=>{
   beginNewSearch(interaction,document.querySelector('#results'));
   placeHierarchy.setTerritory(location.value);syncLocationSummary();selectedTerritoryBounds=territoryBounds(location.value);
   territoryFocusPending=location.value;radiusInput.value='0';radiusInput.disabled=true;syncRadiusControls();
   void analyticsController.track('filter_used',{filter_type:'territory'});
   if(selectedTerritoryBounds)mapController?.fitArea(selectedTerritoryBounds);
-  requestSearch({immediate:true,force:true});
+  requestSearch({immediate:true,force:true,intent:'manual'});
 });
 document.querySelector('#categories').addEventListener('click',event => {
   const button = event.target.closest('[data-category]');
   if (!button) return;
   beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'category'});
-  category = button.dataset.category; syncCategories(); requestSearch({immediate:true});
+  category = button.dataset.category; syncCategories(); requestSearch({immediate:true,force:true,intent:'manual'});
 });
 document.querySelector('#employer-filter').addEventListener('change',event=>{
   beginNewSearch(interaction,document.querySelector('#results'));
   void analyticsController.track('filter_used',{filter_type:'employer'});
   employer=event.currentTarget.value;
-  requestSearch({immediate:true,force:true});
+  requestSearch({immediate:true,force:true,intent:'manual'});
 });
 document.querySelector('#clear-filters').addEventListener('click',clear);
 document.querySelector('#mobile-clear-filters').addEventListener('click',clear);

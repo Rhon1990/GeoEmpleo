@@ -31,7 +31,7 @@ jobs:
           for origin in https://geoempleo360.com https://geoempleo-49978.web.app; do
             node tools/validate-daily-catalog.mjs \
               --catalog apps/web-preview/public/data/calls.json \
-              --matches-url "$origin/data/calls.json?release=$GITHUB_RUN_ID"
+              --matches-url "$origin/data/calls-full.json?release=$GITHUB_RUN_ID"
           done
 
       - name: Construir la web con el catálogo recuperado
@@ -55,11 +55,11 @@ jobs:
 
       - name: Bloquear cualquier cambio de ofertas antes de publicar
         run: |
-          cmp apps/web-preview/public/data/calls.json var/public-site/data/calls.json
+          cmp apps/web-preview/public/data/calls.json var/public-site/data/calls-full.json
           for origin in https://geoempleo360.com https://geoempleo-49978.web.app; do
             node tools/validate-daily-catalog.mjs \
-              --catalog var/public-site/data/calls.json \
-              --matches-url "$origin/data/calls.json?release=$GITHUB_RUN_ID-predeploy"
+              --catalog var/public-site/data/calls-full.json \
+              --matches-url "$origin/data/calls-full.json?release=$GITHUB_RUN_ID-predeploy"
           done
           test -f var/public-site/index.html
 
@@ -77,8 +77,11 @@ jobs:
           for origin in https://geoempleo360.com https://geoempleo-49978.web.app; do
             for attempt in 1 2 3 4 5 6; do
               if node tools/validate-daily-catalog.mjs \
-                --catalog var/public-site/data/calls.json \
-                --matches-url "$origin/data/calls.json?release=$GITHUB_RUN_ID-$attempt" \
+                --catalog var/public-site/data/calls-full.json \
+                --matches-url "$origin/data/calls-full.json?release=$GITHUB_RUN_ID-$attempt" \
+                && node tools/validate-daily-catalog.mjs \
+                  --catalog var/public-site/data/calls.json \
+                  --matches-url "$origin/data/calls.json?release=$GITHUB_RUN_ID-$attempt" \
                 && curl -fsSL "$origin/?release=$GITHUB_RUN_ID-$attempt" | cmp -s var/public-site/index.html -; then
                 break
               fi

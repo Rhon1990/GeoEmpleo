@@ -42,6 +42,7 @@ function filtersFrom(params) {
 
 export function createStaticDataFetch({fetchImpl=fetch}={}) {
   let catalogPromise;
+  const detailPromises=new Map();
   const placePromises=new Map();
   async function catalog() {
     if(!catalogPromise)catalogPromise=fetchImpl('/data/calls.json').then(async response=>{
@@ -51,6 +52,32 @@ export function createStaticDataFetch({fetchImpl=fetch}={}) {
       return data;
     }).catch(error=>{catalogPromise=null;throw error;});
     return catalogPromise;
+  }
+  async function detail(id,retryAfterRefresh=true) {
+    const data=await catalog();
+    const index=data.calls.findIndex(job=>job.id===id);
+    if(index<0)return null;
+    if(data.detailShardSize){
+      const shard=Math.floor(index/data.detailShardSize);
+      if(!detailPromises.has(shard))detailPromises.set(shard,fetchImpl(`/data/job-details/${shard}.json`).then(async response=>{
+        if(!response.ok)throw new Error('Detalle no disponible');
+        return response.json();
+      }).catch(error=>{detailPromises.delete(shard);throw error;}));
+      let jobs;
+      try{jobs=await detailPromises.get(shard);}catch(error){
+        if(!retryAfterRefresh)throw error;
+        catalogPromise=null;detailPromises.clear();
+        return detail(id,false);
+      }
+      const job=jobs[index%data.detailShardSize];
+      if(job?.id!==id){
+        if(!retryAfterRefresh)throw new Error('Detalle incoherente con el catálogo');
+        catalogPromise=null;detailPromises.clear();
+        return detail(id,false);
+      }
+      return job;
+    }
+    return data.calls[index];
   }
   async function placeShard(key) {
     if(!placePromises.has(key))placePromises.set(key,fetchImpl(`/data/place-shards/${key}.json`).then(async response=>{
@@ -82,7 +109,7 @@ export function createStaticDataFetch({fetchImpl=fetch}={}) {
     }
     if(parsed.pathname==='/api/job') {
       if(params.getAll('id').length!==1||!params.get('id')||params.get('id').length>120)throw new TypeError('ID inválido');
-      const job=(await catalog()).calls.find(job=>job.id===params.get('id'));
+      const job=await detail(params.get('id'));
       return json(job??{error:'Oferta no disponible'},job?200:404);
     }
     if(parsed.pathname==='/api/places') {

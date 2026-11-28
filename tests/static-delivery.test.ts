@@ -112,6 +112,20 @@ test('el catálogo estático devuelve solo ofertas del área y conserva el detal
   assert.equal(catalogLoads,1);
 });
 
+test('una pestaña abierta refresca el índice si cambia la posición de una oferta',async()=>{
+  const oldIndex={checkedAt:'2026-10-24T08:00:00Z',detailShardSize:2,calls:[{id:'segovia-1'},{id:'madrid-1'}]};
+  const newIndex={checkedAt:'2026-10-25T08:00:00Z',detailShardSize:2,calls:[{id:'new-company-1'},{id:'segovia-1'},{id:'madrid-1'}]};
+  let indexLoads=0;
+  const fetchData=createStaticDataFetch({fetchImpl:async(url:string|URL|Request)=>{
+    if(url==='/data/calls.json')return Response.json(++indexLoads===1?oldIndex:newIndex);
+    if(url==='/data/job-details/0.json')return Response.json([{id:'new-company-1',paragraphs:['Nueva']},{id:'segovia-1',paragraphs:['Actualizada']}]);
+    return new Response('',{status:404});
+  }});
+  const detail=await(await fetchData('/api/job?id=segovia-1')).json();
+  assert.deepEqual(detail.paragraphs,['Actualizada']);
+  assert.equal(indexLoads,2);
+});
+
 test('el total nacional no cambia al activar el mapa y distingue ofertas sin punto', async () => {
   const data={checkedAt:catalog.checkedAt,calls:[
     jobs[0],jobs[1],
@@ -200,6 +214,30 @@ test('si falla una descarga no se guarda un catálogo vacío como éxito', async
   assert.equal(attempts,2);
 });
 
+test('nuevas empresas y ofertas pasan al índice y al bloque de detalle correcto',async()=>{
+  const root=await mkdtemp(join(tmpdir(),'geoempleo-growth-'));
+  const source=join(root,'public');
+  await mkdir(join(source,'data'),{recursive:true});
+  await writeFile(join(source,'index.html'),'<html lang="es"><!--SEO_DIRECTORY--></html>');
+  const newJob={...jobs[0],id:'new-company-101',employer:'Empresa Nueva',title:'Nueva oportunidad',paragraphs:['Descripción de la nueva empresa']};
+  const growingCatalog={checkedAt:catalog.checkedAt,calls:[...Array.from({length:101},(_,index)=>({...jobs[0],id:`old-${index}`})),newJob]};
+  await writeFile(join(source,'data','calls.json'),JSON.stringify(growingCatalog));
+  const placesPath=join(root,'places.gz');
+  await writeFile(placesPath,gzipSync(JSON.stringify({places})));
+  const output=join(root,'hosting');
+  await buildStaticSite({sourceDir:source,placesGzipPath:placesPath,outputDir:output,config:{googleMapsApiKey:'restricted'}});
+  const fetchData=createStaticDataFetch({fetchImpl:async(url:string|URL|Request)=>{
+    try{return new Response(await readFile(join(output,String(url).slice(1))));}
+    catch{return new Response('',{status:404});}
+  }});
+  const found=await(await fetchData('/api/jobs?employer=empresa-nueva')).json();
+  assert.deepEqual(found.jobs.map((job:{id:string})=>job.id),['new-company-101']);
+  assert.equal(found.facets.employers.some((company:{id:string})=>company.id==='empresa-nueva'),true);
+  const detail=await(await fetchData('/api/job?id=new-company-101')).json();
+  assert.deepEqual(detail.paragraphs,['Descripción de la nueva empresa']);
+  assert.equal(JSON.parse(await readFile(join(output,'data','job-details','1.json'),'utf8'))[1].id,'new-company-101');
+});
+
 for(const includePublishLink of [true,false])test(`el despliegue estático publica búsqueda y localidades, sin ofrecer un formulario inoperante (enlace publicar ${includePublishLink?'presente':'ausente'})`, async () => {
   const root=await mkdtemp(join(tmpdir(),'geoempleo-static-'));
   const source=join(root,'public');
@@ -222,6 +260,13 @@ for(const includePublishLink of [true,false])test(`el despliegue estático publi
   await assert.rejects(readFile(join(output,'manage.html')));
   assert.equal(await readFile(join(output,'privacy.html'),'utf8'),'<html lang="es">Política de privacidad</html>');
   assert.equal(JSON.parse(await readFile(join(output,'data','place-shards','sa.json'),'utf8'))[0].name,'Coto de San Isidro');
+  const searchIndex=JSON.parse(await readFile(join(output,'data','calls.json'),'utf8'));
+  assert.equal(searchIndex.calls[0].paragraphs,undefined);
+  assert.deepEqual(JSON.parse(await readFile(join(output,'data','calls-full.json'),'utf8')),catalog);
+  const detailShard=JSON.parse(await readFile(join(output,'data','job-details','0.json'),'utf8'));
+  assert.deepEqual(detailShard[0].paragraphs,['Texto original']);
+  const staticFetch=createStaticDataFetch({fetchImpl:async(url:string|URL|Request)=>new Response(await readFile(join(output,String(url).slice(1))))});
+  assert.deepEqual((await(await staticFetch('/api/job?id=segovia-1')).json()).paragraphs,['Texto original']);
   const publicConfig=JSON.parse(await readFile(join(output,'config.json'),'utf8'));
   assert.equal(publicConfig.googleMapsApiKey,'key-restricted');
   assert.deepEqual(publicConfig.adsense,{enabled:false});
